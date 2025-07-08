@@ -3,18 +3,25 @@ import axios from "axios"
 import { useEffect } from 'react'
 import { supabase } from '../supabaseClient.js'
 import { Link } from 'react-router-dom';
+import { UserAuth } from '../context/authContext.jsx'
 
 const Workspace = () => {
+    const { session } = UserAuth();
     const [workspace, setworkspace] = useState('')
     const [allworkspace, setAllworkspace] = useState([])
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setAllworkspace((prev) => [...prev, workspace])
         if (!workspace.trim()) return
         setworkspace('')
+        const id = session.user?.id
+        const email = session.user?.email
         try {
             await axios.post('/api/ws', {
                 workspace,
+                id,
+                email
             })
         } catch (error) {
             console.error("error coming in workspacees", error)

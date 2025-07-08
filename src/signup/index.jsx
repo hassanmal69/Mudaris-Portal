@@ -26,7 +26,6 @@ const SignUp = () => {
         setEmail(res.data?.data[0].email)
         setWsId(res.data?.data[0].workspaceId)
         setGroupId(res.data?.data[0].groupId)
-        console.log(email, wsId, groupID)
     }
     useEffect(() => {
         checkingToken();
@@ -39,7 +38,8 @@ const SignUp = () => {
         try {
             const response = await axios.post('/api/signup', {
                 email,
-                password
+                password,
+                token
             }, {
                 headers: {
                     'Content-Type': 'application/json'
