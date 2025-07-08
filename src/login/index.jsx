@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { UserAuth } from '../context/authContext';
 import axios from 'axios';
+import { supabase } from '../supabaseClient';
 
 const Login = () => {
   const { setSession, session } = UserAuth();
@@ -9,12 +10,50 @@ const Login = () => {
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [worksId, setworksId] = useState('')
+  const [grId, setgrId] = useState('')
   const navigate = useNavigate()
   useEffect(() => {
     if (session) {
-      navigate('/dashboard')
+      const sessionDetect = async () => {
+        const lsRaw = localStorage.getItem('session');
+        if (!lsRaw) return;
+
+        const ls = JSON.parse(lsRaw);
+        const { data: checkAdmin, error: checkerror } = await supabase.from('user')
+          .select('role')
+          .eq('email', ls.user?.email).single()
+        console.log('muhhehe', checkAdmin.role)
+        if (checkerror) console.log(checkerror)
+        if (checkAdmin.role === 'admin') {
+          navigate('/dashboard')
+        } else {
+          const { data: wsData, error: wsError } = await supabase
+            .from('invitations')
+            .select('workspaceId,groupId')
+            .eq('email', ls.user?.email);
+
+          if (wsError) {
+            console.log('Error fetching invitation:', wsError);
+            return;
+          }
+
+          if (wsData && wsData.length > 0) {
+            const WsId = wsData[0].workspaceId;
+            const gId = wsData[0].groupId;
+            setgrId(gId);
+            setworksId(WsId);
+            navigate(`/workspace/${WsId}/group/${gId}`);
+          } else {
+            console.log('No invitation found for this email');
+          }
+        }
+      };
+
+      sessionDetect();
     }
-  }, [session, navigate])
+  }, [session, navigate]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -32,7 +71,7 @@ const Login = () => {
       const session = res.data?.session
       localStorage.setItem("session", JSON.stringify(session))
       setSession(session)
-      navigate('/dashboard')
+      navigate(`/workspace/${worksId}/group/${grId}`)
     } catch (error) {
       console.error("here are error in login in login.jsx", error)
     } finally {

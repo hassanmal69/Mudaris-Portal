@@ -70,7 +70,6 @@ const Groups = ({ workspaceId }) => {
                 </div>
             </div>
 
-            <Chat />
         </div>
     )
 }

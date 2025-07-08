@@ -8,7 +8,6 @@ const Chat = () => {
   const [newMsg, setNewMsg] = useState("")
   const [msg, setMsg] = useState([])
   const { groupId } = useParams();
-  console.log(groupId)
   const fetchMessages = async () => {
     const { data, error } = await supabase
       .from("message")
