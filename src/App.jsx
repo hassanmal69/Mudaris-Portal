@@ -1,11 +1,7 @@
-import './App.css'
-import SignUp from './signup'
+import "@styles/index.css";
+// import SignUp from "./signup";
 function App() {
-  return (
-    <>
-      <SignUp />
-    </>
-  )
+  return <>{/* <SignUp /> */}</>;
 }
 
-export default App
+export default App;

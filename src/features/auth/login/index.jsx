@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { UserAuth } from "../context/authContext";
+import { UserAuth } from "@/context/authContext";
 import axios from "axios";
-import { supabase } from "../supabaseClient";
+import { supabase } from "@/services/supabaseClient";
 
 const Login = () => {
   const { setSession, session } = UserAuth();
