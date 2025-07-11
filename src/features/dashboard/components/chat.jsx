@@ -1,26 +1,25 @@
-import { useEffect, useState } from "react"
-import axios from "axios"
-import { supabase } from "../supabaseClient.js"
-import { Link } from 'react-router-dom';
-import { useParams } from 'react-router-dom';
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { supabase } from "@/services/supabaseClient.js";
+import { useParams } from "react-router-dom";
 
 const Chat = () => {
-  const [newMsg, setNewMsg] = useState("")
-  const [msg, setMsg] = useState([])
+  const [newMsg, setNewMsg] = useState("");
+  const [msg, setMsg] = useState([]);
   const { groupId } = useParams();
   const fetchMessages = async () => {
     const { data, error } = await supabase
       .from("message")
       .select("message")
       .eq("groupId", groupId)
-      .order("created_at", { ascending: false })
+      .order("created_at", { ascending: false });
 
     if (!error) {
-      setMsg(data)
+      setMsg(data);
     } else {
-      console.error("Error fetching messages:", error)
+      console.error("Error fetching messages:", error);
     }
-  }
+  };
   useEffect(() => {
     if (!groupId) return;
 
@@ -33,33 +32,33 @@ const Chat = () => {
           event: "INSERT",
           schema: "public",
           table: "message",
-          filter: `groupId=eq.${groupId}`
+          filter: `groupId=eq.${groupId}`,
         },
         (payload) => {
-          const newMessage = payload.new
-          setMsg((prev) => [newMessage, ...prev])
+          const newMessage = payload.new;
+          setMsg((prev) => [newMessage, ...prev]);
         }
       )
-      .subscribe()
+      .subscribe();
 
     return () => {
-      supabase.removeChannel(channel)
-    }
-  }, [groupId])
+      supabase.removeChannel(channel);
+    };
+  }, [groupId]);
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    if (!newMsg.trim()) return
-    setNewMsg("")
+    e.preventDefault();
+    if (!newMsg.trim()) return;
+    setNewMsg("");
     try {
       await axios.post("/api/chat", {
         newMsg,
-        groupId
-      })
+        groupId,
+      });
     } catch (err) {
-      console.error("Error sending message to backend", err)
+      console.error("Error sending message to backend", err);
     }
-  }
+  };
 
   return (
     <div className="border-2 w-full flex flex-col items-center justify-center">
@@ -80,7 +79,7 @@ const Chat = () => {
         ))}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Chat
+export default Chat;
