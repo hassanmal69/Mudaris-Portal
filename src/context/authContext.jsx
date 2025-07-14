@@ -1,4 +1,4 @@
-import React, { useEffect, useState, createContext, useContext } from "react";
+import { useEffect, useState, createContext, useContext } from "react";
 import { supabase } from "@/services/supabaseClient";
 
 const AuthContext = createContext();
@@ -8,29 +8,16 @@ export const AuthContextProvider = ({ children }) => {
 
   useEffect(() => {
     // Fetch current session on mount
-    const getSession = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      setSession(session);
-    };
-    getSession();
-
-    // Subscribe to auth state changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
-
-    return () => {
-      subscription.unsubscribe();
-    };
+    const localSession = localStorage.getItem("session");
+    if (localSession) {
+      setSession(JSON.parse(localSession));
+    }
   }, []);
 
   const logOut = async () => {
     await supabase.auth.signOut();
     setSession(null);
+    localStorage.removeItem("session");
   };
 
   return (

@@ -1,38 +1,12 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { Link } from "react-router-dom";
 import { UserAuth } from "../../../context/authContext";
-import { supabase } from "@/services/supabaseClient";
 import { useNavigate } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
 import { signupSchema } from "@/validation/authSchema";
-import quotesData from "@/assets/qoutes/Qoutes.json";
-
-const FarsiQuote = () => {
-  const [quote, setQuote] = useState(null);
-
-  useEffect(() => {
-    if (quotesData && quotesData.length > 0) {
-      const randomIndex = Math.floor(Math.random() * quotesData.length);
-      setQuote(quotesData[randomIndex]);
-    }
-  }, []);
-
-  if (!quote) return null;
-
-  return (
-    <div
-      className="flex flex-col items-center justify-center h-full w-full px-6 animate-fadeIn"
-      style={{ minHeight: "300px" }}
-    >
-      <blockquote className="text-3xl md:text-4xl lg:text-5xl font-semibold italic text-white text-center leading-relaxed font-serif">
-        {`«${quote.quote}»`}
-      </blockquote>
-      <span className="mt-4 text-lg text-muted">— {quote.author}</span>
-    </div>
-  );
-};
-
+import axios from "axios";
+import { FarsiQuote } from "../components/FarsiQuote";
 const SignUp = () => {
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
@@ -46,17 +20,17 @@ const SignUp = () => {
 
   const checkingToken = async () => {
     try {
-      // This would need to be updated to use your actual API endpoint
-      // For now, we'll use a placeholder
+      const res = await axios.post("/api/inviteValidation", {
+        token: token,
+      });
       console.log("Token validation would happen here:", token);
-      // setInviteEmail(res.data?.data[0].email);
-      // setWsId(res.data?.data[0].workspaceId);
-      // setGroupId(res.data?.data[0].groupId);
+      setInviteEmail(res.data?.data[0].email);
+      setWsId(res.data?.data[0].workspaceId);
+      setGroupId(res.data?.data[0].groupId);
     } catch (error) {
       console.error("Token validation error:", error);
     }
   };
-
   useEffect(() => {
     if (token) {
       checkingToken();
@@ -68,18 +42,27 @@ const SignUp = () => {
     setError("");
 
     try {
-      // Use Supabase auth for signup
-      const { data, error: signUpError } = await supabase.auth.signUp({
-        email: values.email,
-        password: values.password,
-        options: {
-          data: {
-            name: values.name,
-            // Add any additional metadata you need
-          },
+      const response = await axios.post(
+        "/api/signup",
+        {
+          name: values.name,
+          email: values.email,
+          password: values.password,
+          token,
         },
-      });
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const session = response.data.session;
+      localStorage.setItem("session", JSON.stringify(session));
+      setSession(session);
+      navigate(`/workspace/${wsId}/group/${groupID}`);
 
+      // Handle the response from your API
+      const { data, error: signUpError } = response.data;
       if (signUpError) {
         setError(signUpError.message || "Signup failed");
         return;
@@ -88,19 +71,19 @@ const SignUp = () => {
       // If successful, you might want to redirect or show a success message
       console.log("Signup successful:", data);
 
-      // For now, we'll just set the session if available
       if (data.session) {
         setSession(data.session);
-        // Navigate to workspace if we have the IDs
         if (wsId && groupID) {
           navigate(`/workspace/${wsId}/group/${groupID}`);
         } else {
-          navigate("/dashboard"); // or wherever you want to redirect
+          navigate("/dashboard");
         }
       }
     } catch (err) {
-      const errorMessage = err.message || "Signup failed";
-      console.error("Signup error:", err);
+      const errorMessage =
+        err.response?.data?.message || err.message || "Signup failed";
+
+      console.error("Signup error:", err.message);
       setError(errorMessage);
     } finally {
       setLoading(false);

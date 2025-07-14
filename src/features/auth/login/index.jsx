@@ -1,56 +1,88 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { supabase } from "@/services/supabaseClient";
 import { useSessionRedirect } from "@/context/useSessionRedirect";
-import quotesData from "@/assets/qoutes/Qoutes.json";
 import { loginSchema } from "@/validation/authSchema";
-
-const FarsiQuote = () => {
-  const [quote, setQuote] = useState(null);
-
-  useEffect(() => {
-    if (quotesData && quotesData.length > 0) {
-      const randomIndex = Math.floor(Math.random() * quotesData.length);
-      setQuote(quotesData[randomIndex]);
-    }
-  }, []);
-
-  if (!quote) return null;
-
-  return (
-    <div
-      className="flex flex-col items-center justify-center h-full w-full px-6 animate-fadeIn"
-      style={{ minHeight: "300px" }}
-    >
-      <blockquote className="text-3xl md:text-4xl lg:text-5xl font-semibold italic text-white text-center leading-relaxed font-serif">
-        {`«${quote.quote}»`}
-      </blockquote>
-      <span className="mt-4 text-lg text-muted">— {quote.author}</span>
-    </div>
-  );
-};
-
+import { FarsiQuote } from "../components/FarsiQuote"; // Adjust the import path as necessary
+import { useNavigate } from "react-router-dom";
+import { UserAuth } from "@/context/authContext";
+import axios from "axios";
 const Login = () => {
   useSessionRedirect();
+
+  const { setSession, session } = UserAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [worksId, setworksId] = useState("");
+  const [grId, setgrId] = useState("");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (session) {
+      const sessionDetect = async () => {
+        const lsRaw = localStorage.getItem("session");
+        if (!lsRaw) return;
+
+        const ls = JSON.parse(lsRaw);
+        const { data: checkAdmin, error: checkerror } = await supabase
+          .from("user")
+          .select("role")
+          .eq("email", ls.user?.email)
+          .single();
+        console.log("checkAdmin role in login.jsx ->", checkAdmin.role);
+        console.log("checkAdmin in login.jsx ->", checkAdmin);
+        if (checkerror) console.log(checkerror);
+        if (checkAdmin.role === "admin") {
+          navigate("/dashboard");
+        } else {
+          const { data: wsData, error: wsError } = await supabase
+            .from("invitations")
+            .select("workspaceId,groupId")
+            .eq("email", ls.user?.email);
+
+          if (wsError) {
+            console.log("Error fetching invitation:", wsError);
+            return;
+          }
+
+          if (wsData && wsData.length > 0) {
+            const WsId = wsData[0].workspaceId;
+            const gId = wsData[0].groupId;
+            setgrId(gId);
+            setworksId(WsId);
+            navigate(`/workspace/${WsId}/group/${gId}`);
+          } else {
+            console.log("No invitation found for this email");
+          }
+        }
+      };
+
+      sessionDetect();
+    }
+  }, [session, navigate]);
 
   const handleSubmit = async (values, { setSubmitting }) => {
-    setError("");
-    setLoading(true);
+    // setError("");
+    // setLoading(true);
     try {
-      const { data, error: signInError } =
-        await supabase.auth.signInWithPassword({
+      const res = await axios.post(
+        "/api/signin",
+        {
           email: values.email,
           password: values.password,
-        });
-      if (signInError) {
-        setError("Invalid email or password. Please try again.");
-        return;
-      }
-      // Session is managed by Supabase; redirection handled by hook
-    } catch (err) {
-      setError("Something went wrong. Please try again later.");
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const session = res.data?.session;
+      localStorage.setItem("session", JSON.stringify(session));
+      setSession(session);
+      navigate(`/workspace/${worksId}/group/${grId}`);
+    } catch (error) {
+      console.error("here are error in login in login.jsx", error);
     } finally {
       setLoading(false);
       setSubmitting(false);
