@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { supabase } from "@/services/supabaseClient.js";
 import { useParams } from "react-router-dom";
+import Video from "./video.jsx";
 
 const Chat = () => {
-  const [newMsg, setNewMsg] = useState("");
-  const [msg, setMsg] = useState([]);
+  const [newMsg, setNewMsg] = useState("")
+  const [msg, setMsg] = useState([])
+  const [videoOption, setVideoOption] = useState(false)
   const { groupId } = useParams();
   const fetchMessages = async () => {
     const { data, error } = await supabase
@@ -62,13 +64,17 @@ const Chat = () => {
 
   return (
     <div className="border-2 w-full flex flex-col items-center justify-center">
-      <form onSubmit={handleSubmit}>
+      <form className="flex" onSubmit={handleSubmit}>
         <input
           type="text"
           value={newMsg}
           onChange={(e) => setNewMsg(e.target.value)}
         />
         <button type="submit">Submit</button>
+        <button onClick={() => setVideoOption(!videoOption)}>Video Record</button>
+        {videoOption &&
+          <Video />
+        }
       </form>
 
       <div className="flex flex-col-reverse">
