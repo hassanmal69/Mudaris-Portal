@@ -75,7 +75,6 @@ const SignUp = () => {
         options: {
           data: {
             name: values.name,
-            // Add any additional metadata you need
           },
         },
       });
