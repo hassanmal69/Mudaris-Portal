@@ -19,6 +19,7 @@ export function useSessionRedirect(enableRedirect = true) {
 
     const checkRoleAndRedirect = async () => {
       try {
+        console.log(session?.user.email, "session in useSessionRedirect.js");
         // Fetch user role
         const { data: userData, error: userError } = await supabase
           .from("user")
@@ -45,8 +46,7 @@ export function useSessionRedirect(enableRedirect = true) {
           }
         }
       } catch (err) {
-        // Optionally handle error (e.g., show notification)
-        // console.error("Session redirect error:", err);
+        console.error("Session redirect error:", err);
       }
     };
     checkRoleAndRedirect();

@@ -1,38 +1,12 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { Link } from "react-router-dom";
 import { UserAuth } from "../../../context/authContext";
-import { supabase } from "@/services/supabaseClient";
 import { useNavigate } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
 import { signupSchema } from "@/validation/authSchema";
-import quotesData from "@/assets/qoutes/Qoutes.json";
-
-const FarsiQuote = () => {
-  const [quote, setQuote] = useState(null);
-
-  useEffect(() => {
-    if (quotesData && quotesData.length > 0) {
-      const randomIndex = Math.floor(Math.random() * quotesData.length);
-      setQuote(quotesData[randomIndex]);
-    }
-  }, []);
-
-  if (!quote) return null;
-
-  return (
-    <div
-      className="flex flex-col items-center justify-center h-full w-full px-6 animate-fadeIn"
-      style={{ minHeight: "300px" }}
-    >
-      <blockquote className="text-3xl md:text-4xl lg:text-5xl font-semibold italic text-white text-center leading-relaxed font-serif">
-        {`«${quote.quote}»`}
-      </blockquote>
-      <span className="mt-4 text-lg text-muted">— {quote.author}</span>
-    </div>
-  );
-};
-
+import { FarsiQuote } from "../components/FarsiQuote";
+import { handleSignup, validationTokenInvite } from "../../../services/auth";
 const SignUp = () => {
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
@@ -44,67 +18,36 @@ const SignUp = () => {
   const [groupID, setGroupId] = useState("");
   const [inviteEmail, setInviteEmail] = useState("");
 
-  const checkingToken = async () => {
-    try {
-      // This would need to be updated to use your actual API endpoint
-      // For now, we'll use a placeholder
-      console.log("Token validation would happen here:", token);
-      // setInviteEmail(res.data?.data[0].email);
-      // setWsId(res.data?.data[0].workspaceId);
-      // setGroupId(res.data?.data[0].groupId);
-    } catch (error) {
-      console.error("Token validation error:", error);
-    }
-  };
-
   useEffect(() => {
     if (token) {
-      checkingToken();
+      (async () => {
+        try {
+          const invite = await validationTokenInvite(token);
+          setInviteEmail(invite.email);
+          setWsId(invite.workspaceId);
+          setGroupId(invite.groupId);
+        } catch (error) {
+          console.error("Error validating token:", error);
+          setError("Invalid or expired token");
+        }
+      })();
     }
   }, [token]);
 
-  const handleSubmit = async (values, { setSubmitting }) => {
-    setLoading(true);
-    setError("");
 
-    try {
-      // Use Supabase auth for signup
-      const { data, error: signUpError } = await supabase.auth.signUp({
-        email: values.email,
-        password: values.password,
-        options: {
-          data: {
-            name: values.name,
-          },
-        },
-      });
+  const handleSubmit = async (values, forkmikHelpers) => {
+    handleSignup({
+      values,
+      token,
+      setLoading,
+      setError,
+      setSession,
+      navigate,
+      wsId,
+      groupID,
+      ...forkmikHelpers,
+    });
 
-      if (signUpError) {
-        setError(signUpError.message || "Signup failed");
-        return;
-      }
-
-      // If successful, you might want to redirect or show a success message
-      console.log("Signup successful:", data);
-
-      // For now, we'll just set the session if available
-      if (data.session) {
-        setSession(data.session);
-        // Navigate to workspace if we have the IDs
-        if (wsId && groupID) {
-          navigate(`/workspace/${wsId}/group/${groupID}`);
-        } else {
-          navigate("/dashboard"); // or wherever you want to redirect
-        }
-      }
-    } catch (err) {
-      const errorMessage = err.message || "Signup failed";
-      console.error("Signup error:", err);
-      setError(errorMessage);
-    } finally {
-      setLoading(false);
-      setSubmitting(false);
-    }
   };
 
   return (
