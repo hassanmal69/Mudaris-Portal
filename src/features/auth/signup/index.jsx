@@ -34,6 +34,7 @@ const SignUp = () => {
     }
   }, [token]);
 
+
   const handleSubmit = async (values, forkmikHelpers) => {
     handleSignup({
       values,
@@ -46,6 +47,7 @@ const SignUp = () => {
       groupID,
       ...forkmikHelpers,
     });
+
   };
 
   return (
