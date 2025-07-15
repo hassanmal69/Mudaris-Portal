@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useReactMediaRecorder } from 'react-media-recorder';
+import { supabase } from '../../../../supabaseClient.js';
 import axios from 'axios'
 const Video = () => {
     const videoPreviewRef = useRef(null);
@@ -42,7 +43,7 @@ const Video = () => {
 
         const formData = new FormData();
         formData.append('uploaded_file', file);         // 🔸 name="uploaded_file" matches Multer field
-
+        console.log(file)
         try {
             const res = await axios.post('/api/videoSend', formData, {
                 headers: {
@@ -53,6 +54,7 @@ const Video = () => {
         } catch (err) {
             console.error('Upload failed:', err);
         }
+
     };
 
     return (
@@ -105,3 +107,22 @@ const Video = () => {
 };
 
 export default Video;
+// const fileName = `video-${Date.now()}.webm`;
+//     const { data, error } = await supabase.storage.from('media')
+//         .upload(`video/${fileName}`, blob, {
+//             contentType: 'video/webm',
+//             upsert: false, // set to true if you want to overwrite duplicates
+//         })
+//     if (error) {
+//         console.error('❌ Upload failed:', error);
+//         return null;
+//     }
+
+//     console.log('✅ Uploaded:', data);
+
+//     // Optional: generate public URL
+//     const { data: publicUrlData } = supabase.storage
+//         .from('media')
+//         .getPublicUrl(`video/${fileName}`);
+
+//     console.log('🌐 Public URL:', publicUrlData?.publicUrl);
