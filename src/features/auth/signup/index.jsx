@@ -5,8 +5,8 @@ import { UserAuth } from "../../../context/authContext";
 import { useNavigate } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
 import { signupSchema } from "@/validation/authSchema";
-import axios from "axios";
 import { FarsiQuote } from "../components/FarsiQuote";
+import { handleSignup, validationTokenInvite } from "../../../services/auth";
 const SignUp = () => {
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
@@ -18,77 +18,34 @@ const SignUp = () => {
   const [groupID, setGroupId] = useState("");
   const [inviteEmail, setInviteEmail] = useState("");
 
-  const checkingToken = async () => {
-    try {
-      const res = await axios.post("/api/inviteValidation", {
-        token: token,
-      });
-      console.log("Token validation would happen here:", token);
-      setInviteEmail(res.data?.data[0].email);
-      setWsId(res.data?.data[0].workspaceId);
-      setGroupId(res.data?.data[0].groupId);
-    } catch (error) {
-      console.error("Token validation error:", error);
-    }
-  };
   useEffect(() => {
     if (token) {
-      checkingToken();
+      (async () => {
+        try {
+          const invite = await validationTokenInvite(token);
+          setInviteEmail(invite.email);
+          setWsId(invite.workspaceId);
+          setGroupId(invite.groupId);
+        } catch (error) {
+          console.error("Error validating token:", error);
+          setError("Invalid or expired token");
+        }
+      })();
     }
   }, [token]);
 
-  const handleSubmit = async (values, { setSubmitting }) => {
-    setLoading(true);
-    setError("");
-
-    try {
-      const response = await axios.post(
-        "/api/signup",
-        {
-          name: values.name,
-          email: values.email,
-          password: values.password,
-          token,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      const session = response.data.session;
-      localStorage.setItem("session", JSON.stringify(session));
-      setSession(session);
-      navigate(`/workspace/${wsId}/group/${groupID}`);
-
-      // Handle the response from your API
-      const { data, error: signUpError } = response.data;
-      if (signUpError) {
-        setError(signUpError.message || "Signup failed");
-        return;
-      }
-
-      // If successful, you might want to redirect or show a success message
-      console.log("Signup successful:", data);
-
-      if (data.session) {
-        setSession(data.session);
-        if (wsId && groupID) {
-          navigate(`/workspace/${wsId}/group/${groupID}`);
-        } else {
-          navigate("/dashboard");
-        }
-      }
-    } catch (err) {
-      const errorMessage =
-        err.response?.data?.message || err.message || "Signup failed";
-
-      console.error("Signup error:", err.message);
-      setError(errorMessage);
-    } finally {
-      setLoading(false);
-      setSubmitting(false);
-    }
+  const handleSubmit = async (values, forkmikHelpers) => {
+    handleSignup({
+      values,
+      token,
+      setLoading,
+      setError,
+      setSession,
+      navigate,
+      wsId,
+      groupID,
+      ...forkmikHelpers,
+    });
   };
 
   return (

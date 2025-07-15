@@ -3,10 +3,10 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import { supabase } from "@/services/supabaseClient";
 import { useSessionRedirect } from "@/context/useSessionRedirect";
 import { loginSchema } from "@/validation/authSchema";
-import { FarsiQuote } from "../components/FarsiQuote"; // Adjust the import path as necessary
+import { FarsiQuote } from "../components/FarsiQuote";
 import { useNavigate } from "react-router-dom";
 import { UserAuth } from "@/context/authContext";
-import axios from "axios";
+import { handleLogin } from "@/services/auth";
 const Login = () => {
   useSessionRedirect();
 
@@ -61,34 +61,6 @@ const Login = () => {
     }
   }, [session, navigate]);
 
-  const handleSubmit = async (values, { setSubmitting }) => {
-    // setError("");
-    // setLoading(true);
-    try {
-      const res = await axios.post(
-        "/api/signin",
-        {
-          email: values.email,
-          password: values.password,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      const session = res.data?.session;
-      localStorage.setItem("session", JSON.stringify(session));
-      setSession(session);
-      navigate(`/workspace/${worksId}/group/${grId}`);
-    } catch (error) {
-      console.error("here are error in login in login.jsx", error);
-    } finally {
-      setLoading(false);
-      setSubmitting(false);
-    }
-  };
-
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-gradient-to-br from-secondary to-primary">
       {/* Section 1: Quote */}
@@ -113,7 +85,18 @@ const Login = () => {
             password: "",
           }}
           validationSchema={loginSchema}
-          onSubmit={handleSubmit}
+          onSubmit={(values, formikHelpers) => {
+            handleLogin({
+              setLoading,
+              values,
+              setSession,
+              setWorksId: setworksId,
+              setGrId: setgrId,
+              navigate,
+              setError,
+              ...formikHelpers,
+            });
+          }}
         >
           {({ touched, errors, isSubmitting }) => (
             <Form
