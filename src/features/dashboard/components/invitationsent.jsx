@@ -1,23 +1,26 @@
 import axios from 'axios';
 import React, { useState } from 'react'
 import { useParams } from 'react-router-dom'
+import { UserAuth } from '../../../context/authContext';
 
 const InviteSend = () => {
     const [inviteEmail, setInviteEmail] = useState("");
     const { workspaceId } = useParams()
-    const {groupId}=useParams();
+    const { session } = UserAuth()
+    const senderEmail = session?.user?.email
     const handleInvite = async () => {
-        if (!inviteEmail) return;
+        if (!inviteEmail || inviteEmail.trim() === '') return alert("enter emails");
         try {
-            await axios.post("/api/invite", {
+            const res = await axios.post("/api/invite", {
                 email: inviteEmail,
                 workspaceId,
-                groupId
+                senderEmail
             });
             alert("Invite sent!");
+            console.log(res)
             setInviteEmail("");
         } catch (err) {
-            alert("Failed to send invite.",err);
+            alert("Failed to send invite.", err);
         }
     };
 

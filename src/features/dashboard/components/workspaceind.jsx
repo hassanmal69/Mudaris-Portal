@@ -1,13 +1,15 @@
-import React, { useEffect, useState } from "react";
-import Chat from "./chat.jsx";
-import Groups from "./group.jsx";
+import React, { useEffect, useState, Suspense } from "react";
+const Groups = React.lazy(() => import("./group.jsx"));
+
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/services/supabaseClient.js";
 import { useParams } from "react-router-dom";
-import InviteSend from "./invitationsent.jsx";
+const InviteSend = React.lazy(() => import("./invitationsent.jsx"));
+
 import { UserAuth } from "@/context/authContext.jsx";
-import Members from "./members.jsx";
-import axios from "axios";
+const Chat = React.lazy(() => import("./chat.jsx"));
+const Members = React.lazy(() => import("./members.jsx"));
+
 const WorkSpaceInd = () => {
   const { workspaceId, groupId } = useParams();
   const navigate = useNavigate();
@@ -27,15 +29,6 @@ const WorkSpaceInd = () => {
       setGroups(data);
     }
     setEmail(session.user.email);
-    // here is where when we invite any user
-    //he will straightly jump on the workspaces of what they're 
-    // invited to we are automatically fetching it's group id
-    const { data: checkData, error: checkError } = await supabase
-      .from("invitations")
-      .select("workspace_Id");
-    if (checkError) {
-      console.error("error arha ha in ws-ind");
-    }
     if (!groupId)
       navigate(`/workspace/${workspaceId}/group/${data[0].id}`, {
         replace: true,
@@ -43,7 +36,7 @@ const WorkSpaceInd = () => {
   };
   useEffect(() => {
     fetchGroups();
-  });
+  }, [workspaceId, groupId, session]);
   const handleLogout = () => {
     logOut();
   };
@@ -52,17 +45,26 @@ const WorkSpaceInd = () => {
   };
   return (
     <div className="flex h-[100vh] w-full relative text-amber-50">
-      {isScreen && <Members />}
+      <Suspense fallback={<div>Loading Members...</div>}>
+        {isScreen && <Members />}
+      </Suspense>
       <div className="w-full h-15 bg-gray-500 absolute flex justify-center">
         <h1>Top Bar</h1>
         <button onClick={toggleScreen}>view all members</button>
       </div>
       <div className="flex flex-col bg-gray-900 h-full justify-center items-center">
-        <Groups workspaceId={workspaceId} />
-        <InviteSend />
+        <Suspense fallback={<div>Loading groups...</div>}>
+          <Groups workspaceId={workspaceId} />
+        </Suspense>
+        <Suspense fallback={<div>Loading invite...</div>}>
+          <InviteSend />
+        </Suspense>
         <button onClick={handleLogout}>LOG OUT</button>
       </div>
-      <Chat />
+      {/* ✅ Lazy-load Chat */}
+      <Suspense fallback={<div>Loading Chat...</div>}>
+        <Chat />
+      </Suspense>
     </div>
   );
 };
