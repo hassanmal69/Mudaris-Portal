@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useReactMediaRecorder } from 'react-media-recorder';
-import { supabase } from '../../../../supabaseClient.js';
+// import { supabase } from '../../../../supabaseClient.js';
 import axios from 'axios'
 const Video = () => {
     const videoPreviewRef = useRef(null);

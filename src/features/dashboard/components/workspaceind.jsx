@@ -16,18 +16,23 @@ const WorkSpaceInd = () => {
   const [email, setEmail] = useState("");
   const [isScreen, setisScreen] = useState(false);
   const fetchGroups = async () => {
+    //we all doing this so we can send a user
+    //  when he creates a first channel 
     const { data, error } = await supabase
-      .from("groups")
-      .select("id,groupName")
-      .eq("workspaceId", workspaceId)
+      .from("channels")
+      .select("id,channel_name")
+      .eq("workspace_Id", workspaceId)
       .order("created_at", { ascending: true });
     if (!error && data.length > 0) {
       setGroups(data);
     }
     setEmail(session.user.email);
+    // here is where when we invite any user
+    //he will straightly jump on the workspaces of what they're 
+    // invited to we are automatically fetching it's group id
     const { data: checkData, error: checkError } = await supabase
       .from("invitations")
-      .select("workspaceId");
+      .select("workspace_Id");
     if (checkError) {
       console.error("error arha ha in ws-ind");
     }
@@ -46,7 +51,7 @@ const WorkSpaceInd = () => {
     setisScreen((prev) => !prev);
   };
   return (
-    <div className="flex h-[100vh] w-full relative">
+    <div className="flex h-[100vh] w-full relative text-amber-50">
       {isScreen && <Members />}
       <div className="w-full h-15 bg-gray-500 absolute flex justify-center">
         <h1>Top Bar</h1>
