@@ -88,4 +88,4 @@ const Groups = ({ workspaceId }) => {
   );
 };
 
-export default Groups;
+export default React.memo(Groups);

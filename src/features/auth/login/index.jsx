@@ -29,9 +29,9 @@ const Login = () => {
           .select("role")
           .eq("email", ls.user?.email)
           .single();
-        console.log("checkAdmin role in login.jsx ->", checkAdmin.role);
-        console.log("checkAdmin in login.jsx ->", checkAdmin);
         if (checkerror) console.log(checkerror);
+        //if role == admin we want them to go to the dashboard page 
+        //otherwise check else condition
         if (checkAdmin.role === "admin") {
           navigate("/dashboard");
         } else {
@@ -122,11 +122,10 @@ const Login = () => {
                   name="email"
                   type="email"
                   autoComplete="email"
-                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple transition bg-white/20 text-white placeholder-white/60 backdrop-blur-sm ${
-                    touched.email && errors.email
+                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple transition bg-white/20 text-white placeholder-white/60 backdrop-blur-sm ${touched.email && errors.email
                       ? "border-red-400"
                       : "border-white/30"
-                  }`}
+                    }`}
                   placeholder="Enter your email"
                 />
                 <ErrorMessage
@@ -148,11 +147,10 @@ const Login = () => {
                   name="password"
                   type="password"
                   autoComplete="current-password"
-                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple transition bg-white/20 text-white placeholder-white/60 backdrop-blur-sm ${
-                    touched.password && errors.password
+                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple transition bg-white/20 text-white placeholder-white/60 backdrop-blur-sm ${touched.password && errors.password
                       ? "border-red-400"
                       : "border-white/30"
-                  }`}
+                    }`}
                   placeholder="Enter your password"
                 />
                 <ErrorMessage
