@@ -3,28 +3,26 @@ import axios from "axios";
 import { supabase } from "@/services/supabaseClient.js";
 import { useParams } from "react-router-dom";
 import Video from "./video.jsx";
-
+import { UserAuth } from '../../../context/authContext.jsx'
 const Chat = () => {
   const [newMsg, setNewMsg] = useState("")
   const [msg, setMsg] = useState([])
   const [videoOption, setVideoOption] = useState(false)
   const { groupId } = useParams();
-  const fetchMessages = async () => {
-    const { data, error } = await supabase
-      .from("message")
-      .select("message")
-      .eq("groupId", groupId)
-      .order("created_at", { ascending: false });
+  const { session } = UserAuth()
 
-    if (!error) {
-      setMsg(data);
-    } else {
-      console.error("Error fetching messages:", error);
+  const fetchMessages = async () => {
+    try {
+      const res = await axios.post("/api/chat/fetch", {
+        groupId,
+      });
+      setMsg(res?.data?.data)
+    } catch (error) {
+      console.error(error)
     }
   };
   useEffect(() => {
     if (!groupId) return;
-
     fetchMessages();
     const channel = supabase
       .channel("message-channel")
@@ -34,7 +32,7 @@ const Chat = () => {
           event: "INSERT",
           schema: "public",
           table: "message",
-          filter: `groupId=eq.${groupId}`,
+          filter: `channel_id=eq.${groupId}`,
         },
         (payload) => {
           const newMessage = payload.new;
@@ -50,12 +48,13 @@ const Chat = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!newMsg.trim()) return;
+    if (!newMsg.trim()) return setNewMsg("");
     setNewMsg("");
     try {
       await axios.post("/api/chat", {
         newMsg,
         groupId,
+        senderEmail: session?.user?.email
       });
     } catch (err) {
       console.error("Error sending message to backend", err);
@@ -79,11 +78,16 @@ const Chat = () => {
         }
       </form>
 
-      <div className="flex flex-col-reverse">
+      <div className="flex flex-col-reverse text-black">
         {msg.map((m, idx) => (
-          <p key={m.id || idx} className="mt-3">
-            {m.message}
-          </p>
+          <div className="flex gap-2 mt-2" key={m.id || idx}>
+            <p>
+              {m.content}
+            </p>
+            <p>
+              {m.sender_email}
+            </p>
+          </div>
         ))}
       </div>
     </div>

@@ -95,45 +95,45 @@ export const handleLogin = async ({
     localStorage.setItem("session", JSON.stringify(session));
     setSession(session);
 
-    const userEmail = session?.user?.email;
-    if (!userEmail) {
-      throw new Error("Login failed, no user email found in session");
-    }
-    console.log("User email:", userEmail);
-    //Getting user role
-    const { data: checkAdmin, error: checkError } = await supabase
-      .from("user")
-      .select("role")
-      .eq("email", userEmail)
-      .single();
-    if (checkError) {
-      throw new Error("Error fetching user role: " + checkError.message);
-    }
-    if (checkAdmin?.role === "admin") {
-      navigate("/dashboard");
-      return;
-    }
-    // if not admin, check for workspace invitation
-    const { data: wsdata, error: wsError } = await supabase
-      .from("invitations")
-      .select("workspaceId, groupId")
-      .eq("email", userEmail);
-    if (wsError) {
-      throw new Error(
-        "Error fetching workspace invitation: " + wsError.message
-      );
-    }
+    // const userEmail = session?.user?.email;
+    // if (!userEmail) {
+    //   throw new Error("Login failed, no user email found in session");
+    // }
+    // console.log("User email:", userEmail);
+    // //Getting user role
+    // const { data: checkAdmin, error: checkError } = await supabase
+    //   .from("user")
+    //   .select("role")
+    //   .eq("email", userEmail)
+    //   .single();
+    // if (checkError) {
+    //   throw new Error("Error fetching user role: " + checkError.message);
+    // }
+    // if (checkAdmin?.role === "admin") {
+    //   navigate("/dashboard");
+    //   return;
+    // }
+    // // if not admin, check for workspace invitation
+    // const { data: wsdata, error: wsError } = await supabase
+    //   .from("invitations")
+    //   .select("workspaceId, groupId")
+    //   .eq("email", userEmail);
+    // if (wsError) {
+    //   throw new Error(
+    //     "Error fetching workspace invitation: " + wsError.message
+    //   );
+    // }
 
-    if (wsdata?.length > 0) {
-      const wsId = wsdata[0].workspaceId;
-      const groupId = wsdata[0].groupId;
+    // if (wsdata?.length > 0) {
+    //   const wsId = wsdata[0].workspaceId;
+    //   const groupId = wsdata[0].groupId;
 
-      setWorksId(wsId);
-      setGrId(groupId);
-      navigate(`/workspace/${wsId}/group/${groupId}`);
-    } else {
-      throw new Error("No workspace invitation found for this email");
-    }
+    //   setWorksId(wsId);
+    //   setGrId(groupId);
+    //   navigate(`/workspace/${wsId}/group/${groupId}`);
+    // } else {
+    //   throw new Error("No workspace invitation found for this email");
+    // }
   } catch (error) {
     const errorMessage =
       error.response?.data?.message || error.message || "Login failed";
