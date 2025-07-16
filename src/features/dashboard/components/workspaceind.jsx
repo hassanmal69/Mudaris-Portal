@@ -15,33 +15,41 @@ const WorkSpaceInd = () => {
   const [groups, setGroups] = useState([]);
   const [email, setEmail] = useState("");
   const [isScreen, setisScreen] = useState(false);
-  const fetchGroups = async () => {
-    //we all doing this so we can send a user
-    //  when he creates a first channel 
-    const { data, error } = await supabase
-      .from("channels")
-      .select("id,channel_name")
-      .eq("workspace_Id", workspaceId)
-      .order("created_at", { ascending: true });
-    if (!error && data.length > 0) {
-      setGroups(data);
-    }
-    setEmail(session.user.email);
-    // here is where when we invite any user
-    //he will straightly jump on the workspaces of what they're 
-    // invited to we are automatically fetching it's group id
-    const { data: checkData, error: checkError } = await supabase
-      .from("invitations")
-      .select("workspace_Id");
-    if (checkError) {
-      console.error("error arha ha in ws-ind");
-    }
-    if (!groupId)
-      navigate(`/workspace/${workspaceId}/group/${data[0].id}`, {
-        replace: true,
-      });
-  };
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
+    const fetchGroups = async () => {
+      setLoading(true);
+      //we all doing this so we can send a user
+      //  when he creates a first channel
+      const { data, error } = await supabase
+        .from("channels")
+        .select("id,channel_name")
+        .eq("workspace_Id", workspaceId)
+        .order("created_at", { ascending: true });
+      if (!error && data.length > 0) {
+        setGroups(data);
+      }
+
+      if (session?.user?.email) {
+        setEmail(session.user.email); //session could be null briefly.
+      }
+
+      // here is where when we invite any user
+      //he will straightly jump on the workspaces of what they're
+      // invited to we are automatically fetching it's group id
+      const { data: checkData, error: checkError } = await supabase
+        .from("invitations")
+        .select("workspace_Id");
+      if (checkError) {
+        console.error("error arha ha in ws-ind");
+      }
+      if (!groupId)
+        navigate(`/workspace/${workspaceId}/group/${data[0].id}`, {
+          replace: true,
+        });
+      setLoading(false);
+    };
     fetchGroups();
   });
   const handleLogout = () => {

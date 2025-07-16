@@ -45,15 +45,15 @@ const Login = () => {
             return;
           }
 
-          if (wsData && wsData.length > 0) {
-            const WsId = wsData[0].workspaceId;
-            const gId = wsData[0].groupId;
-            setgrId(gId);
-            setworksId(WsId);
-            navigate(`/workspace/${WsId}/group/${gId}`);
-          } else {
-            console.log("No invitation found for this email");
-          }
+          // if (wsData && wsData.length > 0) {
+          //   const WsId = wsData[0].workspaceId;
+          //   const gId = wsData[0].groupId;
+          //   setgrId(gId);
+          //   setworksId(WsId);
+          //   navigate(`/workspace/${WsId}/group/${gId}`);
+          // } else {
+          //   console.log("No invitation found for this email");
+          // }
         }
       };
 

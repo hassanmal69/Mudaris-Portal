@@ -5,15 +5,16 @@ import { useParams } from "react-router-dom";
 import Video from "./video.jsx";
 
 const Chat = () => {
-  const [newMsg, setNewMsg] = useState("")
-  const [msg, setMsg] = useState([])
-  const [videoOption, setVideoOption] = useState(false)
+  const [newMsg, setNewMsg] = useState("");
+  const [msg, setMsg] = useState([]);
+  const [videoOption, setVideoOption] = useState(false);
   const { groupId } = useParams();
   const fetchMessages = async () => {
     const { data, error } = await supabase
       .from("message")
       .select("message")
       .eq("groupId", groupId)
+      // .limit(100)
       .order("created_at", { ascending: false });
 
     if (!error) {
@@ -73,10 +74,10 @@ const Chat = () => {
           onChange={(e) => setNewMsg(e.target.value)}
         />
         <button type="submit">Submit</button>
-        <button onClick={() => setVideoOption(!videoOption)}>Video Record</button>
-        {videoOption &&
-          <Video />
-        }
+        <button onClick={() => setVideoOption(!videoOption)}>
+          Video Record
+        </button>
+        {videoOption && <Video />}
       </form>
 
       <div className="flex flex-col-reverse">

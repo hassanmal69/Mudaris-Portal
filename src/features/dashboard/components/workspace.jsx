@@ -19,13 +19,13 @@ const Workspace = () => {
     try {
       await axios.post("/api/ws", {
         workspace,
-        id
+        id,
       });
     } catch (error) {
       console.error("error coming in workspacees", error);
     }
   };
-  const fetchWs = () => {
+  const fetchWorkspaces = () => {
     axios
       .get("/api/ws/getData")
       .then((response) => {
@@ -34,7 +34,7 @@ const Workspace = () => {
       .catch((error) => console.error(error));
   };
   useEffect(() => {
-    fetchWs();
+    fetchWorkspaces();
     const channel = supabase
       .channel("ws-channel")
       .on(
@@ -43,10 +43,21 @@ const Workspace = () => {
           event: "INSERT",
           schema: "public",
           table: "workspaces",
+          filter: `user_id=eq.${session?.user?.id}`,
         },
         (payload) => {
-          const newShey = payload.new;
-          setAllworkspace((prev) => [newShey, ...prev]);
+          const newWorkSpace = payload.new;
+          setAllworkspace((prev) => {
+            const existingWorkspace = prev.find(
+              (item) => item.id === newWorkSpace.id
+            );
+            if (existingWorkspace) {
+              return prev.map((w) =>
+                w.id === newWorkSpace.id ? newWorkSpace : w
+              );
+            }
+            return [...prev, newWorkSpace];
+          });
         }
       )
       .subscribe();
@@ -56,8 +67,8 @@ const Workspace = () => {
   }, []);
 
   return (
-    <div>
-      <form onSubmit={handleSubmit} method="post">
+    <section>
+      {/* <form onSubmit={handleSubmit} method="post">
         <input
           type="text"
           placeholder="add your workspace"
@@ -65,7 +76,7 @@ const Workspace = () => {
           onChange={(e) => setworkspace(e.target.value)}
         />
         <button>add</button>
-      </form>
+      </form> */}
       {allworkspace.map((w, i) => (
         <Link
           key={i}
@@ -76,7 +87,7 @@ const Workspace = () => {
           <button>{w.workspace_name}</button>
         </Link>
       ))}
-    </div>
+    </section>
   );
 };
 
