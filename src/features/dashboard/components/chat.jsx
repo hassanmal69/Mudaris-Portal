@@ -63,11 +63,13 @@ const Chat = () => {
   };
 
   return (
-    <div className="border-2 w-full flex flex-col items-center justify-center">
+    <div className="border-2 w-full flex flex-col items-center justify-center text-black">
       <form className="flex" onSubmit={handleSubmit}>
         <input
           type="text"
           value={newMsg}
+          className="border-2"
+          placeholder="enter your text"
           onChange={(e) => setNewMsg(e.target.value)}
         />
         <button type="submit">Submit</button>

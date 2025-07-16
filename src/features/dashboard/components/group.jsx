@@ -12,6 +12,9 @@ const Groups = ({ workspaceId }) => {
   const navigate = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (group.trim() === '') {
+      return alert("kindly enter correct channel name")
+    }
     setallGroups((prev) => [...prev, group]);
     setGroup("");
     try {
@@ -36,13 +39,13 @@ const Groups = ({ workspaceId }) => {
   useEffect(() => {
     fetchGroups();
     const channel = supabase
-      .channel("ws-channel")
+      .channel("group-channel")
       .on(
         "postgres_changes",
         {
           event: "INSERT",
           schema: "public",
-          table: "groups",
+          table: "channels",
         },
         (payload) => {
           const newShey = payload.new;
@@ -76,7 +79,7 @@ const Groups = ({ workspaceId }) => {
               className="flex flex-col"
               style={{ textDecoration: "none" }}
             >
-              <button>{m.groupName}</button>
+              <button>{m.channel_name}</button>
             </Link>
           ))}
         </div>

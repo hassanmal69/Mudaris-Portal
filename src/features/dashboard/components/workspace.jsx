@@ -16,12 +16,10 @@ const Workspace = () => {
     if (!workspace.trim()) return;
     setworkspace("");
     const id = session.user?.id;
-    const email = session.user?.email;
     try {
       await axios.post("/api/ws", {
         workspace,
-        id,
-        email,
+        id
       });
     } catch (error) {
       console.error("error coming in workspacees", error);
@@ -59,7 +57,7 @@ const Workspace = () => {
 
   return (
     <div>
-      <form action="" onSubmit={handleSubmit} method="post">
+      <form onSubmit={handleSubmit} method="post">
         <input
           type="text"
           placeholder="add your workspace"
@@ -75,7 +73,7 @@ const Workspace = () => {
           className="flex flex-col"
           style={{ textDecoration: "none" }}
         >
-          <button>{w.wsName}</button>
+          <button>{w.workspace_name}</button>
         </Link>
       ))}
     </div>
