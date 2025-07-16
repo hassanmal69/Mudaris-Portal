@@ -1,18 +1,69 @@
-import { UserAuth } from "@/context/authContext";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from "@/components/ui/card";
+import { Plus, PlusCircle } from "lucide-react";
 import Workspace from "./components/workspace";
+import { UserAuth } from "@/context/authContext";
+
 const Dashboard = () => {
   const { session, logOut } = UserAuth();
+
   return (
-    <div className="flex justify-between flex-col">
-      <div className="">
-        <h2>Dashboard A GYA JE</h2>
-        <h2>{session.user.email}</h2>
-        <button onClick={logOut}>logging out </button>
-      </div>
-      <div className="h-full w-full">
-        {/* <Chat/> */}
-        <Workspace />
-      </div>
+    <div className="min-h-screen flex flex-col bg-white text-gray-900">
+      <nav className="sticky top-0 z-10 flex justify-between items-center p-4 border-b bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/60">
+        <span className="text-xl font-bold tracking-tight text-primary">
+          Mudaris Academy
+        </span>
+        <Button className="bg-primary text-white hover:bg-primary/90 gap-2">
+          <Plus className="w-4 h-4" />
+          Create New Workspace
+        </Button>
+      </nav>
+
+      <main className="flex-1 container mx-auto p-4 space-y-6 w-full max-w-3xl">
+        <h1 className="text-3xl font-semibold text-primary">
+          Welcome back.{session?.user?.email}
+        </h1>
+
+        {/* Card */}
+        <Card className="rounded-2xl border border-secondary/30">
+          <CardHeader>
+            <CardTitle className="text-secondary">Workspace</CardTitle>
+            <CardDescription>
+              Manage your current workspaces and collaborate with your team.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Workspace />
+          </CardContent>
+        </Card>
+
+        <div className="rounded-xl border border-primary/30 p-6 text-center space-y-4 bg-primary/5">
+          <div className="text-lg font-medium text-secondary">
+            Want to create workspaces for more batches?
+          </div>
+          <Button className="bg-secondary text-white hover:bg-secondary/90 gap-2">
+            <PlusCircle className="w-4 h-4" />
+            Create New Workspaces
+          </Button>
+        </div>
+      </main>
+
+      <footer className="w-full text-sm text-muted-foreground text-center py-4 border-t mt-8">
+        © 2025 <span className="text-primary font-medium">Mudaris Academy</span>
+        . Developed by{" "}
+        <a
+          href="https://asrnova.com"
+          className="text-secondary font-medium underline"
+        >
+          asrnova.com
+        </a>
+      </footer>
     </div>
   );
 };
