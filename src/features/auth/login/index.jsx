@@ -30,7 +30,7 @@ const Login = () => {
           .eq("email", ls.user?.email)
           .single();
         if (checkerror) console.log(checkerror);
-        //if role == admin we want them to go to the dashboard page 
+        //if role == admin we want them to go to the dashboard page
         //otherwise check else condition
         if (checkAdmin.role === "admin") {
           navigate("/dashboard");
@@ -62,7 +62,7 @@ const Login = () => {
   }, [session, navigate]);
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row bg-gradient-to-br from-secondary to-primary">
+    <div className="min-h-screen flex flex-col md:flex-row bg-gradient-to-br from-[#020103] to-[#4d3763]">
       {/* Section 1: Quote */}
       <div className="w-full md:w-1/2 flex items-center justify-center relative">
         <FarsiQuote />
@@ -122,10 +122,11 @@ const Login = () => {
                   name="email"
                   type="email"
                   autoComplete="email"
-                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple transition bg-white/20 text-white placeholder-white/60 backdrop-blur-sm ${touched.email && errors.email
+                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple transition bg-white/20 text-white placeholder-white/60 backdrop-blur-sm ${
+                    touched.email && errors.email
                       ? "border-red-400"
                       : "border-white/30"
-                    }`}
+                  }`}
                   placeholder="Enter your email"
                 />
                 <ErrorMessage
@@ -147,10 +148,11 @@ const Login = () => {
                   name="password"
                   type="password"
                   autoComplete="current-password"
-                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple transition bg-white/20 text-white placeholder-white/60 backdrop-blur-sm ${touched.password && errors.password
+                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple transition bg-white/20 text-white placeholder-white/60 backdrop-blur-sm ${
+                    touched.password && errors.password
                       ? "border-red-400"
                       : "border-white/30"
-                    }`}
+                  }`}
                   placeholder="Enter your password"
                 />
                 <ErrorMessage
