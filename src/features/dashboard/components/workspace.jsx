@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { supabase } from "../../../services/supabaseClient.js";
 import { Link } from "react-router-dom";
 import { UserAuth } from "../../../context/authContext.jsx";
+import { getFromSupabase } from "@/utils/getFromSupabase.js";
 
 const Workspace = () => {
   const { session } = UserAuth();
@@ -25,13 +26,12 @@ const Workspace = () => {
       console.error("error coming in workspacees", error);
     }
   };
-  const fetchWorkspaces = () => {
-    axios
-      .get("/api/ws/getData")
-      .then((response) => {
-        setAllworkspace(response?.data?.data);
-      })
-      .catch((error) => console.error(error));
+  const fetchWorkspaces = async () => {
+    const res = await getFromSupabase('workspaces',
+      ["workspace_name", "id"], "", "")
+    console.log(res.data)
+    setAllworkspace(res.data)
+    console.log(allworkspace)
   };
   useEffect(() => {
     fetchWorkspaces();
