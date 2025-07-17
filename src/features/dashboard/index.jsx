@@ -12,28 +12,24 @@ import { UserAuth } from "@/context/authContext";
 
 const Dashboard = () => {
   const { session, logOut } = UserAuth();
-
   return (
     <div className="min-h-screen flex flex-col bg-white text-gray-900">
       <nav className="sticky top-0 z-10 flex justify-between items-center p-4 border-b bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/60">
-        <span className="text-xl font-bold tracking-tight text-primary">
+        <span className="text-xl font-bold tracking-tight text-[#4d3763]">
           Mudaris Academy
         </span>
-        <Button className="bg-primary text-white hover:bg-primary/90 gap-2">
-          <Plus className="w-4 h-4" />
-          Create New Workspace
-        </Button>
+        <CreateWorkspace />
       </nav>
 
-      <main className="flex-1 container mx-auto p-4 space-y-6 w-full max-w-3xl">
-        <h1 className="text-3xl font-semibold text-primary">
-          Welcome back.{session?.user?.email}
+      <main className="flex-1 container ] mx-auto p-4 space-y-6 w-full max-w-3xl">
+        <h1 className="text-3xl font-semibold text-[#4d3763]">
+          Welcome back {session?.user?.email}
         </h1>
 
         {/* Card */}
         <Card className="rounded-2xl border border-secondary/30">
           <CardHeader>
-            <CardTitle className="text-secondary">Workspace</CardTitle>
+            <CardTitle className="text-gray-800">Workspace</CardTitle>
             <CardDescription>
               Manage your current workspaces and collaborate with your team.
             </CardDescription>
@@ -44,13 +40,10 @@ const Dashboard = () => {
         </Card>
 
         <div className="rounded-xl border border-primary/30 p-6 text-center space-y-4 bg-primary/5">
-          <div className="text-lg font-medium text-secondary">
+          <div className="text-lg font-medium text-gray-800">
             Want to create workspaces for more batches?
           </div>
-          <Button className="bg-secondary text-white hover:bg-secondary/90 gap-2">
-            <PlusCircle className="w-4 h-4" />
-            Create New Workspaces
-          </Button>
+          <CreateWorkspace />
         </div>
       </main>
 
@@ -69,3 +62,11 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+function CreateWorkspace() {
+  return (
+    <Button className="border border-[#4d3763] text-[#4d3763] bg-white hover:bg-[#4d3763] hover:text-white gap-2">
+      <Plus className="w-4 h-4" />
+      Create New Workspace
+    </Button>
+  );
+}

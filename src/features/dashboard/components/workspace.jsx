@@ -84,7 +84,7 @@ const Workspace = () => {
           className="flex flex-col"
           style={{ textDecoration: "none" }}
         >
-          <button>{w.workspace_name}</button>
+          <button>{w.workspace_name} </button>
         </Link>
       ))}
     </section>
