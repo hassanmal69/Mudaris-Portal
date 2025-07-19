@@ -1,7 +1,7 @@
-import { UserAuth } from "@/context/authContext";
 import { Navigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 const PrivateRoute = ({ children }) => {
-  const { session } = UserAuth();
+  const { session } = useSelector((state) => state.auth);
   if (session === undefined) {
     <p>loading.......</p>;
   }

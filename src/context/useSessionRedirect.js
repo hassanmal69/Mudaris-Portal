@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/services/supabaseClient";
-import { UserAuth } from "@/context/authContext";
+import { useSelector } from "react-redux";
 
 /**
  * Custom hook to handle session-based redirection.
@@ -11,7 +11,7 @@ import { UserAuth } from "@/context/authContext";
  * @param {boolean} enableRedirect - If true, will redirect based on session.
  */
 export function useSessionRedirect(enableRedirect = true) {
-  const { session } = UserAuth();
+  const { session } = useSelector((state) => state.auth);
   const navigate = useNavigate();
 
   useEffect(() => {

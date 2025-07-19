@@ -1,9 +1,9 @@
-import { UserAuth } from "../context/authContext";
 import { Navigate } from "react-router-dom";
 import { supabase } from "../services/supabaseClient";
+import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 const AdminRoute = ({ children }) => {
-  const { session } = UserAuth();
+  const { session } = useSelector((state) => state.auth);
   const [authorized, setAuthorized] = useState(null);
   const [loading, setLoading] = useState(true);
   useEffect(() => {

@@ -1,25 +1,24 @@
-
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { supabase } from "@/services/supabaseClient.js";
 import { useParams } from "react-router-dom";
 import Video from "./video.jsx";
-import { UserAuth } from '../../../context/authContext.jsx'
+import { useSelector } from "react-redux";
 const Chat = () => {
-  const [newMsg, setNewMsg] = useState("")
-  const [msg, setMsg] = useState([])
-  const [videoOption, setVideoOption] = useState(false)
+  const [newMsg, setNewMsg] = useState("");
+  const [msg, setMsg] = useState([]);
+  const [videoOption, setVideoOption] = useState(false);
   const { groupId } = useParams();
-  const { session } = UserAuth()
+  const { session } = useSelector((state) => state.auth);
 
   const fetchMessages = async () => {
     try {
       const res = await axios.post("/api/chat/fetch", {
         groupId,
       });
-      setMsg(res?.data?.data)
+      setMsg(res?.data?.data);
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
   };
   useEffect(() => {
@@ -55,7 +54,7 @@ const Chat = () => {
       await axios.post("/api/chat", {
         newMsg,
         groupId,
-        senderEmail: session?.user?.email
+        senderEmail: session?.user?.email,
       });
     } catch (err) {
       console.error("Error sending message to backend", err);
@@ -73,21 +72,17 @@ const Chat = () => {
           onChange={(e) => setNewMsg(e.target.value)}
         />
         <button type="submit">Submit</button>
-        <button onClick={() => setVideoOption(!videoOption)}>Video Record</button>
-        {videoOption &&
-          <Video />
-        }
+        <button onClick={() => setVideoOption(!videoOption)}>
+          Video Record
+        </button>
+        {videoOption && <Video />}
       </form>
 
       <div className="flex flex-col-reverse text-black">
         {msg.map((m, idx) => (
           <div className="flex gap-2 mt-2" key={m.id || idx}>
-            <p>
-              {m.content}
-            </p>
-            <p>
-              {m.sender_email}
-            </p>
+            <p>{m.content}</p>
+            <p>{m.sender_email}</p>
           </div>
         ))}
       </div>

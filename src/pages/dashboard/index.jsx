@@ -8,10 +8,12 @@ import {
 } from "@/components/ui/card";
 import { Plus, PlusCircle } from "lucide-react";
 import Workspace from "./components/workspace";
-import { UserAuth } from "@/context/authContext";
-
+import { useSelector } from "react-redux";
+import { useSessionRedirect } from "@/context/useSessionRedirect";
+import { useEffect } from "react";
 const Dashboard = () => {
-  const { session, logOut } = UserAuth();
+  useSessionRedirect();
+  const { session } = useSelector((state) => state.auth);
   return (
     <div className="min-h-screen flex flex-col bg-white text-gray-900">
       <nav className="sticky top-0 z-10 flex justify-between items-center p-4 border-b bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/60">
@@ -47,7 +49,7 @@ const Dashboard = () => {
         </div>
       </main>
 
-      <footer className="w-full text-sm text-muted-foreground text-center py-4 border-t mt-8">
+      <footer className="w-full text-sm  text-center py-4 border-t text-gray-900 mt-8">
         © 2025 <span className="text-primary font-medium">Mudaris Academy</span>
         . Developed by{" "}
         <a
