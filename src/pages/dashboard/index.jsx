@@ -15,12 +15,18 @@ const Dashboard = () => {
   useSessionRedirect();
   const { session } = useSelector((state) => state.auth);
   return (
-    <div className="min-h-screen flex flex-col bg-white text-gray-900">
+    <div className="min-h-screen overflow-hidden relative flex flex-col bg-white text-gray-900">
+      <div className="h-dvh z-10 w-dvw absolute overflow-hidden pointer-events-none">
+        {isOpen && <CreateWorkspace />}
+      </div>
       <nav className="sticky top-0 z-10 flex justify-between items-center p-4 border-b bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/60">
         <span className="text-xl font-bold tracking-tight text-[#4d3763]">
           Mudaris Academy
         </span>
-        <CreateWorkspace />
+        <CreateWorkspaceButton
+          isOpen={isOpen}
+          onClick={() => setisOpen((prev) => !prev)}
+        />
       </nav>
 
       <main className="flex-1 container ] mx-auto p-4 space-y-6 w-full max-w-3xl">
@@ -45,7 +51,7 @@ const Dashboard = () => {
           <div className="text-lg font-medium text-gray-800">
             Want to create workspaces for more batches?
           </div>
-          <CreateWorkspace />
+          <CreateWorkspaceButton onClick={() => setisOpen((prev) => !prev)} />
         </div>
       </main>
 
@@ -64,11 +70,20 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-function CreateWorkspace() {
+function CreateWorkspaceButton({ onClick, isOpen }) {
   return (
-    <Button className="border border-[#4d3763] text-[#4d3763] bg-white hover:bg-[#4d3763] hover:text-white gap-2">
-      <Plus className="w-4 h-4" />
-      Create New Workspace
+    <Button
+      onClick={onClick}
+      className="border border-[#4d3763] text-[#4d3763] bg-white hover:bg-[#4d3763] hover:text-white gap-2"
+    >
+      {isOpen ? (
+        "X"
+      ) : (
+        <div className=" flex gap-2 items-center">
+          <Plus className="w-4 h-4" />
+          Create new Workpace{" "}
+        </div>
+      )}
     </Button>
   );
 }

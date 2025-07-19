@@ -5,8 +5,11 @@ import { supabase } from "../../../services/supabaseClient.js";
 import { Link } from "react-router-dom";
 
 import { getFromSupabase } from "@/utils/getFromSupabase.js";
+<<<<<<< HEAD:src/pages/dashboard/components/workspace.jsx
 import { useSelector } from "react-redux";
 
+=======
+>>>>>>> main:src/features/dashboard/components/workspace.jsx
 const Workspace = () => {
   const { session } = useSelector((state) => state.auth);
   const [workspace, setworkspace] = useState("");
@@ -82,16 +85,36 @@ const Workspace = () => {
         />
         <button>add</button>
       </form> */}
-      {allworkspace.map((w, i) => (
-        <Link
-          key={i}
-          to={`/workspace/${w.id}`}
-          className="flex flex-col"
-          style={{ textDecoration: "none" }}
-        >
-          <button>{w.workspace_name} </button>
-        </Link>
-      ))}
+      <div className="flex w-full h-full flex-col gap-4">
+        {allworkspace.map((w, i) => (
+          <div className="flex w-full px-4 m-auto justify-between items-center">
+            <div className="flex gap-1.5">
+              <img className='w-16 h-16' src='https://mudarisacademy.com/assets/mudarisLogo-uXFNaSVO.png' alt="workspace logo" />
+              <div className="flex flex-col gap-2">
+                <p className="text-l font-medium capitalize">{w.workspace_name}</p>
+                <div className="flex gap-3 items-center">
+                  <div class="flex -space-x-4 rtl:space-x-reverse">
+                    <img class="w-7 h-7 border-2 border-white rounded-full dark:border-gray-800" src="https://i.pravatar.cc/40?img=1" alt="User 1" />
+                    <img class="w-7 h-7 border-2 border-white rounded-full dark:border-gray-800" src="https://i.pravatar.cc/40?img=2" alt="User 2" />
+                    <img class="w-7 h-7 border-2 border-white rounded-full dark:border-gray-800" src="https://i.pravatar.cc/40?img=3" alt="User 3" />
+                    <img class="w-7 h-7 border-2 border-white rounded-full dark:border-gray-800" src="https://i.pravatar.cc/40?img=4" alt="User 4" />
+                  </div>
+
+                  <p className="font-light text-gray-500 text-sm">100 Members</p>
+                </div>
+              </div>
+
+            </div>
+            <Link
+              key={i}
+              to={`/workspace/${w.id}`}
+              style={{ textDecoration: "none" }}
+            >
+              <button className="bg-[#4d3763] font-semibold py-2 px-4 rounded-sm text-amber-50"> Launch Workspace </button>
+            </Link>
+          </div>
+        ))}
+      </div>
     </section>
   );
 };
