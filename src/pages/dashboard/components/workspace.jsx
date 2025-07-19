@@ -5,11 +5,8 @@ import { supabase } from "../../../services/supabaseClient.js";
 import { Link } from "react-router-dom";
 
 import { getFromSupabase } from "@/utils/getFromSupabase.js";
-<<<<<<< HEAD:src/pages/dashboard/components/workspace.jsx
 import { useSelector } from "react-redux";
 
-=======
->>>>>>> main:src/features/dashboard/components/workspace.jsx
 const Workspace = () => {
   const { session } = useSelector((state) => state.auth);
   const [workspace, setworkspace] = useState("");
