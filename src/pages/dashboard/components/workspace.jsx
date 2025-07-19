@@ -3,10 +3,15 @@ import axios from "axios";
 import { useEffect } from "react";
 import { supabase } from "../../../services/supabaseClient.js";
 import { Link } from "react-router-dom";
-import { UserAuth } from "../../../context/authContext.jsx";
+
 import { getFromSupabase } from "@/utils/getFromSupabase.js";
+<<<<<<< HEAD:src/pages/dashboard/components/workspace.jsx
+import { useSelector } from "react-redux";
+
+=======
+>>>>>>> main:src/features/dashboard/components/workspace.jsx
 const Workspace = () => {
-  const { session } = UserAuth();
+  const { session } = useSelector((state) => state.auth);
   const [workspace, setworkspace] = useState("");
   const [allworkspace, setAllworkspace] = useState([]);
 
@@ -26,11 +31,15 @@ const Workspace = () => {
     }
   };
   const fetchWorkspaces = async () => {
-    const res = await getFromSupabase('workspaces',
-      ["workspace_name", "id"], "", "")
-    console.log(res.data)
-    setAllworkspace(res.data)
-    console.log(allworkspace)
+    const res = await getFromSupabase(
+      "workspaces",
+      ["workspace_name", "id"],
+      "",
+      ""
+    );
+    console.log(res.data);
+    setAllworkspace(res.data);
+    console.log(allworkspace);
   };
   useEffect(() => {
     fetchWorkspaces();

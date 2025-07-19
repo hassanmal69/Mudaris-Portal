@@ -1,68 +1,60 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import { supabase } from "@/services/supabaseClient";
-import { useSessionRedirect } from "@/context/useSessionRedirect";
-import { loginSchema } from "@/validation/authSchema";
-import { FarsiQuote } from "../components/FarsiQuote";
+import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { UserAuth } from "@/context/authContext";
-import { handleLogin } from "@/services/auth";
-const Login = () => {
-  useSessionRedirect();
+import { useSearchParams } from "react-router-dom";
+import { signupSchema } from "@/validation/authSchema";
+import { FarsiQuote } from "../components/FarsiQuote";
+import { validationTokenInvite } from "@/utils/helper";
+import { useDispatch } from "react-redux";
+import { signupUser } from "@/features/auth/authSlice";
+const SignUp = () => {
+  const dispatch = useDispatch();
 
-  const { setSession, session } = UserAuth();
+  const [searchParams] = useSearchParams();
+  const token = searchParams.get("token");
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [worksId, setworksId] = useState("");
-  const [grId, setgrId] = useState("");
-  const navigate = useNavigate();
+  const [wsId, setWsId] = useState("");
+  const [groupID, setGroupId] = useState("");
+  const [inviteEmail, setInviteEmail] = useState("");
 
   useEffect(() => {
-    if (session) {
-      const sessionDetect = async () => {
-        const lsRaw = localStorage.getItem("session");
-        if (!lsRaw) return;
-
-        const ls = JSON.parse(lsRaw);
-        const { data: checkAdmin, error: checkerror } = await supabase
-          .from("user")
-          .select("role")
-          .eq("email", ls.user?.email)
-          .single();
-        if (checkerror) console.log(checkerror);
-        //if role == admin we want them to go to the dashboard page
-        //otherwise check else condition
-        if (checkAdmin.role === "admin") {
-          navigate("/dashboard");
-        } else {
-          const { data: wsData, error: wsError } = await supabase
-            .from("invitations")
-            .select("workspaceId,groupId")
-            .eq("email", ls.user?.email);
-
-          if (wsError) {
-            console.log("Error fetching invitation:", wsError);
-            return;
-          }
-
-          // if (wsData && wsData.length > 0) {
-          //   const WsId = wsData[0].workspaceId;
-          //   const gId = wsData[0].groupId;
-          //   setgrId(gId);
-          //   setworksId(WsId);
-          //   navigate(`/workspace/${WsId}/group/${gId}`);
-          // } else {
-          //   console.log("No invitation found for this email");
-          // }
+    if (token) {
+      (async () => {
+        try {
+          const invite = await validationTokenInvite(token);
+          setInviteEmail(invite.email);
+          setWsId(invite.workspaceId);
+          setGroupId(invite.groupId);
+        } catch (error) {
+          console.error("Error validating token:", error);
+          setError("Invalid or expired token");
         }
-      };
-
-      sessionDetect();
+      })();
     }
-  }, [session, navigate]);
+  }, [token]);
+
+  const handleSubmit = async (values, { setSubmitting, setErrors }) => {
+    setSubmitting(true);
+    const result = dispatch(
+      signupUser({
+        email: values.email,
+        password: values.password,
+        token,
+      })
+    );
+    if (result.type === "auth/signupUser/fulfilled") {
+      navigate(`/workspace/${wsId}/group/${groupID}`);
+    } else {
+      setErrors({ email: result.payload }); // or general error
+    }
+    setSubmitting(false);
+  };
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row bg-gradient-to-br from-[#020103] to-[#4d3763]">
+    <div className="min-h-screen flex flex-col md:flex-row bg-gradient-to-br from-secondary to-primary">
       {/* Section 1: Quote */}
       <div className="w-full md:w-1/2 flex items-center justify-center relative">
         <FarsiQuote />
@@ -77,38 +69,57 @@ const Login = () => {
           }
         `}</style>
       </div>
-      {/* Section 2: Login Form */}
+
+      {/* Section 2: Signup Form */}
       <div className="w-full md:w-1/2 flex items-center justify-center py-12 px-4">
         <Formik
           initialValues={{
-            email: "",
+            name: "",
+            email: inviteEmail || "",
             password: "",
+            confirmPassword: "",
           }}
-          validationSchema={loginSchema}
-          onSubmit={(values, formikHelpers) => {
-            handleLogin({
-              setLoading,
-              values,
-              setSession,
-              setWorksId: setworksId,
-              setGrId: setgrId,
-              navigate,
-              setError,
-              ...formikHelpers,
-            });
-          }}
+          validationSchema={signupSchema}
+          onSubmit={handleSubmit}
+          enableReinitialize={true}
         >
           {({ touched, errors, isSubmitting }) => (
             <Form
               className="w-full max-w-md p-8 rounded-xl shadow-2xl border border-white/20 backdrop-blur-md bg-white/10"
-              aria-label="Login form"
+              aria-label="Signup form"
               style={{
                 boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.37)",
               }}
             >
               <h2 className="text-2xl font-bold mb-8 text-center text-white dm-sans">
-                Sign in to your account
+                Create your account
               </h2>
+
+              <div className="mb-5">
+                <label
+                  htmlFor="name"
+                  className="block mb-2 text-white font-medium monts"
+                >
+                  Full Name
+                </label>
+                <Field
+                  id="name"
+                  name="name"
+                  type="text"
+                  autoComplete="name"
+                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple transition bg-white/20 text-white placeholder-white/60 backdrop-blur-sm ${
+                    touched.name && errors.name
+                      ? "border-red-400"
+                      : "border-white/30"
+                  }`}
+                  placeholder="Enter your full name"
+                />
+                <ErrorMessage
+                  name="name"
+                  component="p"
+                  className="text-red-300 text-xs mt-1"
+                />
+              </div>
 
               <div className="mb-5">
                 <label
@@ -128,6 +139,7 @@ const Login = () => {
                       : "border-white/30"
                   }`}
                   placeholder="Enter your email"
+                  disabled={!!inviteEmail}
                 />
                 <ErrorMessage
                   name="email"
@@ -136,7 +148,7 @@ const Login = () => {
                 />
               </div>
 
-              <div className="mb-6">
+              <div className="mb-5">
                 <label
                   htmlFor="password"
                   className="block mb-2 text-white font-medium monts"
@@ -147,7 +159,7 @@ const Login = () => {
                   id="password"
                   name="password"
                   type="password"
-                  autoComplete="current-password"
+                  autoComplete="new-password"
                   className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple transition bg-white/20 text-white placeholder-white/60 backdrop-blur-sm ${
                     touched.password && errors.password
                       ? "border-red-400"
@@ -157,6 +169,32 @@ const Login = () => {
                 />
                 <ErrorMessage
                   name="password"
+                  component="p"
+                  className="text-red-300 text-xs mt-1"
+                />
+              </div>
+
+              <div className="mb-6">
+                <label
+                  htmlFor="confirmPassword"
+                  className="block mb-2 text-white font-medium monts"
+                >
+                  Confirm Password
+                </label>
+                <Field
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type="password"
+                  autoComplete="new-password"
+                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple transition bg-white/20 text-white placeholder-white/60 backdrop-blur-sm ${
+                    touched.confirmPassword && errors.confirmPassword
+                      ? "border-red-400"
+                      : "border-white/30"
+                  }`}
+                  placeholder="Confirm your password"
+                />
+                <ErrorMessage
+                  name="confirmPassword"
                   component="p"
                   className="text-red-300 text-xs mt-1"
                 />
@@ -190,16 +228,26 @@ const Login = () => {
                         d="M4 12a8 8 0 018-8v8z"
                       ></path>
                     </svg>
-                    Signing in...
+                    Creating account...
                   </span>
                 ) : (
-                  "Sign in"
+                  "Create Account"
                 )}
               </button>
 
               {error && (
                 <p className="text-red-300 text-sm mt-6 text-center">{error}</p>
               )}
+
+              <p className="text-white/80 text-sm mt-6 text-center">
+                Already have an account?{" "}
+                <Link
+                  to="/login"
+                  className="text-purple hover:text-white transition"
+                >
+                  Sign in
+                </Link>
+              </p>
             </Form>
           )}
         </Formik>
@@ -208,4 +256,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default SignUp;

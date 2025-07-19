@@ -1,11 +1,11 @@
 import { createBrowserRouter } from "react-router-dom";
-import SignUp from "@/features/auth/signup/index.jsx";
-import Login from "@/features/auth/login/index.jsx";
-import Dashboard from "@/features/dashboard/index.jsx";
+import SignUp from "@/pages/auth/signup/index.jsx";
+import Login from "@/pages/auth/login/index.jsx";
+import Dashboard from "@/pages/dashboard/index.jsx";
 import PrivateRoute from "./privateRoute.jsx";
-import AdminDashboard from "@/features/admin/admin.jsx";
+import AdminDashboard from "@/pages/admin/admin.jsx";
 import AdminRoute from "./adminRoute.jsx";
-import WorkSpaceInd from "@/features/dashboard/components/workspaceInd.jsx";
+import WorkSpaceInd from "@/pages/dashboard/components/workspaceInd.jsx";
 export const router = createBrowserRouter([
   {
     path: "/",

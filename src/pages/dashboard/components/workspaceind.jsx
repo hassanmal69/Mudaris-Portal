@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, Suspense } from "react";
 const Groups = React.lazy(() => import("./group.jsx"));
 
@@ -7,20 +6,20 @@ import { supabase } from "@/services/supabaseClient.js";
 import { useParams } from "react-router-dom";
 const InviteSend = React.lazy(() => import("./invitationsent.jsx"));
 
-import { UserAuth } from "@/context/authContext.jsx";
+import { useSelector } from "react-redux";
 const Chat = React.lazy(() => import("./chat.jsx"));
 const Members = React.lazy(() => import("./members.jsx"));
 
 const WorkSpaceInd = () => {
   const { workspaceId, groupId } = useParams();
   const navigate = useNavigate();
-  const { logOut, session } = UserAuth();
+  const { logOut, session } = useSelector((state) => state.auth);
   const [groups, setGroups] = useState([]);
   const [email, setEmail] = useState("");
   const [isScreen, setisScreen] = useState(false);
   const fetchGroups = async () => {
     //we all doing this so we can send a user
-    //  when he creates a first channel 
+    //  when he creates a first channel
     const { data, error } = await supabase
       .from("channels")
       .select("id,channel_name")

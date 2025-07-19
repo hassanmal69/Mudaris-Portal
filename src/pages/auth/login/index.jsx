@@ -1,61 +1,63 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import { Link } from "react-router-dom";
-import { UserAuth } from "../../../context/authContext";
-import { useNavigate } from "react-router-dom";
-import { useSearchParams } from "react-router-dom";
-import { signupSchema } from "@/validation/authSchema";
+import { supabase } from "@/services/supabaseClient";
+import { loginSchema } from "@/validation/authSchema";
 import { FarsiQuote } from "../components/FarsiQuote";
-import { handleSignup, validationTokenInvite } from "../../../services/auth";
-const SignUp = () => {
-  const [searchParams] = useSearchParams();
-  const token = searchParams.get("token");
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { loginUser } from "@/features/auth/authSlice";
+const Login = () => {
+  const dispatch = useDispatch();
+  const { session, loading, error } = useSelector((state) => state.auth);
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const { setSession } = UserAuth();
-  const [wsId, setWsId] = useState("");
-  const [groupID, setGroupId] = useState("");
-  const [inviteEmail, setInviteEmail] = useState("");
-
   useEffect(() => {
-    if (token) {
-      (async () => {
-        try {
-          const invite = await validationTokenInvite(token);
-          setInviteEmail(invite.email);
-          setWsId(invite.workspaceId);
-          setGroupId(invite.groupId);
-        } catch (error) {
-          console.error("Error validating token:", error);
-          setError("Invalid or expired token");
+    if (session) {
+      const sessionDetect = async () => {
+        const lsRaw = localStorage.getItem("session");
+        if (!lsRaw) return;
+
+        const ls = JSON.parse(lsRaw);
+        const { data: checkAdmin, error: checkerror } = await supabase
+          .from("user")
+          .select("role")
+          .eq("email", ls.user?.email)
+          .single();
+        if (checkerror) console.log(checkerror);
+        //if role == admin we want them to go to the dashboard page
+        //otherwise check else condition
+        if (checkAdmin.role === "admin") {
+          navigate("/dashboard");
+        } else {
+          const { data: wsData, error: wsError } = await supabase
+            .from("invitations")
+            .select("workspaceId,groupId")
+            .eq("email", ls.user?.email);
+
+          if (wsError) {
+            console.log("Error fetching invitation:", wsError);
+            return;
+          }
+
+          if (wsData && wsData.length > 0) {
+            const WsId = wsData[0].workspaceId;
+            const gId = wsData[0].groupId;
+            setgrId(gId);
+            setworksId(WsId);
+            navigate(`/workspace/${WsId}/group/${gId}`);
+          } else {
+            console.log("No invitation found for this email");
+          }
         }
-      })();
+      };
+
+      sessionDetect();
     }
-  }, [token]);
-
-
-  const handleSubmit = async (values, forkmikHelpers) => {
-    handleSignup({
-      values,
-      token,
-      setLoading,
-      setError,
-      setSession,
-      navigate,
-      wsId,
-      groupID,
-      ...forkmikHelpers,
-    });
-
-  };
+  }, [session, navigate]);
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row bg-gradient-to-br from-secondary to-primary">
-      {/* Section 1: Quote */}
+    <div className="min-h-screen flex flex-col md:flex-row bg-gradient-to-br from-[#020103] to-[#4d3763]">
       <div className="w-full md:w-1/2 flex items-center justify-center relative">
         <FarsiQuote />
-        {/* Fade-in animation */}
         <style>{`
           .animate-fadeIn {
             animation: fadeInUp 1.2s cubic-bezier(0.4,0,0.2,1) both;
@@ -66,57 +68,29 @@ const SignUp = () => {
           }
         `}</style>
       </div>
-
-      {/* Section 2: Signup Form */}
       <div className="w-full md:w-1/2 flex items-center justify-center py-12 px-4">
         <Formik
           initialValues={{
-            name: "",
-            email: inviteEmail || "",
+            email: "",
             password: "",
-            confirmPassword: "",
           }}
-          validationSchema={signupSchema}
-          onSubmit={handleSubmit}
-          enableReinitialize={true}
+          validationSchema={loginSchema}
+          onSubmit={(values, { setSubmitting }) => {
+            dispatch(loginUser(values));
+            setSubmitting(true);
+          }}
         >
           {({ touched, errors, isSubmitting }) => (
             <Form
               className="w-full max-w-md p-8 rounded-xl shadow-2xl border border-white/20 backdrop-blur-md bg-white/10"
-              aria-label="Signup form"
+              aria-label="Login form"
               style={{
                 boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.37)",
               }}
             >
               <h2 className="text-2xl font-bold mb-8 text-center text-white dm-sans">
-                Create your account
+                Sign in to your account
               </h2>
-
-              <div className="mb-5">
-                <label
-                  htmlFor="name"
-                  className="block mb-2 text-white font-medium monts"
-                >
-                  Full Name
-                </label>
-                <Field
-                  id="name"
-                  name="name"
-                  type="text"
-                  autoComplete="name"
-                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple transition bg-white/20 text-white placeholder-white/60 backdrop-blur-sm ${
-                    touched.name && errors.name
-                      ? "border-red-400"
-                      : "border-white/30"
-                  }`}
-                  placeholder="Enter your full name"
-                />
-                <ErrorMessage
-                  name="name"
-                  component="p"
-                  className="text-red-300 text-xs mt-1"
-                />
-              </div>
 
               <div className="mb-5">
                 <label
@@ -136,7 +110,6 @@ const SignUp = () => {
                       : "border-white/30"
                   }`}
                   placeholder="Enter your email"
-                  disabled={!!inviteEmail}
                 />
                 <ErrorMessage
                   name="email"
@@ -145,7 +118,7 @@ const SignUp = () => {
                 />
               </div>
 
-              <div className="mb-5">
+              <div className="mb-6">
                 <label
                   htmlFor="password"
                   className="block mb-2 text-white font-medium monts"
@@ -156,7 +129,7 @@ const SignUp = () => {
                   id="password"
                   name="password"
                   type="password"
-                  autoComplete="new-password"
+                  autoComplete="current-password"
                   className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple transition bg-white/20 text-white placeholder-white/60 backdrop-blur-sm ${
                     touched.password && errors.password
                       ? "border-red-400"
@@ -166,32 +139,6 @@ const SignUp = () => {
                 />
                 <ErrorMessage
                   name="password"
-                  component="p"
-                  className="text-red-300 text-xs mt-1"
-                />
-              </div>
-
-              <div className="mb-6">
-                <label
-                  htmlFor="confirmPassword"
-                  className="block mb-2 text-white font-medium monts"
-                >
-                  Confirm Password
-                </label>
-                <Field
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  type="password"
-                  autoComplete="new-password"
-                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple transition bg-white/20 text-white placeholder-white/60 backdrop-blur-sm ${
-                    touched.confirmPassword && errors.confirmPassword
-                      ? "border-red-400"
-                      : "border-white/30"
-                  }`}
-                  placeholder="Confirm your password"
-                />
-                <ErrorMessage
-                  name="confirmPassword"
                   component="p"
                   className="text-red-300 text-xs mt-1"
                 />
@@ -225,26 +172,16 @@ const SignUp = () => {
                         d="M4 12a8 8 0 018-8v8z"
                       ></path>
                     </svg>
-                    Creating account...
+                    Signing in...
                   </span>
                 ) : (
-                  "Create Account"
+                  "Sign in"
                 )}
               </button>
 
               {error && (
                 <p className="text-red-300 text-sm mt-6 text-center">{error}</p>
               )}
-
-              <p className="text-white/80 text-sm mt-6 text-center">
-                Already have an account?{" "}
-                <Link
-                  to="/login"
-                  className="text-purple hover:text-white transition"
-                >
-                  Sign in
-                </Link>
-              </p>
             </Form>
           )}
         </Formik>
@@ -253,4 +190,4 @@ const SignUp = () => {
   );
 };
 
-export default SignUp;
+export default Login;

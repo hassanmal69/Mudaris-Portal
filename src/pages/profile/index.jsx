@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
-import { UserAuth } from "../../context/authContext";
+import { useSelector } from "react-redux";
 
 const Profile = () => {
-  const { signOut, session } = UserAuth();
+  const { signOut, session } = useSelector((state) => state.auth);
   const [name, setName] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [uploading, setUploading] = useState(false);

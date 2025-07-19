@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useState } from "react";
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { UserAuth } from "@/context/authContext.jsx";
+import { useSelector } from "react-redux";
 const Members = () => {
   const [emails, setEmails] = useState([]);
   // const [dataResponse, setdataResponse] = useState([])
@@ -10,7 +10,7 @@ const Members = () => {
   const [activeMail, setActiveMail] = useState("");
   const [isAdmin, setisAdmin] = useState(false);
   const { workspaceId } = useParams();
-  const { session } = UserAuth();
+  const { session } = useSelector((state) => state.auth);
   const fetchMembers = async () => {
     axios
       .post("/api/fetchMembersinWs", {
