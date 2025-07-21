@@ -1,0 +1,68 @@
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import { useDispatch, useSelector } from "react-redux";
+import { updateField, resetSignupForm } from "@/features/auth/signupSlice.js";
+import { passwordSchema } from "@/validation/authSchema";
+
+const Password = ({ onBack, token, wsId, groupID }) => {
+  const { fullName, email } = useSelector((state) => state.signupForm);
+  const dispatch = useDispatch();
+
+  const handleSubmit = async (values) => {
+    dispatch(updateField({ field: "password", value: values.password }));
+
+    // ✅ Here you can send the full form to your backend
+    console.log({
+      fullName,
+      email,
+      password: values.password,
+      token,
+      wsId,
+      groupID,
+    });
+
+    dispatch(resetSignupForm());
+    alert("Signup complete!");
+  };
+
+  return (
+    <Formik
+      initialValues={{ password: "" }}
+      validationSchema={passwordSchema}
+      onSubmit={handleSubmit}
+    >
+      {() => (
+        <Form className="space-y-4 bg-white p-6 rounded-md shadow-md w-[400px]">
+          <h2 className="text-lg font-bold">Step 3: Password</h2>
+          <div>
+            <label>Password</label>
+            <Field
+              type="password"
+              name="password"
+              className="w-full p-2 border rounded"
+            />
+            <ErrorMessage
+              name="password"
+              component="div"
+              className="text-red-500 text-sm"
+            />
+          </div>
+
+          <div className="flex justify-between">
+            <button
+              type="button"
+              onClick={onBack}
+              className="btn btn-secondary"
+            >
+              Back
+            </button>
+            <button type="submit" className="btn btn-primary">
+              Submit
+            </button>
+          </div>
+        </Form>
+      )}
+    </Formik>
+  );
+};
+
+export default Password;
