@@ -10,10 +10,11 @@ import { Plus, PlusCircle } from "lucide-react";
 import Workspace from "./components/workspace";
 import { useSelector } from "react-redux";
 import { useSessionRedirect } from "@/context/useSessionRedirect";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import CreateWorkspace from "./components/createWorkspace";
 const Dashboard = () => {
-  useSessionRedirect();
   const { session } = useSelector((state) => state.auth);
+  const [isOpen, setisOpen] = useState(false);
   return (
     <div className="min-h-screen overflow-hidden relative flex flex-col bg-white text-gray-900">
       <div className="h-dvh z-10 w-dvw absolute overflow-hidden pointer-events-none">

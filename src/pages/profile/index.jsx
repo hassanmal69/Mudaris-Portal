@@ -61,9 +61,14 @@ const Profile = () => {
     setImageUrl(publicUrl);
 
     // Update user record with avatar URL
-    const { error: updateError } = await supabase
-      .from("user")
-      .upsert([{ id: user.id, avatar: publicUrl }], { onConflict: ["id"] });
+    // const { error: updateError } = await supabase
+    //   .from("user")
+    //   .upsert([{ id: user.id, avatar: publicUrl }], { onConflict: ["id"] });
+    const { error: checkerror } = await supabase.auth.updateUser({
+      data: {
+        avatar: publicUrl,
+      },
+    });
 
     if (updateError) {
       console.error("Error updating avatar in DB:", updateError);
@@ -73,12 +78,15 @@ const Profile = () => {
   };
 
   const getUserAvatar = async (userId) => {
-    const { data, error } = await supabase
-      .from("user")
-      .select("avatar")
-      .eq("id", userId)
-      .single();
-
+    // const { data, error } = await supabase
+    //   .from("user")
+    //   .select("avatar")
+    //   .eq("id", userId)
+    //   .single();
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser();
     if (error) {
       console.error("Error getting avatar:", error);
     } else if (data?.avatar) {

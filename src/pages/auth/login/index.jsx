@@ -17,15 +17,20 @@ const Login = () => {
         if (!lsRaw) return;
 
         const ls = JSON.parse(lsRaw);
-        const { data: checkAdmin, error: checkerror } = await supabase
-          .from("user")
-          .select("role")
-          .eq("email", ls.user?.email)
-          .single();
+        // const { data: checkAdmin, error: checkerror } = await supabase
+        //   .from("user")
+        //   .select("role")
+        //   .eq("email", ls.user?.email)
+        //   .single();
+
+        const {
+          data: { user },
+          error: checkerror,
+        } = await supabase.auth.getUser();
         if (checkerror) console.log(checkerror);
         //if role == admin we want them to go to the dashboard page
         //otherwise check else condition
-        if (checkAdmin.role === "admin") {
+        if (user.role === "admin") {
           navigate("/dashboard");
         } else {
           const { data: wsData, error: wsError } = await supabase
