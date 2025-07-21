@@ -9,8 +9,7 @@ import {
 import { Plus, PlusCircle } from "lucide-react";
 import Workspace from "./components/workspace";
 import { useSelector } from "react-redux";
-import { useSessionRedirect } from "@/context/useSessionRedirect";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import CreateWorkspace from "./components/createWorkspace";
 const Dashboard = () => {
   const { session } = useSelector((state) => state.auth);
