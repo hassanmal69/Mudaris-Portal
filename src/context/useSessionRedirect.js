@@ -21,15 +21,20 @@ export function useSessionRedirect(enableRedirect = true) {
       try {
         console.log(session?.user.email, "session in useSessionRedirect.js");
         // Fetch user role
-        const { data: userData, error: userError } = await supabase
-          .from("user")
-          .select("role, email")
-          .eq("email", session.user?.email)
-          .single();
-        if (userError) throw userError;
-        if (!userData) return;
+        // const { data: userData, error: userError } = await supabase
+        //   .from("user")
+        //   .select("role, email")
+        //   .eq("email", session.user?.email)
+        //   .single();
 
-        if (userData.role === "admin") {
+        const {
+          data: { user },
+          error,
+        } = await supabase.auth.getUser();
+        if (user) throw error;
+        if (!error) return;
+
+        if (user.role === "admin") {
           navigate("/dashboard", { replace: true });
         } else {
           // Fetch workspace/group for this user

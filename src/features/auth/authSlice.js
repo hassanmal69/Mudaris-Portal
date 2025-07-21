@@ -2,12 +2,32 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { supabase } from "@/services/supabaseClient";
 
+/**
+ * Sign up a new user using Supabase Auth.
+ * @param {Object} userData - User input from signup form.
+ * @param {string} userData.email
+ * @param {string} userData.password
+ * @param {string} userData.fullName
+ * @param {string} userData.role
+ * @param {string} userData.avatarUrl
+ */
 // --- Signup Thunk ---
 export const signupUser = createAsyncThunk(
   "auth/signupUser",
-  async ({ email, password, token }, { rejectWithValue }) => {
+  async ({ fullName, email, password, token }, { rejectWithValue }) => {
     try {
-      const { data, error } = await supabase.auth.signUp({ email, password });
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: null,
+          data: {
+            fullName,
+            role: "user",
+            avatar: null,
+          },
+        },
+      });
 
       if (error) return rejectWithValue(error.message);
 
@@ -18,7 +38,7 @@ export const signupUser = createAsyncThunk(
         if (token) localStorage.setItem("token", token);
       }
 
-      return { session, token };
+      return { session, token, user: data.user };
     } catch (err) {
       return rejectWithValue(err.message || "Signup failed");
     }

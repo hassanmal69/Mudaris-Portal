@@ -13,12 +13,16 @@ const AdminRoute = ({ children }) => {
         setAuthorized(false);
         return;
       }
-      const { data, error } = await supabase
-        .from("user")
-        .select("role")
-        .eq("id", userId)
-        .single();
-      if (error || !data || data.role !== "admin") {
+
+      const {
+        data: { user },
+        error,
+      } = await supabase.auth.getUser();
+
+      if (error) throw error;
+      const role = user?.user_metadata?.role;
+
+      if (error || !user || role !== "admin") {
         setAuthorized(false);
       } else {
         setAuthorized(true);

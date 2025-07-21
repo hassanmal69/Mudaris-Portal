@@ -40,6 +40,7 @@ const SignUp = () => {
     setSubmitting(true);
     const result = dispatch(
       signupUser({
+        name: values.name,
         email: values.email,
         password: values.password,
         token,
