@@ -15,14 +15,7 @@ const Login = () => {
       const sessionDetect = async () => {
         const lsRaw = localStorage.getItem("session");
         if (!lsRaw) return;
-
         const ls = JSON.parse(lsRaw);
-        // const { data: checkAdmin, error: checkerror } = await supabase
-        //   .from("user")
-        //   .select("role")
-        //   .eq("email", ls.user?.email)
-        //   .single();
-
         const {
           data: { user },
           error: checkerror,

@@ -1,4 +1,4 @@
-import { supabase } from "../../supabaseClient.js";
+import { supabase } from "@/services/supabaseClient.js";
 
 /**
  * Insert data into a Supabase table
@@ -7,28 +7,31 @@ import { supabase } from "../../supabaseClient.js";
  * @returns {Promise<{ data: any|null, error: Error|null }>}
  */
 export const getFromSupabase = async (tableName, data, eqTable, reqTable) => {
-    if (typeof tableName !== 'string' || !tableName.trim()) {
-        return { data: null, error: new Error('Invalid table name') };
-    }
-    if (!data) {
-        return { data: null, error: new Error('Invalid data payload') };
+  if (typeof tableName !== "string" || !tableName.trim()) {
+    return { data: null, error: new Error("Invalid table name") };
+  }
+  if (!data) {
+    return { data: null, error: new Error("Invalid data payload") };
+  }
+
+  try {
+    console.log(tableName, data);
+    const { data: insertedData, error: sbError } = await supabase
+      .from(tableName)
+      .select(data.join(","))
+      .eq(eqTable, reqTable);
+
+    if (sbError) {
+      console.error(
+        `Supabase getting error on "${tableName}":`,
+        sbError.message
+      );
+      return { data: null, error: new Error("Database get failed") };
     }
 
-    try {
-        console.log(tableName, data)
-        const { data: insertedData, error: sbError } = await supabase
-            .from(tableName)
-            .select(data.join(","))
-        .eq(eqTable, reqTable)
-
-        if (sbError) {
-            console.error(`Supabase getting error on "${tableName}":`, sbError.message);
-            return { data: null, error: new Error('Database get failed') };
-        }
-
-        return { data: insertedData, error: null };
-    } catch (err) {
-        console.error(`Unexpected error in postToSupabase:`, err);
-        return { data: null, error: new Error('Internal server error') };
-    }
+    return { data: insertedData, error: null };
+  } catch (err) {
+    console.error(`Unexpected error in postToSupabase:`, err);
+    return { data: null, error: new Error("Internal server error") };
+  }
 };

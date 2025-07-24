@@ -1,4 +1,4 @@
-import { supabase } from "../supabaseClient.js";
+import { supabase } from "@/services/supabaseClient.js";
 
 /**
  * Insert data into a Supabase table
@@ -7,11 +7,14 @@ import { supabase } from "../supabaseClient.js";
  * @returns {Promise<{ data: any|null, error: Error|null }>}
  */
 export const postToSupabase = async (tableName, data) => {
-  if (typeof tableName !== 'string' || !tableName.trim()) {
-    return { data: null, error: new Error('Invalid table name') };
+  if (typeof tableName !== "string" || !tableName.trim()) {
+    return { data: null, error: new Error("Invalid table name") };
   }
-  if (!data || (Array.isArray(data) ? data.length === 0 : typeof data !== 'object')) {
-    return { data: null, error: new Error('Invalid data payload') };
+  if (
+    !data ||
+    (Array.isArray(data) ? data.length === 0 : typeof data !== "object")
+  ) {
+    return { data: null, error: new Error("Invalid data payload") };
   }
 
   try {
@@ -21,13 +24,16 @@ export const postToSupabase = async (tableName, data) => {
       .select();
 
     if (sbError) {
-      console.error(`Supabase insert error on "${tableName}":`, sbError.message);
-      return { data: null, error: new Error('Database insert failed') };
+      console.error(
+        `Supabase insert error on "${tableName}":`,
+        sbError.message
+      );
+      return { data: null, error: new Error("Database insert failed") };
     }
 
     return { data: insertedData, error: null };
   } catch (err) {
     console.error(`Unexpected error in postToSupabase:`, err);
-    return { data: null, error: new Error('Internal server error') };
+    return { data: null, error: new Error("Internal server error") };
   }
 };
