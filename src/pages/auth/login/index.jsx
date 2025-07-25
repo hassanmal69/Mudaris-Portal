@@ -4,6 +4,7 @@ import { supabase } from "@/services/supabaseClient";
 import { loginSchema } from "@/validation/authSchema";
 import { FarsiQuote } from "../components/FarsiQuote";
 import { useNavigate } from "react-router-dom";
+import { sessionDetection } from "@/features/auth/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "@/features/auth/authSlice";
 const Login = () => {
@@ -11,46 +12,48 @@ const Login = () => {
   const { session, loading, error } = useSelector((state) => state.auth);
   const navigate = useNavigate();
   useEffect(() => {
-    if (session) {
-      const sessionDetect = async () => {
-        const lsRaw = localStorage.getItem("session");
-        if (!lsRaw) return;
-        const ls = JSON.parse(lsRaw);
-        const {
-          data: { user },
-          error: checkerror,
-        } = await supabase.auth.getUser();
-        if (checkerror) console.log(checkerror);
-        //if role == admin we want them to go to the dashboard page
-        //otherwise check else condition
-        if (user.role === "admin") {
-          navigate("/dashboard");
-        } else {
-          const { data: wsData, error: wsError } = await supabase
-            .from("invitations")
-            .select("workspaceId,groupId")
-            .eq("email", ls.user?.email);
+    const sessionDetect = async () => {
+      dispatch(sessionDetection())
+      const {
+        data: { user },
+        error: checkerror,
+      } = await supabase.auth.getUser();
+      if (checkerror) console.log(checkerror);
+      console.log(user)
+      if (user) {
+        navigate('/dashboard')
+      }
+      //if role == admin we want them to go to the dashboard page
+      //otherwise check else condition
+      if (user.role === "admin") {
+        navigate("/dashboard");
+      }
+      // } else {
+      //   const { data: wsData, error: wsError } = await supabase
+      //     .from("invitations")
+      //     .select("workspaceId,groupId")
+      //     .eq("email", ls.user?.email);
 
-          if (wsError) {
-            console.log("Error fetching invitation:", wsError);
-            return;
-          }
+      //   if (wsError) {
+      //     console.log("Error fetching invitation:", wsError);
+      //     return;
+      //   }
 
-          if (wsData && wsData.length > 0) {
-            const WsId = wsData[0].workspaceId;
-            const gId = wsData[0].groupId;
-            setgrId(gId);
-            setworksId(WsId);
-            navigate(`/workspace/${WsId}/group/${gId}`);
-          } else {
-            console.log("No invitation found for this email");
-          }
-        }
-      };
+      //   if (wsData && wsData.length > 0) {
+      //     const WsId = wsData[0].workspaceId;
+      //     const gId = wsData[0].groupId;
+      //     setgrId(gId);
+      //     setworksId(WsId);
+      //     navigate(`/workspace/${WsId}/group/${gId}`);
+      //   } else {
+      //     console.log("No invitation found for this email");
+      //   }
+      // }
 
-      sessionDetect();
     }
-  }, [session, navigate]);
+    sessionDetect();
+
+  }, []);
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-gradient-to-br from-[#020103] to-[#4d3763]">
@@ -102,11 +105,10 @@ const Login = () => {
                   name="email"
                   type="email"
                   autoComplete="email"
-                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple transition bg-white/20 text-white placeholder-white/60 backdrop-blur-sm ${
-                    touched.email && errors.email
-                      ? "border-red-400"
-                      : "border-white/30"
-                  }`}
+                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple transition bg-white/20 text-white placeholder-white/60 backdrop-blur-sm ${touched.email && errors.email
+                    ? "border-red-400"
+                    : "border-white/30"
+                    }`}
                   placeholder="Enter your email"
                 />
                 <ErrorMessage
@@ -128,11 +130,10 @@ const Login = () => {
                   name="password"
                   type="password"
                   autoComplete="current-password"
-                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple transition bg-white/20 text-white placeholder-white/60 backdrop-blur-sm ${
-                    touched.password && errors.password
-                      ? "border-red-400"
-                      : "border-white/30"
-                  }`}
+                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple transition bg-white/20 text-white placeholder-white/60 backdrop-blur-sm ${touched.password && errors.password
+                    ? "border-red-400"
+                    : "border-white/30"
+                    }`}
                   placeholder="Enter your password"
                 />
                 <ErrorMessage

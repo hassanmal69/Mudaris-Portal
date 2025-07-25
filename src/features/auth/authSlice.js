@@ -1,7 +1,6 @@
 // authSlice.js
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { supabase } from "@/services/supabaseClient";
-
 /**
  * Sign up a new user using Supabase Auth.
  * @param {Object} userData - User input from signup form.
@@ -11,13 +10,31 @@ import { supabase } from "@/services/supabaseClient";
  * @param {string} userData.role
  * @param {string} userData.avatarUrl
  */
+// --- session detection Thunk ---
+export const sessionDetection = createAsyncThunk(
+  "auth/sessionDetect",
+  async (_, { dispatch, rejectWithValue }) => {
+    try {
+      const { data, error } = await supabase.auth.getSession()
+      const session = data.session;
+      if (error) {
+        rejectWithValue(error)
+        return
+      }
+      dispatch(setSession({ session }));
+      return session
+    } catch (error) {
+      rejectWithValue(error)
+    }
+  }
+)
 // --- Signup Thunk ---
 export const signupUser = createAsyncThunk(
   "auth/signupUser",
   async ({ fullName, email, password, token }, { rejectWithValue }) => {
     try {
       const { data, error } = await supabase.auth.signUp({
-        email,
+        email: email.trim(),
         password,
         options: {
           emailRedirectTo: null,
@@ -28,17 +45,11 @@ export const signupUser = createAsyncThunk(
           },
         },
       });
-
-      if (error) return rejectWithValue(error.message);
-
-      const session = data.session;
-
-      if (session) {
-        localStorage.setItem("session", JSON.stringify(session));
-        if (token) localStorage.setItem("token", token);
+      if (error) {
+        console.log("error coming in signup of a user", error)
       }
 
-      return { session, token, user: data.user };
+      return { token, user: data.user };
     } catch (err) {
       return rejectWithValue(err.message || "Signup failed");
     }
@@ -58,10 +69,6 @@ export const loginUser = createAsyncThunk(
       if (error) return rejectWithValue(error.message);
 
       const session = data.session;
-
-      if (session) {
-        localStorage.setItem("session", JSON.stringify(session));
-      }
 
       return session;
     } catch (err) {
