@@ -7,7 +7,8 @@ import { useParams } from "react-router-dom";
 const InviteSend = React.lazy(() => import("./invitationsent.jsx"));
 
 import { useSelector } from "react-redux";
-const Chat = React.lazy(() => import("./chat.jsx"));
+
+const Chat = React.lazy(() => import("../../chat/index.jsx"));
 const Members = React.lazy(() => import("./members.jsx"));
 
 const WorkSpaceInd = () => {
@@ -44,15 +45,16 @@ const WorkSpaceInd = () => {
     setisScreen((prev) => !prev);
   };
   return (
-    <div className="flex h-[100vh] w-full relative text-amber-50">
+    <div className="flex h-[100vh] w-full relative text-black">
       <Suspense fallback={<div>Loading Members...</div>}>
         {isScreen && <Members />}
       </Suspense>
-      <div className="w-full h-15 bg-gray-500 absolute flex justify-center">
-        <h1>Top Bar</h1>
+      {/* <div className="w-full h-15 bg-gray-500 absolute flex justify-center">
+        <h1>uaa topbar</h1>
         <button onClick={toggleScreen}>view all members</button>
-      </div>
-      <div className="flex flex-col bg-gray-900 h-full justify-center items-center">
+      </div> */}
+      {/* <div className="flex flex-col bg-purple-900 h-full justify-center items-center">
+        baaa
         <Suspense fallback={<div>Loading groups...</div>}>
           <Groups workspaceId={workspaceId} />
         </Suspense>
@@ -60,7 +62,7 @@ const WorkSpaceInd = () => {
           <InviteSend />
         </Suspense>
         <button onClick={handleLogout}>LOG OUT</button>
-      </div>
+      </div> */}
       {/* ✅ Lazy-load Chat */}
       <Suspense fallback={<div>Loading Chat...</div>}>
         <Chat />
