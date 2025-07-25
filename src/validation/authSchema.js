@@ -21,3 +21,25 @@ export const contactSchema = Yup.object().shape({
 export const passwordSchema = Yup.object().shape({
   password: Yup.string().min(6).required("Password is required"),
 });
+
+/// for adding students
+export const channelInfoSchema = Yup.object().shape({
+  name: Yup.string().required("Channel name is required"),
+  description: Yup.string(),
+});
+
+export const inviteUsersSchema = Yup.object().shape({
+  users: Yup.array()
+    .of(
+      Yup.string()
+        .email("Invalid email")
+        .test("is-username-or-email", "Invalid username or email", (value) => {
+          // Accepts email or username (alphanumeric, 3+ chars)
+          return (
+            /^[a-zA-Z0-9_]{3,}$/.test(value) ||
+            /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(value)
+          );
+        })
+    )
+    .notRequired(),
+});
