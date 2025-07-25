@@ -2,15 +2,15 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useDispatch, useSelector } from "react-redux";
 import { updateField, resetSignupForm } from "@/features/auth/signupSlice.js";
 import { passwordSchema } from "@/validation/authSchema";
-
+import { signupUser } from '@/features/auth/authSlice.js'
+import { supabase } from "@/services/supabaseClient";
+import { useNavigate } from "react-router-dom";
 const Password = ({ onBack, token, wsId, groupID }) => {
   const { fullName, email } = useSelector((state) => state.signupForm);
   const dispatch = useDispatch();
-
+  const navigate = useNavigate();
   const handleSubmit = async (values) => {
     dispatch(updateField({ field: "password", value: values.password }));
-
-    // ✅ Here you can send the full form to your backend
     console.log({
       fullName,
       email,
@@ -19,9 +19,18 @@ const Password = ({ onBack, token, wsId, groupID }) => {
       wsId,
       groupID,
     });
-
+    const signUpObj = {
+      fullName,
+      email,
+      password: values.password,
+      token,
+      wsId,
+      groupID,
+    }
+    dispatch(signupUser(signUpObj));
     dispatch(resetSignupForm());
     alert("Signup complete!");
+    navigate('/dashboard')
   };
 
   return (

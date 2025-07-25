@@ -12,15 +12,15 @@ const Signup = () => {
   const [wsId, setWsId] = useState("");
   const [groupID, setGroupId] = useState("");
 
-  useEffect(() => {
-    if (token) {
-      (async () => {
-        const invite = await validationTokenInvite(token);
-        setWsId(invite.workspaceId);
-        setGroupId(invite.groupId);
-      })();
-    }
-  }, [token]);
+  // useEffect(() => {
+  //   if (token) {
+  //     (async () => {
+  //       const invite = await validationTokenInvite(token);
+  //       setWsId(invite.workspaceId);
+  //       setGroupId(invite.groupId);
+  //     })();
+  //   } else return console.log('tokenisnot ')
+  // }, [token]);
 
   const handleNextFromContact = ({ avatarFile }) => {
     // Store avatarFile in Redux if needed
