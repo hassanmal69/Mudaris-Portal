@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
+import AddChannelDialog from '@/components/add-channel-dialog';
 
 const CreateWorkspace = ({ onClose }) => {
   const [workspaceName, setWorkspaceName] = useState('');
@@ -7,15 +8,18 @@ const CreateWorkspace = ({ onClose }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log('Workspace Name:', workspaceName);
-    onClose(); 
+    onClose();
   };
 
   return (
     <div className="fixed pointer-events-auto inset-0 z-130 flex items-center justify-center bg-black/50 backdrop-blur-sm">
       <div className="relative w-full max-w-md p-6 rounded-2xl bg-white/30 backdrop-blur-lg shadow-xl border border-white/20 text-gray-900">
-
+        <AddChannelDialog
+          open={true}
+          usedIn={"CreateWorkspace"}
+        />
         {/* Content */}
-        <h2 className="text-2xl font-bold mb-4 text-center text-[#4d3763]">
+        {/* <h2 className="text-2xl font-bold mb-4 text-center text-[#4d3763]">
           Create New Workspace
         </h2>
 
@@ -38,7 +42,7 @@ const CreateWorkspace = ({ onClose }) => {
           <Button type="submit" className="w-full bg-[#4d3763] text-white hover:bg-[#3b2a50]">
             Create Workspace
           </Button>
-        </form>
+        </form> */}
       </div>
     </div>
   );

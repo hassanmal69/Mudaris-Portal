@@ -27,6 +27,10 @@ export const channelInfoSchema = Yup.object().shape({
   name: Yup.string().required("Channel name is required"),
   description: Yup.string(),
 });
+export const workspaceInfoSchema = Yup.object().shape({
+  name: Yup.string().required("Workspace name is required"),
+  description: Yup.string(),
+});
 
 export const inviteUsersSchema = Yup.object().shape({
   users: Yup.array()

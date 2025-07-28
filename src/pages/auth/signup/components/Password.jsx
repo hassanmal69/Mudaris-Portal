@@ -40,7 +40,7 @@ const Password = ({ onBack, token, wsId, groupID }) => {
       onSubmit={handleSubmit}
     >
       {() => (
-        <Form className="space-y-4 bg-white p-6 rounded-md shadow-md w-[400px]">
+        <Form className="space-y-4 rounded-md">
           <h2 className="text-lg font-bold">Step 3: Password</h2>
           <div>
             <label>Password</label>
