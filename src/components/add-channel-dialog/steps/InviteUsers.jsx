@@ -9,9 +9,12 @@ const parseUsers = (input) => {
     .filter(Boolean);
 };
 
-const InviteUsers = ({ state, setState, errors, onSkip, onCopyLink }) => {
+const InviteUsers = ({ state, setState, errors, onSkip, onCopyLink, usedIn }) => {
   const [input, setInput] = useState("");
-
+  let isWhite;
+  if (usedIn === "CreateWorkspace") {
+    isWhite = true
+  }
   const handleAdd = () => {
     const users = parseUsers(input);
     setState({ ...state, users: [...(state.users || []), ...users] });
@@ -19,7 +22,9 @@ const InviteUsers = ({ state, setState, errors, onSkip, onCopyLink }) => {
   };
 
   return (
-    <div className="space-y-4">
+    <div className={`space-y-4 `}>
+     <div className={`${isWhite ? 'text-white' : ""}`}>
+     <h6>Enter email's</h6>
       <Input
         value={input}
         onChange={(e) => setInput(e.target.value)}
@@ -28,6 +33,7 @@ const InviteUsers = ({ state, setState, errors, onSkip, onCopyLink }) => {
           if (e.key === "Enter") handleAdd();
         }}
       />
+      </div>
       <Button type="button" size="sm" className="mt-2" onClick={handleAdd}>
         Add
       </Button>

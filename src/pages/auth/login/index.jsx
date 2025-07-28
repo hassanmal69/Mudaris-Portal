@@ -18,7 +18,7 @@ const Login = () => {
         data: { user },
         error: checkerror,
       } = await supabase.auth.getUser();
-      if (checkerror) console.log(checkerror);
+      if (checkerror) console.log("error is coming in login",checkerror);
       console.log(user)
       if (user) {
         navigate('/dashboard')

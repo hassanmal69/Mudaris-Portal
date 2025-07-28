@@ -15,6 +15,7 @@ const Sidebar = () => {
       <AddChannelDialog
         open={addChannelOpen}
         onOpenChange={setAddChannelOpen}
+        usedIn={"createChannel"}
       />
       <aside
         className="fixed left-0 top-0 py-30 h-screen w-64 bg-white shadow-md flex flex-col z-40 px-3  gap-4 border-r border-gray-100 overflow-y-auto transition-all duration-300 md:w-64 sm:w-56 sm:-translate-x-0"
