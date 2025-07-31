@@ -49,11 +49,11 @@ const EmailAvatar = ({ onNext, onBack }) => {
             <button
               type="button"
               onClick={onBack}
-              className="btn btn-secondary"
+              className="btn btn-secondary bg-yellow-50 text-black py-1.5 px-6 rounded-2xl text-l font-semibold"
             >
               Back
             </button>
-            <button type="submit" className="btn btn-primary">
+            <button type="submit" className="btn btn-primary bg-purple py-1.5 px-6 rounded-2xl text-l font-semibold">
               Next
             </button>
           </div>
