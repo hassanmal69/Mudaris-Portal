@@ -7,12 +7,12 @@ export function Dialog({ open, onOpenChange, children }) {
     <DialogContext.Provider value={{ onOpenChange }}>
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
         <div
-          className="fixed inset-0 z-40"
+          className="fixed inset-0 z-40 "
           aria-hidden="true"
           onClick={() => onOpenChange(false)}
         />
         <div
-          className="relative z-50 w-full max-w-lg mx-auto bg-white rounded-lg shadow-lg animate-fade-in"
+          className="relative z-50 w-full max-w-md mx-auto bg-white rounded-lg shadow-lg animate-fade-in"
           role="dialog"
           aria-modal="true"
         >

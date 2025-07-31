@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 const parseUsers = (input) => {
@@ -9,11 +8,18 @@ const parseUsers = (input) => {
     .filter(Boolean);
 };
 
-const InviteUsers = ({ state, setState, errors, onSkip, onCopyLink, usedIn }) => {
+const InviteUsers = ({
+  state,
+  setState,
+  errors,
+  onSkip,
+  onCopyLink,
+  usedIn,
+}) => {
   const [input, setInput] = useState("");
   let isWhite;
   if (usedIn === "CreateWorkspace") {
-    isWhite = true
+    isWhite = true;
   }
   const handleAdd = () => {
     const users = parseUsers(input);
@@ -23,20 +29,24 @@ const InviteUsers = ({ state, setState, errors, onSkip, onCopyLink, usedIn }) =>
 
   return (
     <div className={`space-y-4 `}>
-     <div className={`${isWhite ? 'text-white' : ""}`}>
-     <h6>Enter email's</h6>
-      <Input
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        placeholder="Add students with username or email (comma separated)"
-        onKeyDown={(e) => {
-          if (e.key === "Enter") handleAdd();
-        }}
-      />
+      <div className={`${isWhite ? "text-white" : ""} flex flex-col gap-2`}>
+        <h6>Enter email's</h6>
+        <textarea
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder="Add students with email (comma separated)"
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === "," || e.key === " ") {
+              e.preventDefault(); // prevent newline on Enter
+              handleAdd();
+            }
+          }}
+          aria-label="Add emails"
+          rows={4}
+          className="w-full border border-gray-300 rounded-md p-2 resize-none"
+        />
       </div>
-      <Button type="button" size="sm" className="mt-2" onClick={handleAdd}>
-        Add
-      </Button>
+
       {errors.users && (
         <p className="text-xs text-red-500 mt-1">{errors.users}</p>
       )}
@@ -48,7 +58,15 @@ const InviteUsers = ({ state, setState, errors, onSkip, onCopyLink, usedIn }) =>
         ))}
       </div>
       <div className="flex gap-2 mt-4">
-        <Button type="button" variant="outline" onClick={onSkip}>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={onSkip}
+          aria-label="Skip invite"
+          className="text-[#556cd6] border
+          transition delay-200 duration-300 ease-in-out
+          border-[#556cd6] hover:bg-[#556cd6] hover:text-white"
+        >
           Skip for now
         </Button>
         <Button type="button" variant="secondary" onClick={onCopyLink}>
