@@ -5,12 +5,12 @@ import { Label } from "@/components/ui/label";
 const ChannelInfo = ({ state, setState, errors, usedIn }) => {
   let isWhite;
   if (usedIn === "CreateWorkspace") {
-    isWhite = true
+    isWhite = true;
   }
   return (
-    <div className={`space-y-4 ${isWhite ? 'text-white' : ""}`}>
-      <div>
-        <Label htmlFor="channel-name">
+    <div className={`space-y-4 ${isWhite ? "text-white" : ""}`}>
+      <div className="flex flex-col gap-2">
+        <Label htmlFor="channel-name" className="text-[#4d3763]">
           Channel Name<span className="text-red-500">*</span>
         </Label>
         <Input
@@ -25,8 +25,10 @@ const ChannelInfo = ({ state, setState, errors, usedIn }) => {
           <p className="text-xs text-red-500 mt-1">{errors.name}</p>
         )}
       </div>
-      <div>
-        <Label htmlFor="channel-description">Description</Label>
+      <div className="flex flex-col gap-2">
+        <Label htmlFor="channel-description" className="text-[#4d3763]">
+          Description
+        </Label>
         <Input
           id="channel-description"
           value={state.description || ""}
@@ -35,7 +37,7 @@ const ChannelInfo = ({ state, setState, errors, usedIn }) => {
         />
       </div>
     </div>
-  )
+  );
 };
 
 export default ChannelInfo;

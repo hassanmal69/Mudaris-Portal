@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import InviteStepEmails from './InviteStepEmails';
-import InviteStepChannels from './InviteStepChannels';
+import React, { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import InviteStepEmails from "./InviteStepEmails";
+import InviteStepChannels from "./InviteStepChannels";
 
-const workspace_name = 'Mudaris Academy'; // Replace with dynamic value if needed
-const suggestedChannels = ['channel 01', 'channel 02'];
+const workspace_name = "Mudaris Academy"; // Replace with dynamic value if needed
+const suggestedChannels = ["channel 01", "channel 02"];
 
 const InviteDialog = ({ open, onOpenChange }) => {
   const [step, setStep] = useState(0);
@@ -13,7 +17,7 @@ const InviteDialog = ({ open, onOpenChange }) => {
   const [channels, setChannels] = useState([]);
 
   const handleCopyLink = () => {
-    navigator.clipboard.writeText('https://mudaris.app/invite-link');
+    navigator.clipboard.writeText("https://mudaris.app/invite-link");
   };
 
   return (

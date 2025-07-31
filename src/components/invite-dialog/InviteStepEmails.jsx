@@ -52,18 +52,20 @@ const InviteStepEmails = ({ emails, setEmails, onCopyLink, onNext }) => {
           ))}
         </div>
         <div className="flex gap-2">
-          <Input
+          <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Enter email(s), comma separated"
             onKeyDown={(e) => {
-              if (e.key === "Enter") handleAdd();
+              if (e.key === "Enter" || e.key === "," || e.key === " ") {
+                e.preventDefault(); // prevent newline on Enter
+                handleAdd();
+              }
             }}
             aria-label="Add emails"
+            rows={4}
+            className="w-full border border-gray-300 rounded-md p-2 resize-none"
           />
-          <Button type="button" onClick={handleAdd} size="sm">
-            Add
-          </Button>
         </div>
         {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
       </div>

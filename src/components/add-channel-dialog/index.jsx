@@ -168,28 +168,37 @@ const AddChannelDialog = ({ open, onOpenChange, usedIn }) => {
   };
 
   const renderFooterButtons = () => (
-    <div className="flex gap-2 mt-6">
-      {step > 0 && (
+    <div className="flex gap-2 justify-between mt-6">
+      <div className="flex gap-2">
+        {step > 0 && (
+          <Button
+            className="bg-transparent transition delay-150 duration-300 ease-in-out hover:bg-[#c50000] hover:text-[#eee] border border-[#c50000] text-[#c50000]"
+            variant="outline"
+            onClick={handleBack}
+          >
+            Back
+          </Button>
+        )}
+        {step < 2 && (
+          <Button
+            className="bg-transparent transition delay-150 duration-300 ease-in-out hover:bg-[#556cd6] hover:text-[#eee] border border-[#556cd6] text-[#556cd6]"
+            onClick={handleNext}
+          >
+            Next
+          </Button>
+        )}
+      </div>
+      {step === 2 && (
         <Button
-          className="bg-transparent transition delay-150 duration-300 ease-in-out hover:bg-[#c50000] hover:text-[#eee] border border-[#c50000] text-[#c50000]"
-          variant="outline"
-          onClick={handleBack}
+          onClick={handleSubmit}
+          className="bg-[#008000] transition delay-150 duration-300 ease-in-out hover:bg-transparent hover:text-[#008000] border border-[#008000] text-[#fff]"
         >
-          Back
+          Finish
         </Button>
       )}
-      {step < 2 && (
-        <Button
-          className="bg-transparent transition delay-150 duration-300 ease-in-out hover:bg-[#556cd6] hover:text-[#eee] border border-[#556cd6] text-[#556cd6]"
-          onClick={handleNext}
-        >
-          Next
-        </Button>
-      )}
-      {step === 2 && <Button onClick={handleSubmit}>Finish</Button>}
       {step === 1 && usedIn === "createChannel" && state.type === "public" && (
         <Button
-          className="bg-transparent transition delay-150 duration-300 ease-in-out hover:bg-[#008000] hover:text-[#eee] border border-[#008000] text-[#008000]"
+          className="bg-[#008000] transition delay-150 duration-300 ease-in-out hover:bg-transparent hover:text-[#008000] border border-[#008000] text-[#fff]"
           onClick={handleSubmit}
         >
           Finish
@@ -201,7 +210,7 @@ const AddChannelDialog = ({ open, onOpenChange, usedIn }) => {
   if (usedIn === "createChannel") {
     return (
       <Dialog open={open} onOpenChange={onOpenChange} initialFocus={dialogRef}>
-        <DialogContent className="max-w-md w-full">
+        <DialogContent className="max-w-md  w-full">
           <DialogHeader>
             <DialogTitle>Add Channel</DialogTitle>
           </DialogHeader>

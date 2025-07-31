@@ -7,7 +7,9 @@ const ChannelType = ({ state, setState }) => (
       <Button
         type="button"
         variant={state.type === "public" ? "default" : "outline"}
-        className="flex-1 bg-gray-200 hover:bg-gray-300 text-black border border-gray-400"
+        className={`flex-1 bg-gray-200 hover:bg-gray-300
+          ${state.type === "public" ? "bg-[#556cd6] text-white" : "text-black"}
+           border border-gray-400`}
         onClick={() => setState({ ...state, type: "public" })}
         aria-pressed={state.type === "public"}
       >
@@ -17,7 +19,10 @@ const ChannelType = ({ state, setState }) => (
       <Button
         type="button"
         variant={state.type === "private" ? "default" : "outline"}
-        className="flex-1 bg-gray-500 hover:bg-gray-600 text-white"
+        className={`flex-1 bg-gray-500 
+          ${state.type === "private" ? "bg-[#556cd6]" : ""}
+
+        hover:bg-gray-600 text-white`}
         onClick={() => setState({ ...state, type: "private" })}
         aria-pressed={state.type === "private"}
       >
