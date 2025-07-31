@@ -32,7 +32,11 @@ export function DialogHeader({ children }) {
 }
 
 export function DialogTitle({ children }) {
-  return <h2 className="text-lg font-semibold leading-tight">{children}</h2>;
+  return (
+    <h2 className="text-lg text-[#556cd6] font-semibold leading-tight">
+      {children}
+    </h2>
+  );
 }
 
 export function DialogClose({ asChild = false, children }) {
