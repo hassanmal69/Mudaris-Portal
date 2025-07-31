@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import AddChannelDialog from "@/components/add-channel-dialog";
+import InviteDialog from "@/components/invite-dialog/InviteDialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button"; // Adjust import path if needed
 import {
@@ -10,6 +11,7 @@ import {
 
 const Sidebar = () => {
   const [addChannelOpen, setAddChannelOpen] = useState(false);
+  const [inviteOpen, setInviteOpen] = useState(false);
   return (
     <>
       <AddChannelDialog
@@ -17,6 +19,7 @@ const Sidebar = () => {
         onOpenChange={setAddChannelOpen}
         usedIn={"createChannel"}
       />
+      <InviteDialog open={inviteOpen} onOpenChange={setInviteOpen} />
       <aside
         className="fixed left-0 top-0 py-30 h-screen w-64 bg-white shadow-md flex flex-col z-40 px-3  gap-4 border-r border-gray-100 overflow-y-auto transition-all duration-300 md:w-64 sm:w-56 sm:-translate-x-0"
         style={{ minWidth: "220px" }}
@@ -83,7 +86,12 @@ const Sidebar = () => {
         </section>
 
         <div className="pb-2">
-          <Button variant="default" size="sm" className="w-full bg-[#556cd6]">
+          <Button
+            variant="default"
+            size="sm"
+            className="w-full bg-[#556cd6]"
+            onClick={() => setInviteOpen(true)}
+          >
             Invite Users
           </Button>
         </div>
