@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { Input } from "@/components/ui/input"; // Adjust import path if needed
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"; // Adjust import path if needed
-
+import Profile from "@/pages/profile";
 const mockUsers = [
   { id: 1, name: "Alice", avatar: "https://i.pravatar.cc/150?img=1" },
   { id: 2, name: "Bob", avatar: "https://i.pravatar.cc/150?img=2" },
@@ -17,7 +17,7 @@ const Topbar = () => {
   const maxAvatars = 5;
   const visibleUsers = mockUsers.slice(0, maxAvatars);
   const extraCount = mockUsers.length - maxAvatars;
-
+  const [isProfile, setisProfile] = useState(false)
   return (
     <section
       className="fixed top-0 left-0 w-full z-50 bg-white shadow-sm px-2 md:px-6 py-2 flex items-center justify-between gap-2"
@@ -61,12 +61,21 @@ const Topbar = () => {
           )}
         </div>
         {/* Current user avatar */}
-        <Avatar className="w-9 h-9 border-2 border-primary ml-2">
-          <AvatarImage src={currentUser.avatar} alt={currentUser.name} />
-          <AvatarFallback>{currentUser.name[0]}</AvatarFallback>
-        </Avatar>
+
+        <div className='flex flex-col relative'>
+          <div
+            onClick={() => setisProfile(prev => !prev)}>
+            <Avatar className="w-9 h-9 border-2 border-primary ml-2"
+            >
+              <AvatarImage src={currentUser.avatar} alt={currentUser.name} />
+              <AvatarFallback>{currentUser.name[0]}</AvatarFallback>
+            </Avatar>
+          </div>
+          {isProfile && <div className="absolute right-0 top-15 w-70 h-40"> <Profile /> </div>}
+        </div>
+
       </div>
-    </section>
+    </section >
   );
 };
 
