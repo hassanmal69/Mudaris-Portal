@@ -60,7 +60,7 @@ const Dashboard = () => {
         . Developed by{" "}
         <a
           href="https://asrnova.com"
-          className="text-secondary font-medium underline"
+          className="text-black font-medium underline"
         >
           asrnova.com
         </a>

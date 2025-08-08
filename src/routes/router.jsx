@@ -32,9 +32,9 @@ export const router = createBrowserRouter([
   {
     path: "/workspace/:workspaceId",
     element: (
-      // <PrivateRoute>
-      <WorkspaceLayout />
-      // </PrivateRoute>
+      <PrivateRoute>
+        <WorkspaceLayout />
+      </PrivateRoute>
     ),
     children: [
       {
