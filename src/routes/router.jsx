@@ -13,20 +13,13 @@ export const router = createBrowserRouter([
     path: "/",
     element: <Login />,
   },
-  // {
-  //     path: '/dashboard',
-  //     element: (
-  //         <AdminRoute>
-  //             <Dashboard />
-  //         </AdminRoute>
-  //     )
-  // },
+
   {
-    path: "/dashboard",
+    path: "/dashboard/:adminId",
     element: (
-      // <PrivateRoute>
-      <Dashboard />
-      // </PrivateRoute>
+      <PrivateRoute>
+        <Dashboard />
+      </PrivateRoute>
     ),
   },
   {
