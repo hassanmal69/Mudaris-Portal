@@ -5,8 +5,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import InviteStepEmails from "./InviteStepEmails";
-import InviteStepChannels from "./InviteStepChannels";
+import InviteByEmail from "./steps/InviteByEmail";
+import Channelinvitation from "./steps/Channelinvitation";
 
 const workspace_name = "Mudaris Academy"; // Replace with dynamic value if needed
 const suggestedChannels = ["channel 01", "channel 02"];
@@ -27,7 +27,7 @@ const InviteDialog = ({ open, onOpenChange }) => {
           <DialogTitle>Invite people to {workspace_name}</DialogTitle>
         </DialogHeader>
         {step === 0 && (
-          <InviteStepEmails
+          <InviteByEmail
             emails={emails}
             setEmails={setEmails}
             onCopyLink={handleCopyLink}
@@ -35,7 +35,7 @@ const InviteDialog = ({ open, onOpenChange }) => {
           />
         )}
         {step === 1 && (
-          <InviteStepChannels
+          <Channelinvitation
             channels={channels}
             setChannels={setChannels}
             suggestedChannels={suggestedChannels}

@@ -6,7 +6,7 @@ function isValidEmail(email) {
   return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email);
 }
 
-const InviteStepEmails = ({ emails, setEmails, onCopyLink, onNext }) => {
+const InviteByEmail = ({ emails, setEmails, onCopyLink, onNext }) => {
   const [input, setInput] = useState("");
   const [error, setError] = useState("");
 
@@ -81,4 +81,4 @@ const InviteStepEmails = ({ emails, setEmails, onCopyLink, onNext }) => {
   );
 };
 
-export default InviteStepEmails;
+export default InviteByEmail;

@@ -6,25 +6,29 @@ const ChannelType = ({ state, setState }) => (
     <div className="flex gap-2">
       <Button
         type="button"
-        variant={state.type === "public" ? "default" : "outline"}
+        variant={state.visibility === "public" ? "default" : "outline"}
         className={`flex-1 bg-gray-200 hover:bg-gray-300
-          ${state.type === "public" ? "bg-[#556cd6] text-white" : "text-black"}
+          ${
+            state.visibility === "public"
+              ? "bg-[#556cd6] text-white"
+              : "text-black"
+          }
            border border-gray-400`}
-        onClick={() => setState({ ...state, type: "public" })}
-        aria-pressed={state.type === "public"}
+        onClick={() => setState({ ...state, visibility: "public" })}
+        aria-pressed={state.visibility === "public"}
       >
         <Globe className="w-4 h-4 mr-2" />
         Public
       </Button>
       <Button
         type="button"
-        variant={state.type === "private" ? "default" : "outline"}
+        variant={state.visibility === "private" ? "default" : "outline"}
         className={`flex-1 bg-gray-500 
-          ${state.type === "private" ? "bg-[#556cd6]" : ""}
+          ${state.visibility === "private" ? "bg-[#556cd6]" : ""}
 
         hover:bg-gray-600 text-white`}
-        onClick={() => setState({ ...state, type: "private" })}
-        aria-pressed={state.type === "private"}
+        onClick={() => setState({ ...state, visibility: "private" })}
+        aria-pressed={state.visibility === "private"}
       >
         <Lock className="w-4 h-4 mr-2" />
         Private

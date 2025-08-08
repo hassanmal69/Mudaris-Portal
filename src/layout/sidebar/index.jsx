@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AddChannelDialog from "@/components/add-channel-dialog";
-import InviteDialog from "@/components/invite-dialog/InviteDialog";
+import InviteDialog from "@/components/invite-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button"; // Adjust import path if needed
 import {
@@ -8,10 +8,36 @@ import {
   GlobeAltIcon,
   PlusIcon,
 } from "@heroicons/react/24/outline"; // Heroicons for icons
-
+import { getFromSupabase } from "@/utils/getFromSupabase.js";
 const Sidebar = () => {
   const [addChannelOpen, setAddChannelOpen] = useState(false);
   const [inviteOpen, setInviteOpen] = useState(false);
+  const [channels, setChannels] = useState([]);
+
+  const fetchChannels = async () => {
+    const res = await getFromSupabase(
+      "channels",
+      ["id", "channel_name", "visibility"],
+      "",
+      ""
+    );
+    if (res.data) {
+      console.log("Fetched channels:", res.data);
+      setChannels(
+        res.data.map((channel) => ({
+          id: channel.id,
+          name: channel.channel_name,
+          visibility: channel.visibility,
+        }))
+      );
+    } else {
+      console.error("Failed to fetch channels:", res.error);
+    }
+  };
+  useEffect(() => {
+    fetchChannels();
+  }, []);
+
   return (
     <>
       <AddChannelDialog
@@ -34,7 +60,7 @@ const Sidebar = () => {
                 key={channel.id}
                 className="flex items-center gap-2 px-2 py-1 rounded hover:bg-gray-100 cursor-pointer"
               >
-                {channel.type === "private" ? (
+                {channel.visibility === "private" ? (
                   <LockClosedIcon className="w-4 h-4 text-gray-400" />
                 ) : (
                   <GlobeAltIcon className="w-4 h-4 text-gray-400" />
@@ -102,12 +128,12 @@ const Sidebar = () => {
 
 export default Sidebar;
 // Mock data
-const channels = [
-  { id: 1, name: "general", type: "public" },
-  { id: 2, name: "design", type: "public" },
-  { id: 3, name: "private-team", type: "private" },
-  { id: 4, name: "marketing", type: "public" },
-];
+// const channels = [
+//   { id: 1, name: "general", visibility: "public" },
+//   { id: 2, name: "design", visibility: "public" },
+//   { id: 3, name: "private-team", visibility: "private" },
+//   { id: 4, name: "marketing", visibility: "public" },
+// ];
 
 const users = [
   {
