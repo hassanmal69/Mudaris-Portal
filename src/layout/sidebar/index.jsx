@@ -8,18 +8,21 @@ import {
   GlobeAltIcon,
   PlusIcon,
 } from "@heroicons/react/24/outline"; // Heroicons for icons
+import { useParams } from "react-router-dom";
 import { getFromSupabase } from "@/utils/getFromSupabase.js";
+import { supabase } from "@/services/supabaseClient.js";
 const Sidebar = () => {
   const [addChannelOpen, setAddChannelOpen] = useState(false);
   const [inviteOpen, setInviteOpen] = useState(false);
   const [channels, setChannels] = useState([]);
+  const { workspaceId } = useParams();
 
   const fetchChannels = async () => {
     const res = await getFromSupabase(
       "channels",
       ["id", "channel_name", "visibility"],
-      "",
-      ""
+      "workspace_Id",
+      workspaceId
     );
     if (res.data) {
       console.log("Fetched channels:", res.data);
@@ -36,6 +39,22 @@ const Sidebar = () => {
   };
   useEffect(() => {
     fetchChannels();
+  }, []);
+  useEffect(() => {
+    const subscription = supabase
+      .channel("channels_changes")
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "channels" },
+        (payload) => {
+          setChannels((prev) => [...prev, payload.new]);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(subscription);
+    };
   }, []);
 
   return (
@@ -127,13 +146,6 @@ const Sidebar = () => {
 };
 
 export default Sidebar;
-// Mock data
-// const channels = [
-//   { id: 1, name: "general", visibility: "public" },
-//   { id: 2, name: "design", visibility: "public" },
-//   { id: 3, name: "private-team", visibility: "private" },
-//   { id: 4, name: "marketing", visibility: "public" },
-// ];
 
 const users = [
   {

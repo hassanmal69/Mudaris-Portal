@@ -10,51 +10,32 @@ import { loginUser } from "@/features/auth/authSlice";
 const Login = () => {
   const dispatch = useDispatch();
   const { session, loading, error } = useSelector((state) => state.auth);
+  const adminId = session?.user?.id;
   const navigate = useNavigate();
   useEffect(() => {
     const sessionDetect = async () => {
-      dispatch(sessionDetection())
+      dispatch(sessionDetection());
       const {
         data: { user },
         error: checkerror,
       } = await supabase.auth.getUser();
-      if (checkerror) console.log("error is coming in login",checkerror);
-      console.log(user)
-      if (user) {
-        navigate('/dashboard')
-      }
+      if (checkerror) console.log("error is coming in login", checkerror);
+      // if (user) {
+      //   navigate(`/dashboard/${session?.user?.id}`);
+      // }
       //if role == admin we want them to go to the dashboard page
       //otherwise check else condition
-      if (user.role === "admin") {
-        navigate("/dashboard");
-      }
-      // } else {
-      //   const { data: wsData, error: wsError } = await supabase
-      //     .from("invitations")
-      //     .select("workspaceId,groupId")
-      //     .eq("email", ls.user?.email);
-
-      //   if (wsError) {
-      //     console.log("Error fetching invitation:", wsError);
-      //     return;
-      //   }
-
-      //   if (wsData && wsData.length > 0) {
-      //     const WsId = wsData[0].workspaceId;
-      //     const gId = wsData[0].groupId;
-      //     setgrId(gId);
-      //     setworksId(WsId);
-      //     navigate(`/workspace/${WsId}/group/${gId}`);
-      //   } else {
-      //     console.log("No invitation found for this email");
-      //   }
+      // if (user.role === "admin") {
+      //   navigate(`/dashboard/:${adminId}`);
       // }
-
-    }
+    };
     sessionDetect();
-
   }, []);
-
+  useEffect(() => {
+    if (adminId) {
+      navigate(`/dashboard/${adminId}`);
+    }
+  }, [adminId, navigate]);
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-gradient-to-br from-[#020103] to-[#4d3763]">
       <div className="w-full md:w-1/2 flex items-center justify-center relative">
@@ -105,10 +86,11 @@ const Login = () => {
                   name="email"
                   type="email"
                   autoComplete="email"
-                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple transition bg-white/20 text-white placeholder-white/60 backdrop-blur-sm ${touched.email && errors.email
-                    ? "border-red-400"
-                    : "border-white/30"
-                    }`}
+                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple transition bg-white/20 text-white placeholder-white/60 backdrop-blur-sm ${
+                    touched.email && errors.email
+                      ? "border-red-400"
+                      : "border-white/30"
+                  }`}
                   placeholder="Enter your email"
                 />
                 <ErrorMessage
@@ -130,10 +112,11 @@ const Login = () => {
                   name="password"
                   type="password"
                   autoComplete="current-password"
-                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple transition bg-white/20 text-white placeholder-white/60 backdrop-blur-sm ${touched.password && errors.password
-                    ? "border-red-400"
-                    : "border-white/30"
-                    }`}
+                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple transition bg-white/20 text-white placeholder-white/60 backdrop-blur-sm ${
+                    touched.password && errors.password
+                      ? "border-red-400"
+                      : "border-white/30"
+                  }`}
                   placeholder="Enter your password"
                 />
                 <ErrorMessage

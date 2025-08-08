@@ -15,8 +15,11 @@ import {
   inviteUsersSchema,
   workspaceInfoSchema,
 } from "@/validation/authSchema.js";
-const steps = ["Channel Info", "Channel visibility", "Invite Users"];
+import { useParams } from "react-router-dom";
 import { supabase } from "@/services/supabaseClient.js";
+import { useSelector } from "react-redux";
+const steps = ["Channel Info", "Channel visibility", "Invite Users"];
+
 const StepIndicator = ({ step }) => (
   <div className="flex items-center gap-2 mb-2">
     {steps.map((label, idx) => (
@@ -33,6 +36,12 @@ const StepIndicator = ({ step }) => (
 );
 
 const AddChannelDialog = ({ open, onOpenChange, usedIn }) => {
+  const { workspaceId } = useParams();
+
+  const userEmail = useSelector((state) => state.auth.session?.user?.email);
+  if (userEmail === "me@gmail.com") {
+    var adminId = useSelector((state) => state.auth.session?.user?.id);
+  }
   const [step, setStep] = useState(0);
   const [errors, setErrors] = useState({});
   const dialogRef = useRef();
@@ -56,7 +65,7 @@ const AddChannelDialog = ({ open, onOpenChange, usedIn }) => {
       if (step === 0) return channelInfoSchema;
       if (step === 2 && state.visibility === "private")
         return inviteUsersSchema;
-    } else {
+    } else if (usedIn === "createWorkspace") {
       if (step === 0) return workspaceInfoSchema;
       if (step === 1) return;
       if (step === 2) return inviteUsersSchema;
@@ -103,31 +112,45 @@ const AddChannelDialog = ({ open, onOpenChange, usedIn }) => {
 
   const handleSubmit = async () => {
     if (await validateStep()) {
-      const formData = usedIn === "createChannel" ? state : workspaceData;
-      let { name, description, visibility, users } = formData;
-      console.log(formData);
+      const formData = usedIn === "createChannel" ? state : null;
+      if (usedIn === "createChannel") {
+        let { name, description, visibility, users } = formData;
+        console.log(formData);
 
-      const { data, error } = await supabase
-        .from("channels")
-        .insert({
-          channel_name: name,
-          description,
-          visibility,
-          channel_members: users.map((user) => user.id),
-        })
-        .select()
-        .then((res) => {
-          if (res.error) {
-            console.error("Error creating channel:", res.error);
-          } else {
-            console.log("Channel created successfully:", res.data);
-          }
-        })
-        .catch((error) => {
-          console.error("Unexpected error:", error);
-        });
-      if (usedIn === "createChannel") onOpenChange(false);
-      setTimeout(resetStates, 300);
+        const { data, error } = await supabase
+          .from("channels")
+          .insert({
+            channel_name: name,
+            description,
+            visibility,
+            channel_members: users.map((user) => user.id),
+            workspace_Id: workspaceId,
+          })
+          .select();
+
+        if (usedIn === "createChannel") onOpenChange(false);
+        if (error) {
+          console.error(error);
+        }
+        setTimeout(resetStates, 300);
+      } else if (usedIn === "createWorkspace") {
+        console.log("clicked");
+        const formData = usedIn === "createWorkspace" ? workspaceData : null;
+        let { name, description, avatarUrl, users } = formData;
+        const { data, error } = await supabase
+          .from("workspaces")
+          .insert({
+            workspace_name: name,
+            description,
+            avatar_url: avatarUrl,
+            owner_id: adminId,
+          })
+          .select();
+        if (error) {
+          console.error(error);
+        }
+        setTimeout(resetStates, 300);
+      }
     }
   };
 
@@ -155,7 +178,7 @@ const AddChannelDialog = ({ open, onOpenChange, usedIn }) => {
             onCopyLink={handleCopyLink}
           />
         );
-    } else {
+    } else if (usedIn === "createWorkspace") {
       if (step === 0)
         return (
           <ChannelInfo
@@ -209,7 +232,7 @@ const AddChannelDialog = ({ open, onOpenChange, usedIn }) => {
           </Button>
         )}
       </div>
-      {step === 2 && (
+      {step === 2 && usedIn === "createWorkspace" && (
         <Button
           onClick={handleSubmit}
           className="bg-[#008000] transition delay-150 duration-300 ease-in-out hover:bg-transparent hover:text-[#008000] border border-[#008000] text-[#fff]"
