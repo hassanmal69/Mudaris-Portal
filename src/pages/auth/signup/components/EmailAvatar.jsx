@@ -3,8 +3,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { updateField } from "@/features/auth/signupSlice.js";
 import { contactSchema } from "@/validation/authSchema";
 
-const EmailAvatar = ({ onNext, onBack }) => {
-  const { email } = useSelector((state) => state.signupForm);
+const EmailAvatar = ({ onNext, onBack, invite }) => {
+  console.log("invite", invite);
+  const email = invite.email;
+  console.log("email step", email);
   const dispatch = useDispatch();
 
   return (
@@ -53,7 +55,10 @@ const EmailAvatar = ({ onNext, onBack }) => {
             >
               Back
             </button>
-            <button type="submit" className="btn btn-primary bg-purple py-1.5 px-6 rounded-2xl text-l font-semibold">
+            <button
+              type="submit"
+              className="btn btn-primary bg-purple py-1.5 px-6 rounded-2xl text-l font-semibold"
+            >
               Next
             </button>
           </div>

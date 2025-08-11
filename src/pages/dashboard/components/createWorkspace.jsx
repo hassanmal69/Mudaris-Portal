@@ -1,15 +1,8 @@
 import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
 import AddChannelDialog from "@/components/add-channel-dialog";
 
 const CreateWorkspace = ({ onClose }) => {
   const [workspaceName, setWorkspaceName] = useState("");
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Workspace Name:", workspaceName);
-    onClose();
-  };
 
   return (
     <div className="fixed pointer-events-auto inset-0 z-130 flex items-center justify-center bg-black/50 backdrop-blur-sm">

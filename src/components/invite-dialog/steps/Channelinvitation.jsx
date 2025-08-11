@@ -6,7 +6,6 @@ const Channelinvitation = ({
   channels,
   setChannels,
   suggestedChannels,
-  onCopyLink,
   onBack,
   onSend,
 }) => {
@@ -64,9 +63,6 @@ const Channelinvitation = ({
         />
       </div>
       <div className="flex gap-2 justify-between">
-        <Button type="button" variant="secondary" onClick={onCopyLink}>
-          Copy link
-        </Button>
         <Button type="button" variant="outline" onClick={onBack}>
           Back
         </Button>
