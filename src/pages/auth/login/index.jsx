@@ -13,29 +13,44 @@ const Login = () => {
   const adminId = session?.user?.id;
   const navigate = useNavigate();
   useEffect(() => {
+    let redirected = false; // local flag
+
     const sessionDetect = async () => {
-      dispatch(sessionDetection());
+      if (redirected) return;
+
       const {
         data: { user },
         error: checkerror,
       } = await supabase.auth.getUser();
-      if (checkerror) console.log("error is coming in login", checkerror);
-      // if (user) {
-      //   navigate(`/dashboard/${session?.user?.id}`);
-      // }
-      //if role == admin we want them to go to the dashboard page
-      //otherwise check else condition
-      // if (user.role === "admin") {
-      //   navigate(`/dashboard/:${adminId}`);
-      // }
+
+      if (checkerror) {
+        console.log("error is coming in login", checkerror);
+        return;
+      }
+
+      const { data: workspace, error: workspaceError } = await supabase
+        .from("workspace_members")
+        .select("workspace_id")
+        .eq("user_id", user.id)
+        .single();
+
+      if (workspaceError) {
+        console.error("Error fetching workspace members:", workspaceError);
+        return;
+      }
+
+      if (user?.user_metadata?.user_role === "user") {
+        const workspaceId = workspace.workspace_id;
+        if (window.location.pathname !== `/workspace/${workspaceId}`) {
+          redirected = true;
+          navigate(`/workspace/${workspaceId}`);
+        }
+      }
     };
+
     sessionDetect();
-  }, []);
-  useEffect(() => {
-    if (adminId) {
-      navigate(`/dashboard/${adminId}`);
-    }
-  }, [adminId, navigate]);
+  }, [navigate]);
+
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-gradient-to-br from-[#020103] to-[#4d3763]">
       <div className="w-full md:w-1/2 flex items-center justify-center relative">

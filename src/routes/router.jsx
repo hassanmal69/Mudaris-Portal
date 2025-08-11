@@ -6,7 +6,7 @@ import PrivateRoute from "./privateRoute.jsx";
 import AdminDashboard from "@/pages/admin/admin.jsx";
 import AdminRoute from "./adminRoute.jsx";
 import WorkSpaceInd from "@/pages/dashboard/components/workspaceInd.jsx";
-import Sidebar from "@/layout/sidebar/index.jsx";
+import AppLayout from "@/layout/AppLayout.jsx";
 import Topbar from "@/layout/topbar/index.jsx";
 export const router = createBrowserRouter([
   {
@@ -23,7 +23,7 @@ export const router = createBrowserRouter([
     ),
   },
   {
-    path: "/workspace/:workspaceId",
+    path: "/workspace/:workspace_id",
     element: (
       <PrivateRoute>
         <WorkspaceLayout />
@@ -57,10 +57,13 @@ export const router = createBrowserRouter([
 
 function WorkspaceLayout() {
   return (
-    <>
-      <Topbar />
-      <Sidebar />
-      <Outlet />
-    </>
+    <AppLayout>
+      <div className="flex flex-col w-full">
+        <Topbar />
+        <div className="flex-1 overflow-auto">
+          <Outlet />
+        </div>
+      </div>
+    </AppLayout>
   );
 }

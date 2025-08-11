@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import {
   Dialog,
   DialogContent,
@@ -7,7 +8,8 @@ import {
 } from "@/components/ui/dialog";
 import InviteByEmail from "./steps/InviteByEmail";
 import Channelinvitation from "./steps/Channelinvitation";
-
+import { useParams } from "react-router-dom";
+import createInvitation from "@/utils/invite/createInvitation";
 const workspace_name = "Mudaris Academy"; // Replace with dynamic value if needed
 const suggestedChannels = ["channel 01", "channel 02"];
 
@@ -15,9 +17,20 @@ const InviteDialog = ({ open, onOpenChange }) => {
   const [step, setStep] = useState(0);
   const [emails, setEmails] = useState([]);
   const [channels, setChannels] = useState([]);
+  const { workspace_id } = useParams();
 
-  const handleCopyLink = () => {
-    navigator.clipboard.writeText("https://mudaris.app/invite-link");
+  const handleCopyLink = async () => {
+    let copied = false;
+    for (const email of emails) {
+      const link = await createInvitation({
+        email,
+        workspace_id: workspace_id,
+      });
+      if (link) {
+        await navigator.clipboard.writeText(link);
+        alert(`Invitation link copied for ${email}`);
+      }
+    }
   };
 
   return (
@@ -26,6 +39,7 @@ const InviteDialog = ({ open, onOpenChange }) => {
         <DialogHeader>
           <DialogTitle>Invite people to {workspace_name}</DialogTitle>
         </DialogHeader>
+
         {step === 0 && (
           <InviteByEmail
             emails={emails}
@@ -39,7 +53,6 @@ const InviteDialog = ({ open, onOpenChange }) => {
             channels={channels}
             setChannels={setChannels}
             suggestedChannels={suggestedChannels}
-            onCopyLink={handleCopyLink}
             onBack={() => setStep(0)}
             onSend={() => {
               // You can handle send logic here

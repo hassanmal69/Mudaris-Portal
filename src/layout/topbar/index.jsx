@@ -17,20 +17,15 @@ const Topbar = () => {
   const maxAvatars = 5;
   const visibleUsers = mockUsers.slice(0, maxAvatars);
   const extraCount = mockUsers.length - maxAvatars;
-  const [isProfile, setisProfile] = useState(false)
+  const [isProfile, setisProfile] = useState(false);
   return (
     <section
-      className="fixed top-0 left-0 w-full z-50 bg-white shadow-sm px-2 md:px-6 py-2 flex items-center justify-between gap-2"
+      className="fixed w-[85%] top-0 bg-white shadow-sm px-2 md:px-6 py-2 flex items-center justify-between gap-2"
       style={{ minHeight: "56px" }}
     >
-      <div className="flex items-center gap-2 min-w-0">
-        <span className="font-bold text-lg text-[#556cd6] shrink-0">
-          🟢 Mudaris 07
-        </span>
-        <span className="hidden sm:inline-block text-gray-600 font-medium ml-2 truncate max-w-[120px] md:max-w-[200px]">
-          {channelName}
-        </span>
-      </div>
+      <span className="hidden sm:inline-block text-gray-600 font-medium ml-2 truncate max-w-[120px] md:max-w-[200px]">
+        {channelName}
+      </span>
 
       {/* Center: Search Input */}
       <div className="flex-1 flex justify-center px-2">
@@ -62,20 +57,22 @@ const Topbar = () => {
         </div>
         {/* Current user avatar */}
 
-        <div className='flex flex-col relative'>
-          <div
-            onClick={() => setisProfile(prev => !prev)}>
-            <Avatar className="w-9 h-9 border-2 border-primary ml-2"
-            >
+        <div className="flex flex-col relative">
+          <div onClick={() => setisProfile((prev) => !prev)}>
+            <Avatar className="w-9 h-9 border-2 border-primary ml-2">
               <AvatarImage src={currentUser.avatar} alt={currentUser.name} />
               <AvatarFallback>{currentUser.name[0]}</AvatarFallback>
             </Avatar>
           </div>
-          {isProfile && <div className="absolute right-0 top-15 w-70 h-40"> <Profile /> </div>}
+          {isProfile && (
+            <div className="absolute right-0 top-15 w-70 h-40">
+              {" "}
+              <Profile />{" "}
+            </div>
+          )}
         </div>
-
       </div>
-    </section >
+    </section>
   );
 };
 
