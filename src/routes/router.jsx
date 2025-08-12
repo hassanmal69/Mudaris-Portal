@@ -4,7 +4,6 @@ import Login from "@/pages/auth/login/index.jsx";
 import Dashboard from "@/pages/dashboard/index.jsx";
 import PrivateRoute from "./privateRoute.jsx";
 import AdminDashboard from "@/pages/admin/admin.jsx";
-import AdminRoute from "./adminRoute.jsx";
 import WorkSpaceInd from "@/pages/dashboard/components/workspaceInd.jsx";
 import AppLayout from "@/layout/AppLayout.jsx";
 import Topbar from "@/layout/topbar/index.jsx";

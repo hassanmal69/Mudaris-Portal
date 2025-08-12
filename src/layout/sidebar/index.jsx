@@ -25,6 +25,8 @@ const Sidebar = () => {
   const [addChannelOpen, setAddChannelOpen] = useState(false);
   const [inviteOpen, setInviteOpen] = useState(false);
   const [channels, setChannels] = useState([]);
+  const [workspaceName, setWorkspaceName] = useState("");
+
   const { workspace_id } = useParams();
 
   const fetchChannels = async () => {
@@ -49,6 +51,18 @@ const Sidebar = () => {
   };
   useEffect(() => {
     fetchChannels();
+  }, []);
+  useEffect(() => {
+    const fetchWorkspaceName = async () => {
+      const { data } = await supabase
+        .from("workspaces")
+        .select("workspace_name")
+        .eq("id", workspace_id)
+        .single();
+      if (data) setWorkspaceName(data.workspace_name);
+    };
+
+    fetchWorkspaceName();
   }, []);
   useEffect(() => {
     const subscription = supabase
@@ -77,7 +91,9 @@ const Sidebar = () => {
       <InviteDialog open={inviteOpen} onOpenChange={setInviteOpen} />
       <SidebarContent className="h-full px-2 py-4 flex flex-col gap-4">
         <SidebarHeader>
-          <span className="text-lg font-bold tracking-tight">Mudaris</span>
+          <span className="text-lg font-bold tracking-tight">
+            {workspaceName}
+          </span>
         </SidebarHeader>
         <SidebarGroup>
           <SidebarGroupLabel>Channels</SidebarGroupLabel>
