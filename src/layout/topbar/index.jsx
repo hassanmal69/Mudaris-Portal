@@ -91,7 +91,7 @@ const Topbar = () => {
         </div>
         {/* Current user avatar */}
 
-        <div className="flex flex-col relative">
+        {/* <div className="flex flex-col relative">
           <div onClick={() => setisProfile((prev) => !prev)}>
             <Avatar className="w-9 h-9 border-2 border-primary ml-2">
               <AvatarImage src={currentUser.avatar} alt={currentUser.name} />
@@ -102,10 +102,9 @@ const Topbar = () => {
             <VaulDrawer/>
           </div>
           {isProfile && <div className="absolute right-0 top-15 w-70 h-40"> <Profile /> </div>}
-        </div>
-
+        </div> */}
       </div>
-    </section >
+    </section>
   );
 };
 
