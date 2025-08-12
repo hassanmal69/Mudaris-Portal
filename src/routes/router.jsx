@@ -6,27 +6,34 @@ import PrivateRoute from "./privateRoute.jsx";
 import AdminDashboard from "@/pages/admin/admin.jsx";
 import AdminRoute from "./adminRoute.jsx";
 import WorkSpaceInd from "@/pages/dashboard/components/workspaceInd.jsx";
-import AppLayout from "@/layout/AppLayout.jsx";
+import Sidebar from "@/layout/sidebar/index.jsx";
 import Topbar from "@/layout/topbar/index.jsx";
 export const router = createBrowserRouter([
   {
     path: "/",
     element: <Login />,
   },
-
+  // {
+  //     path: '/dashboard',
+  //     element: (
+  //         <AdminRoute>
+  //             <Dashboard />
+  //         </AdminRoute>
+  //     )
+  // },
   {
-    path: "/dashboard/:adminId",
+    path: "/dashboard",
     element: (
       <PrivateRoute>
-        <Dashboard />
-      </PrivateRoute>
+      <Dashboard />
+       </PrivateRoute>
     ),
   },
   {
-    path: "/workspace/:workspace_id",
+    path: "/workspace/:workspaceId",
     element: (
       <PrivateRoute>
-        <WorkspaceLayout />
+      <WorkspaceLayout />
       </PrivateRoute>
     ),
     children: [
@@ -57,13 +64,10 @@ export const router = createBrowserRouter([
 
 function WorkspaceLayout() {
   return (
-    <AppLayout>
-      <div className="flex flex-col w-full">
-        <Topbar />
-        <div className="flex-1 overflow-auto">
-          <Outlet />
-        </div>
-      </div>
-    </AppLayout>
+    <>
+      <Topbar />
+      <Sidebar />
+      <Outlet />
+    </>
   );
 }
