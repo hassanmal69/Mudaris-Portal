@@ -1,5 +1,5 @@
 // authSlice.js
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { asyncThunkCreator, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { supabase } from "@/services/supabaseClient";
 /**
  * Sign up a new user using Supabase Auth.
@@ -77,6 +77,23 @@ export const loginUser = createAsyncThunk(
   }
 );
 
+export const logOut = createAsyncThunk("auth/logOut", async (_, { rejectWithValue }) => {
+  try {
+    const { error } = await supabase.auth.signOut();
+    console.log('logout functions in slice ')
+
+    if (error) throw error;
+
+    localStorage.removeItem("session");
+    localStorage.removeItem("token");
+
+    return true; // success signal
+  } catch (err) {
+    return rejectWithValue(err.message || "Logout failed");
+  }
+});
+
+
 const initialState = {
   session: null,
   token: localStorage.getItem("token") || null,
@@ -92,9 +109,6 @@ export const authSlice = createSlice({
     logout: (state) => {
       state.session = null;
       state.token = null;
-      localStorage.removeItem("session");
-      localStorage.removeItem("token");
-      supabase.auth.signOut();
     },
     setSession: (state, action) => {
       state.session = action.payload.session;
@@ -132,7 +146,22 @@ export const authSlice = createSlice({
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
-      });
+      })
+
+      .addCase(logOut.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(logOut.fulfilled, (state) => {
+        state.loading = false;
+        state.session = null;
+        state.token = null;
+      })
+      .addCase(logOut.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
   },
 });
 

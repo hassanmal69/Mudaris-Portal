@@ -32,6 +32,7 @@ const Dashboard = () => {
       <main className="flex-1 container ] mx-auto p-4 space-y-6 w-full max-w-3xl">
         <h1 className="text-3xl font-semibold text-[#4d3763]">
           Welcome back {session?.user?.user_metadata.fullName}
+          
         </h1>
 
         {/* Card */}
