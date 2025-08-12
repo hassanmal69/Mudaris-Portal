@@ -24,17 +24,17 @@ export const router = createBrowserRouter([
   {
     path: "/dashboard",
     element: (
-      // <PrivateRoute>
+      <PrivateRoute>
       <Dashboard />
-      // </PrivateRoute>
+       </PrivateRoute>
     ),
   },
   {
     path: "/workspace/:workspaceId",
     element: (
-      // <PrivateRoute>
+      <PrivateRoute>
       <WorkspaceLayout />
-      // </PrivateRoute>
+      </PrivateRoute>
     ),
     children: [
       {

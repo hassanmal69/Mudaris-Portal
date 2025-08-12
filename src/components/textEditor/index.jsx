@@ -4,16 +4,8 @@ import "./editor.css";
 import { TextStyleKit } from "@tiptap/extension-text-style";
 import { EditorContent, useEditor, useEditorState } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Placeholder from "@tiptap/extension-placeholder";
-
-const extensions = [
-  TextStyleKit,
-  StarterKit,
-  Placeholder.configure({
-    placeholder: "Type your message here...", // your placeholder text
-  }),
-];
 import {
   BoldIcon,
   ItalicIcon,
@@ -26,26 +18,19 @@ import {
   ChatBubbleLeftEllipsisIcon,
 } from "@heroicons/react/24/outline";
 import AddOn from "./addon";
+import { ClockFading } from "lucide-react";
+import { useSelector } from "react-redux";
 
 function TextEditor({ editor }) {
+  const editProfileOpen = useSelector(state => state.profile.editProfileOpen);
+
+useEffect(() => {
+  if (!editProfileOpen && editor) {
+    editor.commands.focus();
+  }
+}, [editProfileOpen, editor]);
+
   const [showEmoji, setShowEmoji] = useState(false);
-  // Read the current editor's state, and re-render the component when it changes
-  // {
-  //   {
-  //     {
-  //       showEmoji && (
-  //         <div className="mt-2 z-50">
-  //           <EmojiPicker
-  //             onEmojiClick={(emoji) =>
-  //               handleEmojiSelect({ native: emoji.emoji })
-  //             }
-  //             theme="light"
-  //           />
-  //         </div>
-  //       );
-  //     }
-  //   }
-  // }
   const editorState = useEditorState({
     editor,
     selector: (ctx) => {
@@ -76,8 +61,25 @@ function TextEditor({ editor }) {
     setShowEmoji(false);
   };
 
+  const [msgArr, setMsgArr] = useState([]);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const messageHTML = editor.getHTML();
+    setMsgArr(prev => [...prev, messageHTML]);
+    editor.commands.clearContent();
+  };
+
   return (
     <div className="control-group">
+      <div>
+        {msgArr.map((m, i) => (
+          <div
+            key={i}
+            className="chat-message"
+            dangerouslySetInnerHTML={{ __html: m }}
+          />
+        ))}
+      </div>
       <div className="button-group">
         <button
           onClick={() => editor.chain().focus().toggleBold().run()}
@@ -166,30 +168,44 @@ function TextEditor({ editor }) {
       </div>
       {showEmoji && (
         <div className="mt-2">
-          <Picker onSelect={handleEmojiSelect} theme="light" />
+          {/* Replace with your emoji picker import */}
+          {/* <EmojiPicker onEmojiClick={(emoji) => handleEmojiSelect({ native: emoji.emoji })} theme="light" /> */}
         </div>
       )}
+      <button onClick={handleSubmit}>submit</button>
     </div>
   );
 }
 
 export default () => {
+  const editProfileOpen = useSelector(state => state.profile.editProfileOpen);
+
   const editor = useEditor({
-    extensions,
-    content: "<p>Type your message here...</p>",
+    extensions: [
+      StarterKit,
+      Placeholder.configure({
+        placeholder: 'Write something...',
+      }),
+    ],
+    content: '',
     editorProps: {
-      attributes: {
-        class: "text-editor",
+      handleKeyDown(view, event) {
+        if (editProfileOpen) {
+         return true;
+        } // block typing when editProfileOpen is true
+        return false;
       },
-    },
+      attributes: {
+        class: "text-editor prose is-editor-empty",
+      }
+    }
   });
+
   return (
-    <>
-      <div className="editor-container">
-        <TextEditor editor={editor} />
-        <EditorContent editor={editor} />
-        <AddOn />
-      </div>
-    </>
+    <div className="editor-container">
+      <TextEditor editor={editor} />
+      <EditorContent editor={editor} />
+      <AddOn />
+    </div>
   );
 };

@@ -7,7 +7,7 @@ import { useParams } from "react-router-dom";
 const InviteSend = React.lazy(() => import("./invitationsent.jsx"));
 
 import { useSelector } from "react-redux";
-
+import EditProfile from "@/components/ui/editProfile.jsx";
 const Chat = React.lazy(() => import("../../chat/index.jsx"));
 const Members = React.lazy(() => import("./members.jsx"));
 
@@ -15,6 +15,7 @@ const WorkSpaceInd = () => {
   const { workspaceId, groupId } = useParams();
   const navigate = useNavigate();
   const { logOut, session } = useSelector((state) => state.auth);
+  const editProfileOpen = useSelector(state => state.profile.editProfileOpen);
   const [groups, setGroups] = useState([]);
   const [email, setEmail] = useState("");
   const [isScreen, setisScreen] = useState(false);
@@ -38,14 +39,14 @@ const WorkSpaceInd = () => {
   useEffect(() => {
     fetchGroups();
   }, [workspaceId, groupId, session]);
-  const handleLogout = () => {
-    logOut();
-  };
-  const toggleScreen = () => {
-    setisScreen((prev) => !prev);
-  };
   return (
     <div className="flex h-[100vh] w-full relative text-black">
+      <div
+        className={`absolute h-full w-full flex pointer-events-none justify-center z-[9999] items-center ${editProfileOpen ? 'block' : 'hidden'}`}
+      >
+        <EditProfile />
+      </div>
+
       <Suspense fallback={<div>Loading Members...</div>}>
         {isScreen && <Members />}
       </Suspense>

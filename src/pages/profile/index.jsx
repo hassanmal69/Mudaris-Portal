@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/button";
+import VaulDrawer from "@/components/ui/drawer";
 import React, { useState, useEffect } from "react";
 // import { supabase } from "../supabaseClient";
 import { useSelector } from "react-redux";
@@ -96,22 +98,7 @@ const Profile = () => {
   // };
 
   return (
-    <div className="relative w-full max-w-md p-6 rounded-2xl bg-[#a78bfa]/10 backdrop-blur-md shadow-xl border border-white/30 text-gray-900">
-
-      {/* <input type="file" accept="image/*" onChange={handleUpload} />
-      {uploading && <p>Uploading...</p>} */}
-
-      <img
-        src='https://www.shutterstock.com/shutterstock/photos/2284410025/display_1500/stock-vector-portrait-of-cat-with-glasses-vector-art-illustration-t-shirt-design-2284410025.jpg'
-        alt="Profile"
-        className="rounded-full mt-4"
-        width={150}
-        height={150}
-      />
-      <h2>'noame'</h2>
-      <h3>Upload Profile Picture</h3>
-      <button>Sign Out</button>
-    </div>
+    <VaulDrawer />
   );
 };
 

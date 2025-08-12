@@ -11,7 +11,7 @@ const ChannelInfo = ({ state, setState, errors, usedIn }) => {
     <div className={`space-y-4 ${isWhite ? "text-white" : ""}`}>
       <div className="flex flex-col gap-2">
         <Label htmlFor="channel-name" className="text-[#4d3763]">
-          Channel Name<span className="text-red-500">*</span>
+          {isWhite ? `Workspace name` : `Channel Name`} <span className="text-red-500">*</span>
         </Label>
         <Input
           id="channel-name"
