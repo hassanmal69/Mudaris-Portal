@@ -1,23 +1,19 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { supabase } from "@/services/supabaseClient";
 import { loginSchema } from "@/validation/authSchema";
 import { FarsiQuote } from "../components/FarsiQuote";
 import { useNavigate } from "react-router-dom";
-import { sessionDetection } from "@/features/auth/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "@/features/auth/authSlice";
 const Login = () => {
   const dispatch = useDispatch();
-  const { session, loading, error } = useSelector((state) => state.auth);
-  const adminId = session?.user?.id;
+  const redirectedRef = useRef(false);
+  const { loading, error } = useSelector((state) => state.auth);
   const navigate = useNavigate();
   useEffect(() => {
-    let redirected = false; // local flag
-
     const sessionDetect = async () => {
-      if (redirected) return;
-
+      if (redirectedRef.current) return;
       const {
         data: { user },
         error: checkerror,
@@ -42,9 +38,12 @@ const Login = () => {
       if (user?.user_metadata?.user_role === "user") {
         const workspaceId = workspace.workspace_id;
         if (window.location.pathname !== `/workspace/${workspaceId}`) {
-          redirected = true;
+          redirectedRef.current = true;
           navigate(`/workspace/${workspaceId}`);
         }
+      } else if (user?.user_metadata?.user_role === "admin") {
+        redirectedRef.current = true;
+        navigate(`/dashboard/${user.id}`);
       }
     };
 

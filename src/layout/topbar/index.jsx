@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input"; // Adjust import path if needed
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"; // Adjust import path if needed
 import Profile from "@/pages/profile";
+import { useParams } from "react-router-dom";
+import { supabase } from "@/services/supabaseClient.js";
 import VaulDrawer from "@/components/ui/drawer";
 const mockUsers = [
   { id: 1, name: "Alice", avatar: "https://i.pravatar.cc/150?img=1" },
@@ -16,9 +18,35 @@ const channelName = "#general";
 
 const Topbar = () => {
   const maxAvatars = 5;
+  const { workspace_id } = useParams();
+
   const visibleUsers = mockUsers.slice(0, maxAvatars);
   const extraCount = mockUsers.length - maxAvatars;
-  const [isProfile, setisProfile] = useState(false)
+  const [isProfile, setisProfile] = useState(false);
+  const [members, setMembers] = useState([]);
+  useEffect(() => {
+    const getWorkspaceMembers = async () => {
+      const { data, error } = await supabase
+        .from("workspace_members")
+        .select(
+          `
+    role,
+    profiles (
+      full_name,
+      avatar_url
+    )
+  `
+        )
+        .eq("workspace_id", workspace_id);
+      setMembers(data || []);
+      if (error) {
+        console.error("Error fetching workspace members:", error);
+      }
+    };
+
+    getWorkspaceMembers();
+  }, [workspace_id]);
+  console.log("Members:", members);
   return (
     <section
       className="fixed top-0 left-0 w-full z-50 bg-white shadow-sm px-2 md:px-6 py-2 flex items-center justify-between gap-2"
@@ -44,13 +72,13 @@ const Topbar = () => {
 
       <div className="flex items-center gap-2 min-w-0">
         <div className="flex -space-x-2">
-          {visibleUsers.map((user) => (
+          {members.map((user) => (
             <Avatar
               key={user.id}
               className="w-8 h-8 border-2 border-white shadow"
             >
-              <AvatarImage src={user.avatar} alt={user.name} />
-              <AvatarFallback>{user.name[0]}</AvatarFallback>
+              <AvatarImage src={user?.avatar_url} alt={user.full_name} />
+              <AvatarFallback>{user.full_name}</AvatarFallback>
             </Avatar>
           ))}
           {extraCount > 0 && (
@@ -63,6 +91,12 @@ const Topbar = () => {
         </div>
         {/* Current user avatar */}
 
+        <div className="flex flex-col relative">
+          <div onClick={() => setisProfile((prev) => !prev)}>
+            <Avatar className="w-9 h-9 border-2 border-primary ml-2">
+              <AvatarImage src={currentUser.avatar} alt={currentUser.name} />
+              <AvatarFallback>{}</AvatarFallback>
+            </Avatar>
         <div className='flex flex-col relative'>
           <div className="w-100vw h-100vh border-2 border-primary rounded-full ml-2">
             <VaulDrawer/>
