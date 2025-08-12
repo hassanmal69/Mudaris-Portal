@@ -20,7 +20,6 @@ export const getFromSupabase = async (tableName, data, eqTable, reqTable) => {
       .from(tableName)
       .select(data.join(","))
       .eq(eqTable, reqTable);
-
     if (sbError) {
       console.error(
         `Supabase getting error on "${tableName}":`,

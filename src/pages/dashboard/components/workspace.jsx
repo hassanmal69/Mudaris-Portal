@@ -4,29 +4,13 @@ import { useEffect } from "react";
 import { supabase } from "../../../services/supabaseClient.js";
 import { Link } from "react-router-dom";
 
-import { getFromSupabase } from "@/utils/getFromSupabase.js";
+import { getFromSupabase } from "@/utils/crud/getFromSupabase.js";
 import { useSelector } from "react-redux";
 
 const Workspace = () => {
   const { session } = useSelector((state) => state.auth);
-  const [workspace, setworkspace] = useState("");
   const [allworkspace, setAllworkspace] = useState([]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setAllworkspace((prev) => [...prev, workspace]);
-    if (!workspace.trim()) return;
-    setworkspace("");
-    const id = session.user?.id;
-    try {
-      await axios.post("/api/ws", {
-        workspace,
-        id,
-      });
-    } catch (error) {
-      console.error("error coming in workspacees", error);
-    }
-  };
   const fetchWorkspaces = async () => {
     const res = await getFromSupabase(
       "workspaces",

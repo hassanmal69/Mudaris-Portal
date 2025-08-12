@@ -1,17 +1,72 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AddChannelDialog from "@/components/add-channel-dialog";
-import InviteDialog from "@/components/invite-dialog/InviteDialog";
+import InviteDialog from "@/components/invite-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button"; // Adjust import path if needed
+import { Button } from "@/components/ui/button";
 import {
   LockClosedIcon,
   GlobeAltIcon,
   PlusIcon,
-} from "@heroicons/react/24/outline"; // Heroicons for icons
+} from "@heroicons/react/24/outline";
+import {
+  SidebarContent,
+  SidebarHeader,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuItem,
+} from "@/components/ui/sidebar";
+import { useParams } from "react-router-dom";
+import { getFromSupabase } from "@/utils/crud/getFromSupabase.js";
+import { supabase } from "@/services/supabaseClient.js";
 
 const Sidebar = () => {
   const [addChannelOpen, setAddChannelOpen] = useState(false);
   const [inviteOpen, setInviteOpen] = useState(false);
+  const [channels, setChannels] = useState([]);
+  const { workspace_id } = useParams();
+
+  const fetchChannels = async () => {
+    const res = await getFromSupabase(
+      "channels",
+      ["id", "channel_name", "visibility"],
+      "workspace_id",
+      workspace_id
+    );
+    if (res.data) {
+      console.log("Fetched channels:", res.data);
+      setChannels(
+        res.data.map((channel) => ({
+          id: channel.id,
+          name: channel.channel_name,
+          visibility: channel.visibility,
+        }))
+      );
+    } else {
+      console.error("Failed to fetch channels:", res.error);
+    }
+  };
+  useEffect(() => {
+    fetchChannels();
+  }, []);
+  useEffect(() => {
+    const subscription = supabase
+      .channel("channels_changes")
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "channels" },
+        (payload) => {
+          setChannels((prev) => [...prev, payload.new]);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(subscription);
+    };
+  }, []);
+
   return (
     <>
       <AddChannelDialog
@@ -20,31 +75,28 @@ const Sidebar = () => {
         usedIn={"createChannel"}
       />
       <InviteDialog open={inviteOpen} onOpenChange={setInviteOpen} />
-      <aside
-        className="fixed left-0 top-0 py-30 h-screen w-64 bg-white shadow-md flex flex-col z-40 px-3  gap-4 border-r border-gray-100 overflow-y-auto transition-all duration-300 md:w-64 sm:w-56 sm:-translate-x-0"
-        style={{ minWidth: "220px" }}
-      >
-        <section>
-          <h2 className="text-xs font-semibold text-gray-500 uppercase mb-2">
-            Channels
-          </h2>
-          <ul className="space-y-1">
+      <SidebarContent className="h-full px-2 py-4 flex flex-col gap-4">
+        <SidebarHeader>
+          <span className="text-lg font-bold tracking-tight">Mudaris</span>
+        </SidebarHeader>
+        <SidebarGroup>
+          <SidebarGroupLabel>Channels</SidebarGroupLabel>
+          <SidebarMenu>
             {channels.map((channel) => (
-              <li
-                key={channel.id}
-                className="flex items-center gap-2 px-2 py-1 rounded hover:bg-gray-100 cursor-pointer"
-              >
-                {channel.type === "private" ? (
-                  <LockClosedIcon className="w-4 h-4 text-gray-400" />
-                ) : (
-                  <GlobeAltIcon className="w-4 h-4 text-gray-400" />
-                )}
-                <span className="font-medium text-sm text-gray-800">
-                  {channel.name}
-                </span>
-              </li>
+              <SidebarMenuItem key={channel.id}>
+                <div className="flex items-center gap-2 px-2 py-1 rounded hover:bg-gray-100 cursor-pointer">
+                  {channel.visibility === "private" ? (
+                    <LockClosedIcon className="w-4 h-4 text-gray-400" />
+                  ) : (
+                    <GlobeAltIcon className="w-4 h-4 text-gray-400" />
+                  )}
+                  <span className="font-medium text-sm text-gray-800">
+                    {channel.name}
+                  </span>
+                </div>
+              </SidebarMenuItem>
             ))}
-          </ul>
+          </SidebarMenu>
           <Button
             variant="outline"
             size="sm"
@@ -54,38 +106,32 @@ const Sidebar = () => {
             <PlusIcon className="w-4 h-4" />
             Add Channel
           </Button>
-        </section>
-
-        {/* Direct Messages Section */}
-        <section>
-          <h2 className="text-xs font-semibold text-gray-500 uppercase mb-2 mt-4">
-            Direct Messages
-          </h2>
-          <ul className="space-y-1">
+        </SidebarGroup>
+        <SidebarGroup className="mt-4">
+          <SidebarGroupLabel>Direct Messages</SidebarGroupLabel>
+          <SidebarMenu>
             {users.map((user) => (
-              <li
-                key={user.id}
-                className="flex items-center gap-2 px-2 py-1 rounded hover:bg-gray-100 cursor-pointer"
-              >
-                <Avatar className="w-7 h-7">
-                  <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback>{user.name[0]}</AvatarFallback>
-                </Avatar>
-                <span className="font-medium text-sm text-gray-800">
-                  {user.name}
-                </span>
-                <span
-                  className={`ml-auto w-2 h-2 rounded-full ${
-                    user.status === "online" ? "bg-green-500" : "bg-gray-400"
-                  }`}
-                  title={user.status}
-                ></span>
-              </li>
+              <SidebarMenuItem key={user.id}>
+                <div className="flex items-center gap-2 px-2 py-1 rounded hover:bg-gray-100 cursor-pointer">
+                  <Avatar className="w-7 h-7">
+                    <AvatarImage src={user.avatar} alt={user.name} />
+                    <AvatarFallback>{user.name[0]}</AvatarFallback>
+                  </Avatar>
+                  <span className="font-medium text-sm text-gray-800">
+                    {user.name}
+                  </span>
+                  <span
+                    className={`ml-auto w-2 h-2 rounded-full ${
+                      user.status === "online" ? "bg-green-500" : "bg-gray-400"
+                    }`}
+                    title={user.status}
+                  ></span>
+                </div>
+              </SidebarMenuItem>
             ))}
-          </ul>
-        </section>
-
-        <div className="pb-2">
+          </SidebarMenu>
+        </SidebarGroup>
+        <SidebarFooter className="mt-auto pb-2">
           <Button
             variant="default"
             size="sm"
@@ -94,20 +140,13 @@ const Sidebar = () => {
           >
             Invite Users
           </Button>
-        </div>
-      </aside>
+        </SidebarFooter>
+      </SidebarContent>
     </>
   );
 };
 
 export default Sidebar;
-// Mock data
-const channels = [
-  { id: 1, name: "general", type: "public" },
-  { id: 2, name: "design", type: "public" },
-  { id: 3, name: "private-team", type: "private" },
-  { id: 4, name: "marketing", type: "public" },
-];
 
 const users = [
   {

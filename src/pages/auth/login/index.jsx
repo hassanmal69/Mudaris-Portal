@@ -10,50 +10,46 @@ import { loginUser } from "@/features/auth/authSlice";
 const Login = () => {
   const dispatch = useDispatch();
   const { session, loading, error } = useSelector((state) => state.auth);
+  const adminId = session?.user?.id;
   const navigate = useNavigate();
   useEffect(() => {
+    let redirected = false; // local flag
+
     const sessionDetect = async () => {
-      dispatch(sessionDetection())
+      if (redirected) return;
+
       const {
         data: { user },
         error: checkerror,
       } = await supabase.auth.getUser();
-      if (checkerror) console.log("error is coming in login",checkerror);
-      console.log(user)
-      if (user) {
-        navigate('/dashboard')
+
+      if (checkerror) {
+        console.log("error is coming in login", checkerror);
+        return;
       }
-      //if role == admin we want them to go to the dashboard page
-      //otherwise check else condition
-      if (user.role === "admin") {
-        navigate("/dashboard");
+
+      const { data: workspace, error: workspaceError } = await supabase
+        .from("workspace_members")
+        .select("workspace_id")
+        .eq("user_id", user.id)
+        .single();
+
+      if (workspaceError) {
+        console.error("Error fetching workspace members:", workspaceError);
+        return;
       }
-      // } else {
-      //   const { data: wsData, error: wsError } = await supabase
-      //     .from("invitations")
-      //     .select("workspaceId,groupId")
-      //     .eq("email", ls.user?.email);
 
-      //   if (wsError) {
-      //     console.log("Error fetching invitation:", wsError);
-      //     return;
-      //   }
+      if (user?.user_metadata?.user_role === "user") {
+        const workspaceId = workspace.workspace_id;
+        if (window.location.pathname !== `/workspace/${workspaceId}`) {
+          redirected = true;
+          navigate(`/workspace/${workspaceId}`);
+        }
+      }
+    };
 
-      //   if (wsData && wsData.length > 0) {
-      //     const WsId = wsData[0].workspaceId;
-      //     const gId = wsData[0].groupId;
-      //     setgrId(gId);
-      //     setworksId(WsId);
-      //     navigate(`/workspace/${WsId}/group/${gId}`);
-      //   } else {
-      //     console.log("No invitation found for this email");
-      //   }
-      // }
-
-    }
     sessionDetect();
-
-  }, []);
+  }, [navigate]);
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-gradient-to-br from-[#020103] to-[#4d3763]">
@@ -105,10 +101,11 @@ const Login = () => {
                   name="email"
                   type="email"
                   autoComplete="email"
-                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple transition bg-white/20 text-white placeholder-white/60 backdrop-blur-sm ${touched.email && errors.email
-                    ? "border-red-400"
-                    : "border-white/30"
-                    }`}
+                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple transition bg-white/20 text-white placeholder-white/60 backdrop-blur-sm ${
+                    touched.email && errors.email
+                      ? "border-red-400"
+                      : "border-white/30"
+                  }`}
                   placeholder="Enter your email"
                 />
                 <ErrorMessage
@@ -130,10 +127,11 @@ const Login = () => {
                   name="password"
                   type="password"
                   autoComplete="current-password"
-                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple transition bg-white/20 text-white placeholder-white/60 backdrop-blur-sm ${touched.password && errors.password
-                    ? "border-red-400"
-                    : "border-white/30"
-                    }`}
+                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple transition bg-white/20 text-white placeholder-white/60 backdrop-blur-sm ${
+                    touched.password && errors.password
+                      ? "border-red-400"
+                      : "border-white/30"
+                  }`}
                   placeholder="Enter your password"
                 />
                 <ErrorMessage

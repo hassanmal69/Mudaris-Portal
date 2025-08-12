@@ -15,8 +15,10 @@ import {
   inviteUsersSchema,
   workspaceInfoSchema,
 } from "@/validation/authSchema.js";
-
-const steps = ["Channel Info", "Channel Type", "Invite Users"];
+import { useParams } from "react-router-dom";
+import { supabase } from "@/services/supabaseClient.js";
+import { useSelector } from "react-redux";
+const steps = ["Channel Info", "Channel visibility", "Invite Users"];
 
 const StepIndicator = ({ step }) => (
   <div className="flex items-center gap-2 mb-2">
@@ -34,6 +36,12 @@ const StepIndicator = ({ step }) => (
 );
 
 const AddChannelDialog = ({ open, onOpenChange, usedIn }) => {
+  const { workspaceId } = useParams();
+
+  const userEmail = useSelector((state) => state.auth.session?.user?.email);
+  if (userEmail === "me@gmail.com") {
+    var adminId = useSelector((state) => state.auth.session?.user?.id);
+  }
   const [step, setStep] = useState(0);
   const [errors, setErrors] = useState({});
   const dialogRef = useRef();
@@ -41,7 +49,7 @@ const AddChannelDialog = ({ open, onOpenChange, usedIn }) => {
   const [state, setState] = useState({
     name: "",
     description: "",
-    type: "public",
+    visibility: "public",
     users: [],
   });
 
@@ -55,8 +63,9 @@ const AddChannelDialog = ({ open, onOpenChange, usedIn }) => {
   const getValidationSchema = () => {
     if (usedIn === "createChannel") {
       if (step === 0) return channelInfoSchema;
-      if (step === 2 && state.type === "private") return inviteUsersSchema;
-    } else {
+      if (step === 2 && state.visibility === "private")
+        return inviteUsersSchema;
+    } else if (usedIn === "createWorkspace") {
       if (step === 0) return workspaceInfoSchema;
       if (step === 1) return;
       if (step === 2) return inviteUsersSchema;
@@ -97,16 +106,51 @@ const AddChannelDialog = ({ open, onOpenChange, usedIn }) => {
   const resetStates = () => {
     setStep(0);
     setErrors({});
-    setState({ name: "", description: "", type: "public", users: [] });
+    setState({ name: "", description: "", visibility: "public", users: [] });
     setWorkspaceData({ name: "", description: "", avatarUrl: "", users: [] });
   };
 
   const handleSubmit = async () => {
     if (await validateStep()) {
-      const formData = usedIn === "createChannel" ? state : workspaceData;
-      console.log(formData);
-      if (usedIn === "createChannel") onOpenChange(false);
-      setTimeout(resetStates, 300);
+      const formData = usedIn === "createChannel" ? state : null;
+      if (usedIn === "createChannel") {
+        let { name, description, visibility, users } = formData;
+        console.log(formData);
+
+        const { data, error } = await supabase
+          .from("channels")
+          .insert({
+            channel_name: name,
+            description,
+            visibility,
+            channel_members: users.map((user) => user.id),
+            workspace_Id: workspaceId,
+          })
+          .select();
+
+        if (usedIn === "createChannel") onOpenChange(false);
+        if (error) {
+          console.error(error);
+        }
+        setTimeout(resetStates, 300);
+      } else if (usedIn === "createWorkspace") {
+        console.log("clicked");
+        const formData = usedIn === "createWorkspace" ? workspaceData : null;
+        let { name, description, avatarUrl, users } = formData;
+        const { data, error } = await supabase
+          .from("workspaces")
+          .insert({
+            workspace_name: name,
+            description,
+            avatar_url: avatarUrl,
+            owner_id: adminId,
+          })
+          .select();
+        if (error) {
+          console.error(error);
+        }
+        setTimeout(resetStates, 300);
+      }
     }
   };
 
@@ -123,7 +167,7 @@ const AddChannelDialog = ({ open, onOpenChange, usedIn }) => {
           <ChannelInfo state={state} setState={setState} errors={errors} />
         );
       if (step === 1) return <ChannelType state={state} setState={setState} />;
-      if (step === 2 && state.type === "private")
+      if (step === 2 && state.visibility === "private")
         return (
           <InviteUsers
             state={state}
@@ -134,7 +178,7 @@ const AddChannelDialog = ({ open, onOpenChange, usedIn }) => {
             onCopyLink={handleCopyLink}
           />
         );
-    } else {
+    } else if (usedIn === "createWorkspace") {
       if (step === 0)
         return (
           <ChannelInfo
@@ -188,7 +232,7 @@ const AddChannelDialog = ({ open, onOpenChange, usedIn }) => {
           </Button>
         )}
       </div>
-      {step === 2 && (
+      {step === 2 && usedIn === "createWorkspace" && (
         <Button
           onClick={handleSubmit}
           className="bg-[#008000] transition delay-150 duration-300 ease-in-out hover:bg-transparent hover:text-[#008000] border border-[#008000] text-[#fff]"
@@ -196,14 +240,16 @@ const AddChannelDialog = ({ open, onOpenChange, usedIn }) => {
           Finish
         </Button>
       )}
-      {step === 1 && usedIn === "createChannel" && state.type === "public" && (
-        <Button
-          className="bg-[#008000] transition delay-150 duration-300 ease-in-out hover:bg-transparent hover:text-[#008000] border border-[#008000] text-[#fff]"
-          onClick={handleSubmit}
-        >
-          Finish
-        </Button>
-      )}
+      {step === 1 &&
+        usedIn === "createChannel" &&
+        state.visibility === "public" && (
+          <Button
+            className="bg-[#008000] transition delay-150 duration-300 ease-in-out hover:bg-transparent hover:text-[#008000] border border-[#008000] text-[#fff]"
+            onClick={handleSubmit}
+          >
+            Finish
+          </Button>
+        )}
     </div>
   );
 

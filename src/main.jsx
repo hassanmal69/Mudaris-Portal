@@ -12,3 +12,7 @@ createRoot(document.getElementById("root")).render(
     </Provider>
   </StrictMode>
 );
+
+const log = (valName, val) => {
+  console.log(`i am ${valName}`, val);
+};

@@ -2,11 +2,10 @@ import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-const InviteStepChannels = ({
+const Channelinvitation = ({
   channels,
   setChannels,
   suggestedChannels,
-  onCopyLink,
   onBack,
   onSend,
 }) => {
@@ -64,9 +63,6 @@ const InviteStepChannels = ({
         />
       </div>
       <div className="flex gap-2 justify-between">
-        <Button type="button" variant="secondary" onClick={onCopyLink}>
-          Copy link
-        </Button>
         <Button type="button" variant="outline" onClick={onBack}>
           Back
         </Button>
@@ -78,4 +74,4 @@ const InviteStepChannels = ({
   );
 };
 
-export default InviteStepChannels;
+export default Channelinvitation;

@@ -15,19 +15,19 @@ export const sessionDetection = createAsyncThunk(
   "auth/sessionDetect",
   async (_, { dispatch, rejectWithValue }) => {
     try {
-      const { data, error } = await supabase.auth.getSession()
+      const { data, error } = await supabase.auth.getSession();
       const session = data.session;
       if (error) {
-        rejectWithValue(error)
-        return
+        rejectWithValue(error);
+        return;
       }
       dispatch(setSession({ session }));
-      return session
+      return session;
     } catch (error) {
-      rejectWithValue(error)
+      rejectWithValue(error);
     }
   }
-)
+);
 // --- Signup Thunk ---
 export const signupUser = createAsyncThunk(
   "auth/signupUser",
@@ -40,16 +40,16 @@ export const signupUser = createAsyncThunk(
           emailRedirectTo: null,
           data: {
             fullName,
-            role: "user",
+            user_role: "user",
             avatar: null,
           },
         },
       });
       if (error) {
-        console.log("error coming in signup of a user", error)
+        console.log("error coming in signup of a user", error);
       }
 
-      return { token, user: data.user };
+      return { token, user: data.user, session: data.session || null };
     } catch (err) {
       return rejectWithValue(err.message || "Signup failed");
     }
@@ -98,6 +98,7 @@ const initialState = {
   session: null,
   token: localStorage.getItem("token") || null,
   loading: false,
+  user: null,
   error: null,
 };
 
@@ -124,6 +125,7 @@ export const authSlice = createSlice({
       .addCase(signupUser.fulfilled, (state, action) => {
         state.loading = false;
         state.session = action.payload.session;
+        state.user = action.payload.user;
         state.token = action.payload.token;
       })
       .addCase(signupUser.rejected, (state, action) => {

@@ -6,7 +6,7 @@ function isValidEmail(email) {
   return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email);
 }
 
-const InviteStepEmails = ({ emails, setEmails, onCopyLink, onNext }) => {
+const InviteByEmail = ({ emails, setEmails, onCopyLink, onNext }) => {
   const [input, setInput] = useState("");
   const [error, setError] = useState("");
 
@@ -32,7 +32,9 @@ const InviteStepEmails = ({ emails, setEmails, onCopyLink, onNext }) => {
   return (
     <div className="space-y-6">
       <div>
-        <label className="block text-sm font-medium mb-1">To:</label>
+        <label className="block text-sm font-medium mb-1">
+          write email to copy link
+        </label>
         <div className="flex flex-wrap gap-2 mb-2">
           {emails.map((email, idx) => (
             <span
@@ -81,4 +83,4 @@ const InviteStepEmails = ({ emails, setEmails, onCopyLink, onNext }) => {
   );
 };
 
-export default InviteStepEmails;
+export default InviteByEmail;
