@@ -1,5 +1,5 @@
 // authSlice.js
-import { asyncThunkCreator, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { supabase } from "@/services/supabaseClient";
 /**
  * Sign up a new user using Supabase Auth.
@@ -15,13 +15,16 @@ export const sessionDetection = createAsyncThunk(
   "auth/sessionDetect",
   async (_, { dispatch, rejectWithValue }) => {
     try {
-      const { data, error } = await supabase.auth.getSession();
-      const session = data.session;
+      console.log("session is auth")
+      const { data: { session }, error } = await supabase.auth.getSession();
       if (error) {
         rejectWithValue(error);
         return;
       }
-      dispatch(setSession({ session }));
+      dispatch(setSession({
+        session,
+        token: session?.access_token || null
+      }));
       return session;
     } catch (error) {
       rejectWithValue(error);
@@ -111,6 +114,7 @@ export const authSlice = createSlice({
       state.token = null;
     },
     setSession: (state, action) => {
+      console.log("action is",action)
       state.session = action.payload.session;
       state.token = action.payload.token || null;
     },

@@ -1,15 +1,24 @@
 import { supabase } from '@/services/supabaseClient';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux';
 
 const EditProfile = () => {
   const { session } = useSelector((state) => state.auth);
   const [file, setFile] = useState(null)
-  const [name, setName] = useState(session.user?.user_metadata.fullname)
+  console.log("session is", session)
+  useEffect(() => {
+    const check = async () => {
+      const { data: { session }, error } = await supabase.auth.getSession();
+      console.log("trying to get session in useffect ", session)
+    }
+    check();
+  }, [])
+  const [name, setName] = useState(session.user?.user_metadata?.fullName)
   const [displayName, setDisplayName] = useState(session.user?.user_metadata.displayName)
+
   const handleSave = async () => {
     const { data, error } = await supabase.auth.updateUser({
-      data: { fullname: name, displayname: displayName }
+      data: { fullName: name, displayName: displayName }
     })
     if (error) {
       console.error("error is comig in updating the user INFO")
@@ -67,7 +76,7 @@ const EditProfile = () => {
         onChange={(e) => setDisplayName(e.target.value)}
         className='text-black border-4 border-black pointer-events-auto relative z-[99999]' />
       <img
-        src={session.user.user_metadata.avatar_url}
+        src={session?.user.user_metadata?.avatar_url}
         alt="profilePicture" />
       <button onClick={handleEditPic}>
         change pic

@@ -1,12 +1,10 @@
 import { Drawer } from 'vaul';
 import { useDispatch, useSelector } from "react-redux";
-import { logOut } from "../../features/auth/authSlice.js";
+import { logOut } from "../../../features/auth/authSlice.js";
 import { useEffect, useState } from 'react';
-import EditProfile from './editProfile.jsx';
 import { updateValue } from '@/features/ui/profileSlice.js';
 export default function VaulDrawer() {
   const { session } = useSelector((state) => state.auth);
-  const [addChannelOpen, setAddChannelOpen] = useState(false);
   const dispatch = useDispatch();
   const handleLogout = () => {
     dispatch(logOut());
@@ -19,7 +17,7 @@ export default function VaulDrawer() {
   }, []);
 
   return (
-      <Drawer.Root direction="right" modal={false}>
+      <Drawer.Root direction="right" modal={true}>
         <Drawer.Trigger className="relative flex h-10 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded-full bg-white px-4 text-sm font-medium shadow-sm transition-all hover:bg-[#FAFAFA] dark:bg-[#161615] dark:hover:bg-[#1A1A19] dark:text-white">
           <img
             src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQiJQHCxo4M5IWzyJgHlB-NBbJuRStycN-PRg&s"
