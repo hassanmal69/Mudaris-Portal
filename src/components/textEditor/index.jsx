@@ -22,14 +22,6 @@ import { ClockFading } from "lucide-react";
 import { useSelector } from "react-redux";
 
 function TextEditor({ editor }) {
-  const editProfileOpen = useSelector(state => state.profile.editProfileOpen);
-
-useEffect(() => {
-  if (!editProfileOpen && editor) {
-    editor.commands.focus();
-  }
-}, [editProfileOpen, editor]);
-
   const [showEmoji, setShowEmoji] = useState(false);
   const editorState = useEditorState({
     editor,
@@ -188,17 +180,6 @@ export default () => {
       }),
     ],
     content: '',
-    editorProps: {
-      handleKeyDown(view, event) {
-        if (editProfileOpen) {
-         return true;
-        } // block typing when editProfileOpen is true
-        return false;
-      },
-      attributes: {
-        class: "text-editor prose is-editor-empty",
-      }
-    }
   });
 
   return (

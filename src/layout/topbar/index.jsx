@@ -4,7 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"; //
 import Profile from "@/pages/profile";
 import { useParams } from "react-router-dom";
 import { supabase } from "@/services/supabaseClient.js";
-import VaulDrawer from "@/components/ui/drawer";
+import VaulDrawer from "@/pages/profile/components/drawer";
 const mockUsers = [
   { id: 1, name: "Alice", avatar: "https://i.pravatar.cc/150?img=1" },
   { id: 2, name: "Bob", avatar: "https://i.pravatar.cc/150?img=2" },
@@ -13,7 +13,6 @@ const mockUsers = [
   { id: 5, name: "Eve", avatar: "https://i.pravatar.cc/150?img=5" },
   { id: 6, name: "Frank", avatar: "https://i.pravatar.cc/150?img=6" },
 ];
-const currentUser = { name: "You", avatar: "https://i.pravatar.cc/150?img=7" };
 const channelName = "#general";
 
 const Topbar = () => {
@@ -21,7 +20,6 @@ const Topbar = () => {
   const { workspace_id } = useParams();
   const [workspaceName, setWorkspaceName] = useState("");
   const extraCount = mockUsers.length - maxAvatars;
-  const [isProfile, setisProfile] = useState(false);
   const [members, setMembers] = useState([]);
   useEffect(() => {
     const getWorkspaceData = async () => {
@@ -93,6 +91,7 @@ const Topbar = () => {
               </AvatarFallback>
             </Avatar>
           )}
+          <Profile/>
         </div>
       </div>
     </section>

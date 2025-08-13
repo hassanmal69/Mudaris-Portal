@@ -1,20 +1,18 @@
 import React, { useEffect, useState, Suspense } from "react";
 const Groups = React.lazy(() => import("./group.jsx"));
 
-import { useNavigate } from "react-router-dom";
 import { supabase } from "@/services/supabaseClient.js";
 import { useParams } from "react-router-dom";
 const InviteSend = React.lazy(() => import("./invitationsent.jsx"));
 
 import { useSelector } from "react-redux";
-import EditProfile from "@/components/ui/editProfile.jsx";
+import EditProfile from "@/pages/profile/components/editProfile.jsx";
 const Chat = React.lazy(() => import("../../chat/index.jsx"));
 const Members = React.lazy(() => import("./members.jsx"));
 
 const WorkSpaceInd = () => {
   const { workspaceId, groupId } = useParams();
-  const navigate = useNavigate();
-  const { logOut, session } = useSelector((state) => state.auth);
+  const {  session } = useSelector((state) => state.auth);
   const editProfileOpen = useSelector((state) => state.profile.editProfileOpen);
   const [groups, setGroups] = useState([]);
   const [email, setEmail] = useState("");
@@ -60,9 +58,9 @@ const WorkSpaceInd = () => {
         <button onClick={handleLogout}>LOG OUT</button>
       </div> */}
       {/* ✅ Lazy-load Chat */}
-      {/* <Suspense fallback={<div>Loading Chat...</div>}>
+      <Suspense fallback={<div>Loading Chat...</div>}>
         <Chat />
-      </Suspense> */}
+      </Suspense>
     </div>
   );
 };
