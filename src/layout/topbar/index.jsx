@@ -19,13 +19,12 @@ const channelName = "#general";
 const Topbar = () => {
   const maxAvatars = 5;
   const { workspace_id } = useParams();
-
-  const visibleUsers = mockUsers.slice(0, maxAvatars);
+  const [workspaceName, setWorkspaceName] = useState("");
   const extraCount = mockUsers.length - maxAvatars;
   const [isProfile, setisProfile] = useState(false);
   const [members, setMembers] = useState([]);
   useEffect(() => {
-    const getWorkspaceMembers = async () => {
+    const getWorkspaceData = async () => {
       const { data, error } = await supabase
         .from("workspace_members")
         .select(
@@ -42,9 +41,16 @@ const Topbar = () => {
       if (error) {
         console.error("Error fetching workspace members:", error);
       }
+
+      let { data: workspaces, error: workspaceName_error } = await supabase
+        .from("workspaces")
+        .select("workspace_name")
+        .eq("id", workspace_id)
+        .single();
+      setWorkspaceName(workspaces.workspace_name || "Workspace");
     };
 
-    getWorkspaceMembers();
+    getWorkspaceData();
   }, [workspace_id]);
   console.log("Members:", members);
   return (
@@ -54,14 +60,13 @@ const Topbar = () => {
     >
       <div className="flex items-center gap-2 min-w-0">
         <span className="font-bold text-lg text-[#556cd6] shrink-0">
-          🟢 Mudaris 07
+          {workspaceName}
         </span>
         <span className="hidden sm:inline-block text-gray-600 font-medium ml-2 truncate max-w-[120px] md:max-w-[200px]">
           {channelName}
         </span>
       </div>
 
-      {/* Center: Search Input */}
       <div className="flex-1 flex justify-center px-2">
         <Input
           type="text"
@@ -89,20 +94,6 @@ const Topbar = () => {
             </Avatar>
           )}
         </div>
-        {/* Current user avatar */}
-
-        {/* <div className="flex flex-col relative">
-          <div onClick={() => setisProfile((prev) => !prev)}>
-            <Avatar className="w-9 h-9 border-2 border-primary ml-2">
-              <AvatarImage src={currentUser.avatar} alt={currentUser.name} />
-              <AvatarFallback>{}</AvatarFallback>
-            </Avatar>
-        <div className='flex flex-col relative'>
-          <div className="w-100vw h-100vh border-2 border-primary rounded-full ml-2">
-            <VaulDrawer/>
-          </div>
-          {isProfile && <div className="absolute right-0 top-15 w-70 h-40"> <Profile /> </div>}
-        </div> */}
       </div>
     </section>
   );

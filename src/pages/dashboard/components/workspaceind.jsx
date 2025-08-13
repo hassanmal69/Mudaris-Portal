@@ -45,9 +45,6 @@ const WorkSpaceInd = () => {
         <EditProfile />
       </div>
 
-      <Suspense fallback={<div>Loading Members...</div>}>
-        {isScreen && <Members />}
-      </Suspense>
       {/* <div className="w-full h-15 bg-gray-500 absolute flex justify-center">
         <h1>uaa topbar</h1>
         <button onClick={toggleScreen}>view all members</button>
@@ -63,9 +60,9 @@ const WorkSpaceInd = () => {
         <button onClick={handleLogout}>LOG OUT</button>
       </div> */}
       {/* ✅ Lazy-load Chat */}
-      <Suspense fallback={<div>Loading Chat...</div>}>
+      {/* <Suspense fallback={<div>Loading Chat...</div>}>
         <Chat />
-      </Suspense>
+      </Suspense> */}
     </div>
   );
 };
