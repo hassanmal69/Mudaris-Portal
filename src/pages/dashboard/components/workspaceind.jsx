@@ -15,7 +15,7 @@ const WorkSpaceInd = () => {
   const { workspaceId, groupId } = useParams();
   const navigate = useNavigate();
   const { logOut, session } = useSelector((state) => state.auth);
-  const editProfileOpen = useSelector(state => state.profile.editProfileOpen);
+  const editProfileOpen = useSelector((state) => state.profile.editProfileOpen);
   const [groups, setGroups] = useState([]);
   const [email, setEmail] = useState("");
   const [isScreen, setisScreen] = useState(false);
@@ -31,10 +31,6 @@ const WorkSpaceInd = () => {
       setGroups(data);
     }
     setEmail(session.user.email);
-    if (!groupId)
-      navigate(`/workspace/${workspaceId}/group/${data[0].id}`, {
-        replace: true,
-      });
   };
   useEffect(() => {
     fetchGroups();
@@ -42,14 +38,13 @@ const WorkSpaceInd = () => {
   return (
     <div className="flex h-[100vh] w-full relative text-black">
       <div
-        className={`absolute h-full w-full flex pointer-events-none justify-center z-[9999] items-center ${editProfileOpen ? 'block' : 'hidden'}`}
+        className={`absolute h-full w-full flex pointer-events-none justify-center z-[9999] items-center ${
+          editProfileOpen ? "block" : "hidden"
+        }`}
       >
         <EditProfile />
       </div>
 
-      <Suspense fallback={<div>Loading Members...</div>}>
-        {isScreen && <Members />}
-      </Suspense>
       {/* <div className="w-full h-15 bg-gray-500 absolute flex justify-center">
         <h1>uaa topbar</h1>
         <button onClick={toggleScreen}>view all members</button>
@@ -65,9 +60,9 @@ const WorkSpaceInd = () => {
         <button onClick={handleLogout}>LOG OUT</button>
       </div> */}
       {/* ✅ Lazy-load Chat */}
-      <Suspense fallback={<div>Loading Chat...</div>}>
+      {/* <Suspense fallback={<div>Loading Chat...</div>}>
         <Chat />
-      </Suspense>
+      </Suspense> */}
     </div>
   );
 };
