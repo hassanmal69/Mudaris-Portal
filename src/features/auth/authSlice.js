@@ -10,6 +10,26 @@ import { supabase } from "@/services/supabaseClient";
  * @param {string} userData.role
  * @param {string} userData.avatarUrl
  */
+//auth listener 
+export const initAuthListener = () => (dispatch) => {
+  const {
+    data: { subscription },
+  } = supabase.auth.onAuthStateChange((event, session) => {
+
+    if (session) {
+      dispatch(
+        setSession({
+          session,
+          token: session.access_token,
+        })
+      );
+    } else {
+      dispatch(setSession({ session: null, token: null }));
+    }
+  });
+
+  return subscription; // so you can unsubscribe if needed
+};
 // --- session detection Thunk ---
 export const sessionDetection = createAsyncThunk(
   "auth/sessionDetect",
@@ -114,7 +134,7 @@ export const authSlice = createSlice({
       state.token = null;
     },
     setSession: (state, action) => {
-      console.log("action is",action)
+      console.log("action is", action)
       state.session = action.payload.session;
       state.token = action.payload.token || null;
     },

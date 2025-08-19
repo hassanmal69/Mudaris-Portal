@@ -1,91 +1,173 @@
-import { supabase } from '@/services/supabaseClient';
-import React, { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux';
+import { supabase } from '@/services/supabaseClient'
+import React, { useEffect, useId, useState } from 'react'
+import { useSelector } from 'react-redux'
+import { CheckIcon, ImagePlusIcon } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 
 const EditProfile = () => {
-  const { session } = useSelector((state) => state.auth);
+  const { session } = useSelector((state) => state.auth)
   const [file, setFile] = useState(null)
-  console.log("session is", session)
-  useEffect(() => {
-    const check = async () => {
-      const { data: { session }, error } = await supabase.auth.getSession();
-      console.log("trying to get session in useffect ", session)
-    }
-    check();
-  }, [])
   const [name, setName] = useState(session.user?.user_metadata?.fullName)
   const [displayName, setDisplayName] = useState(session.user?.user_metadata.displayName)
+  const [publicUrl, setPublicUrl] = useState(undefined)
+  const [sessionAvatarUrl, setSessionAvatarUrl] = useState(session.user.user_metadata.avatar_url)
+  const id = useId()
+
+  useEffect(() => {
+    setSessionAvatarUrl(session.user.user_metadata.avatar_url)
+  }, [session])
 
   const handleSave = async () => {
-    const { data, error } = await supabase.auth.updateUser({
+    // Update names
+    const { error } = await supabase.auth.updateUser({
       data: { fullName: name, displayName: displayName }
     })
     if (error) {
-      console.error("error is comig in updating the user INFO")
+      console.error("Error updating user info", error)
+      return
     }
-    alert("UPDATED")
-    console.log(data)
+
+    // If picture selected → upload
+    if (file) {
+      await handleEditPic()
+    }
+
+    alert("Profile updated successfully!")
   }
+
   const handleEditPic = async () => {
-    if (!file) {
-      alert("Please choose a file first");
-      return;
-    }
-
-    const userId = session.user.id;
-    const fileExt = file.name.split('.').pop();
-    const filePath = `pictures/avatar/${userId}.${fileExt}`;
-
-    // Upload to bucket
+    const userId = session.user.id
+    const fileExt = file.name.split(".").pop()
+    const newFilePath = `pictures/avatar/${userId}-${Date.now()}.${fileExt}`
     const { error: uploadError } = await supabase.storage
-      .from('media')
-      .upload(filePath, file, { upsert: true });
+      .from("media")
+      .upload(newFilePath, file, { upsert: true })
 
     if (uploadError) {
-      console.error("Error uploading file:", uploadError);
-      return;
+      console.error("Error uploading file:", uploadError)
     }
 
     // Get public URL
-    const { data: publicUrlData } = supabase.storage
-      .from('media')
-      .getPublicUrl(filePath);
+    const { data: { publicUrl } } = supabase.storage
+      .from("media")
+      .getPublicUrl(newFilePath)
 
-    const publicUrl = publicUrlData.publicUrl;
-
-    // Update user's profile picture URL in metadata
+    // Update user metadata
     const { error: updateError } = await supabase.auth.updateUser({
-      data: { avatar_url: publicUrl }
-    });
+      data: { avatar_url: publicUrl },
+    })
 
     if (updateError) {
-      console.error("Error updating avatar URL:", updateError);
-    } else {
-      alert("Profile picture updated!");
+      console.error("Error updating avatar URL:", updateError)
+      return
     }
-  };
+
+    setPublicUrl(publicUrl)
+    setSessionAvatarUrl(publicUrl)
+  }
+
   return (
-    <div className='absolute flex items-center pointer-events-auto justify-center text-black'>
-      <h2>Edit your Information</h2>
-      <input type="text"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        className='text-black border-4 border-black pointer-events-auto relative z-[99999]' />
-      <input type="text" name="name"
-        value={displayName}
-        onChange={(e) => setDisplayName(e.target.value)}
-        className='text-black border-4 border-black pointer-events-auto relative z-[99999]' />
-      <img
-        src={session?.user.user_metadata?.avatar_url}
-        alt="profilePicture" />
-      <button onClick={handleEditPic}>
-        change pic
-        <input type="file"
-          accept="image/*"
-          onChange={(e) => setFile(e.target.files[0])} />
-      </button>
-      <button onClick={handleSave}>click</button>
-    </div>
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="outline">Edit profile</Button>
+      </DialogTrigger>
+      <DialogContent className="flex flex-col gap-0 overflow-y-visible p-0 sm:max-w-lg [&>button:last-child]:top-3.5">
+        <DialogHeader className="contents space-y-0 text-left">
+          <DialogTitle className="border-b px-6 py-4 text-base">
+            Edit profile
+          </DialogTitle>
+        </DialogHeader>
+        <DialogDescription className="sr-only">
+          Make changes to your profile here. You can change your photo and set a username.
+        </DialogDescription>
+
+        {/* Avatar Upload */}
+        <div className="w-full h-full flex justify-center pt-6">
+          <div className="border-background bg-muted relative flex size-20 items-center justify-center overflow-hidden rounded-full border-4 shadow-xs shadow-black/10">
+            <img
+              src={publicUrl || sessionAvatarUrl}
+              className="size-full object-cover"
+              alt="Profile"
+            />
+            <button
+              type="button"
+              className="focus-visible:border-ring focus-visible:ring-ring/50 absolute flex size-8 cursor-pointer items-center justify-center rounded-full bg-black/60 text-white hover:bg-black/80 focus-visible:ring-[3px] outline-none"
+              onClick={() => document.getElementById("avatarInput").click()}
+              aria-label="Change profile picture"
+            >
+              <ImagePlusIcon size={16} aria-hidden="true" />
+            </button>
+            <input
+              id="avatarInput"
+              type="file"
+              accept="image/*"
+              className="sr-only"
+              onChange={(e) => {
+                const f = e.target.files[0]
+                setFile(f)
+                if (f) setPublicUrl(URL.createObjectURL(f))
+              }}
+            />
+          </div>
+        </div>
+
+        {/* Form */}
+        <div className="px-6 pt-4 pb-6">
+          <form className="space-y-4">
+            <div>
+              <Label htmlFor={`${id}-fullname`}>Full Name</Label>
+              <div className="relative">
+                <Input
+                  id={`${id}-fullname`}
+                  placeholder="Full Name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  type="text"
+                  required
+                />
+              </div>
+            </div>
+            <div>
+              <Label htmlFor={`${id}-displayname`}>Display Name</Label>
+              <div className="relative">
+                <Input
+                  id={`${id}-displayname`}
+                  placeholder="Display Name"
+                  value={displayName}
+                  onChange={(e) => setDisplayName(e.target.value)}
+                  type="text"
+                  required
+                />
+              </div>
+            </div>
+          </form>
+        </div>
+
+        {/* Footer */}
+        <DialogFooter className="border-t px-6 py-4">
+          <DialogClose asChild>
+            <Button type="button" variant="outline">Cancel</Button>
+          </DialogClose>
+          <DialogClose asChild>
+            <Button type="button" onClick={handleSave}>
+              Save changes
+            </Button>
+          </DialogClose>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   )
 }
 
