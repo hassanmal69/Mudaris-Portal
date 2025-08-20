@@ -36,7 +36,7 @@ const StepIndicator = ({ step }) => (
 );
 
 const AddChannelDialog = ({ open, onOpenChange, usedIn }) => {
-  const { workspaceId } = useParams();
+  const { workspace_id } = useParams();
 
   const userEmail = useSelector((state) => state.auth.session?.user?.email);
   if (userEmail === "me@gmail.com") {
@@ -124,7 +124,7 @@ const AddChannelDialog = ({ open, onOpenChange, usedIn }) => {
             description,
             visibility,
             channel_members: users.map((user) => user.id),
-            workspace_Id: workspaceId,
+            workspace_Id: workspace_id,
           })
           .select();
 
