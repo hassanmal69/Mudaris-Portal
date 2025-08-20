@@ -8,12 +8,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "@/features/auth/authSlice";
 const Login = () => {
   const dispatch = useDispatch();
-  const redirectedRef = useRef(false);
   const { loading, error } = useSelector((state) => state.auth);
   const navigate = useNavigate();
   useEffect(() => {
     const sessionDetect = async () => {
-      if (redirectedRef.current) return;
       const {
         data: { user },
         error: checkerror,
@@ -38,11 +36,9 @@ const Login = () => {
       if (user?.user_metadata?.user_role === "user") {
         const workspaceId = workspace.workspace_id;
         if (window.location.pathname !== `/workspace/${workspaceId}`) {
-          redirectedRef.current = true;
           navigate(`/workspace/${workspaceId}`);
         }
       } else if (user?.user_metadata?.user_role === "admin") {
-        redirectedRef.current = true;
         navigate(`/dashboard/${user.id}`);
       }
     };
