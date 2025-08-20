@@ -4,8 +4,10 @@ import "./editor.css";
 import { TextStyleKit } from "@tiptap/extension-text-style";
 import { EditorContent, useEditor, useEditorState } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
+import Mention from "@tiptap/extension-mention";
 import React, { useEffect, useState } from "react";
 import Placeholder from "@tiptap/extension-placeholder";
+import suggestion from "./MentionComponent/suggestion";
 import {
   BoldIcon,
   ItalicIcon,
@@ -17,10 +19,8 @@ import {
   CodeBracketIcon,
   ChatBubbleLeftEllipsisIcon,
 } from "@heroicons/react/24/outline";
-import AddOn from "./addon";
-import { ClockFading } from "lucide-react";
 import { useSelector } from "react-redux";
-
+import { useParams } from "react-router-dom";
 function TextEditor({ editor }) {
   const [showEmoji, setShowEmoji] = useState(false);
   const editorState = useEditorState({
@@ -57,7 +57,7 @@ function TextEditor({ editor }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     const messageHTML = editor.getHTML();
-    setMsgArr(prev => [...prev, messageHTML]);
+    setMsgArr((prev) => [...prev, messageHTML]);
     editor.commands.clearContent();
   };
 
@@ -157,6 +157,21 @@ function TextEditor({ editor }) {
             😊
           </span>
         </button>
+        <button
+          type="button"
+          title="mention"
+          onClick={() => {
+            if (!editor) return;
+            const { from, to } = editor.state.selection;
+            editor.view.dispatch(editor.state.tr.insertText("@", from, to));
+
+            editor.commands.focus();
+          }}
+        >
+          <span role="img" className="w-5 h-5" aria-label="mention">
+            @
+          </span>
+        </button>
       </div>
       {showEmoji && (
         <div className="mt-2">
@@ -170,23 +185,31 @@ function TextEditor({ editor }) {
 }
 
 export default () => {
-  const editProfileOpen = useSelector(state => state.profile.editProfileOpen);
-
+  const editProfileOpen = useSelector((state) => state.profile.editProfileOpen);
+  const { workspace_id } = useParams();
+  console.log("tiptap wsId", workspace_id);
   const editor = useEditor({
     extensions: [
       StarterKit,
       Placeholder.configure({
-        placeholder: 'Write something...',
+        placeholder: "Write something...",
+      }),
+      Mention.configure({
+        HtmlAttributes: {
+          class: "mention",
+        },
+        suggestion,
       }),
     ],
-    content: '',
+
+    content: "",
+    workspaceId: workspace_id,
   });
 
   return (
     <div className="editor-container">
       <TextEditor editor={editor} />
       <EditorContent editor={editor} />
-      <AddOn />
     </div>
   );
 };
