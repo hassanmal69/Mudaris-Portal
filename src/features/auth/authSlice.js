@@ -35,7 +35,6 @@ export const sessionDetection = createAsyncThunk(
   "auth/sessionDetect",
   async (_, { dispatch, rejectWithValue }) => {
     try {
-      console.log("session is auth")
       const { data: { session }, error } = await supabase.auth.getSession();
       if (error) {
         rejectWithValue(error);
@@ -103,7 +102,6 @@ export const loginUser = createAsyncThunk(
 export const logOut = createAsyncThunk("auth/logOut", async (_, { rejectWithValue }) => {
   try {
     const { error } = await supabase.auth.signOut();
-    console.log('logout functions in slice ')
 
     if (error) throw error;
 
@@ -134,7 +132,6 @@ export const authSlice = createSlice({
       state.token = null;
     },
     setSession: (state, action) => {
-      console.log("action is", action)
       state.session = action.payload.session;
       state.token = action.payload.token || null;
     },

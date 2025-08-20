@@ -1,6 +1,8 @@
-import { Plus, Video, Mic, Send } from "lucide-react";
+import { Plus, Mic, Send } from "lucide-react";
 import React from "react";
 import "./addon.css";
+import VideoRecording from "../../../pages/dashboard/components/video.jsx";
+import AudioRecording from "@/pages/dashboard/components/audio";
 const AddOn = () => {
   const [recordVideo, setRecordVideo] = React.useState(false);
   const [recordAudio, setRecordAudio] = React.useState(false);
@@ -15,10 +17,11 @@ const AddOn = () => {
             <span className="w-5 h-5">@</span>
           </button>
           <button title="video">
-            <Video className="w-5 h-5" />
+            {/* <Video className="w-5 h-5" /> */}
+          <VideoRecording/>
           </button>
           <button title="audio">
-            <Mic className="w-5 h-5" />
+            <AudioRecording/>
           </button>
         </div>
 

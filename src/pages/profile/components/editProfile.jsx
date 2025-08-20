@@ -1,7 +1,7 @@
 import { supabase } from '@/services/supabaseClient'
 import React, { useEffect, useId, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { CheckIcon, ImagePlusIcon } from "lucide-react"
+import { ImagePlusIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -24,7 +24,7 @@ const EditProfile = () => {
   const [publicUrl, setPublicUrl] = useState(undefined)
   const [sessionAvatarUrl, setSessionAvatarUrl] = useState(session.user.user_metadata.avatar_url)
   const id = useId()
-
+  const editProfileOpen = useSelector((state) => state?.profile?.editProfileOpen);
   useEffect(() => {
     setSessionAvatarUrl(session.user.user_metadata.avatar_url)
   }, [session])
@@ -81,7 +81,12 @@ const EditProfile = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline">Edit profile</Button>
+        {
+          editProfileOpen ?
+            ''
+            :
+            <Button variant="outline">Edit profile</Button>
+        }
       </DialogTrigger>
       <DialogContent className="flex flex-col gap-0 overflow-y-visible p-0 sm:max-w-lg [&>button:last-child]:top-3.5">
         <DialogHeader className="contents space-y-0 text-left">
