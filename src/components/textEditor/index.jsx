@@ -188,6 +188,8 @@ export default () => {
   const editProfileOpen = useSelector((state) => state.profile.editProfileOpen);
   const { workspace_id } = useParams();
   console.log("tiptap wsId", workspace_id);
+  const { file, fileType } = useSelector((state) => state.file);
+  console.log(file, fileType);
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -209,6 +211,19 @@ export default () => {
   return (
     <div className="editor-container">
       <TextEditor editor={editor} />
+      {file && (
+        <div className="mt-4">
+          {fileType === "audio" && (
+            <audio src={file} controls className="w-full" />
+          )}
+          {fileType === "image" && (
+            <img src={file} alt="uploaded" className="max-w-sm rounded" />
+          )}
+          {fileType === "video" && (
+            <video src={file} controls className="max-w-sm rounded" />
+          )}
+        </div>
+      )}
       <EditorContent editor={editor} />
     </div>
   );
