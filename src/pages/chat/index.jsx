@@ -1,11 +1,9 @@
-import TextEditor from "@/components/textEditor";
-import Messages from "./components/messages";
+import Editor from "@/components/Editor";
 
 const Chat = () => {
   return (
     <section className="flex flex-col">
-      <Messages />
-      <TextEditor />
+      <Editor />
     </section>
   );
 };
