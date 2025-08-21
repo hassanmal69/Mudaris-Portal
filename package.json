@@ -61,6 +61,7 @@
     "classnames": "^2.5.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
+    "emoji-picker-react": "^4.13.2",
     "formik": "^2.4.6",
     "katex": "^0.16.22",
     "lexical": "^0.33.1",
