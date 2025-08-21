@@ -11,8 +11,11 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/services/supabaseClient";
+import { setValue } from "@/features/ui/fileSlice";
+import { useDispatch } from "react-redux";
 
 const VideoRecording = () => {
+  const dispatch = useDispatch();
   const videoPreviewRef = useRef(null);
   const [previewStream, setPreviewStream] = useState(null);
   //for live stream purpose
@@ -55,20 +58,20 @@ const VideoRecording = () => {
     });
 
     ("uploaded_file", file);
-    const fileExt = file.name.split(".").pop()
-    const newFilePath = `video/recorded/-${Date.now()}.${fileExt}`
 
-    try {
-      const { error: uploadError } = await supabase.storage
-        .from("media")
-        .upload(newFilePath, file, { upsert: true })
+    dispatch(setValue({ file: mediaBlobUrl, fileType: "video" }));
 
-      if (uploadError) {
-        console.error("Error uploading file:", uploadError)
-      }
-    } catch (err) {
-      console.error("❌ Upload failed:", err);
-    }
+    // try {
+    //   const { error: uploadError } = await supabase.storage
+    //     .from("media")
+    //     .upload(newFilePath, file, { upsert: true })
+
+    //   if (uploadError) {
+    //     console.error("Error uploading file:", uploadError)
+    //   }
+    // } catch (err) {
+    //   console.error("❌ Upload failed:", err);
+    // }
   };
 
   return (

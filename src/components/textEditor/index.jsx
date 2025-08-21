@@ -1,6 +1,7 @@
 import "./styles.scss";
 import "./editor.css";
 // import EmojiPicker from "react-emoji-picker";
+import EmojiPicker from "emoji-picker-react";
 import { TextStyleKit } from "@tiptap/extension-text-style";
 import { EditorContent, useEditor, useEditorState } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
@@ -21,6 +22,8 @@ import {
 } from "@heroicons/react/24/outline";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
+import AudioRecording from "@/pages/dashboard/components/audio";
+import VideoRecording from "@/pages/dashboard/components/video";
 function TextEditor({ editor }) {
   const [showEmoji, setShowEmoji] = useState(false);
   const editorState = useEditorState({
@@ -62,7 +65,7 @@ function TextEditor({ editor }) {
   };
 
   return (
-    <div className="control-group">
+    <div className="control-group relative">
       <div>
         {msgArr.map((m, i) => (
           <div
@@ -172,11 +175,19 @@ function TextEditor({ editor }) {
             @
           </span>
         </button>
+        <button>
+          <VideoRecording />
+        </button>
+        <button>
+          <AudioRecording />
+        </button>
       </div>
       {showEmoji && (
-        <div className="mt-2">
+        <div className="absolute flex justify-center w-full -top-70">
           {/* Replace with your emoji picker import */}
-          {/* <EmojiPicker onEmojiClick={(emoji) => handleEmojiSelect({ native: emoji.emoji })} theme="light" /> */}
+          <EmojiPicker
+              onEmojiClick={(emoji) => handleEmojiSelect({ native: emoji.emoji })}
+          />
         </div>
       )}
       <button onClick={handleSubmit}>submit</button>
@@ -220,7 +231,7 @@ export default () => {
             <img src={file} alt="uploaded" className="max-w-sm rounded" />
           )}
           {fileType === "video" && (
-            <video src={file} controls className="max-w-sm rounded" />
+            <video src={file} controls className="h-45 max-w-sm rounded" />
           )}
         </div>
       )}
