@@ -168,7 +168,7 @@ function TextEditor({ editor }) {
             editor.commands.focus();
           }}
         >
-          <span role="img" className="w-5 h-5" aria-label="mention">
+          <span role="img" className="w-4 h-4 text-[18px]" aria-label="mention">
             @
           </span>
         </button>
