@@ -4,9 +4,7 @@ import { updateField } from "@/features/auth/signupSlice.js";
 import { contactSchema } from "@/validation/authSchema";
 
 const EmailAvatar = ({ onNext, onBack, invite }) => {
-  console.log("invite", invite);
   const email = invite.email;
-  console.log("email step", email);
   const dispatch = useDispatch();
 
   return (
@@ -24,7 +22,8 @@ const EmailAvatar = ({ onNext, onBack, invite }) => {
 
           <div>
             <label>Email</label>
-            <Field name="email" className="w-full p-2 border rounded" />
+            <Field name="email"
+              disabled className="w-full p-2 border rounded" />
             <ErrorMessage
               name="email"
               component="div"
@@ -33,10 +32,11 @@ const EmailAvatar = ({ onNext, onBack, invite }) => {
           </div>
 
           <div>
-            <label>Avatar (optional)</label>
+            <label>Avatar</label>
             <input
               type="file"
               onChange={(event) =>
+                // console.log("event is ",event)
                 setFieldValue("avatarFile", event.currentTarget.files[0])
               }
             />
