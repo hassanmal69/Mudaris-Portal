@@ -10,12 +10,11 @@ import { supabase } from "@/services/supabaseClient";
  * @param {string} userData.role
  * @param {string} userData.avatarUrl
  */
-//auth listener 
+//auth listener
 export const initAuthListener = () => (dispatch) => {
   const {
     data: { subscription },
   } = supabase.auth.onAuthStateChange((event, session) => {
-
     if (session) {
       dispatch(
         setSession({
@@ -35,15 +34,20 @@ export const sessionDetection = createAsyncThunk(
   "auth/sessionDetect",
   async (_, { dispatch, rejectWithValue }) => {
     try {
-      const { data: { session }, error } = await supabase.auth.getSession();
+      const {
+        data: { session },
+        error,
+      } = await supabase.auth.getSession();
       if (error) {
         rejectWithValue(error);
         return;
       }
-      dispatch(setSession({
-        session,
-        token: session?.access_token || null
-      }));
+      dispatch(
+        setSession({
+          session,
+          token: session?.access_token || null,
+        })
+      );
       return session;
     } catch (error) {
       rejectWithValue(error);
@@ -99,21 +103,23 @@ export const loginUser = createAsyncThunk(
   }
 );
 
-export const logOut = createAsyncThunk("auth/logOut", async (_, { rejectWithValue }) => {
-  try {
-    const { error } = await supabase.auth.signOut();
+export const logOut = createAsyncThunk(
+  "auth/logOut",
+  async (_, { rejectWithValue }) => {
+    try {
+      const { error } = await supabase.auth.signOut();
 
-    if (error) throw error;
+      if (error) throw error;
 
-    localStorage.removeItem("session");
-    localStorage.removeItem("token");
+      localStorage.removeItem("session");
+      localStorage.removeItem("token");
 
-    return true; // success signal
-  } catch (err) {
-    return rejectWithValue(err.message || "Logout failed");
+      return true; // success signal
+    } catch (err) {
+      return rejectWithValue(err.message || "Logout failed");
+    }
   }
-});
-
+);
 
 const initialState = {
   session: null,
@@ -134,6 +140,7 @@ export const authSlice = createSlice({
     setSession: (state, action) => {
       state.session = action.payload.session;
       state.token = action.payload.token || null;
+      state.user = action.payload.session?.user || null;
     },
   },
   extraReducers: (builder) => {
@@ -181,8 +188,7 @@ export const authSlice = createSlice({
       .addCase(logOut.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
-      })
-
+      });
   },
 });
 
