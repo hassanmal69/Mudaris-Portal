@@ -4,6 +4,9 @@ import { useParams } from "react-router-dom";
 import { postToSupabase } from "@/utils/crud/posttoSupabase";
 import Toolbar from "./components/toolbar/Toolbar.jsx";
 import MessageList from "./components/MessageList";
+import { Send } from "lucide-react";
+
+export default function TextEditor({ editor }) {
 import { supabase } from "@/services/supabaseClient.js";
 
 export default function TextEditor({ editor }) {
@@ -15,7 +18,6 @@ export default function TextEditor({ editor }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const messageHTML = editor.getHTML();
-    setMsgArr((prev) => [...prev, messageHTML]);
     editor.commands.clearContent();
       const urls = [];
 
@@ -59,7 +61,7 @@ export default function TextEditor({ editor }) {
       reply_to: null,
       attachments: urls,
     };
-
+    if (res.content === "<p></p>") return; // Prevent empty messages
     const { data, error } = await postToSupabase("messages", res);
     if (error) console.error("Error adding message:", error.message);
     else console.log("Inserted message:", data);
@@ -67,9 +69,10 @@ export default function TextEditor({ editor }) {
 
   return (
     <div className="control-group relative">
-      <MessageList messages={msgArr} />
       <Toolbar editor={editor} />
-      <button onClick={handleSubmit}>Submit</button>
+      <button className="kumar" onClick={handleSubmit}>
+        <Send className="text-[22px]" />
+      </button>
     </div>
   );
 }

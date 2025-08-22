@@ -20,7 +20,6 @@ export default function EditorWrapper() {
       Placeholder.configure({ placeholder: "Write something..." }),
       Mention.configure({ HtmlAttributes: { class: "mention" }, suggestion }),
     ],
-    content: "",
     workspaceId: workspace_id,
   });
 

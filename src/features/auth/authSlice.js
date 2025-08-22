@@ -1,4 +1,3 @@
-// authSlice.js
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { supabase } from "@/services/supabaseClient";
 /**
