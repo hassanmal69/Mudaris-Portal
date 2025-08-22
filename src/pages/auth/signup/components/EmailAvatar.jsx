@@ -2,11 +2,10 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useDispatch, useSelector } from "react-redux";
 import { updateField } from "@/features/auth/signupSlice.js";
 import { contactSchema } from "@/validation/authSchema";
+import { Input } from "@/components/ui/input";
 
 const EmailAvatar = ({ onNext, onBack, invite }) => {
-  console.log("invite", invite);
   const email = invite.email;
-  console.log("email step", email);
   const dispatch = useDispatch();
 
   return (
@@ -24,7 +23,8 @@ const EmailAvatar = ({ onNext, onBack, invite }) => {
 
           <div>
             <label>Email</label>
-            <Field name="email" className="w-full p-2 border rounded" />
+            <Field name="email"
+              disabled className="w-full p-2 border rounded" />
             <ErrorMessage
               name="email"
               component="div"
@@ -33,10 +33,11 @@ const EmailAvatar = ({ onNext, onBack, invite }) => {
           </div>
 
           <div>
-            <label>Avatar (optional)</label>
-            <input
+            <label>Avatar (Optional)</label>
+            <Input
               type="file"
               onChange={(event) =>
+                // console.log("event is ",event)
                 setFieldValue("avatarFile", event.currentTarget.files[0])
               }
             />

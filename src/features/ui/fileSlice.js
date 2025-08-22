@@ -2,19 +2,22 @@ import { createSlice } from "@reduxjs/toolkit";
 const fileSlice = createSlice({
     name: "fileSlice",
     initialState: {
-        file: null,
-        fileType: null
+        files: []
     },
     reducers: {
-        setValue: (state, action) => {
-            state.file = action.payload.file;
-            state.fileType = action.payload.fileType;
+        addValue: (state, action) => {
+            // state.file = action.payload.file;
+            // state.fileLink = action.payload.fileLink;
+            // state.fileType = action.payload.fileType;
+            state.files.push(action.payload)
+        },
+        removeValue: (state, action) => {
+            state.files = state.files.filter((m, i) => i !== action.payload)
         },
         clearValue: (state) => {
-            state.file = null;
-            state.fileType = null;
+            state.files = []
         }
     },
 })
-export const { setValue, clearValue } = fileSlice.actions;
+export const { addValue, removeValue, clearValue } = fileSlice.actions;
 export default fileSlice.reducer;
