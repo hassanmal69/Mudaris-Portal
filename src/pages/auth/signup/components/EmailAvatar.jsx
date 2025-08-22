@@ -2,6 +2,7 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useDispatch, useSelector } from "react-redux";
 import { updateField } from "@/features/auth/signupSlice.js";
 import { contactSchema } from "@/validation/authSchema";
+import { Input } from "@/components/ui/input";
 
 const EmailAvatar = ({ onNext, onBack, invite }) => {
   const email = invite.email;
@@ -32,8 +33,8 @@ const EmailAvatar = ({ onNext, onBack, invite }) => {
           </div>
 
           <div>
-            <label>Avatar</label>
-            <input
+            <label>Avatar (Optional)</label>
+            <Input
               type="file"
               onChange={(event) =>
                 // console.log("event is ",event)
