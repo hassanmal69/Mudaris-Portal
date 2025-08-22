@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/services/supabaseClient";
-import { setValue } from "@/features/ui/fileSlice";
+import { addValue } from "@/features/ui/fileSlice";
 import { useDispatch } from "react-redux";
 
 const VideoRecording = () => {
@@ -57,9 +57,14 @@ const VideoRecording = () => {
       type: blob.type,
     });
 
-    ("uploaded_file", file);
-
-    dispatch(setValue({ file: mediaBlobUrl, fileType: "video" }));
+    console.log("uploaded_file", file);
+    const fileName = `video-${Date.now()}.webm`
+    dispatch(addValue({
+      fileLink: mediaBlobUrl,
+      file: file,
+      fileType: "video",
+      filePath: `video/recorded/${fileName}`
+    }));
 
     // try {
     //   const { error: uploadError } = await supabase.storage

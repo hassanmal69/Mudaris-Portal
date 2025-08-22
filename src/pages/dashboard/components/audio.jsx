@@ -12,7 +12,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/services/supabaseClient";
 import { useDispatch } from "react-redux";
-import { setValue } from "@/features/ui/fileSlice";
+import { addValue } from "@/features/ui/fileSlice";
+// import { setValue } from "@/features/ui/fileSlice";
 
 const AudioRecording = () => {
     const dispatch = useDispatch()
@@ -54,21 +55,14 @@ const AudioRecording = () => {
             type: blob.type,
         });
 
-        ("uploaded_file", file);
-        dispatch(setValue({ file: mediaBlobUrl, fileType: "audio" }));
-
-        // try {
-        //     const { error: uploadError } = await supabase.storage
-        //         .from("media")
-        //         .upload(newFilePath, file, { upsert: true })
-
-        //     if (uploadError) {
-        //         console.error("Error uploading file:", uploadError)
-        //     }
-        // } catch (err) {
-        //     console.error("❌ Upload failed:", err);
-        // }
-    };
+        const fileName = `audio-${Date.now()}.webm`
+        dispatch(addValue({
+            fileLink: mediaBlobUrl,
+            file: file,
+            fileType: "audio",
+            filePath: `audio/${fileName}`
+        }));
+    }
 
 
     return (
