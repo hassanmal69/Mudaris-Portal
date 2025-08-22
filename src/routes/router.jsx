@@ -58,7 +58,7 @@ function WorkspaceLayout() {
   return (
     <AppLayout>
       <div className="flex flex-col w-full">
-        <Topbar />
+        {/* <Topbar /> */}
         <div className="flex-1 overflow-auto">
           <Outlet />
         </div>

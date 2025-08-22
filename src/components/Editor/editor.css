@@ -1,22 +1,24 @@
-.button-group button {
+.toolbar button {
   padding: 5px 10px;
   color: #fff;
   background: none;
   cursor: pointer;
 }
-.button-group {
-  padding: 2px 5px;
+.toolbar {
+  padding: 5px;
   display: flex;
   align-items: center;
 }
 .editor-container {
-  width: 100%;
   max-width: 1350px;
-  margin-left: 300px;
-  margin-top: 680px;
+  margin-left: 10px;
   background-color: #556cd6;
+  width: 1350px;
+  border: 2px solid #eee;
   border-radius: 12px;
-  height: fit-content;
+}
+.control-group {
+  position: relative;
 }
 .editor-container ul li {
   list-style: disc;
@@ -24,14 +26,24 @@
 .editor-container ol li {
   list-style: decimal;
 }
+.kumar {
+  background: transparent;
+  color: green;
+  position: absolute;
+  top: 120px;
+  right: 0;
+  padding: 5px 10px;
+  cursor: pointer;
+}
 .tiptap {
   height: 120px;
   max-height: 500px;
   background-color: #eee;
   padding: 4px 15px;
-  color: #555;
   border: 1px solid #ccc;
+  color: #555;
   border-bottom: 0;
+  border-radius: 0 0 12px 12px;
   overflow-y: auto;
 }
 .tiptap code {

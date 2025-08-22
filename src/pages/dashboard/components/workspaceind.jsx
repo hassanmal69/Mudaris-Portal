@@ -12,7 +12,7 @@ const Members = React.lazy(() => import("./members.jsx"));
 
 const WorkSpaceInd = () => {
   const { workspaceId, groupId } = useParams();
-  const {  session } = useSelector((state) => state.auth);
+  const { session } = useSelector((state) => state.auth);
   const editProfileOpen = useSelector((state) => state.profile.editProfileOpen);
   const [groups, setGroups] = useState([]);
   const [email, setEmail] = useState("");
@@ -42,22 +42,6 @@ const WorkSpaceInd = () => {
       >
         <EditProfile />
       </div>
-
-      {/* <div className="w-full h-15 bg-gray-500 absolute flex justify-center">
-        <h1>uaa topbar</h1>
-        <button onClick={toggleScreen}>view all members</button>
-      </div> */}
-      {/* <div className="flex flex-col bg-purple-900 h-full justify-center items-center">
-        baaa
-        <Suspense fallback={<div>Loading groups...</div>}>
-          <Groups workspaceId={workspaceId} />
-        </Suspense>
-        <Suspense fallback={<div>Loading invite...</div>}>
-          <InviteSend />
-        </Suspense>
-        <button onClick={handleLogout}>LOG OUT</button>
-      </div> */}
-      {/* ✅ Lazy-load Chat */}
       <Suspense fallback={<div>Loading Chat...</div>}>
         <Chat />
       </Suspense>

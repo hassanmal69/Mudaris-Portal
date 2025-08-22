@@ -8,7 +8,7 @@ export default function Toolbar({ editor }) {
   if (!editor) return null;
 
   return (
-    <div className="button-group">
+    <div className="toolbar">
       {toolbarButtons.map(({ name, icon: Icon, action, isActive, canRun }) => (
         <button
           key={name}
