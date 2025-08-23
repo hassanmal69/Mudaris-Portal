@@ -5,6 +5,8 @@ import { postToSupabase } from "@/utils/crud/posttoSupabase";
 import Toolbar from "./components/toolbar/Toolbar.jsx";
 import { Send } from "lucide-react";
 
+import { supabase } from "@/services/supabaseClient.js";
+
 export default function TextEditor({ editor }) {
   const [msgArr, setMsgArr] = useState([]);
   const [publicUrl, setPublicUrl] = useState([]);
@@ -34,7 +36,7 @@ export default function TextEditor({ editor }) {
               .from("media")
               .getPublicUrl(m.filePath);
 
-            console.log(" Public URL mihyhy", data.publicUrl);
+            console.log(" Public URL ", data.publicUrl);
 
             urls.push({
               fileType: m.fileType,

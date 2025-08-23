@@ -124,7 +124,7 @@ const AddChannelDialog = ({ open, onOpenChange, usedIn }) => {
             description,
             visibility,
             channel_members: users.map((user) => user.id),
-            workspace_Id: workspace_id,
+            workspace_id: workspace_id,
           })
           .select();
 
