@@ -50,9 +50,6 @@ const Sidebar = () => {
     }
   };
   useEffect(() => {
-    fetchChannels();
-  }, []);
-  useEffect(() => {
     const fetchWorkspaceName = async () => {
       const { data } = await supabase
         .from("workspaces")
@@ -61,6 +58,7 @@ const Sidebar = () => {
         .single();
       if (data) setWorkspaceName(data.workspace_name);
     };
+    fetchChannels();
 
     fetchWorkspaceName();
   }, []);
@@ -79,7 +77,10 @@ const Sidebar = () => {
     return () => {
       supabase.removeChannel(subscription);
     };
-  }, []);
+  },[]);
+useEffect(() => {
+  console.log("channels are", channels);
+}, [channels]);
 
   return (
     <>
@@ -107,7 +108,7 @@ const Sidebar = () => {
                     <GlobeAltIcon className="w-4 h-4 text-gray-400" />
                   )}
                   <span className="font-medium text-sm text-gray-800">
-                    {channel.name}
+                    {channel.name || channel.channel_name}
                   </span>
                 </div>
               </SidebarMenuItem>
@@ -137,9 +138,8 @@ const Sidebar = () => {
                     {user.name}
                   </span>
                   <span
-                    className={`ml-auto w-2 h-2 rounded-full ${
-                      user.status === "online" ? "bg-green-500" : "bg-gray-400"
-                    }`}
+                    className={`ml-auto w-2 h-2 rounded-full ${user.status === "online" ? "bg-green-500" : "bg-gray-400"
+                      }`}
                     title={user.status}
                   ></span>
                 </div>

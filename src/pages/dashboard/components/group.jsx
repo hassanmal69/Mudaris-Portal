@@ -17,24 +17,9 @@ const Groups = ({ workspaceId }) => {
     }
     setallGroups((prev) => [...prev, group]);
     setGroup("");
-    try {
-      await axios.post("/api/group", {
-        group,
-        workspaceId,
-      });
-    } catch (error) {
-      console.error("error coming in workspacees", error);
-    }
   };
   const fetchGroups = () => {
-    axios
-      .post("/api/group/getGroups", {
-        workspaceId,
-      })
-      .then((response) => {
-        setallGroups(response?.data?.data);
-      })
-      .catch((error) => console.error(error));
+
   };
   useEffect(() => {
     fetchGroups();
