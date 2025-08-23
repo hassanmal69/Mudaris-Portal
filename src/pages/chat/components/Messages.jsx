@@ -3,7 +3,7 @@ import { supabase } from "@/services/supabaseClient";
 import { useDispatch, useSelector } from "react-redux";
 import { addMessage, setMessages } from "@/features/messages/messageSlice";
 import { useParams } from "react-router-dom";
-
+import "./message.css";
 const Messages = () => {
   const dispatch = useDispatch();
   const { workspace_id } = useParams();
@@ -67,8 +67,10 @@ const Messages = () => {
     };
   }, [dispatch, fullName, imageUrl]);
   return (
-    <section>
+    <section className="messages-container">
       {messages.map((m) => (
+        <>
+
         <div key={m.id} className="flex gap-2">
           <img
             src={m.profiles?.avatar_url}

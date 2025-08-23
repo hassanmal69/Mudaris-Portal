@@ -3,8 +3,8 @@ import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { postToSupabase } from "@/utils/crud/posttoSupabase";
 import Toolbar from "./components/toolbar/Toolbar.jsx";
-import MessageList from "./components/MessageList";
 import { Send } from "lucide-react";
+
 import { supabase } from "@/services/supabaseClient.js";
 
 export default function TextEditor({ editor }) {
@@ -17,10 +17,9 @@ export default function TextEditor({ editor }) {
     e.preventDefault();
     const messageHTML = editor.getHTML();
     editor.commands.clearContent();
-      const urls = [];
+    const urls = [];
 
     if (files && files.length > 0) {
-
       for (const [i, m] of files.entries()) {
         try {
           console.log(m.filePath, m.file);
