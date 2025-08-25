@@ -11,7 +11,7 @@ export default function TextEditor({ editor }) {
   const [msgArr, setMsgArr] = useState([]);
   const [publicUrl, setPublicUrl] = useState([]);
   const userId = useSelector((state) => state.auth.user?.id);
-  const { workspace_id } = useParams();
+  const { groupId } = useParams();
   const { files } = useSelector((state) => state.file);
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,7 +26,6 @@ export default function TextEditor({ editor }) {
           const { error: uploadError } = await supabase.storage
             .from("media")
             .upload(m.filePath, m.file, { upsert: true });
-
           if (uploadError) {
             console.error("Error uploading file:", uploadError);
           } else {
@@ -48,11 +47,10 @@ export default function TextEditor({ editor }) {
         }
       }
 
-      // update state after loop (instead of inside loop)
     }
 
     const res = {
-      workspace_id: workspace_id,
+      channel_id: groupId,
       sender_id: userId,
       content: messageHTML,
       reply_to: null,
@@ -68,7 +66,7 @@ export default function TextEditor({ editor }) {
     <div className="control-group relative">
       <Toolbar editor={editor} />
       <button className="kumar" onClick={handleSubmit}>
-        <Send className="text-[22px]" />
+        <Send className="text-[42px] relative z-40" />
       </button>
     </div>
   );

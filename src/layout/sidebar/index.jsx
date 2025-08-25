@@ -20,15 +20,17 @@ import {
 import { useParams } from "react-router-dom";
 import { getFromSupabase } from "@/utils/crud/getFromSupabase.js";
 import { supabase } from "@/services/supabaseClient.js";
+import { Link, useNavigate } from "react-router-dom";
 
 const Sidebar = () => {
+  const navigate = useNavigate();
   const [addChannelOpen, setAddChannelOpen] = useState(false);
   const [inviteOpen, setInviteOpen] = useState(false);
   const [channels, setChannels] = useState([]);
   const [workspaceName, setWorkspaceName] = useState("");
 
   const { workspace_id } = useParams();
-
+  const { groupId } = useParams();
   const fetchChannels = async () => {
     const res = await getFromSupabase(
       "channels",
@@ -59,7 +61,6 @@ const Sidebar = () => {
       if (data) setWorkspaceName(data.workspace_name);
     };
     fetchChannels();
-
     fetchWorkspaceName();
   }, []);
   useEffect(() => {
@@ -77,11 +78,13 @@ const Sidebar = () => {
     return () => {
       supabase.removeChannel(subscription);
     };
-  },[]);
-useEffect(() => {
-  console.log("channels are", channels);
-}, [channels]);
-
+  }, []);
+  useEffect(() => {
+    if (!groupId && channels.length > 0) {
+      const channelId = channels[0].id;
+      navigate(`/workspace/${workspace_id}/group/${channelId}`);
+    }
+  }, [channels, groupId, navigate, workspace_id]);
   return (
     <>
       <AddChannelDialog
@@ -107,9 +110,13 @@ useEffect(() => {
                   ) : (
                     <GlobeAltIcon className="w-4 h-4 text-gray-400" />
                   )}
-                  <span className="font-medium text-sm text-gray-800">
-                    {channel.name || channel.channel_name}
-                  </span>
+                  <Link
+                    to={`/workspace/${workspace_id}/group/${channel.id}`}
+                  >
+                    <span className="font-medium text-sm text-gray-800">
+                      {channel.name || channel.channel_name}
+                    </span>
+                  </Link>
                 </div>
               </SidebarMenuItem>
             ))}
@@ -157,7 +164,7 @@ useEffect(() => {
             Invite Users
           </Button>
         </SidebarFooter>
-      </SidebarContent>
+      </SidebarContent >
     </>
   );
 };

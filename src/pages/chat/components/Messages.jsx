@@ -3,10 +3,10 @@ import { supabase } from "@/services/supabaseClient";
 import { useDispatch, useSelector } from "react-redux";
 import { addMessage, setMessages } from "@/features/messages/messageSlice";
 import { useParams } from "react-router-dom";
-import "./message.css";
+
 const Messages = () => {
   const dispatch = useDispatch();
-  const { workspace_id } = useParams();
+  const { groupId } = useParams();
   const messages = useSelector((state) => state.messages.items);
   const session = useSelector((state) => state.auth);
   const imageUrl = session.user?.user_metadata?.avatar_url;
@@ -27,7 +27,7 @@ const Messages = () => {
           )
         `
         )
-        .eq("workspace_id", workspace_id)
+        .eq("channel_id", groupId)
         .order("created_at", { ascending: true });
 
       if (error) {
@@ -38,7 +38,7 @@ const Messages = () => {
     };
 
     fetchMessages();
-  }, [dispatch, workspace_id]);
+  }, [dispatch, groupId]);
 
   useEffect(() => {
 
@@ -67,10 +67,8 @@ const Messages = () => {
     };
   }, [dispatch, fullName, imageUrl]);
   return (
-    <section className="messages-container">
+    <section>
       {messages.map((m) => (
-        <>
-
         <div key={m.id} className="flex gap-2">
           <img
             src={m.profiles?.avatar_url}
