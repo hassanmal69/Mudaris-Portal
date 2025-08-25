@@ -13,7 +13,6 @@ export default function EditorWrapper() {
   const dispatch = useDispatch()
   const { workspace_id } = useParams();
   const { files } = useSelector((state) => state.file);
-  console.log(files);
   const editor = useEditor({
     extensions: [
       StarterKit,

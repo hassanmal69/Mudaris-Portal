@@ -37,7 +37,6 @@ const VideoRecording = () => {
       navigator.mediaDevices
         .getUserMedia({ video: false, audio: false });
       mounted = false;
-      console.log('first')
       previewStream?.getTracks().forEach((track) => track.stop());
     };
   }
@@ -57,7 +56,6 @@ const VideoRecording = () => {
       type: blob.type,
     });
 
-    console.log("uploaded_file", file);
     const fileName = `video-${Date.now()}.webm`
     dispatch(addValue({
       fileLink: mediaBlobUrl,
