@@ -8,7 +8,6 @@ import { Send } from "lucide-react";
 import { supabase } from "@/services/supabaseClient.js";
 
 export default function TextEditor({ editor }) {
-  const [msgArr, setMsgArr] = useState([]);
   const [publicUrl, setPublicUrl] = useState([]);
   const userId = useSelector((state) => state.auth.user?.id);
   const { groupId } = useParams();
@@ -46,7 +45,6 @@ export default function TextEditor({ editor }) {
           console.error("❌ Upload failed:", err);
         }
       }
-
     }
 
     const res = {
