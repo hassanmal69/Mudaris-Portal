@@ -20,6 +20,7 @@ const Messages = () => {
           `
           id,
           content,
+          attachments,
           created_at,
           profiles (
             full_name,
@@ -70,6 +71,7 @@ const Messages = () => {
     <section>
       {messages.map((m) => (
         <div key={m.id} className="flex gap-2">
+          {console.log(m)}
           <img
             src={m.profiles?.avatar_url}
             alt={m.profiles?.full_name}
@@ -79,6 +81,17 @@ const Messages = () => {
             <strong>{m.profiles?.full_name || "Unknown User"}</strong>
             <div dangerouslySetInnerHTML={{ __html: m.content }} />
           </div>
+          {m?.attachments?.[0]?.fileType === "video" && (
+            <video src={m?.attachments?.[0]?.fileUrl} width="200" controls />
+          )}
+          {m?.attachments?.[0]?.fileType === "audio" && (
+            <audio src={m?.attachments?.[0]?.fileUrl} width="200" controls />
+          )}
+
+          {m?.attachments?.[0]?.fileType.startsWith("image") && (
+            <img src={m?.attachments?.[0]?.fileUrl} alt="error sending your image" width="100" />
+          )}
+
         </div>
       ))}
     </section>
