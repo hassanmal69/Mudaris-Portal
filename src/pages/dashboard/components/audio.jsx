@@ -38,7 +38,6 @@ const AudioRecording = () => {
             navigator.mediaDevices
                 .getUserMedia({ video: false, audio: false });
             mounted = false;
-            console.log('first')
             previewStream?.getTracks().forEach((track) => track.stop());
         };
     }

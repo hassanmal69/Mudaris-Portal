@@ -1,3 +1,4 @@
+import FileUploader from "@/pages/dashboard/components/fileInput";
 import { toolbarButtons } from "../../config/toolbarButtons";
 import EmojiButton from "../EmojiButton.jsx";
 import MentionButton from "../MentionButton.jsx";
@@ -24,6 +25,7 @@ export default function Toolbar({ editor }) {
       <MentionButton editor={editor} />
       <VideoRecording />
       <AudioRecording />
+      <FileUploader/>
     </div>
   );
 }

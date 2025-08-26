@@ -63,18 +63,6 @@ const VideoRecording = () => {
       fileType: "video",
       filePath: `video/recorded/${fileName}`
     }));
-
-    // try {
-    //   const { error: uploadError } = await supabase.storage
-    //     .from("media")
-    //     .upload(newFilePath, file, { upsert: true })
-
-    //   if (uploadError) {
-    //     console.error("Error uploading file:", uploadError)
-    //   }
-    // } catch (err) {
-    //   console.error("❌ Upload failed:", err);
-    // }
   };
 
   return (
