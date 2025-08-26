@@ -1,5 +1,6 @@
 /* Basic editor styles */
 .tiptap {
+
   :first-child {
     margin-top: 0;
   }
@@ -88,4 +89,9 @@
     border-top: 1px solid var(--gray-2);
     margin: 2rem 0;
   }
+  a{
+    color: #556cd6;
+    text-decoration: underline;
+  }
+ 
 }

@@ -2,7 +2,6 @@ import { supabase } from "@/services/supabaseClient";
 export default async function createInvitation({ email, workspace_id }) {
   const token = crypto.randomUUID();
   const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
-  console.log("invitation file ,", email);
   const { data, error } = await supabase
     .from("invitations")
     .insert([

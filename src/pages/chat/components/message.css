@@ -17,3 +17,13 @@
 .messages-container::-webkit-scrollbar-thumb:hover {
   background: #293c91;
 }
+.message-body {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.message-body a {
+  color: #556cd6;
+  text-decoration: underline;
+}

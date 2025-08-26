@@ -152,21 +152,24 @@ const Messages = () => {
             alt={m.profiles?.full_name}
             className="w-8 h-8 rounded-full"
           />
-          <div>
+          <div className="message-body">
             <strong>{m.profiles?.full_name || "Unknown User"}</strong>
             <div dangerouslySetInnerHTML={{ __html: m.content }} />
+            {m?.attachments?.[0]?.fileType === "video" && (
+              <video src={m?.attachments?.[0]?.fileUrl} width="200" controls />
+            )}
+            {m?.attachments?.[0]?.fileType === "audio" && (
+              <audio src={m?.attachments?.[0]?.fileUrl} width="200" controls />
+            )}
+
+            {m?.attachments?.[0]?.fileType.startsWith("image") && (
+              <img
+                src={m?.attachments?.[0]?.fileUrl}
+                alt="error sending your image"
+                width="100"
+              />
+            )}
           </div>
-          {m?.attachments?.[0]?.fileType === "video" && (
-            <video src={m?.attachments?.[0]?.fileUrl} width="200" controls />
-          )}
-          {m?.attachments?.[0]?.fileType === "audio" && (
-            <audio src={m?.attachments?.[0]?.fileUrl} width="200" controls />
-          )}
-
-          {m?.attachments?.[0]?.fileType.startsWith("image") && (
-            <img src={m?.attachments?.[0]?.fileUrl} alt="error sending your image" width="100" />
-          )}
-
         </div>
       ))}
     </section>

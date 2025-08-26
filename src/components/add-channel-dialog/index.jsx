@@ -115,7 +115,6 @@ const AddChannelDialog = ({ open, onOpenChange, usedIn }) => {
       const formData = usedIn === "createChannel" ? state : null;
       if (usedIn === "createChannel") {
         let { name, description, visibility, users } = formData;
-        console.log(formData);
 
         const { data, error } = await supabase
           .from("channels")
@@ -134,7 +133,6 @@ const AddChannelDialog = ({ open, onOpenChange, usedIn }) => {
         }
         setTimeout(resetStates, 300);
       } else if (usedIn === "createWorkspace") {
-        console.log("clicked");
         const formData = usedIn === "createWorkspace" ? workspaceData : null;
         let { name, description, avatarUrl, users } = formData;
         const { data, error } = await supabase

@@ -15,7 +15,6 @@ export const getFromSupabase = async (tableName, data, eqTable, reqTable) => {
   }
 
   try {
-    console.log(tableName, data);
     const { data: insertedData, error: sbError } = await supabase
       .from(tableName)
       .select(data.join(","))

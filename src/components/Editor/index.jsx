@@ -9,15 +9,19 @@ import TextEditor from "./TextEditor";
 import "./styles.scss";
 import "./editor.css";
 import { removeValue } from "@/features/ui/fileSlice";
+import classNames from "classnames";
 export default function EditorWrapper() {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const { workspace_id } = useParams();
   const { files } = useSelector((state) => state.file);
   const editor = useEditor({
     extensions: [
       StarterKit,
       Placeholder.configure({ placeholder: "Write something..." }),
-      Mention.configure({ HtmlAttributes: { class: "mention" }, suggestion }),
+      Mention.configure({
+        HTMLAttributes: { class: "mention" },
+        suggestion,
+      }),
     ],
     workspaceId: workspace_id,
   });

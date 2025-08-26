@@ -39,7 +39,6 @@ const Sidebar = () => {
       workspace_id
     );
     if (res.data) {
-      console.log("Fetched channels:", res.data);
       setChannels(
         res.data.map((channel) => ({
           id: channel.id,
@@ -110,9 +109,7 @@ const Sidebar = () => {
                   ) : (
                     <GlobeAltIcon className="w-4 h-4 text-gray-400" />
                   )}
-                  <Link
-                    to={`/workspace/${workspace_id}/group/${channel.id}`}
-                  >
+                  <Link to={`/workspace/${workspace_id}/group/${channel.id}`}>
                     <span className="font-medium text-sm text-gray-800">
                       {channel.name || channel.channel_name}
                     </span>
@@ -145,8 +142,9 @@ const Sidebar = () => {
                     {user.name}
                   </span>
                   <span
-                    className={`ml-auto w-2 h-2 rounded-full ${user.status === "online" ? "bg-green-500" : "bg-gray-400"
-                      }`}
+                    className={`ml-auto w-2 h-2 rounded-full ${
+                      user.status === "online" ? "bg-green-500" : "bg-gray-400"
+                    }`}
                     title={user.status}
                   ></span>
                 </div>
@@ -164,7 +162,7 @@ const Sidebar = () => {
             Invite Users
           </Button>
         </SidebarFooter>
-      </SidebarContent >
+      </SidebarContent>
     </>
   );
 };

@@ -34,12 +34,11 @@ const VideoRecording = () => {
       .catch((err) => console.error("Error accessing camera/mic:", err));
 
     return () => {
-      navigator.mediaDevices
-        .getUserMedia({ video: false, audio: false });
+      navigator.mediaDevices.getUserMedia({ video: false, audio: false });
       mounted = false;
       previewStream?.getTracks().forEach((track) => track.stop());
     };
-  }
+  };
 
   const { status, startRecording, stopRecording, mediaBlobUrl } =
     useReactMediaRecorder({
