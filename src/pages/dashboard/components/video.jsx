@@ -55,27 +55,13 @@ const VideoRecording = () => {
       type: blob.type,
     });
 
-    const fileName = `video-${Date.now()}.webm`;
-    dispatch(
-      addValue({
-        fileLink: mediaBlobUrl,
-        file: file,
-        fileType: "video",
-        filePath: `video/recorded/${fileName}`,
-      })
-    );
-
-    // try {
-    //   const { error: uploadError } = await supabase.storage
-    //     .from("media")
-    //     .upload(newFilePath, file, { upsert: true })
-
-    //   if (uploadError) {
-    //     console.error("Error uploading file:", uploadError)
-    //   }
-    // } catch (err) {
-    //   console.error("❌ Upload failed:", err);
-    // }
+    const fileName = `video-${Date.now()}.webm`
+    dispatch(addValue({
+      fileLink: mediaBlobUrl,
+      file: file,
+      fileType: "video",
+      filePath: `video/recorded/${fileName}`
+    }));
   };
 
   return (

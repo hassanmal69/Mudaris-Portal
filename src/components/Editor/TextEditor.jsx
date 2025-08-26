@@ -1,14 +1,15 @@
-import { useState } from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { postToSupabase } from "@/utils/crud/posttoSupabase";
 import Toolbar from "./components/toolbar/Toolbar.jsx";
 import { Send } from "lucide-react";
+import { addValue, clearValue } from "@/features/ui/fileSlice";
+import { useDispatch } from "react-redux";
 
 import { supabase } from "@/services/supabaseClient.js";
 
 export default function TextEditor({ editor }) {
-  const [publicUrl, setPublicUrl] = useState([]);
+  const dispatch = useDispatch()
   const userId = useSelector((state) => state.auth.user?.id);
   const { groupId } = useParams();
   const { files } = useSelector((state) => state.file);
@@ -26,14 +27,11 @@ export default function TextEditor({ editor }) {
             .upload(m.filePath, m.file, { upsert: true });
           if (uploadError) {
             console.error("Error uploading file:", uploadError);
+            alert('can not upload your file sorry')
           } else {
-            console.log(`File ${i} uploaded successfully!`);
-
             const { data } = supabase.storage
               .from("media")
               .getPublicUrl(m.filePath);
-
-            console.log(" Public URL ", data.publicUrl);
 
             urls.push({
               fileType: m.fileType,
@@ -44,6 +42,7 @@ export default function TextEditor({ editor }) {
           console.error("❌ Upload failed:", err);
         }
       }
+      dispatch(clearValue())
     }
 
     const res = {
@@ -56,7 +55,6 @@ export default function TextEditor({ editor }) {
     if (res.content === "<p></p>") return; // Prevent empty messages
     const { data, error } = await postToSupabase("messages", res);
     if (error) console.error("Error adding message:", error.message);
-    else console.log("Inserted message:", data);
   };
 
   return (

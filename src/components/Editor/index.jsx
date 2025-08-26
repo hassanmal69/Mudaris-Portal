@@ -47,7 +47,6 @@ export default function EditorWrapper() {
           </button>
         </div>
       ))}
-
       <EditorContent editor={editor} />
     </div>
   );
