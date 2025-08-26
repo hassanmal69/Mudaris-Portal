@@ -4,7 +4,7 @@ import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Mention from "@tiptap/extension-mention";
 import Placeholder from "@tiptap/extension-placeholder";
-import suggestion from "./components/MentionComponent/suggestion";
+import suggestion from "./components/toolbar/MentionComponent/suggestion";
 import TextEditor from "./TextEditor";
 import "./styles.scss";
 import "./editor.css";

@@ -55,13 +55,15 @@ const VideoRecording = () => {
       type: blob.type,
     });
 
-    const fileName = `video-${Date.now()}.webm`
-    dispatch(addValue({
-      fileLink: mediaBlobUrl,
-      file: file,
-      fileType: "video",
-      filePath: `video/recorded/${fileName}`
-    }));
+    const fileName = `video-${Date.now()}.webm`;
+    dispatch(
+      addValue({
+        fileLink: mediaBlobUrl,
+        file: file,
+        fileType: "video",
+        filePath: `video/recorded/${fileName}`,
+      })
+    );
   };
 
   return (
