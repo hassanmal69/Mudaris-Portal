@@ -43,19 +43,6 @@ export default function EditorWrapper() {
           </button>
         </div>
       ))}
-      {/* {files && (
-        <div className="mt-4">
-          {fileType === "audio" && (
-            <audio src={fileLink} controls className="w-full" />
-          )}
-          {fileType === "image" && (
-            <img src={fileLink} alt="uploaded" className="max-w-sm rounded" />
-          )}
-          {fileType === "video" && (
-            <video src={fileLink} controls className="h-45 max-w-sm rounded" />
-          )}
-        </div>
-      )} */}
       <EditorContent editor={editor} />
     </div>
   );

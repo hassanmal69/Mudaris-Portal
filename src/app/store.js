@@ -12,4 +12,9 @@ export const store = configureStore({
     file: fileSliceReducer,
     messages: messageReducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }),
+
 });

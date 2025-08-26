@@ -147,7 +147,6 @@ const Messages = () => {
       </div>
       {messages.map((m) => (
         <div key={m.id} className="flex gap-2">
-          {console.log(m)}
           <img
             src={m.profiles?.avatar_url}
             alt={m.profiles?.full_name}
