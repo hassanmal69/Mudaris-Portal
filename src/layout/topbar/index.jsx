@@ -6,11 +6,17 @@ import { supabase } from "@/services/supabaseClient.js";
 import "./topbar.css";
 import { Globe, Lock } from "lucide-react";
 import Members from "./members";
+import { useDispatch, useSelector } from "react-redux";
+import { setQuery } from "@/features/messages/search/searchSlice";
+import { Search } from "lucide-react";
 
 const Topbar = () => {
+  const dispatch = useDispatch();
   const { groupId, workspace_id } = useParams();
   const [visibility, setVisibility] = useState("");
   const [channel_name, setChannel_name] = useState("");
+
+  const query = useSelector((state) => state.search.query);
 
   useEffect(() => {
     const getChannelData = async () => {
@@ -44,22 +50,33 @@ const Topbar = () => {
 
   return (
     <section
-      className=" top-0 bg-white shadow-sm topbar-container md:px-6 py-2 flex items-center"
+      className=" top-0 w-full bg-white shadow-sm topbar-container md:px-6 py-2 flex items-center"
       style={{ minHeight: "56px" }}
     >
       <div className="flex items-center gap-2 min-w-0">
-        <h2 className="text-gray-600 font-medium flex gap-0.5">
-          <span>{visibility === "public" ? <Globe /> : <Lock />} </span>
+        <h2 className="text-gray-600 text-[18px]  font-medium flex gap-0.5 items-center">
+          <span>
+            {visibility === "public" ? (
+              <Globe className="w-5" />
+            ) : (
+              <Lock className="w-5" />
+            )}{" "}
+          </span>
           {channel_name}
         </h2>
       </div>
 
-      <div className="flex-1 flex justify-center px-2">
-        <Input
-          type="text"
-          placeholder="Search messages"
-          className="max-w-xs w-full rounded-md border-gray-300 focus:border-primary"
-        />
+      <div className=" flex-1 flex items-center justify-center">
+        <div className="relative ">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+          <Input
+            type="text"
+            placeholder="Search messages"
+            onChange={(e) => dispatch(setQuery(e.target.value))}
+            value={query}
+            className=" w-[500px] h-[40px] rounded-md border-gray-300 focus:border-primary pl-9 "
+          />
+        </div>
       </div>
 
       <div className="flex items-center gap-2 min-w-0">
