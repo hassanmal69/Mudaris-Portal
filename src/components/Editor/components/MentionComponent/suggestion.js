@@ -55,8 +55,6 @@ export default {
         })
         .slice(0, 5);
 
-      console.log("Returning items for mentions:", items);
-
       if (error) {
         console.error("Error fetching mention items:", error);
         return [];

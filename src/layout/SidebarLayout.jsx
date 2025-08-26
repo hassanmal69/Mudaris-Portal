@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/sidebar";
 import SidebarMenu from "./sidebar";
 
-const AppLayout = ({ children }) => {
+const SidebarLayout = ({ children }) => {
   return (
     <SidebarProvider>
       <Sidebar>
@@ -20,4 +20,4 @@ const AppLayout = ({ children }) => {
   );
 };
 
-export default AppLayout;
+export default SidebarLayout;

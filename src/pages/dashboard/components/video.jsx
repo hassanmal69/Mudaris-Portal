@@ -34,12 +34,11 @@ const VideoRecording = () => {
       .catch((err) => console.error("Error accessing camera/mic:", err));
 
     return () => {
-      navigator.mediaDevices
-        .getUserMedia({ video: false, audio: false });
+      navigator.mediaDevices.getUserMedia({ video: false, audio: false });
       mounted = false;
       previewStream?.getTracks().forEach((track) => track.stop());
     };
-  }
+  };
 
   const { status, startRecording, stopRecording, mediaBlobUrl } =
     useReactMediaRecorder({
@@ -56,13 +55,15 @@ const VideoRecording = () => {
       type: blob.type,
     });
 
-    const fileName = `video-${Date.now()}.webm`
-    dispatch(addValue({
-      fileLink: mediaBlobUrl,
-      file: file,
-      fileType: "video",
-      filePath: `video/recorded/${fileName}`
-    }));
+    const fileName = `video-${Date.now()}.webm`;
+    dispatch(
+      addValue({
+        fileLink: mediaBlobUrl,
+        file: file,
+        fileType: "video",
+        filePath: `video/recorded/${fileName}`,
+      })
+    );
 
     // try {
     //   const { error: uploadError } = await supabase.storage

@@ -21,7 +21,6 @@ export default function TextEditor({ editor }) {
     if (files && files.length > 0) {
       for (const [i, m] of files.entries()) {
         try {
-          console.log(m.filePath, m.file);
           const { error: uploadError } = await supabase.storage
             .from("media")
             .upload(m.filePath, m.file, { upsert: true });

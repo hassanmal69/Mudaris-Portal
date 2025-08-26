@@ -3,9 +3,8 @@ import SignUp from "@/pages/auth/signup/index.jsx";
 import Login from "@/pages/auth/login/index.jsx";
 import Dashboard from "@/pages/dashboard/index.jsx";
 import PrivateRoute from "./privateRoute.jsx";
-import AdminDashboard from "@/pages/admin/admin.jsx";
 import WorkSpaceInd from "@/pages/dashboard/components/workspaceInd.jsx";
-import AppLayout from "@/layout/AppLayout.jsx";
+import SidebarLayout from "@/layout/SidebarLayout.jsx";
 import Topbar from "@/layout/topbar/index.jsx";
 export const router = createBrowserRouter([
   {
@@ -44,25 +43,17 @@ export const router = createBrowserRouter([
     path: "/invite/verify",
     element: <SignUp />,
   },
-  {
-    path: "/admindashboard",
-    element: (
-      // <AdminRoute>
-      <AdminDashboard />
-      // </AdminRoute>
-    ),
-  },
 ]);
 
 function WorkspaceLayout() {
   return (
-    <AppLayout>
-      <div className="flex flex-col w-full">
-        {/* <Topbar /> */}
-        <div className="flex-1 overflow-auto">
-          <Outlet />
-        </div>
+    <SidebarLayout>
+      <div>
+        {/* <div className="flex-1 overflow-auto"> */}
+        <Topbar />
+        <Outlet />
+        {/* </div> */}
       </div>
-    </AppLayout>
+    </SidebarLayout>
   );
 }

@@ -9,15 +9,19 @@ import TextEditor from "./TextEditor";
 import "./styles.scss";
 import "./editor.css";
 import { removeValue } from "@/features/ui/fileSlice";
+import classNames from "classnames";
 export default function EditorWrapper() {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const { workspace_id } = useParams();
   const { files } = useSelector((state) => state.file);
   const editor = useEditor({
     extensions: [
       StarterKit,
       Placeholder.configure({ placeholder: "Write something..." }),
-      Mention.configure({ HtmlAttributes: { class: "mention" }, suggestion }),
+      Mention.configure({
+        HTMLAttributes: { class: "mention" },
+        suggestion,
+      }),
     ],
     workspaceId: workspace_id,
   });
@@ -43,19 +47,7 @@ export default function EditorWrapper() {
           </button>
         </div>
       ))}
-      {/* {files && (
-        <div className="mt-4">
-          {fileType === "audio" && (
-            <audio src={fileLink} controls className="w-full" />
-          )}
-          {fileType === "image" && (
-            <img src={fileLink} alt="uploaded" className="max-w-sm rounded" />
-          )}
-          {fileType === "video" && (
-            <video src={fileLink} controls className="h-45 max-w-sm rounded" />
-          )}
-        </div>
-      )} */}
+
       <EditorContent editor={editor} />
     </div>
   );

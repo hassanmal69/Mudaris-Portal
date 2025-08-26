@@ -18,9 +18,7 @@ const Workspace = () => {
       "",
       ""
     );
-    console.log(res.data);
     setAllworkspace(res.data);
-    console.log(allworkspace);
   };
   useEffect(() => {
     fetchWorkspaces();
@@ -57,18 +55,12 @@ const Workspace = () => {
 
   return (
     <section>
-      {/* <form onSubmit={handleSubmit} method="post">
-        <input
-          type="text"
-          placeholder="add your workspace"
-          value={workspace}
-          onChange={(e) => setworkspace(e.target.value)}
-        />
-        <button>add</button>
-      </form> */}
       <div className="flex w-full h-full flex-col gap-4">
         {allworkspace.map((w, i) => (
-          <div className="flex w-full px-4 m-auto justify-between items-center">
+          <div
+            key={i}
+            className="flex w-full px-4 m-auto justify-between items-center"
+          >
             <div className="flex gap-1.5">
               <img
                 className="w-16 h-16"
@@ -80,24 +72,24 @@ const Workspace = () => {
                   {w.workspace_name}
                 </p>
                 <div className="flex gap-3 items-center">
-                  <div class="flex -space-x-4 rtl:space-x-reverse">
+                  <div className="flex -space-x-4 rtl:space-x-reverse">
                     <img
-                      class="w-7 h-7 border-2 border-white rounded-full dark:border-gray-800"
+                      className="w-7 h-7 border-2 border-white rounded-full dark:border-gray-800"
                       src="https://i.pravatar.cc/40?img=1"
                       alt="User 1"
                     />
                     <img
-                      class="w-7 h-7 border-2 border-white rounded-full dark:border-gray-800"
+                      className="w-7 h-7 border-2 border-white rounded-full dark:border-gray-800"
                       src="https://i.pravatar.cc/40?img=2"
                       alt="User 2"
                     />
                     <img
-                      class="w-7 h-7 border-2 border-white rounded-full dark:border-gray-800"
+                      className="w-7 h-7 border-2 border-white rounded-full dark:border-gray-800"
                       src="https://i.pravatar.cc/40?img=3"
                       alt="User 3"
                     />
                     <img
-                      class="w-7 h-7 border-2 border-white rounded-full dark:border-gray-800"
+                      className="w-7 h-7 border-2 border-white rounded-full dark:border-gray-800"
                       src="https://i.pravatar.cc/40?img=4"
                       alt="User 4"
                     />

@@ -23,8 +23,11 @@ const EmailAvatar = ({ onNext, onBack, invite }) => {
 
           <div>
             <label>Email</label>
-            <Field name="email"
-              disabled className="w-full p-2 border rounded" />
+            <Field
+              name="email"
+              disabled
+              className="w-full p-2 border rounded"
+            />
             <ErrorMessage
               name="email"
               component="div"
@@ -37,7 +40,6 @@ const EmailAvatar = ({ onNext, onBack, invite }) => {
             <Input
               type="file"
               onChange={(event) =>
-                // console.log("event is ",event)
                 setFieldValue("avatarFile", event.currentTarget.files[0])
               }
             />
