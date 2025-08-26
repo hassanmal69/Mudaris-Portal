@@ -48,12 +48,8 @@ export const router = createBrowserRouter([
 function WorkspaceLayout() {
   return (
     <SidebarLayout>
-      <div>
-        {/* <div className="flex-1 overflow-auto"> */}
-        <Topbar />
-        <Outlet />
-        {/* </div> */}
-      </div>
+      <Topbar />
+      <Outlet />
     </SidebarLayout>
   );
 }

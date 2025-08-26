@@ -1,9 +1,9 @@
-import FileUploader from "@/pages/dashboard/components/fileInput";
+import FileUploader from "@/components/Editor/components/toolbar/files";
 import { toolbarButtons } from "../../config/toolbarButtons";
 import EmojiButton from "../EmojiButton.jsx";
 import MentionButton from "../MentionButton.jsx";
-import AudioRecording from "@/pages/dashboard/components/audio";
-import VideoRecording from "@/pages/dashboard/components/video";
+import AudioRecording from "@/components/Editor/components/toolbar/audio";
+import VideoRecording from "@/components/Editor/components/toolbar/video";
 
 export default function Toolbar({ editor }) {
   if (!editor) return null;
@@ -25,7 +25,7 @@ export default function Toolbar({ editor }) {
       <MentionButton editor={editor} />
       <VideoRecording />
       <AudioRecording />
-      <FileUploader/>
+      <FileUploader />
     </div>
   );
 }

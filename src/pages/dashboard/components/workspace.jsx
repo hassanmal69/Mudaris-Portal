@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { useEffect } from "react";
 import { supabase } from "../../../services/supabaseClient.js";
 import { Link } from "react-router-dom";
