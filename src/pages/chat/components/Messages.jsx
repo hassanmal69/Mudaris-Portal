@@ -10,6 +10,7 @@ const Messages = () => {
   const { groupId } = useParams();
   const messages = useSelector((state) => state.messages.items);
   const session = useSelector((state) => state.auth);
+  const query = useSelector((state) => state.search.query);
   const imageUrl = session.user?.user_metadata?.avatar_url;
   const fullName = session.user?.user_metadata?.fullName;
 
@@ -17,6 +18,11 @@ const Messages = () => {
   const [hasMore, setHasMore] = useState(true);
   const containerRef = useRef(null);
   const loaderRef = useRef(null);
+  const filtered = query
+    ? messages.filter((msg) =>
+        msg.content?.toLowerCase().includes(query.toLowerCase())
+      )
+    : messages;
 
   const loadMessages = async (pageNum) => {
     const FROM = pageNum * PAGE_SIZE;
@@ -145,7 +151,7 @@ const Messages = () => {
       <div ref={loaderRef}>
         {hasMore ? "loading older messages" : "No more messages"}
       </div>
-      {messages.map((m) => (
+      {filtered.map((m) => (
         <div key={m.id} className="flex gap-2">
           <img
             src={m.profiles?.avatar_url}
