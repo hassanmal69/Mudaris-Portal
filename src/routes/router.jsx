@@ -36,6 +36,10 @@ export const router = createBrowserRouter([
         path: "group/:groupId",
         element: <WorkSpaceInd />, // or another group-specific component
       },
+      {
+        path: "individual/:user_id",
+        element: <WorkSpaceInd />, // or another group-specific component
+      },
     ],
   },
 

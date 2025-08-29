@@ -21,15 +21,19 @@ import { useParams } from "react-router-dom";
 import { getFromSupabase } from "@/utils/crud/getFromSupabase.js";
 import { supabase } from "@/services/supabaseClient.js";
 import { Link, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { postToSupabase } from "@/utils/crud/posttoSupabase";
 
 const Sidebar = () => {
   const navigate = useNavigate();
+  const { session } = useSelector((state) => state.auth);
   const [addChannelOpen, setAddChannelOpen] = useState(false);
   const [inviteOpen, setInviteOpen] = useState(false);
   const [channels, setChannels] = useState([]);
   const [workspaceName, setWorkspaceName] = useState("");
-
+  const [users, setUsers] = useState([])
   const { workspace_id } = useParams();
+  const { user_id } = useParams();
   const { groupId } = useParams();
   const fetchChannels = async () => {
     const res = await getFromSupabase(
@@ -50,6 +54,21 @@ const Sidebar = () => {
       console.error("Failed to fetch channels:", res.error);
     }
   };
+  const getUsers = async () => {
+    const { data, error } = await supabase
+      .from("workspace_members")
+      .select(`
+   user_id,
+    profiles (
+      full_name,
+      avatar_url
+    )
+  `)
+    if (error) {
+      console.log(error);
+    }
+    setUsers(data)
+  }
   useEffect(() => {
     const fetchWorkspaceName = async () => {
       const { data } = await supabase
@@ -60,6 +79,7 @@ const Sidebar = () => {
       if (data) setWorkspaceName(data.workspace_name);
     };
     fetchChannels();
+    getUsers();
     fetchWorkspaceName();
   }, []);
   useEffect(() => {
@@ -79,11 +99,24 @@ const Sidebar = () => {
     };
   }, []);
   useEffect(() => {
-    if (!groupId && channels.length > 0) {
+    if (!groupId && !user_id && channels.length > 0) {
       const channelId = channels[0].id;
       navigate(`/workspace/${workspace_id}/group/${channelId}`);
     }
   }, [channels, groupId, navigate, workspace_id]);
+  const handleIndividualMessage = async (u) => {
+    const token = u?.user_id.slice(0, 6) + session?.user?.id.slice(0, 6)
+    console.log(token);
+    navigate(`/workspace/${workspace_id}/individual/${token}`)
+    const res = {
+      sender_id: session?.user?.id,
+      receiver_id: u?.user_id,
+      token,
+    };
+    const { data, error } = await postToSupabase("directMessagesChannel", res);
+    if (error) console.log(error);
+    console.log(data);
+  }
   return (
     <>
       <AddChannelDialog
@@ -133,18 +166,19 @@ const Sidebar = () => {
           <SidebarMenu>
             {users.map((user) => (
               <SidebarMenuItem key={user.id}>
-                <div className="flex items-center gap-2 px-2 py-1 rounded hover:bg-gray-100 cursor-pointer">
+                <div
+                  onClick={() => handleIndividualMessage(user)}
+                  className="flex items-center gap-2 px-2 py-1 rounded hover:bg-gray-100 cursor-pointer">
                   <Avatar className="w-7 h-7">
-                    <AvatarImage src={user.avatar} alt={user.name} />
-                    <AvatarFallback>{user.name[0]}</AvatarFallback>
+                    <AvatarImage src={user.profiles.avatar_url} alt={user.full_name} />
+                    {/* <AvatarFallback>{user.name[0]}</AvatarFallback> */}
                   </Avatar>
                   <span className="font-medium text-sm text-gray-800">
-                    {user.name}
+                    {user.profiles.full_name}
                   </span>
                   <span
-                    className={`ml-auto w-2 h-2 rounded-full ${
-                      user.status === "online" ? "bg-green-500" : "bg-gray-400"
-                    }`}
+                    className={`ml-auto w-2 h-2 rounded-full ${user.status === "online" ? "bg-green-500" : "bg-gray-400"
+                      }`}
                     title={user.status}
                   ></span>
                 </div>
@@ -169,29 +203,29 @@ const Sidebar = () => {
 
 export default Sidebar;
 
-const users = [
-  {
-    id: 1,
-    name: "Alice",
-    avatar: "https://i.pravatar.cc/150?img=1",
-    status: "online",
-  },
-  {
-    id: 2,
-    name: "Bob",
-    avatar: "https://i.pravatar.cc/150?img=2",
-    status: "offline",
-  },
-  {
-    id: 3,
-    name: "Charlie",
-    avatar: "https://i.pravatar.cc/150?img=3",
-    status: "online",
-  },
-  {
-    id: 4,
-    name: "Dana",
-    avatar: "https://i.pravatar.cc/150?img=4",
-    status: "offline",
-  },
-];
+// const users = [
+//   {
+//     id: 1,
+//     name: "Alice",
+//     avatar: "https://i.pravatar.cc/150?img=1",
+//     status: "online",
+//   },
+//   {
+//     id: 2,
+//     name: "Bob",
+//     avatar: "https://i.pravatar.cc/150?img=2",
+//     status: "offline",
+//   },
+//   {
+//     id: 3,
+//     name: "Charlie",
+//     avatar: "https://i.pravatar.cc/150?img=3",
+//     status: "online",
+//   },
+//   {
+//     id: 4,
+//     name: "Dana",
+//     avatar: "https://i.pravatar.cc/150?img=4",
+//     status: "offline",
+//   },
+// ];
