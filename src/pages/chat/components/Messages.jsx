@@ -13,6 +13,7 @@ const Messages = () => {
   const query = useSelector((state) => state.search.query);
   const imageUrl = session.user?.user_metadata?.avatar_url;
   const fullName = session.user?.user_metadata?.fullName;
+  const { user_id } = useParams();
 
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
@@ -20,39 +21,48 @@ const Messages = () => {
   const loaderRef = useRef(null);
   const filtered = query
     ? messages.filter((msg) =>
-        msg.content?.toLowerCase().includes(query.toLowerCase())
-      )
+      msg.content?.toLowerCase().includes(query.toLowerCase())
+    )
     : messages;
 
   const loadMessages = async (pageNum) => {
     const FROM = pageNum * PAGE_SIZE;
     const TO = FROM + PAGE_SIZE - 1;
-    const { data, error } = await supabase
+
+    let query = supabase
       .from("messages")
       .select(
         `
-          id,
-          content,
-          attachments,
-          created_at,
-          profiles (
-            full_name,
-            avatar_url
-          )
-        `
+        id,
+        content,
+        attachments,
+        created_at,
+        profiles (
+          full_name,
+          avatar_url
+        )
+      `
       )
-      .eq("channel_id", groupId)
       .order("created_at", { ascending: false })
       .range(FROM, TO);
+
+    // apply filter depending on context
+    if (user_id) {
+      query = query.eq("token", user_id); // direct message
+    } else {
+      query = query.eq("channel_id", groupId); // group message
+    }
+
+    const { data, error } = await query;
 
     if (error) {
       console.error("Error fetching messages:", error);
       return [];
     }
-
-    // reverse so oldest at top -> newest at bottom
+    console.log(data);
     return data.reverse();
   };
+
 
   // inital load -> latest messages
   useEffect(() => {
@@ -65,7 +75,7 @@ const Messages = () => {
         containerRef.current.scrollTop = containerRef.current.scrollHeight;
       }, 100);
     })();
-  }, [groupId]);
+  }, [groupId,user_id]);
 
   // load older messages when top reached
 
