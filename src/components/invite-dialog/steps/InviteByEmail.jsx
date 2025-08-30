@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 function isValidEmail(email) {
@@ -72,10 +71,19 @@ const InviteByEmail = ({ emails, setEmails, onCopyLink, onNext }) => {
         {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
       </div>
       <div className="flex gap-2 justify-between">
-        <Button type="button" variant="secondary" onClick={onCopyLink}>
+        <Button
+          type="button"
+          variant="secondary"
+          onClick={onCopyLink}
+          disabled={!input.trim() && emails.length === 0}
+        >
           Copy link
         </Button>
-        <Button type="button" onClick={onNext}>
+        <Button
+          type="button"
+          onClick={onNext}
+          disabled={!input.trim() && emails.length === 0}
+        >
           Next
         </Button>
       </div>
