@@ -14,7 +14,7 @@ import { supabase } from "@/services/supabaseClient";
 import { addValue } from "@/features/ui/fileSlice";
 import { useDispatch } from "react-redux";
 
-const VideoRecording = () => {
+const VideoRecording = ({ toolbarStyles }) => {
   const dispatch = useDispatch();
   const videoPreviewRef = useRef(null);
   const [previewStream, setPreviewStream] = useState(null);
@@ -70,7 +70,7 @@ const VideoRecording = () => {
     <Dialog>
       <DialogTrigger asChild>
         <button className="p-2 rounded hover:bg-gray-200" onClick={VideoStream}>
-          <Video className="w-6 h-6" />
+          <Video style={toolbarStyles} />
         </button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-lg">

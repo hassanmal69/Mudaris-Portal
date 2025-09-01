@@ -5,7 +5,10 @@ const Chat = () => {
   return (
     <section className="flex flex-col">
       <Messages />
-      <Editor />
+      <Editor
+        width="1350px"
+        toolbarStyles={{ width: "20px", height: "20px" }}
+      />
     </section>
   );
 };

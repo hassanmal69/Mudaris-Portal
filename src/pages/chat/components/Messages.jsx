@@ -4,6 +4,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { addMessage, setMessages } from "@/features/messages/messageSlice";
 import { useParams } from "react-router-dom";
 import "./message.css";
+import { SmilePlus, MessageSquareReply } from "lucide-react";
+import ReplyDrawer from "./ReplyDrawer";
+import { openReplyDrawer } from "@/features/reply/replySlice";
 const PAGE_SIZE = 20;
 const Messages = () => {
   const dispatch = useDispatch();
@@ -38,7 +41,8 @@ const Messages = () => {
           profiles (
             full_name,
             avatar_url
-          )
+          ),
+          replies:messages!reply_to(id)
         `
       )
       .eq("channel_id", groupId)
@@ -50,8 +54,14 @@ const Messages = () => {
       return [];
     }
 
+    // Add replyCount property
+    const messagesWithReplyCount = data.map((msg) => ({
+      ...msg,
+      replyCount: msg.replies ? msg.replies.length : 0,
+    }));
+
     // reverse so oldest at top -> newest at bottom
-    return data.reverse();
+    return messagesWithReplyCount.reverse();
   };
 
   // inital load -> latest messages
@@ -148,26 +158,47 @@ const Messages = () => {
   }, [dispatch, fullName, imageUrl]);
   return (
     <section ref={containerRef} className="messages-container">
+      <ReplyDrawer />
       <div ref={loaderRef}>
         {hasMore ? "loading older messages" : "No more messages"}
       </div>
       {filtered.map((m) => (
-        <div key={m.id} className="flex gap-2">
+        <div key={m.id} className="flex gap-2 relative border-t py-1 group">
           <img
             src={m.profiles?.avatar_url}
             alt={m.profiles?.full_name}
             className="w-8 h-8 rounded-full"
           />
-          <div className="message-body">
+          <div className="message-body relative w-full">
+            {/* Action buttons - show only on hover */}
+            <div className="absolute top-0 right-0 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              <button
+                type="button"
+                className="p-1 hover:bg-gray-100 rounded"
+                title="Reply"
+                onClick={() => dispatch(openReplyDrawer(m))}
+              >
+                <MessageSquareReply className="w-4 h-4" />
+              </button>
+              <button
+                type="button"
+                className="p-1 hover:bg-gray-100 rounded"
+                title="React"
+                onClick={() => {
+                  /* handle reaction */
+                }}
+              >
+                <SmilePlus className="w-4 h-4" />
+              </button>
+            </div>
             <strong>{m.profiles?.full_name || "Unknown User"}</strong>
-            <div dangerouslySetInnerHTML={{ __html: m.content }} />
+
             {m?.attachments?.[0]?.fileType === "video" && (
               <video src={m?.attachments?.[0]?.fileUrl} width="200" controls />
             )}
             {m?.attachments?.[0]?.fileType === "audio" && (
               <audio src={m?.attachments?.[0]?.fileUrl} width="200" controls />
             )}
-
             {m?.attachments?.[0]?.fileType.startsWith("image") && (
               <img
                 src={m?.attachments?.[0]?.fileUrl}
@@ -175,6 +206,19 @@ const Messages = () => {
                 width="100"
               />
             )}
+            <div>
+              <div dangerouslySetInnerHTML={{ __html: m.content }} />
+              {m.replyCount > 0 && (
+                <button
+                  className="text-[13px] text-[#556cd6] mt-1 font-bold cursor-pointer"
+                  onClick={() => dispatch(openReplyDrawer(m))}
+                  title="View replies"
+                  type="button"
+                >
+                  {m.replyCount} {m.replyCount === 1 ? "reply" : "replies"}
+                </button>
+              )}
+            </div>
           </div>
         </div>
       ))}
