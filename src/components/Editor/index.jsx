@@ -9,8 +9,7 @@ import TextEditor from "./TextEditor";
 import "./styles.scss";
 import "./editor.css";
 import { removeValue } from "@/features/ui/fileSlice";
-import classNames from "classnames";
-export default function EditorWrapper() {
+export default function EditorWrapper({ width, styles, toolbarStyles }) {
   const dispatch = useDispatch();
   const { workspace_id } = useParams();
   const { files } = useSelector((state) => state.file);
@@ -27,8 +26,14 @@ export default function EditorWrapper() {
   });
 
   return (
-    <div className="editor-container">
-      <TextEditor editor={editor} />
+    <div
+      style={{
+        width: width,
+        ...styles,
+      }}
+      className="editor-container "
+    >
+      <TextEditor editor={editor} toolbarStyles={toolbarStyles} />
       <EditorContent editor={editor} />
             {files.map((f, index) => (
         <div key={index} className="bg-gray-300">

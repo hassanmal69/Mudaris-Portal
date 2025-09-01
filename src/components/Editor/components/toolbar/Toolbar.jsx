@@ -5,7 +5,7 @@ import MentionButton from "../MentionButton.jsx";
 import AudioRecording from "@/components/Editor/components/toolbar/audio";
 import VideoRecording from "@/components/Editor/components/toolbar/video";
 
-export default function Toolbar({ editor }) {
+export default function Toolbar({ editor, toolbarStyles }) {
   if (!editor) return null;
 
   return (
@@ -18,14 +18,14 @@ export default function Toolbar({ editor }) {
           className={isActive && isActive(editor) ? "is-active" : ""}
           title={name}
         >
-          <Icon className="w-5 h-5" />
+          <Icon style={toolbarStyles} />
         </button>
       ))}
-      <EmojiButton editor={editor} />
-      <MentionButton editor={editor} />
-      <VideoRecording />
-      <AudioRecording />
-      <FileUploader />
+      <EmojiButton editor={editor} toolbarStyles={toolbarStyles} />
+      <MentionButton editor={editor} toolbarStyles={toolbarStyles} />
+      <VideoRecording toolbarStyles={toolbarStyles} />
+      <AudioRecording toolbarStyles={toolbarStyles} />
+      <FileUploader toolbarStyles={toolbarStyles} />
     </div>
   );
 }
