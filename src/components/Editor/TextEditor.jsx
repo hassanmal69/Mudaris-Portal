@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { postToSupabase } from "@/utils/crud/posttoSupabase";
 import Toolbar from "./components/toolbar/Toolbar.jsx";
 import { Send } from "lucide-react";
-import { addValue, clearValue } from "@/features/ui/fileSlice";
+import { clearValue } from "@/features/ui/fileSlice";
 import { useDispatch } from "react-redux";
 
 import { supabase } from "@/services/supabaseClient.js";
@@ -12,6 +12,8 @@ export default function TextEditor({ editor, toolbarStyles }) {
   const dispatch = useDispatch();
   const userId = useSelector((state) => state.auth.user?.id);
   const { groupId } = useParams();
+  const { user_id } = useParams();
+
   const { files } = useSelector((state) => state.file);
   const replyMessage = useSelector((state) => state.reply.message);
   const handleSubmit = async (e) => {
@@ -52,6 +54,7 @@ export default function TextEditor({ editor, toolbarStyles }) {
       content: messageHTML,
       reply_to: replyMessage ? replyMessage.id : null,
       attachments: urls,
+      token: user_id
     };
     if (res.content === "<p></p>") return;
     const { data, error } = await postToSupabase("messages", res);

@@ -9,6 +9,7 @@ const Chat = () => {
         width="1350px"
         toolbarStyles={{ width: "20px", height: "20px" }}
       />
+
     </section>
   );
 };

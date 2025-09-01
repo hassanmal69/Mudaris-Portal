@@ -34,8 +34,9 @@ export default function EditorWrapper({ width, styles, toolbarStyles }) {
       className="editor-container "
     >
       <TextEditor editor={editor} toolbarStyles={toolbarStyles} />
-      {files.map((f, index) => (
-        <div key={index}>
+      <EditorContent editor={editor} />
+            {files.map((f, index) => (
+        <div key={index} className="bg-gray-300">
           {f.fileType === "video" && (
             <video src={f.fileLink} width="200" controls />
           )}
@@ -52,7 +53,6 @@ export default function EditorWrapper({ width, styles, toolbarStyles }) {
           </button>
         </div>
       ))}
-      <EditorContent editor={editor} />
     </div>
   );
 }
