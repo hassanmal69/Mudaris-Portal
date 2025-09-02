@@ -1,16 +1,12 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { supabase } from "@/services/supabaseClient";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addMessage, setMessages } from "@/features/messages/messageSlice";
 import { useParams } from "react-router-dom";
-import "./message.css";
-import { SmilePlus, MessageSquareReply } from "lucide-react";
-import ReplyDrawer from "./ReplyDrawer";
+import { supabase } from "@/services/supabaseClient";
+import { addMessage, setMessages } from "@/features/messages/messageSlice";
 import { openReplyDrawer } from "@/features/reply/replySlice";
-import EmojiPicker from "emoji-picker-react"; // NEW
+
 const PAGE_SIZE = 20;
 
-// Utility to group reactions
 function groupReactions(reactions) {
   const grouped = {};
   reactions?.forEach((r) => {
@@ -20,22 +16,21 @@ function groupReactions(reactions) {
   return grouped;
 }
 
-const Messages = () => {
+export default function useMessages() {
   const dispatch = useDispatch();
-  const { groupId } = useParams();
+  const { groupId, user_id } = useParams();
   const messages = useSelector((state) => state.messages.items);
   const session = useSelector((state) => state.auth);
-  const query = useSelector((state) => state.search.query);
+  const currentUserId = session.user?.id;
   const imageUrl = session.user?.user_metadata?.avatar_url;
   const fullName = session.user?.user_metadata?.fullName;
-  const currentUserId = session.user?.id;
-  const { user_id } = useParams();
+  const query = useSelector((state) => state.search.query);
 
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
+  const [pickerOpenFor, setPickerOpenFor] = useState(null);
   const containerRef = useRef(null);
   const loaderRef = useRef(null);
-  const [pickerOpenFor, setPickerOpenFor] = useState(null);
 
   const filtered = query
     ? messages.filter((msg) =>
@@ -43,11 +38,9 @@ const Messages = () => {
       )
     : messages;
 
-  // Load messages + reactions
   const loadMessages = async (pageNum) => {
     const FROM = pageNum * PAGE_SIZE;
     const TO = FROM + PAGE_SIZE - 1;
-
     let queryBuilder = supabase
       .from("messages")
       .select(
@@ -79,18 +72,12 @@ const Messages = () => {
     }
 
     const { data, error } = await queryBuilder;
-
-    if (error) {
-      console.error("Error fetching messages:", error);
-      return [];
-    }
-
+    if (error) return [];
     const messagesWithReplyCount = data.map((msg) => ({
       ...msg,
       replyCount: msg.replies ? msg.replies.length : 0,
       reactions: msg.reactions || [],
     }));
-
     return messagesWithReplyCount.reverse();
   };
 
@@ -99,7 +86,6 @@ const Messages = () => {
       const firstBatch = await loadMessages(0);
       dispatch(setMessages(firstBatch));
       setPage(1);
-
       setTimeout(() => {
         containerRef.current.scrollTop = containerRef.current.scrollHeight;
       }, 100);
@@ -108,19 +94,15 @@ const Messages = () => {
 
   const loadOlder = useCallback(async () => {
     if (!hasMore) return;
-
     const container = containerRef.current;
     const oldScrollHeight = container.scrollHeight;
-
     const olderBatch = await loadMessages(page);
     if (olderBatch.length === 0) {
       setHasMore(false);
       return;
     }
-
     dispatch(setMessages([...olderBatch, ...messages]));
     setPage((p) => p + 1);
-
     setTimeout(() => {
       container.scrollTop = container.scrollHeight - oldScrollHeight;
     }, 50);
@@ -128,22 +110,16 @@ const Messages = () => {
 
   useEffect(() => {
     if (!loaderRef.current) return;
-    const observer = new IntersectionObserver(
+    const observer = new window.IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting) {
-          loadOlder();
-        }
+        if (entries[0].isIntersecting) loadOlder();
       },
-      {
-        root: containerRef.current,
-        threshold: 1.0,
-      }
+      { root: containerRef.current, threshold: 1.0 }
     );
     observer.observe(loaderRef.current);
     return () => observer.disconnect();
   }, [loadOlder]);
 
-  // Realtime subscription for new messages
   useEffect(() => {
     const subscription = supabase
       .channel("public:messages")
@@ -154,10 +130,7 @@ const Messages = () => {
           dispatch(
             addMessage({
               ...payload.new,
-              profiles: {
-                full_name: fullName,
-                avatar_url: imageUrl,
-              },
+              profiles: { full_name: fullName, avatar_url: imageUrl },
               reactions: [],
             })
           );
@@ -165,7 +138,6 @@ const Messages = () => {
           const isAtBottom =
             container.scrollHeight - container.scrollTop <=
             container.clientHeight + 50;
-
           if (isAtBottom) {
             setTimeout(() => {
               container.scrollTop = container.scrollHeight;
@@ -174,13 +146,9 @@ const Messages = () => {
         }
       )
       .subscribe();
-
-    return () => {
-      supabase.removeChannel(subscription);
-    };
+    return () => supabase.removeChannel(subscription);
   }, [dispatch, fullName, imageUrl]);
 
-  // Realtime subscription for reactions
   useEffect(() => {
     const subscription = supabase
       .channel("public:message_reactions")
@@ -190,7 +158,6 @@ const Messages = () => {
         async (payload) => {
           const affectedId = payload.new?.message_id || payload.old?.message_id;
           if (!affectedId) return;
-          // Fetch single message with reactions
           const { data, error } = await supabase
             .from("messages")
             .select(
@@ -218,10 +185,7 @@ const Messages = () => {
               setMessages(
                 messages.map((msg) =>
                   msg.id === affectedId
-                    ? {
-                        ...msg,
-                        reactions: data.reactions || [],
-                      }
+                    ? { ...msg, reactions: data.reactions || [] }
                     : msg
                 )
               )
@@ -230,29 +194,22 @@ const Messages = () => {
         }
       )
       .subscribe();
-    return () => {
-      supabase.removeChannel(subscription);
-    };
+    return () => supabase.removeChannel(subscription);
   }, [messages, dispatch]);
 
-  // Toggle reaction (add/remove)
   const toggleReaction = async (messageId, emoji) => {
     const msg = messages.find((m) => m.id === messageId);
     const alreadyReacted = msg.reactions?.some(
       (r) => r.user_id === currentUserId && r.reaction_type === emoji
     );
-
     let updatedMessages;
     if (alreadyReacted) {
-      // Remove reaction in Supabase
       await supabase
         .from("message_reactions")
         .delete()
         .eq("message_id", messageId)
         .eq("user_id", currentUserId)
         .eq("reaction_type", emoji);
-
-      // Optimistically remove from local state
       updatedMessages = messages.map((m) =>
         m.id === messageId
           ? {
@@ -265,7 +222,6 @@ const Messages = () => {
           : m
       );
     } else {
-      // Add reaction in Supabase
       await supabase.from("message_reactions").upsert([
         {
           message_id: messageId,
@@ -273,8 +229,6 @@ const Messages = () => {
           reaction_type: emoji,
         },
       ]);
-
-      // Optimistically add to local state
       updatedMessages = messages.map((m) =>
         m.id === messageId
           ? {
@@ -284,133 +238,27 @@ const Messages = () => {
                 {
                   user_id: currentUserId,
                   reaction_type: emoji,
-                  id: "optimistic", // temporary id
+                  id: "optimistic",
                 },
               ],
             }
           : m
       );
     }
-
     dispatch(setMessages(updatedMessages));
     setPickerOpenFor(null);
   };
 
-  return (
-    <section ref={containerRef} className="messages-container">
-      <ReplyDrawer />
-      <div ref={loaderRef}>
-        {hasMore ? "loading older messages" : "No more messages"}
-      </div>
-      {filtered.map((m) => {
-        console.log("Message reactions:", m.reactions); // Add this line
-        const grouped = groupReactions(m.reactions);
-        return (
-          <div key={m.id} className="flex gap-2 relative border-t py-1 group">
-            <img
-              src={m.profiles?.avatar_url}
-              alt={m.profiles?.full_name}
-              className="w-8 h-8 rounded-full"
-            />
-            <div className="message-body relative w-full">
-              {/* Action buttons - show only on hover */}
-              <div className="absolute top-0 right-0 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                <button
-                  type="button"
-                  className="p-1 hover:bg-gray-100 rounded"
-                  title="Reply"
-                  onClick={() => dispatch(openReplyDrawer(m))}
-                >
-                  <MessageSquareReply className="w-4 h-4" />
-                </button>
-                <button
-                  type="button"
-                  className="p-1 hover:bg-gray-100 rounded"
-                  title="Reaction"
-                  onClick={() => setPickerOpenFor(m.id)}
-                >
-                  <SmilePlus className="w-4 h-4" />
-                </button>
-                {pickerOpenFor === m.id && (
-                  <div className="absolute z-10 top-8 right-0">
-                    <EmojiPicker
-                      onEmojiClick={(emojiObj, event) => {
-                        console.log("emojiObj", emojiObj);
-                        console.log("event", event);
-                        toggleReaction(m.id, emojiObj.emoji);
-                      }}
-                    />
-                  </div>
-                )}
-              </div>
-              <strong>{m.profiles?.full_name || "Unknown User"}</strong>
-
-              {m?.attachments?.[0]?.fileType === "video" && (
-                <video
-                  src={m?.attachments?.[0]?.fileUrl}
-                  width="200"
-                  controls
-                />
-              )}
-              {m?.attachments?.[0]?.fileType === "audio" && (
-                <audio
-                  src={m?.attachments?.[0]?.fileUrl}
-                  width="200"
-                  controls
-                />
-              )}
-              {m?.attachments?.[0]?.fileType?.startsWith("image") && (
-                <img
-                  src={m?.attachments?.[0]?.fileUrl}
-                  alt="error sending your image"
-                  width="100"
-                />
-              )}
-              <div>
-                <div dangerouslySetInnerHTML={{ __html: m.content }} />
-                {m.replyCount > 0 && (
-                  <button
-                    className="text-[13px] text-[#556cd6] mt-1 font-bold cursor-pointer"
-                    onClick={() => dispatch(openReplyDrawer(m))}
-                    title="View replies"
-                    type="button"
-                  >
-                    {m.replyCount} {m.replyCount === 1 ? "reply" : "replies"}
-                  </button>
-                )}
-                {/* Reactions UI */}
-                <div className="flex gap-1 mt-1 flex-wrap">
-                  {Object.entries(grouped).map(([emoji, userIds]) => {
-                    const reacted = userIds.includes(currentUserId);
-                    return (
-                      <button
-                        key={emoji}
-                        className={`px-2 py-1 rounded flex items-center gap-1 border text-sm ${
-                          reacted
-                            ? "bg-blue-100 border-blue-400"
-                            : "bg-gray-100 border-gray-300"
-                        }`}
-                        onClick={() => toggleReaction(m.id, emoji)}
-                        title={
-                          reacted
-                            ? "Remove your reaction"
-                            : "React with this emoji"
-                        }
-                        type="button"
-                      >
-                        <span style={{ fontSize: "1.2em" }}>{emoji}</span>
-                        <span>{userIds.length}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-          </div>
-        );
-      })}
-    </section>
-  );
-};
-
-export default Messages;
+  return {
+    messages: filtered,
+    setMessages,
+    loadOlder,
+    hasMore,
+    pickerOpenFor,
+    setPickerOpenFor,
+    toggleReaction,
+    containerRef,
+    loaderRef,
+    currentUserId,
+  };
+}
