@@ -1,7 +1,12 @@
 import { computePosition, flip, shift } from "@floating-ui/dom";
 import { posToDOMRect, ReactRenderer } from "@tiptap/react";
 import { MentionList } from "./MentionList.jsx";
-import { supabase } from "@/services/supabaseClient.js";
+import {
+  selectWorkspaceMembers,
+  fetchWorkspaceMembers,
+} from "@/features/workspaceMembers/WorkspaceMembersSlice.js";
+import { store } from "@/app/store.js"; // adjust path if needed
+
 const updatePosition = (editor, element) => {
   const virtualElement = {
     getBoundingClientRect: () =>
@@ -30,45 +35,23 @@ export default {
     try {
       const workspaceId = editor.options.workspaceId;
 
-      const { data, error } = await supabase
-        .from("workspace_members")
-        .select(
-          `
-        profiles: user_id(
-        id, full_name
-        )
-        `
-        )
-        .eq("workspace_id", workspaceId);
-
-      // for debigging
-      const items = (data || [])
-        .map((m) => ({
-          id: m.profiles.id,
-          label: m.profiles.full_name,
-        }))
-
-        .filter((user) => {
-          if (!query) return [];
-
-          user.label.toLowerCase().includes(query.toLowerCase());
-        })
-        .slice(0, 5);
-
-      if (error) {
-        console.error("Error fetching mention items:", error);
-        return [];
+      // Fetch from Redux (with caching)
+      let members = selectWorkspaceMembers(workspaceId)(store.getState());
+      if (!members.length) {
+        await store.dispatch(fetchWorkspaceMembers(workspaceId));
+        members = selectWorkspaceMembers(workspaceId)(store.getState());
       }
 
-      return (data || [])
-        .filter((m) => m.profiles && m.profiles.full_name) // ensure safe
+      // members shape: [{ user_id, profiles: { id, full_name, avatar_url } }]
+      return (members || [])
+        .filter((m) => m.profiles && m.profiles.full_name)
         .map((m) => ({
           id: m.profiles.id,
           label: m.profiles.full_name,
           avatar: m.profiles.avatar_url,
         }))
         .filter((user) =>
-          user.label.toLowerCase().includes(query.toLowerCase())
+          query ? user.label.toLowerCase().includes(query.toLowerCase()) : true
         )
         .slice(0, 5);
     } catch (error) {

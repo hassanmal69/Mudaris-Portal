@@ -7,11 +7,13 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "@/features/auth/authSlice";
 import bgImg from "../../../../public/mudaris.jpg";
+import { fetchUserWorkspace } from "@/features/workspaceMembers/WorkspaceMembersSlice.js"; // <-- import your thunk
 
 const Login = () => {
   const dispatch = useDispatch();
   const { loading, error } = useSelector((state) => state.auth);
   const navigate = useNavigate();
+
   useEffect(() => {
     const sessionDetect = async () => {
       const {
@@ -24,19 +26,18 @@ const Login = () => {
         return;
       }
 
-      const { data: workspace, error: workspaceError } = await supabase
-        .from("workspace_members")
-        .select("workspace_id")
-        .eq("user_id", user.id)
-        .single();
+      // Use Redux thunk to fetch user's workspace membership
+      const result = await dispatch(fetchUserWorkspace(user.id)).unwrap();
 
-      if (workspaceError) {
-        console.error("Error fetching workspace members:", workspaceError);
+      if (!result || !result.workspace_id) {
+        console.error("Error fetching workspace members or no workspace found");
         return;
       }
 
       if (user?.user_metadata?.user_role === "user") {
-        const workspaceId = workspace.workspace_id;
+        const workspaceId = result.workspace_id;
+        // Fetch workspace members from Redux for this workspace
+        dispatch(fetchWorkspaceMembers(workspaceId));
         if (window.location.pathname !== `/workspace/${workspaceId}`) {
           navigate(`/workspace/${workspaceId}`);
         }
@@ -46,7 +47,7 @@ const Login = () => {
     };
 
     sessionDetect();
-  }, [navigate]);
+  }, [navigate, dispatch]);
 
   return (
     <div className="min-h-screen flex relative flex-col md:flex-row bg-black">
