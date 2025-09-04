@@ -9,43 +9,42 @@ import InviteByEmail from "./steps/InviteByEmail";
 import Channelinvitation from "./steps/Channelinvitation";
 import { useParams } from "react-router-dom";
 import createInvitation from "@/utils/invite/createInvitation";
-import { supabase } from "@/services/supabaseClient"; // adjust your import
+import { supabase } from "@/services/supabaseClient";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchWorkspaceById } from "@/features/workspace/workspaceSlice";
+import { fetchChannels } from "@/features/channels/channelsSlice.js";
 
 const InviteDialog = ({ open, onOpenChange }) => {
   const [step, setStep] = useState(0);
   const [emails, setEmails] = useState([]);
   const [channels, setChannels] = useState([]);
-  const [workspaceName, setWorkspaceName] = useState("");
-  const [suggestedChannels, setSuggestedChannels] = useState([]);
   const { workspace_id } = useParams();
+  const dispatch = useDispatch();
 
+  // Redux state
+  const { currentWorkspace, loading } = useSelector(
+    (state) => state.workSpaces
+  );
+  const channelState = useSelector((state) => state.channels); // <-- get channels slice
+
+  // Fetch workspace info from Redux
   useEffect(() => {
-    async function fetchWorkspaceAndChannels() {
-      // Fetch workspace name
-      const { data: wsData, error: wsError } = await supabase
-        .from("workspaces")
-        .select("workspace_name")
-        .eq("id", workspace_id)
-        .single();
-      if (wsData && wsData.workspace_name) {
-        setWorkspaceName(wsData.workspace_name);
-      } else {
-        setWorkspaceName("Workspace");
-      }
-
-      // Fetch channels
-      const { data: channelsData, error: channelsError } = await supabase
-        .from("channels")
-        .select("channel_name")
-        .eq("workspace_id", workspace_id);
-      if (channelsData) {
-        setSuggestedChannels(channelsData.map((c) => c.channel_name));
-      } else {
-        setSuggestedChannels([]);
-      }
+    if (workspace_id) {
+      dispatch(fetchWorkspaceById(workspace_id));
     }
-    if (workspace_id) fetchWorkspaceAndChannels();
-  }, [workspace_id]);
+  }, [workspace_id, dispatch]);
+
+  // Fetch channels from Redux
+  useEffect(() => {
+    if (workspace_id) {
+      dispatch(fetchChannels(workspace_id));
+    }
+  }, [workspace_id, dispatch]);
+
+  // Suggested channels from Redux
+  const suggestedChannels = channelState.allIds.map(
+    (id) => channelState.byId[id]?.channel_name
+  );
 
   const handleCopyLink = async () => {
     for (const email of emails) {
@@ -111,7 +110,12 @@ const InviteDialog = ({ open, onOpenChange }) => {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md w-full">
         <DialogHeader>
-          <DialogTitle>Invite people to {workspaceName}</DialogTitle>
+          <DialogTitle>
+            Invite people to{" "}
+            {loading
+              ? "Loading..."
+              : currentWorkspace?.workspace_name || "Workspace"}
+          </DialogTitle>
         </DialogHeader>
 
         {step === 0 && (

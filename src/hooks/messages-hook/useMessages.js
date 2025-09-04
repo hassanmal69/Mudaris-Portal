@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { supabase } from "@/services/supabaseClient";
 import { addMessage, setMessages } from "@/features/messages/messageSlice";
-import { openReplyDrawer } from "@/features/reply/replySlice";
 
 const PAGE_SIZE = 20;
 

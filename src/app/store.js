@@ -6,6 +6,9 @@ import fileSliceReducer from "@/features/ui/fileSlice";
 import messageReducer from "@/features/messages/messageSlice";
 import searchReducer from "@/features/messages/search/searchSlice.js";
 import replyReducer from "@/features/reply/replySlice.js";
+import workspaceReducer from "@/features/workspace/workspaceSlice.js";
+import workspaceMembersReducer from "@/features/workspaceMembers/WorkspaceMembersSlice.js";
+import channelsReducer from "@/features/channels/channelsSlice.js";
 export const store = configureStore({
   reducer: {
     auth: authReducer,
@@ -15,6 +18,9 @@ export const store = configureStore({
     reply: replyReducer,
     messages: messageReducer,
     search: searchReducer,
+    workSpaces: workspaceReducer,
+    workspaceMembers: workspaceMembersReducer,
+    channels: channelsReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

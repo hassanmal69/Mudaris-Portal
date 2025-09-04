@@ -1,6 +1,6 @@
 import ReplyDrawer from "./ReplyDrawer";
 import MessageList from "./MessageList";
-import useMessages from "./useMessages";
+import useMessages from "../../../hooks/messages-hook/useMessages";
 import "./message.css";
 
 const Messages = () => {
