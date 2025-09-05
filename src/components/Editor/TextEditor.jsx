@@ -12,9 +12,25 @@ export default function TextEditor({ editor }) {
   const dispatch = useDispatch()
   const userId = useSelector((state) => state.auth.user?.id);
   const { groupId } = useParams();
+  const { workspace_id } = useParams();
   const { user_id } = useParams();
-
+  const userRole = useSelector((state) => state.auth.user?.user_metadata?.user_role);
   const { files } = useSelector((state) => state.file);
+  const handleNotificationforAdmin = async () => {
+    console.log(userRole);
+    if (userRole === "admin") {
+      const { error } = await supabase.from("notifications")
+        .insert({
+          description: "admin added a new msg",
+          type: "insertion of message",
+          workspceId: workspace_id,
+          channelId: groupId
+        })
+      if (error) {
+        console.log(error);
+      }
+    }
+  }
   const handleSubmit = async (e) => {
     e.preventDefault();
     const messageHTML = editor.getHTML();
@@ -57,6 +73,7 @@ export default function TextEditor({ editor }) {
     };
     if (res.content === "<p></p>") return; // Prevent empty messages
     const { data, error } = await postToSupabase("messages", res);
+    handleNotificationforAdmin();
     if (error) console.error("Error adding message:", error.message);
   };
 

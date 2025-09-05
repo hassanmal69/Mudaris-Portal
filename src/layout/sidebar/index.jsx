@@ -125,7 +125,7 @@ const Sidebar = () => {
         usedIn={"createChannel"}
       />
       <InviteDialog open={inviteOpen} onOpenChange={setInviteOpen} />
-      <SidebarContent className="h-full px-2 py-4 flex flex-col gap-4">
+      <SidebarContent className="h-full bg-[#222831] text-[#EEEEEE] px-2 py-4 flex flex-col gap-4">
         <SidebarHeader>
           <span className="text-lg font-bold tracking-tight">
             {workspaceName}
@@ -138,12 +138,12 @@ const Sidebar = () => {
               <SidebarMenuItem key={channel.id}>
                 <div className="flex items-center gap-2 px-2 py-1 rounded hover:bg-gray-100 cursor-pointer">
                   {channel.visibility === "private" ? (
-                    <LockClosedIcon className="w-4 h-4 text-gray-400" />
+                    <LockClosedIcon className="w-4 h-4 " />
                   ) : (
-                    <GlobeAltIcon className="w-4 h-4 text-gray-400" />
+                    <GlobeAltIcon className="w-4 h-4 " />
                   )}
                   <Link to={`/workspace/${workspace_id}/group/${channel.id}`}>
-                    <span className="font-medium text-sm text-gray-800">
+                    <span className="font-medium text-sm">
                       {channel.name || channel.channel_name}
                     </span>
                   </Link>
@@ -154,7 +154,7 @@ const Sidebar = () => {
           <Button
             variant="outline"
             size="sm"
-            className="mt-2 w-full flex items-center gap-2 justify-center"
+            className="mt-2 bg-[#00ADB5] text-[#222831] w-full flex items-center gap-2 justify-center"
             onClick={() => setAddChannelOpen(true)}
           >
             <PlusIcon className="w-4 h-4" />
@@ -162,7 +162,7 @@ const Sidebar = () => {
           </Button>
         </SidebarGroup>
         <SidebarGroup className="mt-4">
-          <SidebarGroupLabel>Direct Messages</SidebarGroupLabel>
+          <SidebarGroupLabel className='font-medium text-m text-[#EEEEEE]'>Direct Messages</SidebarGroupLabel>
           <SidebarMenu>
             {users.map((user) => (
               <SidebarMenuItem key={user.id}>
@@ -173,7 +173,7 @@ const Sidebar = () => {
                     <AvatarImage src={user.profiles.avatar_url} alt={user.full_name} />
                     {/* <AvatarFallback>{user.name[0]}</AvatarFallback> */}
                   </Avatar>
-                  <span className="font-medium text-sm text-gray-800">
+                  <span className="font-medium text-sm ">
                     {user.profiles.full_name}
                   </span>
                   <span
@@ -190,7 +190,7 @@ const Sidebar = () => {
           <Button
             variant="default"
             size="sm"
-            className="w-full bg-[#556cd6]"
+            className="w-full bg-[#00ADB5] text-[#222831]"
             onClick={() => setInviteOpen(true)}
           >
             Invite Users
