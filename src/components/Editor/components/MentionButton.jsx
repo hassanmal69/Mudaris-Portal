@@ -1,4 +1,4 @@
-export default function MentionButton({ editor }) {
+export default function MentionButton({ editor, size }) {
   return (
     <button
       type="button"
@@ -10,7 +10,7 @@ export default function MentionButton({ editor }) {
         editor.commands.focus();
       }}
     >
-      <span role="img" aria-label="mention">
+      <span role="img" aria-label="mention" className={size}>
         @
       </span>
     </button>

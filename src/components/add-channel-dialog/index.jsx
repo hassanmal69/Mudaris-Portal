@@ -17,7 +17,9 @@ import {
 } from "@/validation/authSchema.js";
 import { useParams } from "react-router-dom";
 import { supabase } from "@/services/supabaseClient.js";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { createChannel } from "@/features/channels/channelsSlice.js";
+
 const steps = ["Channel Info", "Channel visibility", "Invite Users"];
 
 const StepIndicator = ({ step }) => (
@@ -59,6 +61,8 @@ const AddChannelDialog = ({ open, onOpenChange, usedIn }) => {
     avatarUrl: "",
     users: [],
   });
+
+  const dispatch = useDispatch();
 
   const getValidationSchema = () => {
     if (usedIn === "createChannel") {
@@ -116,21 +120,18 @@ const AddChannelDialog = ({ open, onOpenChange, usedIn }) => {
       if (usedIn === "createChannel") {
         let { name, description, visibility, users } = formData;
 
-        const { data, error } = await supabase
-          .from("channels")
-          .insert({
+        // Use Redux thunk instead of direct Supabase call
+        dispatch(
+          createChannel({
             channel_name: name,
             description,
             visibility,
             channel_members: users.map((user) => user.id),
             workspace_id: workspace_id,
           })
-          .select();
+        );
 
-        if (usedIn === "createChannel") onOpenChange(false);
-        if (error) {
-          console.error(error);
-        }
+        onOpenChange(false);
         setTimeout(resetStates, 300);
       } else if (usedIn === "createWorkspace") {
         const formData = usedIn === "createWorkspace" ? workspaceData : null;

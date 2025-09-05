@@ -4,8 +4,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { updateField, resetSignupForm } from "@/features/auth/signupSlice.js";
 import { passwordSchema } from "@/validation/authSchema";
 import { signupUser } from "@/features/auth/authSlice.js";
-import { supabase } from "@/services/supabaseClient";
 import { useNavigate } from "react-router-dom";
+import {
+  fetchWorkspaceMembers,
+  addWorkspaceMember,
+} from "@/features/workspaceMembers/WorkspaceMembersSlice.js"; // <-- import redux slice and thunk
+
 const Password = ({ onBack, token, invite }) => {
   const [error, setError] = useState();
   const { fullName } = useSelector((state) => state.signupForm);
@@ -26,18 +30,20 @@ const Password = ({ onBack, token, invite }) => {
       ).unwrap();
       if (!user?.id) throw new Error("user id missing after signup!");
 
-      const { error: memberError } = await supabase
-        .from("workspace_members")
-        .insert([
-          {
-            user_id: user.id,
-            workspace_id: invite.workspace_id,
-            role: "user",
-          },
-        ]);
+      // Insert workspace member using Redux thunk
+      const result = await dispatch(
+        addWorkspaceMember({
+          userId: user.id,
+          workspaceId: invite.workspace_id,
+          role: "user",
+        })
+      ).unwrap();
 
-      if (memberError)
-        throw new Error(`Failed to add to workspace: ${memberError}`);
+      if (result.error)
+        throw new Error(`Failed to add to workspace: ${result.error}`);
+
+      // Fetch workspace members from Redux for this workspace
+      dispatch(fetchWorkspaceMembers(invite.workspace_id));
 
       navigate(`/workspace/${invite.workspace_id}`);
     } catch (err) {

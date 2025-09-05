@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import Profile from "@/pages/profile";
 import { useParams } from "react-router-dom";
-import { supabase } from "@/services/supabaseClient.js";
 import "./topbar.css";
 import { Globe, Lock } from "lucide-react";
 import Members from "./members";
@@ -10,44 +9,38 @@ import { useDispatch, useSelector } from "react-redux";
 import { setQuery } from "@/features/messages/search/searchSlice";
 import { Search } from "lucide-react";
 import { Notifications } from "./notification";
-
+import {
+  fetchWorkspaceMembers,
+  selectWorkspaceMembers,
+} from "@/features/workspaceMembers/WorkspaceMembersSlice.js";
 const Topbar = () => {
   const dispatch = useDispatch();
   const { groupId, workspace_id } = useParams();
+
+  // Get channel from Redux
+  const channel = useSelector((state) => state.channels.byId[groupId]);
+
   const [visibility, setVisibility] = useState("");
   const [channel_name, setChannel_name] = useState("");
 
   const query = useSelector((state) => state.search.query);
 
+  // Fetch workspace members from Redux
   useEffect(() => {
-    const getChannelData = async () => {
-      const { data, error } = await supabase
-        .from("workspace_members")
-        .select(
-          `
-        role,
-        profiles (
-          full_name,
-          avatar_url
-        )
-      `
-        )
-        .eq("workspace_id", workspace_id);
-      if (error) {
-        console.error("Error fetching workspace members:", error);
-      }
+    if (workspace_id) {
+      dispatch(fetchWorkspaceMembers(workspace_id));
+    }
+  }, [workspace_id, dispatch]);
 
-      let { data: channels, error: channelName_error } = await supabase
-        .from("channels")
-        .select("channel_name, visibility")
-        .eq("id", groupId)
-        .single();
-      setChannel_name(channels?.channel_name || "channel");
-      setVisibility(channels?.visibility);
-    };
+  // Get workspace members from Redux state
+  const workspaceMembers = useSelector(selectWorkspaceMembers(workspace_id));
 
-    getChannelData();
-  }, [groupId]);
+  useEffect(() => {
+    if (channel) {
+      setChannel_name(channel.channel_name || "channel");
+      setVisibility(channel.visibility);
+    }
+  }, [channel]);
 
   return (
     <section
@@ -83,6 +76,8 @@ const Topbar = () => {
       <div className="flex items-center gap-2 min-w-0">
         <Notifications/>
         <Members />
+        <Members members={workspaceMembers} />{" "}
+        {/* Pass members as prop if needed */}
         <Profile />
       </div>
     </section>

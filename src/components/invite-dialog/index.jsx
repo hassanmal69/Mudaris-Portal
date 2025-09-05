@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -10,17 +9,44 @@ import InviteByEmail from "./steps/InviteByEmail";
 import Channelinvitation from "./steps/Channelinvitation";
 import { useParams } from "react-router-dom";
 import createInvitation from "@/utils/invite/createInvitation";
-const workspace_name = "Mudaris Academy"; // Replace with dynamic value if needed
-const suggestedChannels = ["channel 01", "channel 02"];
+import { supabase } from "@/services/supabaseClient";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchWorkspaceById } from "@/features/workspace/workspaceSlice";
+import { fetchChannels } from "@/features/channels/channelsSlice.js";
 
 const InviteDialog = ({ open, onOpenChange }) => {
   const [step, setStep] = useState(0);
   const [emails, setEmails] = useState([]);
   const [channels, setChannels] = useState([]);
   const { workspace_id } = useParams();
+  const dispatch = useDispatch();
+
+  // Redux state
+  const { currentWorkspace, loading } = useSelector(
+    (state) => state.workSpaces
+  );
+  const channelState = useSelector((state) => state.channels); // <-- get channels slice
+
+  // Fetch workspace info from Redux
+  useEffect(() => {
+    if (workspace_id) {
+      dispatch(fetchWorkspaceById(workspace_id));
+    }
+  }, [workspace_id, dispatch]);
+
+  // Fetch channels from Redux
+  useEffect(() => {
+    if (workspace_id) {
+      dispatch(fetchChannels(workspace_id));
+    }
+  }, [workspace_id, dispatch]);
+
+  // Suggested channels from Redux
+  const suggestedChannels = channelState.allIds.map(
+    (id) => channelState.byId[id]?.channel_name
+  );
 
   const handleCopyLink = async () => {
-    let copied = false;
     for (const email of emails) {
       const link = await createInvitation({
         email,
@@ -33,11 +59,63 @@ const InviteDialog = ({ open, onOpenChange }) => {
     }
   };
 
+  const sendEmail = async () => {
+    try {
+      const {
+        data: { session },
+        error,
+      } = await supabase.auth.getSession();
+
+      if (error || !session) {
+        alert("❌ You must be logged in to invite users.");
+        return;
+      }
+
+      const res = await fetch(
+        "https://surdziukuzjqthcfqoax.supabase.co/functions/v1/invite-user",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session.access_token}`,
+          },
+          body: JSON.stringify({ emails }),
+        }
+      );
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        console.error("❌ Failed:", data);
+        alert("Server error: " + JSON.stringify(data));
+        return;
+      }
+
+      const failed = data.results.filter((r) => r.error);
+      if (failed.length > 0) {
+        alert(
+          "Some invitations failed:\n" +
+            failed.map((f) => `${f.email}: ${f.error}`).join("\n")
+        );
+      } else {
+        alert("✅ All invitations sent successfully!");
+      }
+    } catch (err) {
+      console.error("⚠️ Unexpected error:", err);
+      alert("Unexpected error while sending invitations.");
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md w-full">
         <DialogHeader>
-          <DialogTitle>Invite people to {workspace_name}</DialogTitle>
+          <DialogTitle>
+            Invite people to{" "}
+            {loading
+              ? "Loading..."
+              : currentWorkspace?.workspace_name || "Workspace"}
+          </DialogTitle>
         </DialogHeader>
 
         {step === 0 && (
@@ -54,15 +132,7 @@ const InviteDialog = ({ open, onOpenChange }) => {
             setChannels={setChannels}
             suggestedChannels={suggestedChannels}
             onBack={() => setStep(0)}
-            onSend={() => {
-              // You can handle send logic here
-              onOpenChange(false);
-              setTimeout(() => {
-                setStep(0);
-                setEmails([]);
-                setChannels([]);
-              }, 300);
-            }}
+            onSend={sendEmail}
           />
         )}
       </DialogContent>

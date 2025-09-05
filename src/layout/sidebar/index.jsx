@@ -18,96 +18,76 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { useParams } from "react-router-dom";
-import { getFromSupabase } from "@/utils/crud/getFromSupabase.js";
-import { supabase } from "@/services/supabaseClient.js";
 import { Link, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { postToSupabase } from "@/utils/crud/posttoSupabase";
+import { fetchWorkspaceById } from "@/features/workspace/workspaceSlice";
+import {
+  fetchWorkspaceMembers,
+  selectWorkspaceMembers,
+} from "@/features/workspaceMembers/WorkspaceMembersSlice.js";
+import {
+  fetchChannels,
+  subscribeToChannelChanges,
+  unsubscribeFromChannelChanges,
+} from "@/features/channels/channelsSlice.js";
 
 const Sidebar = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const { session } = useSelector((state) => state.auth);
   const [addChannelOpen, setAddChannelOpen] = useState(false);
   const [inviteOpen, setInviteOpen] = useState(false);
-  const [channels, setChannels] = useState([]);
-  const [workspaceName, setWorkspaceName] = useState("");
-  const [users, setUsers] = useState([])
   const { workspace_id } = useParams();
   const { user_id } = useParams();
   const { groupId } = useParams();
-  const fetchChannels = async () => {
-    const res = await getFromSupabase(
-      "channels",
-      ["id", "channel_name", "visibility"],
-      "workspace_id",
-      workspace_id
-    );
-    if (res.data) {
-      setChannels(
-        res.data.map((channel) => ({
-          id: channel.id,
-          name: channel.channel_name,
-          visibility: channel.visibility,
-        }))
-      );
-    } else {
-      console.error("Failed to fetch channels:", res.error);
-    }
-  };
-  const getUsers = async () => {
-    const { data, error } = await supabase
-      .from("workspace_members")
-      .select(`
-   user_id,
-    profiles (
-      full_name,
-      avatar_url
-    )
-  `)
-    if (error) {
-      console.log(error);
-    }
-    setUsers(data)
-  }
-  useEffect(() => {
-    const fetchWorkspaceName = async () => {
-      const { data } = await supabase
-        .from("workspaces")
-        .select("workspace_name")
-        .eq("id", workspace_id)
-        .single();
-      if (data) setWorkspaceName(data.workspace_name);
-    };
-    fetchChannels();
-    getUsers();
-    fetchWorkspaceName();
-  }, []);
-  useEffect(() => {
-    const subscription = supabase
-      .channel("channels_changes")
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "channels" },
-        (payload) => {
-          setChannels((prev) => [...prev, payload.new]);
-        }
-      )
-      .subscribe();
 
-    return () => {
-      supabase.removeChannel(subscription);
-    };
-  }, []);
+  const { currentWorkspace, loading } = useSelector(
+    (state) => state.workSpaces
+  );
+
+  const channelState = useSelector((state) => state.channels);
+  const channels = channelState.allIds.map((id) => ({
+    id,
+    name: channelState.byId[id]?.channel_name,
+    visibility: channelState.byId[id]?.visibility,
+  }));
+
+  useEffect(() => {
+    if (workspace_id) {
+      dispatch(fetchWorkspaceById(workspace_id));
+    }
+  }, [workspace_id, dispatch]);
+
+  useEffect(() => {
+    if (workspace_id) {
+      dispatch(fetchChannels(workspace_id));
+      subscribeToChannelChanges();
+      return () => {
+        unsubscribeFromChannelChanges();
+      };
+    }
+  }, [workspace_id, dispatch]);
+
+  useEffect(() => {
+    if (workspace_id) {
+      dispatch(fetchWorkspaceMembers(workspace_id));
+    }
+  }, [workspace_id, dispatch]);
+
+  const users = useSelector(selectWorkspaceMembers(workspace_id));
+
   useEffect(() => {
     if (!groupId && !user_id && channels.length > 0) {
       const channelId = channels[0].id;
       navigate(`/workspace/${workspace_id}/group/${channelId}`);
     }
   }, [channels, groupId, navigate, workspace_id]);
+
   const handleIndividualMessage = async (u) => {
-    const token = u?.user_id.slice(0, 6) + session?.user?.id.slice(0, 6)
+    const token = u?.user_id.slice(0, 6) + session?.user?.id.slice(0, 6);
     console.log(token);
-    navigate(`/workspace/${workspace_id}/individual/${token}`)
+    navigate(`/workspace/${workspace_id}/individual/${token}`);
     const res = {
       sender_id: session?.user?.id,
       receiver_id: u?.user_id,
@@ -116,7 +96,8 @@ const Sidebar = () => {
     const { data, error } = await postToSupabase("directMessagesChannel", res);
     if (error) console.log(error);
     console.log(data);
-  }
+  };
+
   return (
     <>
       <AddChannelDialog
@@ -128,7 +109,9 @@ const Sidebar = () => {
       <SidebarContent className="h-full bg-[#222831] text-[#EEEEEE] px-2 py-4 flex flex-col gap-4">
         <SidebarHeader>
           <span className="text-lg font-bold tracking-tight">
-            {workspaceName}
+            {loading
+              ? "Loading..."
+              : currentWorkspace?.workspace_name || "Workspace"}
           </span>
         </SidebarHeader>
         <SidebarGroup>
@@ -145,6 +128,9 @@ const Sidebar = () => {
                   <Link to={`/workspace/${workspace_id}/group/${channel.id}`}>
                     <span className="font-medium text-sm">
                       {channel.name || channel.channel_name}
+                    </span>
+                    <span className="font-medium text-sm text-gray-800">
+                      {channel.name}
                     </span>
                   </Link>
                 </div>
@@ -165,20 +151,24 @@ const Sidebar = () => {
           <SidebarGroupLabel className='font-medium text-m text-[#EEEEEE]'>Direct Messages</SidebarGroupLabel>
           <SidebarMenu>
             {users.map((user) => (
-              <SidebarMenuItem key={user.id}>
+              <SidebarMenuItem key={user.user_id}>
                 <div
                   onClick={() => handleIndividualMessage(user)}
-                  className="flex items-center gap-2 px-2 py-1 rounded hover:bg-gray-100 cursor-pointer">
+                  className="flex items-center gap-2 px-2 py-1 rounded hover:bg-gray-100 cursor-pointer"
+                >
                   <Avatar className="w-7 h-7">
-                    <AvatarImage src={user.profiles.avatar_url} alt={user.full_name} />
-                    {/* <AvatarFallback>{user.name[0]}</AvatarFallback> */}
+                    <AvatarImage
+                      src={user.profiles.avatar_url}
+                      alt={user.profiles.full_name}
+                    />
                   </Avatar>
                   <span className="font-medium text-sm ">
                     {user.profiles.full_name}
                   </span>
                   <span
-                    className={`ml-auto w-2 h-2 rounded-full ${user.status === "online" ? "bg-green-500" : "bg-gray-400"
-                      }`}
+                    className={`ml-auto w-2 h-2 rounded-full ${
+                      user.status === "online" ? "bg-green-500" : "bg-gray-400"
+                    }`}
                     title={user.status}
                   ></span>
                 </div>
@@ -202,30 +192,3 @@ const Sidebar = () => {
 };
 
 export default Sidebar;
-
-// const users = [
-//   {
-//     id: 1,
-//     name: "Alice",
-//     avatar: "https://i.pravatar.cc/150?img=1",
-//     status: "online",
-//   },
-//   {
-//     id: 2,
-//     name: "Bob",
-//     avatar: "https://i.pravatar.cc/150?img=2",
-//     status: "offline",
-//   },
-//   {
-//     id: 3,
-//     name: "Charlie",
-//     avatar: "https://i.pravatar.cc/150?img=3",
-//     status: "online",
-//   },
-//   {
-//     id: 4,
-//     name: "Dana",
-//     avatar: "https://i.pravatar.cc/150?img=4",
-//     status: "offline",
-//   },
-// ];

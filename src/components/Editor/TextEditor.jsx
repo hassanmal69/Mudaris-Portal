@@ -8,8 +8,8 @@ import { useDispatch } from "react-redux";
 
 import { supabase } from "@/services/supabaseClient.js";
 
-export default function TextEditor({ editor }) {
-  const dispatch = useDispatch()
+export default function TextEditor({ editor, toolbarStyles }) {
+  const dispatch = useDispatch();
   const userId = useSelector((state) => state.auth.user?.id);
   const { groupId } = useParams();
   const { workspace_id } = useParams();
@@ -31,6 +31,7 @@ export default function TextEditor({ editor }) {
       }
     }
   }
+  const replyMessage = useSelector((state) => state.reply.message);
   const handleSubmit = async (e) => {
     e.preventDefault();
     const messageHTML = editor.getHTML();
@@ -45,7 +46,7 @@ export default function TextEditor({ editor }) {
             .upload(m.filePath, m.file, { upsert: true });
           if (uploadError) {
             console.error("Error uploading file:", uploadError);
-            alert('can not upload your file sorry')
+            alert("can not upload your file sorry");
           } else {
             const { data } = supabase.storage
               .from("media")
@@ -60,18 +61,18 @@ export default function TextEditor({ editor }) {
           console.error("❌ Upload failed:", err);
         }
       }
-      dispatch(clearValue())
+      dispatch(clearValue());
     }
 
     const res = {
       channel_id: groupId,
       sender_id: userId,
       content: messageHTML,
-      reply_to: null,
+      reply_to: replyMessage ? replyMessage.id : null,
       attachments: urls,
       token: user_id
     };
-    if (res.content === "<p></p>") return; // Prevent empty messages
+    if (res.content === "<p></p>") return;
     const { data, error } = await postToSupabase("messages", res);
     handleNotificationforAdmin();
     if (error) console.error("Error adding message:", error.message);
@@ -79,7 +80,7 @@ export default function TextEditor({ editor }) {
 
   return (
     <div className="control-group relative">
-      <Toolbar editor={editor} />
+      <Toolbar editor={editor} toolbarStyles={toolbarStyles} />
       <button className="kumar" onClick={handleSubmit}>
         <Send className="text-[42px] relative z-40" />
       </button>
