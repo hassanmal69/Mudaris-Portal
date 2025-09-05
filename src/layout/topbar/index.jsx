@@ -8,11 +8,11 @@ import Members from "./members";
 import { useDispatch, useSelector } from "react-redux";
 import { setQuery } from "@/features/messages/search/searchSlice";
 import { Search } from "lucide-react";
+import { Notifications } from "./notification";
 import {
   fetchWorkspaceMembers,
   selectWorkspaceMembers,
 } from "@/features/workspaceMembers/WorkspaceMembersSlice.js";
-import { supabase } from "@/services/supabaseClient";
 const Topbar = () => {
   const dispatch = useDispatch();
   const { groupId, workspace_id } = useParams();
@@ -44,11 +44,11 @@ const Topbar = () => {
 
   return (
     <section
-      className=" top-0 w-full bg-white shadow-sm topbar-container md:px-6 py-2 flex items-center"
+      className=" top-0 w-full bg-[#393E46] shadow-sm topbar-container md:px-6 py-2 flex items-center"
       style={{ minHeight: "56px" }}
     >
       <div className="flex items-center gap-2 min-w-0">
-        <h2 className="text-gray-600 text-[18px]  font-medium flex gap-0.5 items-center">
+        <h2 className=" text-[#EEEEEE] text-[18px]  font-medium flex gap-0.5 items-center">
           <span>
             {visibility === "public" ? (
               <Globe className="w-5" />
@@ -74,6 +74,8 @@ const Topbar = () => {
       </div>
 
       <div className="flex items-center gap-2 min-w-0">
+        <Notifications/>
+        <Members />
         <Members members={workspaceMembers} />{" "}
         {/* Pass members as prop if needed */}
         <Profile />
