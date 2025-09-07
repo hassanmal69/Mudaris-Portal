@@ -7,22 +7,44 @@ import { clearValue } from "@/features/ui/fileSlice";
 import { useDispatch } from "react-redux";
 
 import { supabase } from "@/services/supabaseClient.js";
-
+import { useMemo } from "react";
 export default function TextEditor({ editor, toolbarStyles }) {
   const dispatch = useDispatch();
   const userId = useSelector((state) => state.auth.user?.id);
-  const { groupId } = useParams();
-  const { workspace_id } = useParams();
-  const { user_id } = useParams();
+  const displayName = useSelector((state) => state.auth.user?.user_metadata?.displayName);
+  const { workspace_id, user_id, groupId } = useParams();
   const userRole = useSelector((state) => state.auth.user?.user_metadata?.user_role);
   const { files } = useSelector((state) => state.file);
+  const channelState = useSelector((state) => state.channels);
+  const channels = channelState.allIds.map((id) => ({
+    id,
+    name: channelState.byId[id]?.channel_name,
+    visibility: channelState.byId[id]?.visibility,
+  }));
+  const desiredChannel = useMemo(() => {
+    return channels.find((m) => m.id === groupId);
+  }, [channels, groupId]);
+  const replyMessage = useSelector((state) => state.reply.message);
+
   const handleNotificationforAdmin = async () => {
-    console.log(userRole);
-    if (userRole === "admin") {
+    if (replyMessage) {
+      console.log("replysun", replyMessage);
       const { error } = await supabase.from("notifications")
         .insert({
-          description: "admin added a new msg",
-          type: "insertion of message",
+          description: `${displayName} replied to your msg in ${desiredChannel.name} channel`,
+          type: "reply",
+          workspceId: workspace_id,
+          channelId: groupId
+        })
+      if (error) {
+        console.log(error);
+      }
+    }
+    else if (userRole === "admin") {
+      const { error } = await supabase.from("notifications")
+        .insert({
+          description: `admin ${displayName} added a new msg in ${desiredChannel.name} channel`,
+          type: "adminMessage",
           workspceId: workspace_id,
           channelId: groupId
         })
@@ -31,7 +53,6 @@ export default function TextEditor({ editor, toolbarStyles }) {
       }
     }
   }
-  const replyMessage = useSelector((state) => state.reply.message);
   const handleSubmit = async (e) => {
     e.preventDefault();
     const messageHTML = editor.getHTML();
@@ -74,7 +95,7 @@ export default function TextEditor({ editor, toolbarStyles }) {
     };
     if (res.content === "<p></p>") return;
     const { data, error } = await postToSupabase("messages", res);
-    handleNotificationforAdmin();
+    await handleNotificationforAdmin();
     if (error) console.error("Error adding message:", error.message);
   };
 

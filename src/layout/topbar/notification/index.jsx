@@ -1,4 +1,4 @@
-import { Bell } from "lucide-react"
+import { Bell, ClockFading } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import {
     DropdownMenu,
@@ -9,8 +9,10 @@ import {
 import { useEffect, useState } from "react";
 import { supabase } from "@/services/supabaseClient";
 import { useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 export function Notifications() {
     const [notification, setNotification] = useState([])
+    const { workspace_id } = useParams();
     const { session } = useSelector((state) => state.auth);
     const lastSeen = session?.user?.user_metadata.last_notification_seen
     const [unread, setUnread] = useState([])
@@ -22,52 +24,47 @@ export function Notifications() {
       description,
       created_at,
       workspaces (workspace_name)
-    `);
-
+    `)
+            .eq("workspceId", workspace_id )
+            .order("created_at", { ascending: false })
         if (error) {
             console.log("Error fetching:", error);
             return;
         }
-
-        setNotification(data);
-
-        console.log("lastSeen:", lastSeen);
-        console.log("all created_at:", data.map(d => d.created_at));
-
-        const unread = data.filter((m) => new Date(m.created_at) > new Date(lastSeen));
-
-        console.log("unread count:", unread.length, unread);
+        if (!error && data) {
+            setNotification(data);
+        }
     };
-
+    const unreadLogic = (data) => {
+        console.log("all created_at:", data.map(d => d.created_at));
+        const unreadData = data.filter((m) => new Date(m.created_at).getTime() > new Date(lastSeen).getTime());
+        setUnread(unreadData)
+        console.log("unread count:", unreadData.length, unreadData);
+    }
+    useEffect(() => {
+        unreadLogic(notification)
+    }, [notification, lastSeen])
     useEffect(() => {
         handleDB();
-
         const channel = supabase
-            .channel("realtime:notifications")
+            .channel("notifications-channel")
             .on(
                 "postgres_changes",
                 { event: "INSERT", schema: "public", table: "notifications" },
                 (payload) => {
-                    setNotification((prev) => [...prev, payload.new]);
+                    console.log("New notification:", payload.new);
+                    setNotification((prev) => [payload.new, ...prev]); // prepend new
                 }
             )
             .subscribe();
 
-        // cleanup
         return () => {
             supabase.removeChannel(channel);
         };
     }, []);
 
-    //in unread only there will be notification in which 
-    // isread is false
-    // const unread = notification.filter(n => !n.is_read)
-
     const handleOpenChange = async (open) => {
         if (open) {
-            setNotification((prev) =>
-                prev.map((n) => ({ ...n, is_read: true }))
-            )
             let dateNow = new Date().toISOString();;
             const { error } = await supabase.auth.updateUser({
                 data: { last_notification_seen: dateNow }
@@ -77,6 +74,7 @@ export function Notifications() {
             }
         }
     }
+
     return (
         <DropdownMenu onOpenChange={handleOpenChange}>
             <DropdownMenuTrigger className="relative">
