@@ -50,7 +50,10 @@ const MessageItem = ({
         <Reactions
           reactions={message.reactions}
           currentUserId={currentUserId}
-          onReact={(emoji) => toggleReaction(message.id, emoji)}
+          onReact={(emoji) => {
+            toggleReaction(message.id, emoji)
+            console.log("console log is", emoji);
+          }}
         />
       </div>
     </div>
