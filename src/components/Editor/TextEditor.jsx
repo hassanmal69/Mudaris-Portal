@@ -28,7 +28,6 @@ export default function TextEditor({ editor, toolbarStyles }) {
 
   const handleNotificationforAdmin = async () => {
     if (replyMessage) {
-      console.log("replysun", replyMessage);
       const { error } = await supabase.from("notifications")
         .insert({
           description: `${displayName} replied to your msg in ${desiredChannel.name} channel`,
