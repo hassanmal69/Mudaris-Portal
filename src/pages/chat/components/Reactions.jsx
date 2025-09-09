@@ -16,12 +16,13 @@ const Reactions = ({ reactions, currentUserId, onReact }) => {
         return (
           <button
             key={emoji}
-            className={`px-2 py-1 rounded flex items-center gap-1 border text-sm ${
-              reacted
+            className={`px-2 py-1 rounded flex items-center gap-1 border text-sm ${reacted
                 ? "bg-blue-100 border-blue-400"
                 : "bg-gray-100 border-gray-300"
-            }`}
-            onClick={() => onReact(emoji)}
+              }`}
+            onClick={() =>{ console.log('emoji');
+               onReact(emoji)}
+            }
             title={reacted ? "Remove your reaction" : "React with this emoji"}
             type="button"
           >

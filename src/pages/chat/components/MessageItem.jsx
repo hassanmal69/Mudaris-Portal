@@ -52,7 +52,6 @@ const MessageItem = ({
           currentUserId={currentUserId}
           onReact={(emoji) => {
             toggleReaction(message.id, emoji)
-            console.log("console log is", emoji);
           }}
         />
       </div>

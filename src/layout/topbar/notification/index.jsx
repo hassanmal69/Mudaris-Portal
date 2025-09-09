@@ -15,6 +15,7 @@ export function Notifications() {
     const { workspace_id } = useParams();
     const { session } = useSelector((state) => state.auth);
     const lastSeen = session?.user?.user_metadata.last_notification_seen
+    const userId = session?.user?.id
     const [unread, setUnread] = useState([])
     const handleDB = async () => {
         const { data, error } = await supabase
@@ -25,13 +26,15 @@ export function Notifications() {
       created_at,
       workspaces (workspace_name)
     `)
-            .eq("workspceId", workspace_id )
+            .eq("workspceId", workspace_id)
+            .eq("userId",userId)
             .order("created_at", { ascending: false })
         if (error) {
             console.log("Error fetching:", error);
             return;
         }
         if (!error && data) {
+            console.log('checking data in notification', data);
             setNotification(data);
         }
     };
