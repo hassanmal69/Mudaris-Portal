@@ -7,9 +7,11 @@ import { clearValue } from "@/features/ui/fileSlice";
 import { useDispatch } from "react-redux";
 
 import { supabase } from "@/services/supabaseClient.js";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import HandleSupabaseLogicNotification from "@/layout/topbar/notification/handleSupabaseLogicNotification.jsx";
 export default function TextEditor({ editor, toolbarStyles }) {
   const dispatch = useDispatch();
+  const [mentionedPerson, setMentionedPerson] = useState('')
   const userId = useSelector((state) => state.auth.user?.id);
   const displayName = useSelector((state) => state.auth.user?.user_metadata?.displayName);
   const { workspace_id, user_id, groupId } = useParams();
@@ -28,33 +30,28 @@ export default function TextEditor({ editor, toolbarStyles }) {
 
   const handleNotificationforAdmin = async () => {
     if (replyMessage) {
-      const { error } = await supabase.from("notifications")
-        .insert({
-          description: `${displayName} replied to your msg in ${desiredChannel.name} channel`,
-          type: "reply",
-          workspceId: workspace_id,
-          channelId: groupId
-        })
-      if (error) {
-        console.log(error);
-      }
+      HandleSupabaseLogicNotification("reply", workspace_id, groupId, null, `${displayName} admin replied to your message in ${desiredChannel.name} channel`)
     }
     else if (userRole === "admin") {
-      const { error } = await supabase.from("notifications")
-        .insert({
-          description: `admin ${displayName} added a new msg in ${desiredChannel.name} channel`,
-          type: "adminMessage",
-          workspceId: workspace_id,
-          channelId: groupId
-        })
-      if (error) {
-        console.log(error);
-      }
+      HandleSupabaseLogicNotification("adminMessage", workspace_id, groupId, null, `${displayName} admin added a message in ${desiredChannel.name} channel`)
     }
+  }
+  const checkMention = (json) => {
+    const person = json.content[0]?.content[0]?.attrs?.label;
+    var personID = json.content[0]?.content[0]?.attrs?.id;
+    setMentionedPerson(personID)
+    return JSON.stringify(json).includes('"mention"');
   }
   const handleSubmit = async (e) => {
     e.preventDefault();
     const messageHTML = editor.getHTML();
+    const jsonVersion = editor.getJSON();
+    if (checkMention(jsonVersion)) {
+      console.log('mention hega');
+      HandleSupabaseLogicNotification("mention", workspace_id, groupId, mentionedPerson, `${displayName} mentioned you in ${desiredChannel.name}`)
+    } else {
+      console.log('nahi hega');
+    }
     editor.commands.clearContent();
     const urls = [];
 

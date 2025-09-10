@@ -27,7 +27,7 @@ export function Notifications() {
       workspaces (workspace_name)
     `)
             .eq("workspceId", workspace_id)
-            .eq("userId",userId)
+            .eq("userId", userId)
             .order("created_at", { ascending: false })
         if (error) {
             console.log("Error fetching:", error);
