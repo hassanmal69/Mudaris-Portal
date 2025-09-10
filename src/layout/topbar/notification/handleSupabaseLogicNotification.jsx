@@ -1,22 +1,22 @@
 import { supabase } from "@/services/supabaseClient";
 
-const HandleSupabaseLogicNotification = async (res, workspace_id, groupId, displayName, userId) => {
-    console.log(res, workspace_id, groupId, displayName, userId);
-    if (res === 'reaction') {
-        const { data, error } = await supabase
+const HandleSupabaseLogicNotification = (res, workspace_id, groupId, userId, description) => {
+    console.log(res, workspace_id, groupId, userId, description);
+    const supabaseFunctionality = async () => {
+        const { error } = await supabase
             .from('notifications')
             .insert({
-                description: `${displayName} reacted on your message`,
+                description,
                 userId,
                 workspceId: workspace_id,
                 channelId: groupId,
-                type: 'notification'
+                type: res
             })
         if (error) {
             console.log('error cominng in inserting notification for reaction', error);
         }
-        console.log(data);
     }
+    supabaseFunctionality();
 }
 
 export default HandleSupabaseLogicNotification

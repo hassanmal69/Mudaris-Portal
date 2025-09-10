@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { supabase } from "@/services/supabaseClient";
 import { loginSchema } from "@/validation/authSchema";
@@ -23,7 +23,6 @@ const Login = () => {
 
       if (checkerror) {
         console.log("error is coming in login", checkerror);
-        return;
       }
 
       // Use Redux thunk to fetch user's workspace membership
@@ -33,21 +32,23 @@ const Login = () => {
         console.error("Error fetching workspace members or no workspace found");
         return;
       }
-
-      if (user?.user_metadata?.user_role === "user") {
-        const workspaceId = result.workspace_id;
-        // Fetch workspace members from Redux for this workspace
-        dispatch(fetchWorkspaceMembers(workspaceId));
-        if (window.location.pathname !== `/workspace/${workspaceId}`) {
-          navigate(`/workspace/${workspaceId}`);
+      if (result) {
+        console.log(result);
+        if (user?.user_metadata?.user_role === "user") {
+          const workspaceId = result.workspace_id;
+          // Fetch workspace members from Redux for this workspace
+          dispatch(fetchUserWorkspace(workspaceId));
+          if (window.location.pathname !== `/workspace/${workspaceId}`) {
+            navigate(`/workspace/${workspaceId}`);
+          }
+        } else if (user?.user_metadata?.user_role === "admin") {
+          navigate(`/dashboard/${user.id}`);
         }
-      } else if (user?.user_metadata?.user_role === "admin") {
-        navigate(`/dashboard/${user.id}`);
       }
     };
 
     sessionDetect();
-  }, [navigate, dispatch]);
+  }, [navigate, dispatch,loading]);
 
   return (
     <div className="min-h-screen flex relative flex-col md:flex-row bg-black">
@@ -103,11 +104,10 @@ const Login = () => {
                   name="email"
                   type="email"
                   autoComplete="email"
-                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple transition bg-white/20 text-white placeholder-white/60 backdrop-blur-sm ${
-                    touched.email && errors.email
-                      ? "border-red-400"
-                      : "border-white/30"
-                  }`}
+                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple transition bg-white/20 text-white placeholder-white/60 backdrop-blur-sm ${touched.email && errors.email
+                    ? "border-red-400"
+                    : "border-white/30"
+                    }`}
                   placeholder="Enter your email"
                 />
                 <ErrorMessage
@@ -129,11 +129,10 @@ const Login = () => {
                   name="password"
                   type="password"
                   autoComplete="current-password"
-                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple transition bg-white/20 text-white placeholder-white/60 backdrop-blur-sm ${
-                    touched.password && errors.password
-                      ? "border-red-400"
-                      : "border-white/30"
-                  }`}
+                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple transition bg-white/20 text-white placeholder-white/60 backdrop-blur-sm ${touched.password && errors.password
+                    ? "border-red-400"
+                    : "border-white/30"
+                    }`}
                   placeholder="Enter your password"
                 />
                 <ErrorMessage

@@ -41,12 +41,12 @@ export default {
         await store.dispatch(fetchWorkspaceMembers(workspaceId));
         members = selectWorkspaceMembers(workspaceId)(store.getState());
       }
-
+      console.log("members bhi check lazmi hain", members);
       // members shape: [{ user_id, profiles: { id, full_name, avatar_url } }]
-      return (members || [])
+      const filteredMembers = members
         .filter((m) => m.profiles && m.profiles.full_name)
         .map((m) => ({
-          id: m.profiles.id,
+          id: m.user_id,
           label: m.profiles.full_name,
           avatar: m.profiles.avatar_url,
         }))
@@ -54,6 +54,7 @@ export default {
           query ? user.label.toLowerCase().includes(query.toLowerCase()) : true
         )
         .slice(0, 5);
+      return filteredMembers;
     } catch (error) {
       console.error("Mention items error:", error);
       return [];

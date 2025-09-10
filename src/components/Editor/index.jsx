@@ -18,7 +18,8 @@ export default function EditorWrapper({ width, styles, toolbarStyles }) {
       StarterKit,
       Placeholder.configure({ placeholder: "Write something..." }),
       Mention.configure({
-        HTMLAttributes: { class: "mention" },
+        HTMLAttributes: { class: 
+          "mention" },
         suggestion,
       }),
     ],
