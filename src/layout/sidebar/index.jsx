@@ -148,7 +148,9 @@ const Sidebar = () => {
           </Button>
         </SidebarGroup>
         <SidebarGroup className="mt-4">
-          <SidebarGroupLabel className='font-medium text-m text-[#EEEEEE]'>Direct Messages</SidebarGroupLabel>
+          <SidebarGroupLabel className="font-medium text-m text-[#EEEEEE]">
+            Direct Messages
+          </SidebarGroupLabel>
           <SidebarMenu>
             {users.map((user) => (
               <SidebarMenuItem key={user.user_id}>
@@ -158,12 +160,12 @@ const Sidebar = () => {
                 >
                   <Avatar className="w-7 h-7">
                     <AvatarImage
-                      src={user.profiles.avatar_url}
-                      alt={user.profiles.full_name}
+                      src={user.user_profiles.avatar_url}
+                      alt={user.user_profiles.full_name}
                     />
                   </Avatar>
                   <span className="font-medium text-sm ">
-                    {user.profiles.full_name}
+                    {user.user_profiles.full_name}
                   </span>
                   <span
                     className={`ml-auto w-2 h-2 rounded-full ${
@@ -178,12 +180,12 @@ const Sidebar = () => {
         </SidebarGroup>
         <SidebarFooter className="mt-auto pb-2">
           <Button
-            variant="default"
+            variant="link"
             size="sm"
             className="w-full bg-[#00ADB5] text-[#222831]"
             onClick={() => setInviteOpen(true)}
           >
-            Invite Users
+            Invite new Users
           </Button>
         </SidebarFooter>
       </SidebarContent>

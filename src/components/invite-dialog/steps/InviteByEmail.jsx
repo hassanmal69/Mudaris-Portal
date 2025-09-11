@@ -1,5 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  selectWorkspaceMembers,
+  fetchWorkspaceMembers,
+} from "@/features/workspaceMembers/WorkspaceMembersSlice";
+import { useParams } from "react-router-dom";
+import { Link } from "@radix-ui/react-icons";
 
 function isValidEmail(email) {
   return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email);
@@ -8,17 +15,54 @@ function isValidEmail(email) {
 const InviteByEmail = ({ emails, setEmails, onCopyLink, onNext }) => {
   const [input, setInput] = useState("");
   const [error, setError] = useState("");
+  const { workspace_id } = useParams();
+  const currentUserEmail = useSelector((state) => state.auth.user?.email);
+  const workspaceMembers = useSelector(selectWorkspaceMembers(workspace_id));
+  const dispatch = useDispatch();
 
+  useEffect(() => {
+    if (workspace_id) {
+      dispatch(fetchWorkspaceMembers(workspace_id));
+    }
+  }, [dispatch, workspace_id]);
   const handleAdd = () => {
     const entered = input
       .split(",")
       .map((e) => e.trim())
       .filter(Boolean);
+
+    if (!entered.length) return;
+
     const invalid = entered.filter((e) => !isValidEmail(e));
     if (invalid.length) {
       setError("Please enter valid email(s).");
       return;
     }
+
+    const duplicates = entered.filter((e) => emails.includes(e));
+    if (duplicates.length) {
+      setError(`These email(s) already exist: ${duplicates.join(", ")}`);
+      return;
+    }
+
+    if (entered.includes(currentUserEmail?.toLowerCase())) {
+      setError("You cannot invite yourself.");
+      return;
+    }
+
+    const alreadyMember = workspaceMembers.some((m) =>
+      entered.some(
+        (e) => m.user_profiles?.email?.toLowerCase() === e.toLowerCase()
+      )
+    );
+
+    console.log("aa", workspaceMembers);
+    if (alreadyMember) {
+      setError("One or more of these users are already members.");
+      return;
+    }
+
+    // ✅ Success: add them to list
     setEmails([...emails, ...entered]);
     setInput("");
     setError("");
@@ -73,11 +117,12 @@ const InviteByEmail = ({ emails, setEmails, onCopyLink, onNext }) => {
       <div className="flex gap-2 justify-between">
         <Button
           type="button"
-          variant="secondary"
+          className="border-0 outline-0 bg-transparent text-[#333] "
           onClick={onCopyLink}
           disabled={!input.trim() && emails.length === 0}
         >
           Copy link
+          <Link className="w-4 h-4" />
         </Button>
         <Button
           type="button"
