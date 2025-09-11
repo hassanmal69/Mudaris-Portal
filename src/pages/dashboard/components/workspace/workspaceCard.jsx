@@ -89,21 +89,21 @@ const WorkspaceCard = ({ workspace, index }) => {
                 <p className="text-gray-400 text-sm">Loading...</p>
               ) : (
                 members.slice(0, 4).map((m, idx) =>
-                  m.profiles?.avatar_url ? (
+                  m.user_profiles?.avatar_url ? (
                     <Avatar
                       key={m.user_id}
                       className="w-7 h-7 border-2 border-white rounded-none"
                     >
                       <AvatarImage
-                        src={m.profiles.avatar_url}
-                        alt={m.profiles.full_name}
+                        src={m.user_profiles?.avatar_url}
+                        alt={m.user_profiles.full_name}
                       />
                       <AvatarFallback>
-                        {m.profiles.full_name?.[0]?.toUpperCase()}
+                        {m.user_profiles.full_name?.[0]?.toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
                   ) : (
-                    getMemberFallback(m.profiles.full_name, idx)
+                    getMemberFallback(m.user_profiles.full_name, idx)
                   )
                 )
               )}
