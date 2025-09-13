@@ -86,7 +86,7 @@ const WorkspaceCard = ({ workspace, index }) => {
           <div className="flex gap-3 items-center">
             <div className="flex -space-x-4 rtl:space-x-reverse">
               {membersLoading ? (
-                <p className="text-gray-400 text-sm">Loading...</p>
+                <p className="text-gray-200 text-sm">Loading...</p>
               ) : (
                 members.slice(0, 4).map((m, idx) =>
                   m.user_profiles?.avatar_url ? (
@@ -108,7 +108,7 @@ const WorkspaceCard = ({ workspace, index }) => {
                 )
               )}
             </div>
-            <p className="font-light text-gray-500 text-sm">
+            <p className="font-light text-gray-300 text-sm">
               {members.length} Members
             </p>
           </div>
@@ -119,7 +119,9 @@ const WorkspaceCard = ({ workspace, index }) => {
         to={`/workspace/${workspace.id}`}
         style={{ textDecoration: "none" }}
       >
-        <Button className="bg-[#4d3763] font-semibold py-2 px-4 rounded-sm text-amber-50">
+        <Button
+          className="bg-[#4d3763] font-semibold py-2 px-4 rounded-sm text-amber-50 hover:bg-transparent"
+        >
           Launch Workspace
         </Button>
       </Link>

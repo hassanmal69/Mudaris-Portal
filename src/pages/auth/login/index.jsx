@@ -33,7 +33,6 @@ const Login = () => {
         return;
       }
       if (result) {
-        console.log(result);
         if (user?.user_metadata?.user_role === "user") {
           const workspaceId = result.workspace_id;
           // Fetch workspace members from Redux for this workspace
