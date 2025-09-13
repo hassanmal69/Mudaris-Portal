@@ -89,21 +89,21 @@ const WorkspaceCard = ({ workspace, index }) => {
                 <p className="text-gray-200 text-sm">Loading...</p>
               ) : (
                 members.slice(0, 4).map((m, idx) =>
-                  m.profiles?.avatar_url ? (
+                  m.user_profiles?.avatar_url ? (
                     <Avatar
                       key={m.user_id}
                       className="w-7 h-7 border-2 border-white rounded-none"
                     >
                       <AvatarImage
-                        src={m.profiles.avatar_url}
-                        alt={m.profiles.full_name}
+                        src={m.user_profiles?.avatar_url}
+                        alt={m.user_profiles.full_name}
                       />
                       <AvatarFallback>
-                        {m.profiles.full_name?.[0]?.toUpperCase()}
+                        {m.user_profiles.full_name?.[0]?.toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
                   ) : (
-                    getMemberFallback(m.profiles.full_name, idx)
+                    getMemberFallback(m.user_profiles.full_name, idx)
                   )
                 )
               )}
@@ -119,8 +119,8 @@ const WorkspaceCard = ({ workspace, index }) => {
         to={`/workspace/${workspace.id}`}
         style={{ textDecoration: "none" }}
       >
-        <Button 
-        className="bg-[#4d3763] font-semibold py-2 px-4 rounded-sm text-amber-50 hover:bg-transparent"
+        <Button
+          className="bg-[#4d3763] font-semibold py-2 px-4 rounded-sm text-amber-50 hover:bg-transparent"
         >
           Launch Workspace
         </Button>
