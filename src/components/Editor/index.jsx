@@ -13,18 +13,26 @@ export default function EditorWrapper({ width, styles, toolbarStyles }) {
   const dispatch = useDispatch();
   const { workspace_id } = useParams();
   const { files } = useSelector((state) => state.file);
+  const { groupId } = useParams();
+  const channel = useSelector((state) => state.channels.byId[groupId]);
+  const channelName = channel?.channel_name;
+  console.log(channelName);
+  console.log(channel);
   const editor = useEditor({
     extensions: [
       StarterKit,
-      Placeholder.configure({ placeholder: "Write something..." }),
+      Placeholder.configure({ placeholder: `Write something in ${channelName}` }),
       Mention.configure({
-        HTMLAttributes: { class: 
-          "mention" },
+        HTMLAttributes: {
+          class:
+            "mention"
+        },
         suggestion,
       }),
     ],
     workspaceId: workspace_id,
-  });
+  },
+    [channelName]);
 
   return (
     <div
@@ -36,7 +44,7 @@ export default function EditorWrapper({ width, styles, toolbarStyles }) {
     >
       <TextEditor editor={editor} toolbarStyles={toolbarStyles} />
       <EditorContent editor={editor} />
-            {files.map((f, index) => (
+      {files.map((f, index) => (
         <div key={index} className="bg-gray-300">
           {f.fileType === "video" && (
             <video src={f.fileLink} width="200" controls />

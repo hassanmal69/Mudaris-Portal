@@ -137,15 +137,20 @@ const Sidebar = () => {
               </SidebarMenuItem>
             ))}
           </SidebarMenu>
-          <Button
-            variant="outline"
-            size="sm"
-            className="mt-2 bg-[#00ADB5] text-[#222831] w-full flex items-center gap-2 justify-center"
-            onClick={() => setAddChannelOpen(true)}
-          >
-            <PlusIcon className="w-4 h-4" />
-            Add Channel
-          </Button>
+          {
+            session.user.user_metadata.user_role === 'admin' ?
+              < Button
+                variant="outline"
+                size="sm"
+                className="mt-2 bg-[#00ADB5] text-[#222831] w-full flex items-center gap-2 justify-center"
+                onClick={() => setAddChannelOpen(true)}
+              >
+                <PlusIcon className="w-4 h-4" />
+                Add Channel
+              </Button>
+              :
+              ""
+          }
         </SidebarGroup>
         <SidebarGroup className="mt-4">
           <SidebarGroupLabel className='font-medium text-m text-[#EEEEEE]'>Direct Messages</SidebarGroupLabel>
@@ -166,9 +171,8 @@ const Sidebar = () => {
                     {user.profiles.full_name}
                   </span>
                   <span
-                    className={`ml-auto w-2 h-2 rounded-full ${
-                      user.status === "online" ? "bg-green-500" : "bg-gray-400"
-                    }`}
+                    className={`ml-auto w-2 h-2 rounded-full ${user.status === "online" ? "bg-green-500" : "bg-gray-400"
+                      }`}
                     title={user.status}
                   ></span>
                 </div>
@@ -177,16 +181,20 @@ const Sidebar = () => {
           </SidebarMenu>
         </SidebarGroup>
         <SidebarFooter className="mt-auto pb-2">
-          <Button
-            variant="default"
-            size="sm"
-            className="w-full bg-[#00ADB5] text-[#222831]"
-            onClick={() => setInviteOpen(true)}
-          >
-            Invite Users
-          </Button>
+          {
+            session.user.user_metadata.user_role === 'admin' ?
+              <Button
+                variant="default"
+                size="sm"
+                className="w-full bg-[#00ADB5] text-[#222831]"
+                onClick={() => setInviteOpen(true)}
+              >
+                Invite Users
+              </Button>
+              :
+              ""}
         </SidebarFooter>
-      </SidebarContent>
+      </SidebarContent >
     </>
   );
 };
