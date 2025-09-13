@@ -6,7 +6,7 @@ import {
   fetchWorkspaceMembers,
 } from "@/features/workspaceMembers/WorkspaceMembersSlice";
 import { useParams } from "react-router-dom";
-import { Link } from "@radix-ui/react-icons";
+import { Link } from "lucide-react";
 
 function isValidEmail(email) {
   return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email);
@@ -103,7 +103,7 @@ const InviteByEmail = ({ emails, setEmails, onCopyLink, onNext }) => {
             placeholder="Enter email(s), comma separated"
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === "," || e.key === " ") {
-                e.preventDefault(); // prevent newline on Enter
+                e.preventDefault();
                 handleAdd();
               }
             }}

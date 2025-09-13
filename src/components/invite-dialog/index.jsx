@@ -72,17 +72,19 @@ const InviteDialog = ({ open, onOpenChange }) => {
       }
 
       const res = await fetch(
-        "https://surdziukuzjqthcfqoax.supabase.co/functions/v1/invite-user",
+        "https://surdziukuzjqthcfqoax.supabase.co/functions/v1/workspace-invite-admin",
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${session.access_token}`,
           },
-          body: JSON.stringify({ emails }),
+          body: JSON.stringify({
+            workspace_id,
+            emails,
+          }),
         }
       );
-
       const data = await res.json();
 
       if (!res.ok) {
@@ -108,7 +110,7 @@ const InviteDialog = ({ open, onOpenChange }) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md w-full">
+      <DialogContent className="max-w-md w-full" aria-describedby={undefined}>
         <DialogHeader>
           <DialogTitle>
             Invite people to{" "}
