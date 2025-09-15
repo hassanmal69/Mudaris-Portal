@@ -11,15 +11,16 @@ const Channelinvitation = ({
 }) => {
   const [search, setSearch] = useState("");
   const handleToggle = (channel) => {
-    if (channels.includes(channel)) {
-      setChannels(channels.filter((c) => c !== channel));
+    if (channels.includes(channel.id)) {
+      setChannels(channels.filter((c) => c !== channel.id));
     } else {
-      setChannels([...channels, channel]);
+      setChannels([...channels, channel.id]);
     }
   };
-
-  const filteredSuggested = suggestedChannels.filter((c) =>
-    c.toLowerCase().includes(search.toLowerCase())
+  const filteredSuggested = suggestedChannels.filter(
+    (c) =>
+      c.visibility === "private" &&
+      c.name.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
@@ -39,17 +40,17 @@ const Channelinvitation = ({
           <div className="flex flex-wrap gap-2">
             {filteredSuggested.map((channel) => (
               <button
-                key={channel}
+                key={channel.id}
                 type="button"
                 className={`px-2 py-1 rounded text-xs border ${
-                  channels.includes(channel)
+                  channels.includes(channel.id)
                     ? "bg-[#556cd6] text-white border-[#556cd6]"
                     : "bg-gray-100 text-gray-700 border-gray-200"
                 }`}
                 onClick={() => handleToggle(channel)}
-                aria-pressed={channels.includes(channel)}
+                aria-pressed={channels.includes(channel.id)}
               >
-                {channel}
+                {channel.name}
               </button>
             ))}
           </div>

@@ -56,7 +56,7 @@ const Workspace = () => {
           {workspaces.length > 3 && (
             <button
               onClick={() => setShowAll((prev) => !prev)}
-              className="text-[#ffffffc7] cursor-pointer font-medium mt-2 self-start px-4 flex items-center gap-1"
+              className="text-[#4d3763] cursor-pointer font-medium mt-2 self-start px-4 flex items-center gap-1"
             >
               {showAll ? (
                 <>
