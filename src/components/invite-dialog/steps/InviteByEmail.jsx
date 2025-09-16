@@ -6,7 +6,8 @@ import {
   fetchWorkspaceMembers,
 } from "@/features/workspaceMembers/WorkspaceMembersSlice";
 import { useParams } from "react-router-dom";
-import { Link } from "@radix-ui/react-icons";
+// import  Link from "@radix-ui/react-icons";
+import { Link1Icon } from "@radix-ui/react-icons";
 
 function isValidEmail(email) {
   return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email);
@@ -122,7 +123,7 @@ const InviteByEmail = ({ emails, setEmails, onCopyLink, onNext }) => {
           disabled={!input.trim() && emails.length === 0}
         >
           Copy link
-          <Link className="w-4 h-4" />
+          <Link1Icon className="w-4 h-4" />
         </Button>
         <Button
           type="button"

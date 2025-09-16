@@ -18,9 +18,10 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen overflow-hidden relative flex flex-col bg-black text-gray-900">
       <div className="IMAGECONTAINER absolute w-full h-full flex justify-center items-center pointer-events-none">
-        <img src={Mudaris} className="absolute opacity-25 mix-blend-difference h-[100%] animate-pulse animate-infinite animate-ease-out" />
+        <img src={Mudaris} className="absolute opacity-25 mix-blend-difference h-[100%] blur-2xl" />
       </div>
-      <div className="h-[80%] w-[90%] m-auto border-[0.4px] border-gray-300 rounded-4xl text-white bg-[#8185B2]/10 ">
+       {/* animate-pulse animate-infinite animate-ease-out */}
+      <div className="h-[80%] w-[90%] m-auto border-[0.4px] border-gray-300 rounded-4xl text-white bg-[#ffffff]/10 ">
         <div className="h-dvh z-10 w-dvw absolute overflow-hidden pointer-events-none">
           {isOpen && <CreateWorkspace />}
         </div>
@@ -81,7 +82,7 @@ function CreateWorkspaceButton({ onClick, isOpen }) {
   return (
     <Button
       onClick={onClick}
-      className="border border-[#4d3763] text-[#4d3763] bg-white hover:bg-[#4d3763] hover:text-white gap-2"
+      className="border relative z-30 border-[#4d3763] text-[#4d3763] bg-white hover:bg-[#4d3763] hover:text-white gap-2"
     >
       {isOpen ? (
         "X"

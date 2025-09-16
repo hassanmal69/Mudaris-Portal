@@ -120,7 +120,8 @@ const WorkspaceCard = ({ workspace, index }) => {
         style={{ textDecoration: "none" }}
       >
         <Button
-          className="bg-[#4d3763] font-semibold py-2 px-4 rounded-sm text-amber-50 hover:bg-transparent"
+        // variant='outlined'
+          className="bg-[#4d3763] font-semibold py-2 px-4 rounded-sm text-amber-50"
         >
           Launch Workspace
         </Button>
