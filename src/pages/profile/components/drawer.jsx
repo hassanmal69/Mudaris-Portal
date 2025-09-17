@@ -1,12 +1,15 @@
-import { Drawer } from 'vaul';
+import { Drawer } from "vaul";
 import { useDispatch, useSelector } from "react-redux";
 import { logOut } from "../../../features/auth/authSlice.js";
-import { useEffect, useState } from 'react';
-import { updateValue } from '@/features/ui/profileSlice.js';
-import EditProfile from './editProfile.jsx';
+import { useEffect, useState } from "react";
+import { updateValue } from "@/features/ui/profileSlice.js";
+import EditProfile from "./editProfile.jsx";
+import { Clock, Globe, Lock } from "lucide-react";
 export default function VaulDrawer() {
   const { session } = useSelector((state) => state.auth);
-  const [avatarUrl, setAvatarUrl] = useState(session?.user?.user_metadata.avatar_url)
+  const [avatarUrl, setAvatarUrl] = useState(
+    session?.user?.user_metadata.avatar_url
+  );
   const dispatch = useDispatch();
   const handleLogout = () => {
     dispatch(logOut());
@@ -18,47 +21,88 @@ export default function VaulDrawer() {
     return () => clearInterval(interval); // cleanup on unmount
   }, []);
   useEffect(() => {
-    setAvatarUrl(session?.user?.user_metadata.avatar_url)
-  }, [session?.user?.user_metadata.avatar_url])
+    setAvatarUrl(session?.user?.user_metadata.avatar_url);
+  }, [session?.user?.user_metadata.avatar_url]);
   return (
     <Drawer.Root direction="right" modal={true}>
       <Drawer.Trigger className="relative flex h-10 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded-full bg-white px-4 text-sm font-medium shadow-sm transition-all hover:bg-[#FAFAFA] dark:bg-[#161615] dark:hover:bg-[#1A1A19] dark:text-white">
         <img
           src={avatarUrl}
           alt="profileImg"
-          className="absolute rounded-full object-cover" />
+          className="absolute rounded-full object-cover"
+        />
       </Drawer.Trigger>
       <Drawer.Portal>
         <Drawer.Overlay className="fixed inset-0 bg-black/40" />
         <Drawer.Content
-          className="right-2 top-2 bottom-2 fixed z-10 outline-none w-[310px] flex"
+          className="right-2 top-2 bottom-2 fixed z-10 outline-none w-[400px] rounded-md text-white bg-black/90 flex"
           // The gap between the edge of the screen and the drawer is 8px in this case.
-          style={{ '--initial-transform': 'calc(100% + 8px)' }}
+          style={{ "--initial-transform": "calc(100% + 8px)" }}
         >
-          <div className="bg-zinc-50 h-full w-full grow p-5 flex flex-col rounded-[16px]">
-            <div className="flex h-full w-full flex-col items-center justify-center">
-              <img
-                // src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQiJQHCxo4M5IWzyJgHlB-NBbJuRStycN-PRg&s"
-                src={avatarUrl}
-                alt="larry"
-                className='w-60 h-60 object-cover' />
-              <div className="flex justify-between w-full">
-                <Drawer.Title className="font-medium mb-2 text-2xl text-zinc-900">
+          <div className="flex h-full w-full flex-col items-center mt-7 px-3.5">
+            <Drawer.Title className="font-bold mb-2 text-2xl text-white w-full">
+              Profile
+            </Drawer.Title>
+            <img
+              src={avatarUrl}
+              alt="larry"
+              className="w-70 h-70 rounded-md object-cover"
+            />
+            <div className="w-full flex-col flex   gap-2.5 my-5">
+              <div className="flex my-3 justify-between">
+                <Drawer.Title className="font-medium mb-2 text-2xl text-white">
                   {session?.user?.user_metadata?.displayName}
                 </Drawer.Title>
                 <div onClick={() => dispatch(updateValue())}>
                   <EditProfile />
                 </div>
               </div>
-              <button onClick={handleLogout}>Sign Out</button>
-              <Drawer.Description className="text-zinc-600 mb-2">
-                Current Time: {time.toLocaleTimeString()}
+              <Drawer.Description className="text-zinc-600 profile_active_user">
+                active
+                <span className="active_span"></span>
               </Drawer.Description>
+
+              <div className="flex flex-col text-zinc-600">
+                <h4 className="text-white">Email address</h4>
+                <p>{session?.user?.email}</p>
+              </div>
+
+              <div className="text-zinc-600 flex flex-col w-full mb-2">
+                <h4 className="text-white">Current Time</h4>
+                <p className="flex gap-1 items-center">
+                  <Clock className="w-5  h-5" />
+                  {time.toLocaleTimeString()}
+                </p>
+              </div>
+              <div>
+                <div className="flex flex-col text-zinc-600">
+                  <h4 className="text-white text-[18px]">channels</h4>
+                  <p className="flex gap-1.5 items-center">
+                    <Lock className="w-4 h-4" /> general
+                  </p>
+                  <p className="flex gap-1.5 items-center">
+                    <Lock className="w-4 h-4" /> js
+                  </p>{" "}
+                  <p className="flex gap-1.5 items-center">
+                    <Globe className="w-4 h-4" /> dot.net
+                  </p>{" "}
+                  <p className="flex gap-1.5 items-center">
+                    <Lock className="w-4 h-4" /> py charm
+                  </p>{" "}
+                  <p className="flex gap-1.5 items-center">
+                    <Globe className="w-4 h-4" /> martketing
+                  </p>
+                </div>
+              </div>
+              <div className="w-full">
+                <button className="text-[#556cd6] " onClick={handleLogout}>
+                  Sign Out
+                </button>
+              </div>
             </div>
           </div>
         </Drawer.Content>
       </Drawer.Portal>
     </Drawer.Root>
-
   );
 }

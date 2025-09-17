@@ -3,7 +3,16 @@ import MessageContent from "./MessageContent.jsx";
 import Reactions from "./Reactions";
 import { useDispatch } from "react-redux";
 import { openReplyDrawer } from "@/features/reply/replySlice";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
+const fallbackColors = [
+  "bg-rose-200",
+  "bg-sky-200",
+  "bg-emerald-200",
+  "bg-amber-200",
+  "bg-violet-200",
+  "bg-fuchsia-200",
+];
 const MessageItem = ({
   message,
   currentUserId,
@@ -12,14 +21,39 @@ const MessageItem = ({
   setPickerOpenFor,
 }) => {
   const dispatch = useDispatch();
+  const UserFallback = ({ name, idx }) => {
+    // pick a color based on user id or index
+    const color = fallbackColors[idx % fallbackColors.length];
 
+    return (
+      <Avatar className="w-7 h-7 border-2 border-white rounded-sm flex items-center justify-center">
+        <AvatarFallback
+          className={`text-[#2b092b]  text-sm rounded-none font-semibold ${color}`}
+        >
+          {name?.[0]?.toUpperCase()}
+        </AvatarFallback>
+      </Avatar>
+    );
+  };
   return (
-    <div className="flex gap-2 relative border-t py-1 group">
-      <img
-        src={message.profiles?.avatar_url}
-        alt={message.profiles?.full_name}
-        className="w-8 h-8 rounded-full"
-      />
+    <div className="flex gap-2 relative border-t border-[#333] py-1 group">
+      {message.profiles?.avatar_url ? (
+        <Avatar className="w-7 h-7 border-2 border-white rounded-none">
+          <AvatarImage
+            src={message.profiles?.avatar_url}
+            alt={message.profiles?.full_name}
+          />
+          <AvatarFallback>
+            {message.profiles?.full_name?.[0]?.toUpperCase()}
+          </AvatarFallback>
+        </Avatar>
+      ) : (
+        <UserFallback
+          name={message.profiles?.full_name}
+          idx={message.profiles?.id} // ensures same user always gets same color
+        />
+      )}
+
       <div className="message-body relative w-full">
         <MessageActions
           messageId={message.id}
@@ -29,7 +63,9 @@ const MessageItem = ({
           setPickerOpenFor={setPickerOpenFor}
           toggleReaction={toggleReaction}
         />
-        <strong>{message.profiles?.full_name || "Unknown User"}</strong>
+        <strong className="text-[#fff]">
+          {message.profiles?.full_name || "Unknown User"}
+        </strong>
         <MessageContent
           attachments={message.attachments}
           content={message.content}
@@ -51,7 +87,7 @@ const MessageItem = ({
           reactions={message.reactions}
           currentUserId={currentUserId}
           onReact={(emoji) => {
-            toggleReaction(message.id, emoji)
+            toggleReaction(message.id, emoji);
           }}
         />
       </div>

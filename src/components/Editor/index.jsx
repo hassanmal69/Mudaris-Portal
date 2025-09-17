@@ -16,6 +16,7 @@ export default function EditorWrapper({ width, styles, toolbarStyles }) {
   const { groupId } = useParams();
   const channel = useSelector((state) => state.channels.byId[groupId]);
   const channelName = channel?.channel_name;
+
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -25,12 +26,11 @@ export default function EditorWrapper({ width, styles, toolbarStyles }) {
           class:
             "mention"
         },
-        suggestion,
-      }),
-    ],
-    workspaceId: workspace_id,
-  },
-    [channelName]);
+      },
+      workspaceId: workspace_id,
+    },
+    [channelName]
+  );
 
   return (
     <div
@@ -38,7 +38,7 @@ export default function EditorWrapper({ width, styles, toolbarStyles }) {
         width: width,
         ...styles,
       }}
-      className="editor-container "
+      className="editor-container"
     >
       <TextEditor editor={editor} toolbarStyles={toolbarStyles} />
       <EditorContent editor={editor} />

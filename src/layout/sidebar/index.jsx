@@ -45,7 +45,29 @@ const Sidebar = () => {
   const { currentWorkspace, loading } = useSelector(
     (state) => state.workSpaces
   );
+  const fallbackColors = [
+    "bg-rose-200",
+    "bg-sky-200",
+    "bg-emerald-200",
+    "bg-amber-200",
+    "bg-violet-200",
+    "bg-fuchsia-200",
+  ];
 
+  const getWorkspaceFallback = (name, idx) => {
+    const color = fallbackColors[idx % fallbackColors.length];
+    return (
+      <Avatar
+        className={`w-16 h-16 rounded-sm  flex items-center justify-center`}
+      >
+        <AvatarFallback
+          className={`text-[#222] ${color} rounded-none text-xl font-bold`}
+        >
+          {name?.[0]?.toUpperCase()}
+        </AvatarFallback>
+      </Avatar>
+    );
+  };
   const channelState = useSelector((state) => state.channels);
   const channels = channelState.allIds.map((id) => ({
     id,
@@ -106,8 +128,25 @@ const Sidebar = () => {
         usedIn={"createChannel"}
       />
       <InviteDialog open={inviteOpen} onOpenChange={setInviteOpen} />
-      <SidebarContent className="h-full bg-[#222831] text-[#EEEEEE] px-2 py-4 flex flex-col gap-4">
-        <SidebarHeader>
+      <SidebarContent className="h-full bg-[#230423] text-[#EEEEEE] px-2 py-4 flex flex-col gap-4">
+        <SidebarHeader className="flex gap-2">
+          {currentWorkspace?.avatar_url ? (
+            <Avatar className="w-16 h-16 rounded-none">
+              <AvatarImage
+                src={currentWorkspace?.avatar_url}
+                alt={currentWorkspace?.workspace_name}
+              />
+              <AvatarFallback>
+                {currentWorkspace.workspace_name?.[0]?.toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+          ) : (
+            getWorkspaceFallback(
+              currentWorkspace?.workspace_name,
+              currentWorkspace?.id
+            )
+          )}
+
           <span className="text-lg font-bold tracking-tight">
             {loading
               ? "Loading..."
@@ -115,7 +154,9 @@ const Sidebar = () => {
           </span>
         </SidebarHeader>
         <SidebarGroup>
-          <SidebarGroupLabel>Channels</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-white font-medium text-[16px]">
+            Channels
+          </SidebarGroupLabel>
           <SidebarMenu>
             {channels.map((channel) => (
               <SidebarMenuItem key={channel.id}>
@@ -129,28 +170,23 @@ const Sidebar = () => {
                     <span className="font-medium text-sm">
                       {channel.name || channel.channel_name}
                     </span>
-                    <span className="font-medium text-sm text-gray-800">
-                      {channel.name}
-                    </span>
                   </Link>
                 </div>
               </SidebarMenuItem>
             ))}
           </SidebarMenu>
-          {
-            session.user.user_metadata.user_role === 'admin' ?
-              < Button
-                variant="outline"
-                size="sm"
-                className="mt-2 bg-[#00ADB5] text-[#222831] w-full flex items-center gap-2 justify-center"
-                onClick={() => setAddChannelOpen(true)}
-              >
-                <PlusIcon className="w-4 h-4" />
-                Add Channel
-              </Button>
-              :
-              ""
-          }
+          {session.user.user_metadata.user_role === "admin" ? (
+            <Button
+              size="sm"
+              className="mt-2 bg-[#eee] text-[#2b092b] w-full flex items-center gap-2 justify-center hover:bg-transparent hover:text-white hover:border-[#fff] transition-all delay-150 duration-300 border"
+              onClick={() => setAddChannelOpen(true)}
+            >
+              <PlusIcon className="w-4 h-4" />
+              Add Channel
+            </Button>
+          ) : (
+            ""
+          )}
         </SidebarGroup>
         <SidebarGroup className="mt-4">
           <SidebarGroupLabel className="font-medium text-m text-[#EEEEEE]">
@@ -173,8 +209,9 @@ const Sidebar = () => {
                     {user.user_profiles.full_name}
                   </span>
                   <span
-                    className={`ml-auto w-2 h-2 rounded-full ${user.status === "online" ? "bg-green-500" : "bg-gray-400"
-                      }`}
+                    className={`ml-auto w-2 h-2 rounded-full ${
+                      user.status === "online" ? "bg-green-500" : "bg-gray-400"
+                    }`}
                     title={user.status}
                   ></span>
                 </div>
@@ -183,22 +220,20 @@ const Sidebar = () => {
           </SidebarMenu>
         </SidebarGroup>
         <SidebarFooter className="mt-auto pb-2">
-  {
-    session.user.user_metadata.user_role === 'admin' ?
-      <Button
-        variant="default"
-        size="sm"
-        className="w-full bg-[#00ADB5] text-[#222831]"
-        onClick={() => setInviteOpen(true)}
-      >
-        Invite new Users
-
-      </Button>
-      :
-      ""
-  }
-        </SidebarFooter >
-      </SidebarContent >
+          {session.user.user_metadata.user_role === "admin" ? (
+            <Button
+              variant="default"
+              size="sm"
+              className="mt-2 bg-[#eee] text-[#2b092b] w-full flex items-center gap-2 justify-center hover:bg-transparent hover:text-white hover:border-[#fff] transition-all delay-150 duration-300 border"
+              onClick={() => setInviteOpen(true)}
+            >
+              Invite new Users
+            </Button>
+          ) : (
+            ""
+          )}
+        </SidebarFooter>
+      </SidebarContent>
     </>
   );
 };

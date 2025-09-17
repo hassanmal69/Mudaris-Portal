@@ -11,26 +11,13 @@ import Workspace from "./components/workspace";
 import { useSelector } from "react-redux";
 import { useState } from "react";
 import CreateWorkspace from "./components/createWorkspace";
-import Mudaris from "../../../public/mudaris.jpg";
+import Mudaris from "@/assets/images/mudaris.jpg";
+
 const Dashboard = () => {
   const { session } = useSelector((state) => state.auth);
   const [isOpen, setisOpen] = useState(false);
   return (
-    <section className="min-h-screen w-full relative overflow-hidden  flex flex-col bg-black/25 text-gray-900">
-      <div
-        className=" inset-0 z-0 IMAGECONTAINER absolute w-full h-full pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(125% 125% at 50% 10%, #000000 40%, #2b092b 100%)",
-        }}
-      />
-      <img
-        src={Mudaris}
-        className="absolute 
-        max-w-full max-h-full h-[100%] object-contain opacity-6
-
-        blur-sm mix-blend-difference op-1/2 left-1/2 -translate-x-1/2 "
-      />
+    <section>
       <div className="h-dvh z-10 w-dvw absolute overflow-hidden pointer-events-none">
         {isOpen && <CreateWorkspace />}
       </div>

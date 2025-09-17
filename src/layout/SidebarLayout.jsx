@@ -10,7 +10,7 @@ import SidebarMenu from "./sidebar";
 const SidebarLayout = ({ children }) => {
   return (
     <SidebarProvider>
-      <Sidebar>
+      <Sidebar className="border-black">
         <SidebarContent className="h-full">
           <SidebarMenu />
         </SidebarContent>

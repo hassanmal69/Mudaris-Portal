@@ -6,46 +6,47 @@ import PrivateRoute from "./privateRoute.jsx";
 import WorkSpaceInd from "@/pages/dashboard/components/workspaceInd.jsx";
 import SidebarLayout from "@/layout/SidebarLayout.jsx";
 import Topbar from "@/layout/topbar/index.jsx";
+import ThemeLayout from "@/layout/ThemeLayout.jsx"; // new layout
+
 export const router = createBrowserRouter([
+  // ❌ No theme here
   {
     path: "/",
     element: <Login />,
   },
-
-  {
-    path: "/dashboard/:adminId",
-    element: (
-      <PrivateRoute>
-        <Dashboard />
-      </PrivateRoute>
-    ),
-  },
-  {
-    path: "/workspace/:workspace_id",
-    element: (
-      <PrivateRoute>
-        <WorkspaceLayout />
-      </PrivateRoute>
-    ),
-    children: [
-      {
-        path: "",
-        element: <WorkSpaceInd />, // default when /workspace/:workspaceId
-      },
-      {
-        path: "group/:groupId",
-        element: <WorkSpaceInd />, // or another group-specific component
-      },
-      {
-        path: "individual/:user_id",
-        element: <WorkSpaceInd />, // or another group-specific component
-      },
-    ],
-  },
-
   {
     path: "/invite/verify",
     element: <SignUp />,
+  },
+
+  // ✅ All themed pages wrapped
+  {
+    element: <ThemeLayout />, // theme applied here
+    children: [
+      {
+        path: "/dashboard/:adminId",
+        element: (
+          <PrivateRoute>
+            <Dashboard />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "/workspace/:workspace_id",
+        element: (
+          <PrivateRoute>
+            {/* <ThemeLayout> */}
+            <WorkspaceLayout />
+            {/* </ThemeLayout> */}
+          </PrivateRoute>
+        ),
+        children: [
+          { path: "", element: <WorkSpaceInd /> },
+          { path: "group/:groupId", element: <WorkSpaceInd /> },
+          { path: "individual/:user_id", element: <WorkSpaceInd /> },
+        ],
+      },
+    ],
   },
 ]);
 

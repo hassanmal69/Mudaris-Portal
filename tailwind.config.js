@@ -1,5 +1,4 @@
-import { defineConfig } from "vite";
-import path from "path";
+/** @type {import('tailwindcss').Config} */
 import colors from "tailwindcss/colors";
 
 export default {
@@ -7,7 +6,8 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: "#556cd6",
+        primary: "#2b092b",
+        text_primary: "#556cd6",
         secondary: "#19857b",
         error: "#ff1744", // matches red.A400 from MUI
         // Optional: extend default Tailwind palette
