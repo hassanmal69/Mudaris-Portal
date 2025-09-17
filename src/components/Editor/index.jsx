@@ -17,23 +17,14 @@ export default function EditorWrapper({ width, styles, toolbarStyles }) {
   const channel = useSelector((state) => state.channels.byId[groupId]);
   const channelName = channel?.channel_name;
 
-  const editor = useEditor(
-    {
-      extensions: [
-        StarterKit,
-        Placeholder.configure({
-          placeholder: `Write something in ${channelName}`,
-        }),
-        Mention.configure({
-          HTMLAttributes: {
-            class: "mention",
-          },
-          suggestion,
-        }),
-      ],
-      editorProps: {
-        attributes: {
-          class: "prose prose-invert focus:outline-none", // Tailwind prose-invert helps with dark mode
+  const editor = useEditor({
+    extensions: [
+      StarterKit,
+      Placeholder.configure({ placeholder: `Write something in ${channelName}` }),
+      Mention.configure({
+        HTMLAttributes: {
+          class:
+            "mention"
         },
       },
       workspaceId: workspace_id,
@@ -59,11 +50,9 @@ export default function EditorWrapper({ width, styles, toolbarStyles }) {
           {f.fileType === "audio" && (
             <audio src={f.fileLink} width="200" controls />
           )}
-
           {f.fileType.startsWith("image") && (
             <img src={f.fileLink} alt={f.file.name} width="100" />
           )}
-
           <button onClick={() => dispatch(removeValue(index))}>
             ❌ Remove
           </button>

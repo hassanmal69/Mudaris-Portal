@@ -9,15 +9,37 @@ import { useDispatch } from "react-redux";
 import { supabase } from "@/services/supabaseClient.js";
 import { useMemo, useState } from "react";
 import HandleSupabaseLogicNotification from "@/layout/topbar/notification/handleSupabaseLogicNotification.jsx";
+import { useEffect } from "react";
 export default function TextEditor({ editor, toolbarStyles }) {
   const dispatch = useDispatch();
   const [mentionedPerson, setMentionedPerson] = useState('')
+  const [draftMsg, setDraftMsg] = useState('')
   const userId = useSelector((state) => state.auth.user?.id);
   const displayName = useSelector((state) => state.auth.user?.user_metadata?.displayName);
   const { workspace_id, user_id, groupId } = useParams();
   const userRole = useSelector((state) => state.auth.user?.user_metadata?.user_role);
   const { files } = useSelector((state) => state.file);
   const channelState = useSelector((state) => state.channels);
+  useEffect(() => {
+    if (!editor) return;
+
+    const savedDraft = localStorage.getItem(`draft`);
+    if (savedDraft) {
+      editor.commands.setContent(savedDraft);
+      setDraftMsg(savedDraft);
+    }
+
+    editor.on("update", () => {
+      const html = editor.getHTML();
+      setDraftMsg(html);
+      localStorage.setItem(`draft`, html);
+    });
+
+    return () => {
+      editor.off("update");
+    };
+  }, [editor, groupId]);
+
   const channels = channelState.allIds.map((id) => ({
     id,
     name: channelState.byId[id]?.channel_name,
@@ -37,7 +59,6 @@ export default function TextEditor({ editor, toolbarStyles }) {
     }
   }
   const checkMention = (json) => {
-    const person = json.content[0]?.content[0]?.attrs?.label;
     var personID = json.content[0]?.content[0]?.attrs?.id;
     setMentionedPerson(personID)
     return JSON.stringify(json).includes('"mention"');
@@ -47,10 +68,7 @@ export default function TextEditor({ editor, toolbarStyles }) {
     const messageHTML = editor.getHTML();
     const jsonVersion = editor.getJSON();
     if (checkMention(jsonVersion)) {
-      console.log('mention hega');
       HandleSupabaseLogicNotification("mention", workspace_id, groupId, mentionedPerson, `${displayName} mentioned you in ${desiredChannel.name}`)
-    } else {
-      console.log('nahi hega');
     }
     editor.commands.clearContent();
     const urls = [];
@@ -90,7 +108,7 @@ export default function TextEditor({ editor, toolbarStyles }) {
       token: user_id
     };
     if (res.content === "<p></p>") return;
-    const { data, error } = await postToSupabase("messages", res);
+    const { error } = await postToSupabase("messages", res);
     await handleNotificationforAdmin();
     if (error) console.error("Error adding message:", error.message);
   };
