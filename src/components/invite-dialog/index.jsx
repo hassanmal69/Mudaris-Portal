@@ -42,9 +42,11 @@ const InviteDialog = ({ open, onOpenChange }) => {
   }, [workspace_id, dispatch]);
 
   // Suggested channels from Redux
-  const suggestedChannels = channelState.allIds.map(
-    (id) => channelState.byId[id]?.channel_name
-  );
+  const suggestedChannels = channelState.allIds.map((id) => ({
+    id,
+    name: channelState.byId[id]?.channel_name,
+    visibility: channelState.byId[id]?.visibility,
+  }));
 
   const handleCopyLink = async () => {
     for (const email of emails) {
@@ -70,21 +72,24 @@ const InviteDialog = ({ open, onOpenChange }) => {
         alert("❌ You must be logged in to invite users.");
         return;
       }
-
+      console.log("token", session.access_token);
       const res = await fetch(
-        "https://surdziukuzjqthcfqoax.supabase.co/functions/v1/invite-user",
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-invite`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${session.access_token}`,
+            Authorization: `Bearer ${import.meta.env.SUPABASE_SERVICE_ROLE_KEY}`,
           },
-          body: JSON.stringify({ emails }),
+          body: JSON.stringify({
+            workspace_id,
+            emails,
+            workspaceName: currentWorkspace?.workspace_name || "Workspace",
+          }),
         }
       );
-
       const data = await res.json();
-
+      console.log("response ->", res.body);
       if (!res.ok) {
         console.error("❌ Failed:", data);
         alert("Server error: " + JSON.stringify(data));
@@ -108,7 +113,7 @@ const InviteDialog = ({ open, onOpenChange }) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md w-full">
+      <DialogContent className="max-w-md w-full" aria-describedby={undefined}>
         <DialogHeader>
           <DialogTitle>
             Invite people to{" "}
