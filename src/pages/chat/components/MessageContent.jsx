@@ -7,9 +7,16 @@ const MessageContent = ({ attachments, content }) => (
       <audio src={attachments?.[0]?.fileUrl} width="200" controls />
     )}
     {attachments?.[0]?.fileType?.startsWith("image") && (
-      <img src={attachments?.[0]?.fileUrl} alt="error sending your image" width="100" />
+      <img
+        src={attachments?.[0]?.fileUrl}
+        alt="error sending your image"
+        width="100"
+      />
     )}
-    <div dangerouslySetInnerHTML={{ __html: content }} />
+    <div
+      className="text-[#c7c7c7]"
+      dangerouslySetInnerHTML={{ __html: content }}
+    />
   </>
 );
 

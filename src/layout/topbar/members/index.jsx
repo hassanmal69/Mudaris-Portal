@@ -33,12 +33,12 @@ const Members = () => {
   });
   return (
     <>
-      <div className="flex items-center gap-1 py-1 px-1 border border-[#ddd] rounded-xl  member-container">
+      <div className="flex items-center gap-1 py-1 px-1 border border-[#c1c1c1] rounded-sm member-container">
         <div className="flex -space-x-3">
           {mockUsers.slice(0, MAX_RENDER).map((user) => (
             <Avatar
               key={user.id}
-              className="w-8 h-8 border-2 border-white shadow"
+              className="w-8 h-8 border rounded-sm border-[#c1c1c1] shadow"
             >
               <AvatarImage src={user?.avatar} alt={user.full_name} />
               <AvatarFallback>{user.full_name}</AvatarFallback>
@@ -46,18 +46,18 @@ const Members = () => {
           ))}
         </div>
         {MAX_RENDER < mockUsers.length && (
-          <button onClick={renderMembers} className="text-[#777] text-[14px]">
+          <button onClick={renderMembers} className="text-[#eee] text-[14px]">
             {mockUsers.length - MAX_RENDER}+
           </button>
         )}
       </div>
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="sm:max-w-md p-0">
-          <DialogHeader className="sticky top-0 z-10 bg-white p-4 border-b">
-            <DialogTitle className="text-3xl font-black text-[#556cd6]">
+        <DialogContent className="sm:max-w-md p-0 bg-black/70 border-[#222]">
+          <DialogHeader className="sticky top-0 z-10  p-4 border-[#222] border-b">
+            <DialogTitle className="text-3xl font-bold text-[#556cd6]">
               All Members
             </DialogTitle>
-            <DialogDescription className="text-[16px] text-[#222]">
+            <DialogDescription className="text-[16px] text-[#a9a9a9]">
               A complete list of all members in this group.
             </DialogDescription>
             <div className="relative mt-2">
@@ -66,7 +66,7 @@ const Members = () => {
                 placeholder="Search by name or email..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="pl-9"
+                className="pl-9 border-[#333] bg-[#111]"
               />
             </div>
           </DialogHeader>
@@ -76,7 +76,7 @@ const Members = () => {
               filteredUsers.map((user) => (
                 <div
                   key={user.id}
-                  className="flex items-center gap-2 border-b py-2"
+                  className="flex items-center gap-2 border-b border-[#111] py-2"
                 >
                   <Avatar className="w-10 h-10">
                     <AvatarImage src={user.avatar} alt={user.name} />

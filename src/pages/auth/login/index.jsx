@@ -6,8 +6,8 @@ import { FarsiQuote } from "../../../constants/FarsiQuote";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "@/features/auth/authSlice";
-import bgImg from "../../../../public/mudaris.jpg";
 import { fetchUserWorkspace } from "@/features/workspaceMembers/WorkspaceMembersSlice.js"; // <-- import your thunk
+import bgImg from "@/assets/images/mudaris.jpg";
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -47,7 +47,7 @@ const Login = () => {
     };
 
     sessionDetect();
-  }, [navigate, dispatch,loading]);
+  }, [navigate, dispatch, loading]);
 
   return (
     <div className="min-h-screen flex relative flex-col md:flex-row bg-black">
@@ -103,10 +103,11 @@ const Login = () => {
                   name="email"
                   type="email"
                   autoComplete="email"
-                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple transition bg-white/20 text-white placeholder-white/60 backdrop-blur-sm ${touched.email && errors.email
-                    ? "border-red-400"
-                    : "border-white/30"
-                    }`}
+                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple transition bg-white/20 text-white placeholder-white/60 backdrop-blur-sm ${
+                    touched.email && errors.email
+                      ? "border-red-400"
+                      : "border-white/30"
+                  }`}
                   placeholder="Enter your email"
                 />
                 <ErrorMessage
@@ -128,10 +129,11 @@ const Login = () => {
                   name="password"
                   type="password"
                   autoComplete="current-password"
-                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple transition bg-white/20 text-white placeholder-white/60 backdrop-blur-sm ${touched.password && errors.password
-                    ? "border-red-400"
-                    : "border-white/30"
-                    }`}
+                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple transition bg-white/20 text-white placeholder-white/60 backdrop-blur-sm ${
+                    touched.password && errors.password
+                      ? "border-red-400"
+                      : "border-white/30"
+                  }`}
                   placeholder="Enter your password"
                 />
                 <ErrorMessage

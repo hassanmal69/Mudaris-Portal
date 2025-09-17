@@ -1,9 +1,18 @@
 import Editor from "@/components/Editor";
-import Messages from "./components/index.jsx";
+import Messages from "./components/index";
+import Mudaris from "@/assets/images/mudaris.jpg";
 
 const Chat = () => {
   return (
-    <section className="flex flex-col bg-[#393E46]">
+    <section>
+      <div
+        className="absolute inset-0 z-0 w-full h-full pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(125% 125% at 50% 10%, #000000 40%, #2b092b 100%)",
+        }}
+      />
+
       <Messages />
       <Editor
         width="1350px"

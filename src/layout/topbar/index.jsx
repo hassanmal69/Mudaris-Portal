@@ -44,7 +44,7 @@ const Topbar = () => {
 
   return (
     <section
-      className=" top-0 w-full bg-[#393E46] shadow-sm topbar-container md:px-6 py-2 flex items-center"
+      className=" top-0 w-full bg-[#2b092b] z-20 shadow-sm topbar-container md:px-6 py-2 flex items-center"
       style={{ minHeight: "56px" }}
     >
       <div className="flex items-center gap-2 min-w-0">
@@ -68,14 +68,13 @@ const Topbar = () => {
             placeholder="Search messages"
             onChange={(e) => dispatch(setQuery(e.target.value))}
             value={query}
-            className=" w-[500px] h-[40px] rounded-md border-gray-300 focus:border-primary pl-9 "
+            className=" w-[500px] h-[40px] rounded-md text-[#eee] border-gray-300 focus:border-primary pl-9 "
           />
         </div>
       </div>
 
       <div className="flex items-center gap-2 min-w-0">
-        <Notifications/>
-        <Members />
+        <Notifications />
         <Members members={workspaceMembers} />{" "}
         {/* Pass members as prop if needed */}
         <Profile />

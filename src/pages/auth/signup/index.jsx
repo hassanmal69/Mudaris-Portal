@@ -4,7 +4,8 @@ import StepContact from "./components/EmailAvatar.jsx";
 import StepPassword from "./components/Password.jsx";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/services/supabaseClient.js";
-import bgImg from "../../../../public/mudaris.jpg";
+import bgImg from "@/assets/images/mudaris.jpg";
+
 const Signup = () => {
   const [step, setStep] = useState(0);
   const [searchParams] = useSearchParams();

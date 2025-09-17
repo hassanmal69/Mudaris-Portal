@@ -16,23 +16,30 @@ export default function EditorWrapper({ width, styles, toolbarStyles }) {
   const { groupId } = useParams();
   const channel = useSelector((state) => state.channels.byId[groupId]);
   const channelName = channel?.channel_name;
-  console.log(channelName);
-  console.log(channel);
-  const editor = useEditor({
-    extensions: [
-      StarterKit,
-      Placeholder.configure({ placeholder: `Write something in ${channelName}` }),
-      Mention.configure({
-        HTMLAttributes: {
-          class:
-            "mention"
+
+  const editor = useEditor(
+    {
+      extensions: [
+        StarterKit,
+        Placeholder.configure({
+          placeholder: `Write something in ${channelName}`,
+        }),
+        Mention.configure({
+          HTMLAttributes: {
+            class: "mention",
+          },
+          suggestion,
+        }),
+      ],
+      editorProps: {
+        attributes: {
+          class: "prose prose-invert focus:outline-none", // Tailwind prose-invert helps with dark mode
         },
-        suggestion,
-      }),
-    ],
-    workspaceId: workspace_id,
-  },
-    [channelName]);
+      },
+      workspaceId: workspace_id,
+    },
+    [channelName]
+  );
 
   return (
     <div
@@ -40,7 +47,7 @@ export default function EditorWrapper({ width, styles, toolbarStyles }) {
         width: width,
         ...styles,
       }}
-      className="editor-container "
+      className="editor-container"
     >
       <TextEditor editor={editor} toolbarStyles={toolbarStyles} />
       <EditorContent editor={editor} />

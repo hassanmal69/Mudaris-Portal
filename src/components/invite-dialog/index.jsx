@@ -72,14 +72,13 @@ const InviteDialog = ({ open, onOpenChange }) => {
         alert("❌ You must be logged in to invite users.");
         return;
       }
-      console.log("token", session.access_token);
       const res = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-invite`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${import.meta.env.SUPABASE_SERVICE_ROLE_KEY}`,
+            Authorization: `Bearer ${session.access_token}`,
           },
           body: JSON.stringify({
             workspace_id,
