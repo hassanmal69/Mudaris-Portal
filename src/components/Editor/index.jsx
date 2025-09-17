@@ -50,11 +50,9 @@ export default function EditorWrapper({ width, styles, toolbarStyles }) {
           {f.fileType === "audio" && (
             <audio src={f.fileLink} width="200" controls />
           )}
-
           {f.fileType.startsWith("image") && (
             <img src={f.fileLink} alt={f.file.name} width="100" />
           )}
-
           <button onClick={() => dispatch(removeValue(index))}>
             ❌ Remove
           </button>
