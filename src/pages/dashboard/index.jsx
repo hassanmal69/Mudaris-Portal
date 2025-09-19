@@ -23,7 +23,7 @@ const Dashboard = () => {
       </div>
       <nav className="sticky top-0 z-10 flex justify-between items-center p-4 border-b border-[#1c1c1c]">
         <span
-          className="text-[26px]
+          className="sm:text-[26px]
          block text-right font-extrabold tracking-tight 
              bg-gradient-to-tr from-[#4d3763] to-[#eee] bg-clip-text text-transparent
         "
@@ -40,7 +40,7 @@ const Dashboard = () => {
 
       <main className="flex-1 container mx-auto p-4 space-y-6 w-full max-w-3xl">
         <div className="my-10">
-          <h1 className="relative text-3xl text-[#4d3763] ">
+          <h1 className="relative text-3xl text-[#4d3763] flex flex-col sm:flex-row">
             Welcome back{" "}
             <span className="font-bold">
               {" "}
@@ -49,7 +49,7 @@ const Dashboard = () => {
           </h1>
         </div>
 
-        <Card className="rounded-2xl border-[#1c1c1c] text-white bg-black/30 relative max-md:hidden">
+        <Card className="rounded-2xl border-[#1c1c1c] text-white bg-black/30 relative flex flex-col ">
           <CardHeader>
             <CardTitle className="text-white font-black">Workspace</CardTitle>
             <CardDescription className="text-white relative z-50">
@@ -78,7 +78,7 @@ const Dashboard = () => {
           asrnova.com
         </a>
       </footer>
-    </section>
+    </section >
   );
 };
 
@@ -87,13 +87,13 @@ function CreateWorkspaceButton({ onClick, isOpen }) {
   return (
     <Button
       onClick={onClick}
-      className=" text-[#eee] bg-[#4d3763] hover:bg-[#3e2e4f] gap-2  relative"
+      className=" text-[#eee] bg-[#4d3763] hover:bg-[#3e2e4f] relative"
     >
       {isOpen ? (
         "X"
       ) : (
-        <div className=" flex gap-2 items-center">
-          <Plus className="w-4 h-4" />
+        <div className="flex gap-2 items-center text-[10px] sm:text-sm">
+          <Plus className="w-1 h-1 sm:w-4 sm:h-4" />
           Create new Workpace{" "}
         </div>
       )}

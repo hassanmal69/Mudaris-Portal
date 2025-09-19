@@ -13,6 +13,9 @@ import {
   fetchWorkspaceMembers,
   selectWorkspaceMembers,
 } from "@/features/workspaceMembers/WorkspaceMembersSlice.js";
+import {
+  SidebarTrigger
+} from "@/components/ui/sidebar";
 const Topbar = () => {
   const dispatch = useDispatch();
   const { groupId, workspace_id } = useParams();
@@ -47,6 +50,11 @@ const Topbar = () => {
       className=" top-0 w-full bg-[#2b092b] z-20 shadow-sm topbar-container md:px-6 py-2 flex items-center"
       style={{ minHeight: "56px" }}
     >
+      <div className="p-2">
+        <SidebarTrigger className="text-white border border-white rounded p-2">
+          <span>☰</span>
+        </SidebarTrigger>
+      </div>
       <div className="flex items-center gap-2 min-w-0">
         <h2 className=" text-[#EEEEEE] text-[18px]  font-medium flex gap-0.5 items-center">
           <span>

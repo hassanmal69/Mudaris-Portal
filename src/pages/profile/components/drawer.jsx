@@ -39,16 +39,16 @@ export default function VaulDrawer() {
           // The gap between the edge of the screen and the drawer is 8px in this case.
           style={{ "--initial-transform": "calc(100% + 8px)" }}
         >
-          <div className="flex h-full w-full flex-col items-center mt-7 px-3.5">
+          <div className="flex h-full m-auto w-[90%] sm:w-full flex-col items-center mt-7 px-6">
             <Drawer.Title className="font-bold mb-2 text-2xl text-white w-full">
               Profile
             </Drawer.Title>
             <img
               src={avatarUrl}
-              alt="larry"
-              className="w-70 h-70 rounded-md object-cover"
+              alt="Profile Image"
+              className="w-50 h-50 sm:w-70 sm:h-70 rounded-md object-cover"
             />
-            <div className="w-full flex-col flex   gap-2.5 my-5">
+            <div className=" flex w-full flex-col gap-2.5 my-5">
               <div className="flex my-3 justify-between">
                 <Drawer.Title className="font-medium mb-2 text-2xl text-white">
                   {session?.user?.user_metadata?.displayName}
