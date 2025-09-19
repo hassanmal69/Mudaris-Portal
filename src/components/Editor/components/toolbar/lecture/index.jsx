@@ -5,9 +5,9 @@ import React from "react";
 
 const LectureHandle = () => {
     const handleSupabase = async (e) => {
-        const file = e.target.files[0]
+        const file = e.target.files[0];
         const formData = new FormData();
-        formData.append('file', file);
+        formData.append("file", file);
 
         const {
             data: { session },
@@ -21,17 +21,16 @@ const LectureHandle = () => {
 
         const { data, error } = await supabase.functions.invoke("cors-proxy", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
             body: formData,
         });
-
         if (error) {
             console.error("Invoke error:", error);
             return;
         }
-        console.log("Response:", data);
+        // data here will be binary, not JSON
+        const blob = new Blob([data]);
+        console.log("File returned:", blob);
+        // e.g., preview it
     };
 
     return (
