@@ -8,78 +8,55 @@ import {
 import { Button } from "@/components/ui/button";
 import ChannelInfo from "./steps/ChannelInfo";
 import ChannelType from "./steps/ChannelType";
-import InviteUsers from "./steps/InviteUsers";
-import AddavatarInWS from "./steps/addAvatar";
 import {
   channelInfoSchema,
   inviteUsersSchema,
-  workspaceInfoSchema,
 } from "@/validation/authSchema.js";
 import { useParams } from "react-router-dom";
-import { supabase } from "@/services/supabaseClient.js";
 import { useSelector, useDispatch } from "react-redux";
 import { createChannel } from "@/features/channels/channelsSlice.js";
+import InviteChannelUsers from "./steps/InviteChannelUsers";
+import { ChannelStepIndicator } from "./steps/ChannelStepIndicator";
 
 const steps = ["Channel Info", "Channel visibility", "Invite Users"];
 
-const StepIndicator = ({ step }) => (
-  <div className="flex items-center gap-2 mb-2">
-    {steps.map((label, idx) => (
-      <React.Fragment key={label}>
-        <div
-          className={`w-2 h-2 rounded-full ${
-            step >= idx ? "bg-[#556cd6]" : "bg-gray-300"
-          }`}
-        ></div>
-        {idx < steps.length - 1 && <div className="flex-1 h-0.5 bg-gray-200" />}
-      </React.Fragment>
-    ))}
-  </div>
-);
-
-const AddChannelDialog = ({ open, onOpenChange, usedIn }) => {
+const initialState = {
+  name: "",
+  description: "",
+  visibility: "public",
+  users: [],
+};
+const AddChannelDialog = ({ open, onOpenChange }) => {
   const { workspace_id } = useParams();
-
-  const userEmail = useSelector((state) => state.auth.session?.user?.email);
-  if (userEmail === "me@gmail.com") {
-    var adminId = useSelector((state) => state.auth.session?.user?.id);
+  const { session } = useSelector((state) => state.auth);
+  let creatorId;
+  if (session.user?.user_metadata?.user_role === "admin") {
+    creatorId = session?.user?.id;
   }
+  const resetChannelState = (setChannelData, setStep) => {
+    setChannelData({ name: "", type: "public", invitedUsers: [] });
+    setStep(0);
+  };
+
   const [step, setStep] = useState(0);
   const [errors, setErrors] = useState({});
   const dialogRef = useRef();
 
-  const [state, setState] = useState({
-    name: "",
-    description: "",
-    visibility: "public",
-    users: [],
-  });
-
-  const [workspaceData, setWorkspaceData] = useState({
-    name: "",
-    description: "",
-    avatarUrl: "",
-    users: [],
-  });
+  const [channelData, setChannelData] = useState(initialState);
 
   const dispatch = useDispatch();
 
   const getValidationSchema = () => {
-    if (usedIn === "createChannel") {
-      if (step === 0) return channelInfoSchema;
-      if (step === 2 && state.visibility === "private")
-        return inviteUsersSchema;
-    } else if (usedIn === "createWorkspace") {
-      if (step === 0) return workspaceInfoSchema;
-      if (step === 1) return;
-      if (step === 2) return inviteUsersSchema;
-    }
+    if (step === 0) return channelInfoSchema;
+    if (step === 2 && channelData.visibility === "private")
+      return inviteUsersSchema;
+
     return null;
   };
 
   const validateStep = async () => {
     const schema = getValidationSchema();
-    const currentData = usedIn === "createChannel" ? state : workspaceData;
+    const currentData = channelData;
 
     if (schema) {
       try {
@@ -106,51 +83,33 @@ const AddChannelDialog = ({ open, onOpenChange, usedIn }) => {
   };
 
   const handleBack = () => setStep((s) => s - 1);
-
+  const handleClose = () => {
+    resetChannelState(setChannelData, setStep);
+    onOpenChange(false);
+  };
   const resetStates = () => {
     setStep(0);
     setErrors({});
-    setState({ name: "", description: "", visibility: "public", users: [] });
-    setWorkspaceData({ name: "", description: "", avatarUrl: "", users: [] });
+    setChannelData(initialState);
   };
 
   const handleSubmit = async () => {
-    if (await validateStep()) {
-      const formData = usedIn === "createChannel" ? state : null;
-      if (usedIn === "createChannel") {
-        let { name, description, visibility, users } = formData;
+    const { name, description, visibility, users } = channelData;
 
-        // Use Redux thunk instead of direct Supabase call
-        dispatch(
-          createChannel({
-            channel_name: name,
-            description,
-            visibility,
-            channel_members: users.map((user) => user.id),
-            workspace_id: workspace_id,
-          })
-        );
+    dispatch(
+      createChannel({
+        channel_name: name,
+        description,
+        visibility,
+        channel_members: users.map((user) => user.id) || [],
+        workspace_id,
+        creator_id: creatorId,
+      })
+    );
 
-        onOpenChange(false);
-        setTimeout(resetStates, 300);
-      } else if (usedIn === "createWorkspace") {
-        const formData = usedIn === "createWorkspace" ? workspaceData : null;
-        let { name, description, avatarUrl, users } = formData;
-        const { data, error } = await supabase
-          .from("workspaces")
-          .insert({
-            workspace_name: name,
-            description,
-            avatar_url: avatarUrl,
-            owner_id: adminId,
-          })
-          .select();
-        if (error) {
-          console.error(error);
-        }
-        setTimeout(resetStates, 300);
-      }
-    }
+    handleClose();
+    onOpenChange(false);
+    setTimeout(resetStates, 300);
   };
 
   const handleSkip = () => handleSubmit();
@@ -160,53 +119,29 @@ const AddChannelDialog = ({ open, onOpenChange, usedIn }) => {
   };
 
   const renderStep = () => {
-    if (usedIn === "createChannel") {
-      if (step === 0)
-        return (
-          <ChannelInfo state={state} setState={setState} errors={errors} />
-        );
-      if (step === 1) return <ChannelType state={state} setState={setState} />;
-      if (step === 2 && state.visibility === "private")
-        return (
-          <InviteUsers
-            state={state}
-            usedIn={usedIn}
-            setState={setState}
-            errors={errors}
-            onSkip={handleSkip}
-            onCopyLink={handleCopyLink}
-          />
-        );
-    } else if (usedIn === "createWorkspace") {
-      if (step === 0)
-        return (
-          <ChannelInfo
-            usedIn={usedIn}
-            state={workspaceData}
-            setState={setWorkspaceData}
-            errors={errors}
-          />
-        );
-      if (step === 1)
-        return (
-          <AddavatarInWS
-            usedIn={usedIn}
-            state={workspaceData}
-            setState={setWorkspaceData}
-          />
-        );
-      if (step === 2)
-        return (
-          <InviteUsers
-            state={workspaceData}
-            usedIn={usedIn}
-            setState={setWorkspaceData}
-            errors={errors}
-            onSkip={handleSkip}
-            onCopyLink={handleCopyLink}
-          />
-        );
+    if (step === 0) {
+      return (
+        <ChannelInfo
+          state={channelData}
+          setState={setChannelData}
+          errors={errors}
+        />
+      );
     }
+
+    if (step === 1)
+      return <ChannelType state={channelData} setState={setChannelData} />;
+    if (step === 2 && channelData.visibility === "private")
+      return (
+        <InviteChannelUsers
+          state={channelData}
+          setState={setChannelData}
+          errors={errors}
+          onSkip={handleSkip}
+          onCopyLink={handleCopyLink}
+        />
+      );
+
     return null;
   };
 
@@ -222,7 +157,7 @@ const AddChannelDialog = ({ open, onOpenChange, usedIn }) => {
             Back
           </Button>
         )}
-        {step < 2 && (
+        {step < 2 && !(channelData.visibility === "public" && step === 1) && (
           <Button
             className="bg-transparent transition delay-150 duration-300 ease-in-out hover:bg-[#556cd6] hover:text-[#eee] border border-[#556cd6] text-[#556cd6]"
             onClick={handleNext}
@@ -231,60 +166,30 @@ const AddChannelDialog = ({ open, onOpenChange, usedIn }) => {
           </Button>
         )}
       </div>
-      {step === 2 && usedIn === "createWorkspace" && (
+
+      {step === 1 && channelData.visibility === "public" && (
         <Button
-          onClick={handleSubmit}
           className="bg-[#008000] transition delay-150 duration-300 ease-in-out hover:bg-transparent hover:text-[#008000] border border-[#008000] text-[#fff]"
+          onClick={handleSubmit}
         >
           Finish
         </Button>
       )}
-      {step === 1 &&
-        usedIn === "createChannel" &&
-        state.visibility === "public" && (
-          <Button
-            className="bg-[#008000] transition delay-150 duration-300 ease-in-out hover:bg-transparent hover:text-[#008000] border border-[#008000] text-[#fff]"
-            onClick={handleSubmit}
-          >
-            Finish
-          </Button>
-        )}
     </div>
   );
 
-  if (usedIn === "createChannel") {
-    return (
-      <Dialog open={open} onOpenChange={onOpenChange} initialFocus={dialogRef}>
-        <DialogContent className="max-w-md  w-full">
-          <DialogHeader>
-            <DialogTitle>Add Channel</DialogTitle>
-          </DialogHeader>
-          <div className="flex flex-col gap-6">
-            <StepIndicator step={step} />
-            {renderStep()}
-          </div>
-          {renderFooterButtons()}
-        </DialogContent>
-      </Dialog>
-    );
-  }
-
   return (
-    <div className="flex flex-col">
-      <div className="flex flex-col gap-6">
-        <div className="flex flex-col">
-          <h2 className="text-center text-xl font-bold text-[#4d3763]">
-            Create a new Workspace
-          </h2>
-          <p className="text-center text-[#4d3763]">
-            Enter the details and your workspace will be ready
-          </p>
-        </div>
-        <StepIndicator step={step} />
+    <Dialog open={open} onOpenChange={onOpenChange} initialFocus={dialogRef}>
+      <DialogContent className="max-w-md  w-full">
+        <DialogHeader>
+          <DialogTitle>Add Channel</DialogTitle>
+        </DialogHeader>
         {renderStep()}
-      </div>
-      {renderFooterButtons()}
-    </div>
+        <ChannelStepIndicator step={step} steps={steps} />
+
+        {renderFooterButtons()}
+      </DialogContent>
+    </Dialog>
   );
 };
 

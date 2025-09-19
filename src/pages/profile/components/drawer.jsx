@@ -1,6 +1,6 @@
 import { Drawer } from "vaul";
 import { useDispatch, useSelector } from "react-redux";
-import { logOut } from "../../../features/auth/authSlice.js";
+import { logOut } from "@/features/auth/authSlice.js";
 import { useEffect, useState } from "react";
 import { updateValue } from "@/features/ui/profileSlice.js";
 import EditProfile from "./editProfile.jsx";
@@ -94,7 +94,7 @@ export default function VaulDrawer() {
                   </p>
                 </div>
               </div>
-              <div className="w-full">
+              <div className="w-full mt-[10%]">
                 <button className="text-[#556cd6] " onClick={handleLogout}>
                   Sign Out
                 </button>

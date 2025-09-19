@@ -44,11 +44,12 @@ export default {
       console.log("members bhi check lazmi hain", members);
       // members shape: [{ user_id, profiles: { id, full_name, avatar_url } }]
       const filteredMembers = members
-        .filter((m) => m.profiles && m.profiles.full_name)
+        .filter((m) => m.user_profiles && m.user_profiles.full_name)
         .map((m) => ({
           id: m.user_id,
-          label: m.profiles.full_name,
-          avatar: m.profiles.avatar_url,
+          label: m.user_profiles.full_name,
+          avatar: m.user_profiles.avatar_url,
+          email: m.user_profiles.email,
         }))
         .filter((user) =>
           query ? user.label.toLowerCase().includes(query.toLowerCase()) : true

@@ -2,16 +2,13 @@ import React from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-const ChannelInfo = ({ state, setState, errors, usedIn }) => {
-  let isWhite;
-  if (usedIn === "CreateWorkspace") {
-    isWhite = true;
-  }
+const ChannelInfo = ({ state, setState, errors }) => {
   return (
-    <div className={`space-y-4 ${isWhite ? "text-white" : ""}`}>
+    <div className="space-y-4">
       <div className="flex flex-col gap-2">
         <Label htmlFor="channel-name" className="text-[#4d3763]">
-          {isWhite ? `Workspace name` : `Channel Name`} <span className="text-red-500">*</span>
+          Channel Name
+          <span className="text-red-500">*</span>
         </Label>
         <Input
           id="channel-name"
@@ -25,7 +22,7 @@ const ChannelInfo = ({ state, setState, errors, usedIn }) => {
           <p className="text-xs text-red-500 mt-1">{errors.name}</p>
         )}
       </div>
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-2" aria-describedby={undefined}>
         <Label htmlFor="channel-description" className="text-[#4d3763]">
           Description
         </Label>

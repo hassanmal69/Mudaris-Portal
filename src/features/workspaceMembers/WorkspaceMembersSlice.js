@@ -47,8 +47,7 @@ export const fetchUserWorkspace = createAsyncThunk(
     const { data, error } = await supabase
       .from("workspace_members")
       .select("workspace_id")
-      .eq("user_id", userId)
-      .single();
+      .eq("user_id", userId);
     if (error) throw error;
     return data;
   }
