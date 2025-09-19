@@ -17,16 +17,20 @@ export default function EditorWrapper({ width, styles, toolbarStyles }) {
   const channel = useSelector((state) => state.channels.byId[groupId]);
   const channelName = channel?.channel_name;
 
-  const editor = useEditor({
-    extensions: [
-      StarterKit,
-      Placeholder.configure({ placeholder: `Write something in ${channelName}` }),
-      Mention.configure({
-        HTMLAttributes: {
-          class:
-            "mention"
-        },
-      },
+  const editor = useEditor(
+    {
+      extensions: [
+        StarterKit,
+        Placeholder.configure({
+          placeholder: `Write something in ${channelName}`,
+        }),
+        Mention.configure({
+          HTMLAttributes: {
+            class: "mention",
+          },
+          suggestion,
+        }),
+      ],
       workspaceId: workspace_id,
     },
     [channelName]

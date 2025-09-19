@@ -68,7 +68,7 @@ const Topbar = () => {
             placeholder="Search messages"
             onChange={(e) => dispatch(setQuery(e.target.value))}
             value={query}
-            className=" w-[500px] h-[40px] rounded-md text-[#eee] border-gray-300 focus:border-primary pl-9 "
+            className=" w-[500px] h-[40px] rounded-md text-[#eee] border-[#777] focus:border-primary pl-9 "
           />
         </div>
       </div>

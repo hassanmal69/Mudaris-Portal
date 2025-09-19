@@ -21,7 +21,7 @@ const MessageItem = ({
   setPickerOpenFor,
 }) => {
   const dispatch = useDispatch();
-  const UserFallback = ({ name, idx }) => {
+  const getUserFallback = (name, idx) => {
     // pick a color based on user id or index
     const color = fallbackColors[idx % fallbackColors.length];
 
@@ -48,10 +48,7 @@ const MessageItem = ({
           </AvatarFallback>
         </Avatar>
       ) : (
-        <UserFallback
-          name={message.profiles?.full_name}
-          idx={message.profiles?.id} // ensures same user always gets same color
-        />
+        getUserFallback(message.profiles?.full_name, message.id[0])
       )}
 
       <div className="message-body relative w-full">

@@ -24,26 +24,29 @@ const Login = () => {
       if (checkerror) {
         console.log("error is coming in login", checkerror);
       }
+      if (!user) return;
 
       // Use Redux thunk to fetch user's workspace membership
-      const result = await dispatch(fetchUserWorkspace(user.id)).unwrap();
+      //   const result = await dispatch(fetchUserWorkspace(user.id)).unwrap();
 
-      if (!result || !result.workspace_id) {
-        console.error("Error fetching workspace members or no workspace found");
-        return;
+      // if (!result || !result.workspace_id) {
+      //   console.error("Error fetching workspace members or no workspace found");
+      //   return;
+      // }
+
+      //  if (result) {
+      // if (user?.user_metadata?.user_role === "user") {
+      //   const workspaceId = result[0].workspace_id;
+      //   // Fetch workspace members from Redux for this workspace
+      //   dispatch(fetchUserWorkspace(workspaceId));
+      //   if (window.location.pathname !== `/workspace/${workspaceId}`) {
+      //     navigate(`/workspace/${workspaceId}`);
+      //   }
+      //} else
+      if (user?.user_metadata?.user_role === "admin") {
+        navigate(`/dashboard/${user.id}`);
       }
-      if (result) {
-        if (user?.user_metadata?.user_role === "user") {
-          const workspaceId = result.workspace_id;
-          // Fetch workspace members from Redux for this workspace
-          dispatch(fetchUserWorkspace(workspaceId));
-          if (window.location.pathname !== `/workspace/${workspaceId}`) {
-            navigate(`/workspace/${workspaceId}`);
-          }
-        } else if (user?.user_metadata?.user_role === "admin") {
-          navigate(`/dashboard/${user.id}`);
-        }
-      }
+      // }
     };
 
     sessionDetect();

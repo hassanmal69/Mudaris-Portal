@@ -101,6 +101,10 @@ const InviteDialog = ({ open, onOpenChange }) => {
           "Some invitations failed:\n" +
             failed.map((f) => `${f.email}: ${f.error}`).join("\n")
         );
+        console.log(
+          "Some invitations failed:\n" +
+            failed.map((f) => `${f.email}: ${f.error}`).join("\n")
+        );
       } else {
         alert("✅ All invitations sent successfully!");
       }

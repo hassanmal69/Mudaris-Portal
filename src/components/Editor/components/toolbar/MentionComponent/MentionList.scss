@@ -1,15 +1,15 @@
 /* Dropdown menu */
 .dropdown-menu {
-  background: #ffffff;
-  border: 1px solid #e0e0e0;
+  background: #111;
+  border: 1px solid #333;
   border-radius: 0.7rem;
   box-shadow: var(--shadow);
   display: flex;
   flex-direction: column;
   gap: 0.1rem;
   color: #686868;
+  width: 100%;
   overflow: auto;
-  padding: 0.4rem;
   position: relative;
 
   button {
@@ -18,7 +18,7 @@
     display: flex;
     gap: 0.25rem;
     text-align: left;
-    width: 100%;
+    width: 250px;
 
     &:hover,
     &:hover.is-selected {
@@ -26,7 +26,7 @@
     }
 
     &.is-selected {
-      background-color: #eee;
+      background-color: #556cd6;
       
     }
   }
@@ -34,5 +34,5 @@
 .mention-items{
   font-size: 16px;
   border-bottom: 1px solid #999;
-  color: #4d3763
+  padding: 0.4rem;
 }

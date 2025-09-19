@@ -53,7 +53,20 @@ const Sidebar = () => {
     "bg-violet-200",
     "bg-fuchsia-200",
   ];
+  const getUserFallback = (name, idx) => {
+    // pick a color based on user id or index
+    const color = fallbackColors[idx % fallbackColors.length];
 
+    return (
+      <Avatar className="w-7 h-7 border-2 border-white rounded-sm flex items-center justify-center">
+        <AvatarFallback
+          className={`text-[#2b092b]  text-sm rounded-none font-semibold ${color}`}
+        >
+          {name?.[0]?.toUpperCase()}
+        </AvatarFallback>
+      </Avatar>
+    );
+  };
   const getWorkspaceFallback = (name, idx) => {
     const color = fallbackColors[idx % fallbackColors.length];
     return (
@@ -61,7 +74,7 @@ const Sidebar = () => {
         className={`w-16 h-16 rounded-sm  flex items-center justify-center`}
       >
         <AvatarFallback
-          className={`text-[#222] ${color} rounded-none text-xl font-bold`}
+          className={`text-[#2b092b] ${color} rounded-none text-xl font-bold`}
         >
           {name?.[0]?.toUpperCase()}
         </AvatarFallback>
@@ -143,7 +156,7 @@ const Sidebar = () => {
           ) : (
             getWorkspaceFallback(
               currentWorkspace?.workspace_name,
-              currentWorkspace?.id
+              currentWorkspace?.id[0]
             )
           )}
 
@@ -160,7 +173,7 @@ const Sidebar = () => {
           <SidebarMenu>
             {channels.map((channel) => (
               <SidebarMenuItem key={channel.id}>
-                <div className="flex items-center gap-2 px-2 py-1 rounded hover:bg-gray-100 cursor-pointer">
+                <div className="flex items-center gap-2 px-2 py-1 rounded hover:bg-[#480c48] cursor-pointer">
                   {channel.visibility === "private" ? (
                     <LockClosedIcon className="w-4 h-4 " />
                   ) : (
@@ -193,18 +206,23 @@ const Sidebar = () => {
             Direct Messages
           </SidebarGroupLabel>
           <SidebarMenu>
-            {users.map((user) => (
+            {users.map((user, id) => (
               <SidebarMenuItem key={user.user_id}>
                 <div
                   onClick={() => handleIndividualMessage(user)}
-                  className="flex items-center gap-2 px-2 py-1 rounded hover:bg-gray-100 cursor-pointer"
+                  className="flex items-center gap-2 px-2 py-1 rounded hover:bg-[#480c48] cursor-pointer"
                 >
-                  <Avatar className="w-7 h-7">
-                    <AvatarImage
-                      src={user.user_profiles.avatar_url}
-                      alt={user.user_profiles.full_name}
-                    />
-                  </Avatar>
+                  {user.user_profiles.avatar_url ? (
+                    <Avatar className="w-7 h-7">
+                      <AvatarImage
+                        src={user.user_profiles.avatar_url}
+                        alt={user.user_profiles.full_name}
+                      />
+                    </Avatar>
+                  ) : (
+                    getUserFallback(user.user_profiles.full_name, id)
+                  )}
+
                   <span className="font-medium text-sm ">
                     {user.user_profiles.full_name}
                   </span>

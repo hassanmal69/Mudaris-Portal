@@ -25,25 +25,61 @@ const createChannel = createAsyncThunk(
       visibility = "public",
       channel_members,
       workspace_id,
+      creator_id,
     },
     { rejectWithValue }
   ) => {
-    const { data, error } = await supabase
-      .from("channels")
-      .insert([
-        {
-          channel_name,
-          description,
-          visibility,
-          channel_members,
-          workspace_id,
-        },
-      ])
-      .select()
-      .single();
+    try {
+      const { data: channel, error: channelError } = await supabase
+        .from("channels")
+        .insert([
+          {
+            channel_name,
+            description,
+            visibility,
+            workspace_id,
+          },
+        ])
+        .select()
+        .single();
 
-    if (error) return rejectWithValue(error.message);
-    return data;
+      if (channelError) return rejectWithValue(channelError.message);
+      let membersSet = new Set();
+      if (visibility === "public") {
+        // if visibility is public all members of the specific workspace will be member of the channel
+        const { data: workspaceMembers, error: workspaceError } = await supabase
+          .from("workspace_members")
+          .select("user_id")
+          .eq("workspace_id", workspace_id);
+
+        if (workspaceError) rejectWithValue(workspaceError);
+        workspaceMembers.forEach((wm) => membersSet.add(wm.user_id));
+      } else {
+        // private  channel -> only invited users
+        if (channel_members && channel_members.length > 0) {
+          channel_members.forEach((userId) => membersSet.add(userId));
+        }
+      }
+      if (creator_id) {
+        membersSet.add(creator_id); // adding creator of the channel
+      }
+
+      const membersToInsert = Array.from(membersSet).map((userId) => ({
+        channel_id: channel.id,
+        user_id: userId,
+      }));
+
+      if (membersToInsert.length > 0) {
+        const { error: membersError } = await supabase
+          .from("channel_members")
+          .insert(membersToInsert);
+        if (membersError) rejectWithValue(membersError.message);
+      }
+
+      return channel;
+    } catch (error) {
+      rejectWithValue(error.message);
+    }
   }
 );
 

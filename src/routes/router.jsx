@@ -6,10 +6,9 @@ import PrivateRoute from "./privateRoute.jsx";
 import WorkSpaceInd from "@/pages/dashboard/components/workspaceInd.jsx";
 import SidebarLayout from "@/layout/SidebarLayout.jsx";
 import Topbar from "@/layout/topbar/index.jsx";
-import ThemeLayout from "@/layout/ThemeLayout.jsx"; // new layout
+import ThemeLayout from "@/layout/ThemeLayout.jsx";
 
 export const router = createBrowserRouter([
-  // ❌ No theme here
   {
     path: "/",
     element: <Login />,

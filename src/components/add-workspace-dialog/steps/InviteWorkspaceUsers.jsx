@@ -1,35 +1,22 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-
 const parseUsers = (input) => {
   return input
     .split(",")
     .map((u) => u.trim())
     .filter(Boolean);
 };
-
-const InviteUsers = ({
-  state,
-  setState,
-  errors,
-  onSkip,
-  onCopyLink,
-  usedIn,
-}) => {
+const InviteWorkspaceUsers = ({ state, setState, errors, onSkip }) => {
   const [input, setInput] = useState("");
-  let isWhite;
-  if (usedIn === "CreateWorkspace") {
-    isWhite = true;
-  }
+
   const handleAdd = () => {
     const users = parseUsers(input);
     setState({ ...state, users: [...(state.users || []), ...users] });
     setInput("");
   };
-
   return (
-    <div className={`space-y-4 `}>
-      <div className={`${isWhite ? "text-white" : ""} flex flex-col gap-2`}>
+    <div className="space-y-4">
+      <div className="text-black flex flex-col gap-2">
         <h6>Enter email's</h6>
         <textarea
           value={input}
@@ -37,7 +24,7 @@ const InviteUsers = ({
           placeholder="Add students with email (comma separated)"
           onKeyDown={(e) => {
             if (e.key === "Enter" || e.key === "," || e.key === " ") {
-              e.preventDefault(); // prevent newline on Enter
+              e.preventDefault();
               handleAdd();
             }
           }}
@@ -69,12 +56,9 @@ const InviteUsers = ({
         >
           Skip for now
         </Button>
-        <Button type="button" variant="secondary" onClick={onCopyLink}>
-          Copy Invite Link
-        </Button>
       </div>
     </div>
   );
 };
 
-export default InviteUsers;
+export default InviteWorkspaceUsers;
