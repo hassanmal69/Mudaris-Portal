@@ -4,8 +4,11 @@ import { logOut } from "@/features/auth/authSlice.js";
 import { useEffect, useState } from "react";
 import { updateValue } from "@/features/ui/profileSlice.js";
 import EditProfile from "./editProfile.jsx";
+import { fetchChannels } from "@/features/channels/channelsSlice.js";
 import { Clock, Globe, Lock } from "lucide-react";
+import { useParams } from "react-router-dom";
 export default function VaulDrawer() {
+  const { workspace_id } = useParams();
   const { session } = useSelector((state) => state.auth);
   const [avatarUrl, setAvatarUrl] = useState(
     session?.user?.user_metadata.avatar_url
@@ -14,15 +17,25 @@ export default function VaulDrawer() {
   const handleLogout = () => {
     dispatch(logOut());
   };
+  const channels = useSelector((state) =>
+    state.channels.allIds.map((id) => state.channels.byId[id])
+  );
   const [time, setTime] = useState(new Date());
+  const loading = useSelector((state) => state.channels.loading);
 
   useEffect(() => {
     const interval = setInterval(() => setTime(new Date()), 1000);
     return () => clearInterval(interval); // cleanup on unmount
-  }, []);
+  }, [workspace_id, dispatch]);
   useEffect(() => {
     setAvatarUrl(session?.user?.user_metadata.avatar_url);
   }, [session?.user?.user_metadata.avatar_url]);
+  useEffect(() => {
+    if (workspace_id) {
+      dispatch(fetchChannels(workspace_id));
+    }
+  });
+
   return (
     <Drawer.Root direction="right" modal={true}>
       <Drawer.Trigger className="relative flex h-10 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded-full bg-white px-4 text-sm font-medium shadow-sm transition-all hover:bg-[#FAFAFA] dark:bg-[#161615] dark:hover:bg-[#1A1A19] dark:text-white">
@@ -77,21 +90,17 @@ export default function VaulDrawer() {
               <div>
                 <div className="flex flex-col text-zinc-600">
                   <h4 className="text-white text-[18px]">channels</h4>
-                  <p className="flex gap-1.5 items-center">
-                    <Lock className="w-4 h-4" /> general
-                  </p>
-                  <p className="flex gap-1.5 items-center">
-                    <Lock className="w-4 h-4" /> js
-                  </p>{" "}
-                  <p className="flex gap-1.5 items-center">
-                    <Globe className="w-4 h-4" /> dot.net
-                  </p>{" "}
-                  <p className="flex gap-1.5 items-center">
-                    <Lock className="w-4 h-4" /> py charm
-                  </p>{" "}
-                  <p className="flex gap-1.5 items-center">
-                    <Globe className="w-4 h-4" /> martketing
-                  </p>
+
+                  {channels.map((ch) => (
+                    <p key={ch.id} className="flex gap-1.5 items-center">
+                      {ch.visibility === "public" ? (
+                        <Globe className="w-4 h-4" />
+                      ) : (
+                        <Lock className="w-4 h-4" />
+                      )}
+                      {ch.channel_name}
+                    </p>
+                  ))}
                 </div>
               </div>
               <div className="w-full mt-[10%]">

@@ -2,6 +2,7 @@ import React, { useState, useRef } from "react";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -17,7 +18,11 @@ import { useSelector, useDispatch } from "react-redux";
 import { createChannel } from "@/features/channels/channelsSlice.js";
 import InviteChannelUsers from "./steps/InviteChannelUsers";
 import { ChannelStepIndicator } from "./steps/ChannelStepIndicator";
-
+import {
+  selectWorkspaceMembers,
+  selectLoading,
+  selectError,
+} from "@/features/workspaceMembers/WorkspaceMembersSlice";
 const steps = ["Channel Info", "Channel visibility", "Invite Users"];
 
 const initialState = {
@@ -29,6 +34,16 @@ const initialState = {
 const AddChannelDialog = ({ open, onOpenChange }) => {
   const { workspace_id } = useParams();
   const { session } = useSelector((state) => state.auth);
+  const members = useSelector(selectWorkspaceMembers(workspace_id));
+  const loading = useSelector(selectLoading(workspace_id));
+  const error = useSelector(selectError(workspace_id));
+  // const workspaceMembers = useSelector(
+  //   (state) => state.workspaceMembers.byWorkspace[workspace_id]?.members || []
+  // );
+  const workspaceMembers = useSelector(
+    (state) => state.workspaceMembers.byWorkspaceId[workspace_id]?.members || []
+  );
+
   let creatorId;
   if (session.user?.user_metadata?.user_role === "admin") {
     creatorId = session?.user?.id;
@@ -95,13 +110,23 @@ const AddChannelDialog = ({ open, onOpenChange }) => {
 
   const handleSubmit = async () => {
     const { name, description, visibility, users } = channelData;
+    let membersSet = new Set();
+    if (visibility === "public") {
+      // all workspace members
+      workspaceMembers.forEach((m) => membersSet.add(m.user_id));
+    } else {
+      // private → only invited users
+      users.forEach((u) => membersSet.add(u.id));
+    }
 
+    // add creator always
+    if (creatorId) membersSet.add(creatorId);
     dispatch(
       createChannel({
         channel_name: name,
         description,
         visibility,
-        channel_members: users.map((user) => user.id) || [],
+        channel_members: Array.from(membersSet),
         workspace_id,
         creator_id: creatorId,
       })
@@ -167,7 +192,8 @@ const AddChannelDialog = ({ open, onOpenChange }) => {
         )}
       </div>
 
-      {step === 1 && channelData.visibility === "public" && (
+      {((step === 1 && channelData.visibility === "public") ||
+        (step === 2 && channelData.visibility === "private")) && (
         <Button
           className="bg-[#008000] transition delay-150 duration-300 ease-in-out hover:bg-transparent hover:text-[#008000] border border-[#008000] text-[#fff]"
           onClick={handleSubmit}

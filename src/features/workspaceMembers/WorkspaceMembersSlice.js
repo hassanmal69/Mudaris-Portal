@@ -136,16 +136,28 @@ const workspaceMembersSlice = createSlice({
           state.byWorkspaceId[workspaceId].error = error;
         }
       })
+      // .addCase(fetchUserWorkspace.fulfilled, (state, action) => {
+      //   const { workspace_id } = action.payload;
+      //   if (!state.byWorkspaceId[workspace_id]) {
+      //     state.byWorkspaceId[workspace_id] = {
+      //       members: [],
+      //       loading: false,
+      //       error: null,
+      //     };
+      //   }
+      // })
       .addCase(fetchUserWorkspace.fulfilled, (state, action) => {
-        const { workspace_id } = action.payload;
-        if (!state.byWorkspaceId[workspace_id]) {
-          state.byWorkspaceId[workspace_id] = {
-            members: [],
-            loading: false,
-            error: null,
-          };
-        }
+        action.payload.forEach(({ workspace_id }) => {
+          if (!state.byWorkspaceId[workspace_id]) {
+            state.byWorkspaceId[workspace_id] = {
+              members: [],
+              loading: false,
+              error: null,
+            };
+          }
+        });
       })
+
       .addCase(fetchUserWorkspace.rejected, (state, action) => {
         const error = action.error.message;
         // Handle error if needed
