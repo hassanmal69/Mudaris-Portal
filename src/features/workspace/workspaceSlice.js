@@ -4,9 +4,30 @@ import { supabase } from "@/services/supabaseClient";
 // create workspace
 export const createWorkspace = createAsyncThunk(
   "workspaces/create",
-  async ({ name, description, avatarUrl, adminId }, { rejectWithValue }) => {
+  async ({ name, description, avatarFile, adminId }, { rejectWithValue }) => {
     try {
-      const { data, error } = await supabase
+      let avatarUrl = null;
+
+      // 1. Upload avatar if provided
+      if (avatarFile) {
+        const fileExt = avatarFile.name.split(".").pop();
+        const newFilePath = `workspaces/${adminId}-${Date.now()}.${fileExt}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from("media")
+          .upload(newFilePath, avatarFile, { upsert: true });
+
+        if (uploadError) throw uploadError;
+
+        const {
+          data: { publicUrl },
+        } = supabase.storage.from("media").getPublicUrl(newFilePath);
+
+        avatarUrl = publicUrl;
+      }
+
+      // 2. Create workspace
+      const { data: workspace, error: workspaceError } = await supabase
         .from("workspaces")
         .insert({
           workspace_name: name,
@@ -17,8 +38,9 @@ export const createWorkspace = createAsyncThunk(
         .select()
         .single();
 
-      if (error) throw error;
-      return data;
+      if (workspaceError) throw workspaceError;
+
+      return workspace; // return full workspace object
     } catch (error) {
       return rejectWithValue(error.message);
     }

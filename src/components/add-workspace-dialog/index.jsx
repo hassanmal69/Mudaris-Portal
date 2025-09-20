@@ -5,15 +5,18 @@ import AddavatarInWS from "./steps/addAvatar";
 import WorkspaceStepIndicator from "./steps/WorkspaceStepIndicator";
 import { Button } from "@/components/ui/button";
 import { workspaceInfoSchema } from "@/validation/authSchema";
-import { supabase } from "@/services/supabaseClient";
 import { useParams } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { createWorkspace } from "@/features/workspace/workspaceSlice";
+import { supabase } from "@/services/supabaseClient";
 const initialState = {
   name: "",
   description: "",
-  avatarUrl: "",
+  avatarFile: "",
   users: [],
 };
 const AddWorkspaceDialog = ({ open, onClose }) => {
+  const dispatch = useDispatch();
   const [step, setStep] = useState(0);
   const [errors, setErrors] = useState({});
   const [workspaceData, setWorkspaceData] = useState(initialState);
@@ -63,24 +66,97 @@ const AddWorkspaceDialog = ({ open, onClose }) => {
   };
   const handleSubmit = async () => {
     const formData = workspaceData;
-    let { name, description, avatarUrl, users } = formData;
-    const { data, error } = await supabase
-      .from("workspaces")
-      .insert({
-        workspace_name: name,
+    let { name, description, avatarFile } = formData;
+    dispatch(
+      createWorkspace({
+        name,
         description,
-        avatar_url: avatarUrl,
-        owner_id: adminId,
+        avatarFile,
+        adminId,
       })
-      .select();
-    if (error) {
-      console.error(error);
-    }
-    setTimeout(() => resetWorkspaceState(setWorkspaceData, setStep), 300);
-
-    console.log("Workspace created:", data);
-    handleClose();
+    )
+      .unwrap()
+      .then((data) => {
+        console.log("workspace created", data);
+        setTimeout(() => resetWorkspaceState(setWorkspaceData, setStep), 300);
+        handleClose();
+      })
+      .catch((err) => {
+        console.error("Failed to create workspace:", err);
+      });
   };
+
+  const sendEmail = async () => {
+    try {
+      const {
+        data: { session },
+        error,
+      } = await supabase.auth.getSession();
+
+      if (error || !session) {
+        alert("❌ You must be logged in to invite users.");
+        return;
+      }
+
+      // Use state directly instead of undefined formData
+      const { name, description, avatarFile, users } = workspaceData;
+
+      // 1. Create the workspace first
+      const workspace = await dispatch(
+        createWorkspace({
+          name,
+          description,
+          avatarFile,
+          adminId,
+        })
+      ).unwrap();
+
+      console.log("workspace created", workspace);
+
+      // 2. Now send the invitations with the new workspace_id
+      const res = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-invite`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session.access_token}`,
+          },
+          body: JSON.stringify({
+            workspace_id: workspace.id,
+            emails: users,
+            workspaceName: workspace?.workspace_name || "Workspace",
+          }),
+        }
+      );
+
+      const result = await res.json();
+      console.log("invite response ->", result);
+
+      if (!res.ok) {
+        console.error("❌ Failed:", result);
+        alert("Server error: " + JSON.stringify(result));
+        return;
+      }
+
+      const failed = result.results.filter((r) => r.error);
+      if (failed.length > 0) {
+        alert(
+          "Some invitations failed:\n" +
+            failed.map((f) => `${f.email}: ${f.error}`).join("\n")
+        );
+      } else {
+        alert("✅ All invitations sent successfully!");
+      }
+
+      setTimeout(() => resetWorkspaceState(setWorkspaceData, setStep), 300);
+      handleClose();
+    } catch (err) {
+      console.error("⚠️ Unexpected error:", err);
+      alert("Unexpected error while sending invitations.");
+    }
+  };
+
   const renderStep = () => {
     if (step === 0)
       return (
@@ -127,10 +203,19 @@ const AddWorkspaceDialog = ({ open, onClose }) => {
           </Button>
         )}
         {step < 2 && <Button onClick={handleNext}>Next</Button>}
-        {step === 2 && <Button onClick={handleSubmit}>Finish</Button>}
+        {step === 2 && <Button onClick={sendEmail}>Finish</Button>}
       </div>
     </div>
   );
 };
 
 export default AddWorkspaceDialog;
+
+// {
+//     "id": "c8a0ace1-cb42-4bd5-9edd-2e15a565236f",
+//     "created_at": "2025-09-20T18:02:50.072592+00:00",
+//     "workspace_name": "test",
+//     "owner_id": "99cb0492-a3f0-4f1d-ac52-b6acc73e0a7e",
+//     "avatar_url": null,
+//     "description": "this is test"
+// }

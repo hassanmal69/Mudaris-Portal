@@ -65,7 +65,7 @@ const WorkspaceCard = ({ workspace, index }) => {
     <div className="flex w-full sm:px-4 m-auto flex-col gap-3 sm:gap-0 sm:flex-row justify-between sm:items-center">
       <div className="flex gap-1.5 items-center">
         {workspace.avatar_url ? (
-          <Avatar className="w-16 h-16 rounded-none">
+          <Avatar className="w-16 h-16 rounded-md">
             <AvatarImage
               src={workspace.avatar_url}
               alt={workspace.workspace_name}
@@ -98,9 +98,6 @@ const WorkspaceCard = ({ workspace, index }) => {
                         src={m.user_profiles?.avatar_url}
                         alt={m.user_profiles.full_name}
                       />
-                      <AvatarFallback>
-                        {m.user_profiles.full_name?.[0]?.toUpperCase()}
-                      </AvatarFallback>
                     </Avatar>
                   ) : (
                     getMemberFallback(m.user_profiles.full_name, idx)
@@ -115,7 +112,8 @@ const WorkspaceCard = ({ workspace, index }) => {
         </div>
       </div>
 
-      <Link className="flex justify-center"
+      <Link
+        className="flex justify-center"
         to={`/workspace/${workspace.id}`}
         style={{ textDecoration: "none" }}
       >
