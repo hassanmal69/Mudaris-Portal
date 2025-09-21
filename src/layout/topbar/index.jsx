@@ -68,7 +68,7 @@ const Topbar = () => {
         </h2>
       </div>
 
-      <div className=" flex-1 flex items-center justify-center">
+      <div className="hidden sm:flex sm:flex-1 items-center justify-center">
         <div className="relative ">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
           <Input

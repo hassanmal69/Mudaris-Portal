@@ -42,7 +42,7 @@ export default function EditorWrapper({ width, styles, toolbarStyles }) {
         width: width,
         ...styles,
       }}
-      className="editor-container"
+      className="editor-container w-full"
     >
       <TextEditor editor={editor} toolbarStyles={toolbarStyles} />
       <EditorContent editor={editor} />
