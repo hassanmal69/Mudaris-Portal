@@ -1,53 +1,47 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import Profile from "@/pages/profile";
 import { useParams } from "react-router-dom";
-import "./topbar.css";
-import { Globe, Lock } from "lucide-react";
+import { Globe, Lock, Search } from "lucide-react";
 import Members from "./members";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector, shallowEqual } from "react-redux";
 import { setQuery } from "@/features/messages/search/searchSlice";
-import { Search } from "lucide-react";
 import { Notifications } from "./notification";
-import {
-  fetchWorkspaceMembers,
-  selectWorkspaceMembers,
-} from "@/features/workspaceMembers/WorkspaceMembersSlice.js";
-import {
-  SidebarTrigger
-} from "@/components/ui/sidebar";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import { fetchChannelMembers } from "@/features/channelMembers/channelMembersSlice";
 const Topbar = () => {
   const dispatch = useDispatch();
-  const { groupId, workspace_id } = useParams();
+  const { groupId } = useParams();
 
-  // Get channel from Redux
-  const channel = useSelector((state) => state.channels.byId[groupId]);
+  // Safe selector
+  const channel = useSelector(
+    (state) => state.channels.byId[groupId],
+    shallowEqual
+  );
 
-  const [visibility, setVisibility] = useState("");
-  const [channel_name, setChannel_name] = useState("");
+  const visibility = channel?.visibility || "private";
+  const channel_name = channel?.channel_name || "channel";
 
   const query = useSelector((state) => state.search.query);
+  const channelMembersState = useSelector(
+    (state) => state.channelMembers.byChannelId[groupId],
+    shallowEqual
+  );
 
-  // Fetch workspace members from Redux
+  const channelMembers = channelMembersState?.data || [];
+  const membersStatus = channelMembersState?.status || "idle";
+
+  console.log("checking channel members", channelMembers, membersStatus);
+
   useEffect(() => {
-    if (workspace_id) {
-      dispatch(fetchWorkspaceMembers(workspace_id));
+    if (groupId) {
+      dispatch(fetchChannelMembers(groupId));
     }
-  }, [workspace_id, dispatch]);
-
-  // Get workspace members from Redux state
-  const workspaceMembers = useSelector(selectWorkspaceMembers(workspace_id));
-
-  useEffect(() => {
-    if (channel) {
-      setChannel_name(channel.channel_name || "channel");
-      setVisibility(channel.visibility);
-    }
-  }, [channel]);
-
+  }, [groupId, dispatch]);
+  console.log("checking channel members", channelMembers);
   return (
     <section
-      className=" top-0 w-full bg-[#2b092b] z-20 shadow-sm topbar-container md:px-6 py-2 flex items-center"
+      className="top-0 w-full bg-[#2b092b] z-20 shadow-sm topbar-container md:px-6 py-2 flex items-center"
       style={{ minHeight: "56px" }}
     >
       <div className="p-2">
@@ -55,18 +49,18 @@ const Topbar = () => {
           <span>☰</span>
         </SidebarTrigger>
       </div>
+
       <div className="flex items-center gap-2 min-w-0">
-        <h2 className=" text-[#EEEEEE] text-[18px]  font-medium flex gap-0.5 items-center">
-          <span>
-            {visibility === "public" ? (
-              <Globe className="w-5" />
-            ) : (
-              <Lock className="w-5" />
-            )}{" "}
-          </span>
+        <h2 className="text-[#EEEEEE] text-[18px] font-medium flex gap-0.5 items-center">
+          {visibility === "public" ? (
+            <Globe className="w-5" />
+          ) : (
+            <Lock className="w-5" />
+          )}
           {channel_name}
         </h2>
       </div>
+
 
       <div className="hidden sm:flex sm:flex-1 items-center justify-center">
         <div className="relative ">
@@ -74,17 +68,20 @@ const Topbar = () => {
           <Input
             type="text"
             placeholder="Search messages"
-            onChange={(e) => dispatch(setQuery(e.target.value))}
             value={query}
-            className=" w-[500px] h-[40px] rounded-md text-[#eee] border-[#777] focus:border-primary pl-9 "
+            onChange={(e) => {
+              if (e.target.value !== query) {
+                dispatch(setQuery(e.target.value));
+              }
+            }}
+            className="w-[500px] h-[40px] rounded-md text-[#eee] border-[#777] focus:border-primary pl-9"
           />
         </div>
       </div>
 
       <div className="flex items-center gap-2 min-w-0">
         <Notifications />
-        <Members members={workspaceMembers} />{" "}
-        {/* Pass members as prop if needed */}
+        <Members members={channelMembers} />
         <Profile />
       </div>
     </section>
