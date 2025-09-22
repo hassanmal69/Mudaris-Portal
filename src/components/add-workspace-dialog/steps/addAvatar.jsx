@@ -1,3 +1,4 @@
+import { Input } from "@/components/ui/input";
 import React, { useState } from "react";
 
 const AddavatarInWS = ({ state, setState }) => {
@@ -26,7 +27,7 @@ const AddavatarInWS = ({ state, setState }) => {
     <div className="flex flex-col justify-center items-center text-black gap-4">
       <h2 className="text-lg font-semibold">Add avatar for workspace</h2>
 
-      <input type="file" accept="image/*" onChange={handleFileChange} />
+      <Input type="file" accept="image/*" onChange={handleFileChange} />
 
       {preview && (
         <div className="mt-4">
