@@ -13,6 +13,7 @@ import {
 const Password = ({ onBack, token, invite }) => {
   const [error, setError] = useState();
   const { fullName } = useSelector((state) => state.signupForm);
+  const { session } = useSelector((state) => state.auth);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -45,7 +46,7 @@ const Password = ({ onBack, token, invite }) => {
       // Fetch workspace members from Redux for this workspace
       dispatch(fetchWorkspaceMembers(invite.workspace_id));
 
-      navigate(`/workspace/${invite.workspace_id}`);
+      navigate(`/dashboard/${session?.user?.id}`);
     } catch (err) {
       setError(err.message || "An unexpected error occurred");
     }
