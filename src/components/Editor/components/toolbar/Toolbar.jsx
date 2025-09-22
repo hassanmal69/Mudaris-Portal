@@ -10,7 +10,7 @@ export default function Toolbar({ editor, toolbarStyles }) {
   if (!editor) return null;
 
   return (
-    <div className="toolbar">
+    <div className="toolbar flex flex-wrap">
       {toolbarButtons.map(({ name, icon: Icon, action, isActive, canRun }) => (
         <button
           key={name}
