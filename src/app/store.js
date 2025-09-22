@@ -9,6 +9,7 @@ import replyReducer from "@/features/reply/replySlice.js";
 import workspaceReducer from "@/features/workspace/workspaceSlice.js";
 import workspaceMembersReducer from "@/features/workspaceMembers/WorkspaceMembersSlice.js";
 import channelsReducer from "@/features/channels/channelsSlice.js";
+import channelMembersReducer from "@/features/channelMembers/channelMembersSlice.js";
 export const store = configureStore({
   reducer: {
     auth: authReducer,
@@ -21,6 +22,7 @@ export const store = configureStore({
     workSpaces: workspaceReducer,
     workspaceMembers: workspaceMembersReducer,
     channels: channelsReducer,
+    channelMembers: channelMembersReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

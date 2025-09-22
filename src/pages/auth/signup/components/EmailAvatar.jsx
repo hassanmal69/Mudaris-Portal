@@ -3,9 +3,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { updateField } from "@/features/auth/signupSlice.js";
 import { contactSchema } from "@/validation/authSchema";
 import { Input } from "@/components/ui/input";
+import { MailIcon } from "lucide-react";
 
 const EmailAvatar = ({ onNext, onBack, invite }) => {
-  const email = invite.email;
+  const email = invite?.email;
   const dispatch = useDispatch();
 
   return (
@@ -23,11 +24,15 @@ const EmailAvatar = ({ onNext, onBack, invite }) => {
 
           <div>
             <label>Email</label>
-            <Field
-              name="email"
-              disabled
-              className="w-full p-2 border rounded"
-            />
+            <div className="flex items-center">
+              <Field
+                name="email"
+                disabled
+                className="w-full p-2 border rounded"
+              />
+              <MailIcon className="size-5 signup-email-icon" />
+            </div>
+
             <ErrorMessage
               name="email"
               component="div"
