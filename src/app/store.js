@@ -23,7 +23,7 @@ export const store = configureStore({
     workSpaces: workspaceReducer,
     workspaceMembers: workspaceMembersReducer,
     channels: channelsReducer,
-    direct: directSliceReducer
+    direct: directSliceReducer,
     channelMembers: channelMembersReducer,
   },
   middleware: (getDefaultMiddleware) =>

@@ -144,22 +144,27 @@ const Sidebar = () => {
       <InviteDialog open={inviteOpen} onOpenChange={setInviteOpen} />
       <SidebarContent className="h-full bg-[#230423] text-[#EEEEEE] px-2 py-4 flex flex-col gap-4">
         <SidebarHeader className="flex gap-2">
-          {currentWorkspace?.avatar_url ? (
-            <Avatar className="w-16 h-16 rounded-none">
-              <AvatarImage
-                src={currentWorkspace?.avatar_url}
-                alt={currentWorkspace?.workspace_name}
-              />
-              <AvatarFallback>
-                {currentWorkspace.workspace_name?.[0]?.toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
-          ) : (
-            getWorkspaceFallback(
-              currentWorkspace?.workspace_name,
-              currentWorkspace?.id[0]
-            )
-          )}
+          <Link to={`/dashboard/${session?.user?.id}`}>
+
+            {currentWorkspace?.avatar_url ? (
+
+              <Avatar className="w-16 h-16 rounded-none">
+                <AvatarImage
+                  src={currentWorkspace?.avatar_url}
+                  alt={currentWorkspace?.workspace_name}
+                />
+                <AvatarFallback>
+                  {currentWorkspace.workspace_name?.[0]?.toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+
+            ) : (
+              getWorkspaceFallback(
+                currentWorkspace?.workspace_name,
+                currentWorkspace?.id[0]
+              )
+            )}
+          </Link>
 
           <span className="text-lg font-bold tracking-tight">
             {loading
@@ -228,9 +233,8 @@ const Sidebar = () => {
                     {user.user_profiles.full_name}
                   </span>
                   <span
-                    className={`ml-auto w-2 h-2 rounded-full ${
-                      user.status === "online" ? "bg-green-500" : "bg-gray-400"
-                    }`}
+                    className={`ml-auto w-2 h-2 rounded-full ${user.status === "online" ? "bg-green-500" : "bg-gray-400"
+                      }`}
                     title={user.status}
                   ></span>
                 </div>
@@ -252,7 +256,7 @@ const Sidebar = () => {
             ""
           )}
         </SidebarFooter>
-      </SidebarContent>
+      </SidebarContent >
     </>
   );
 };
