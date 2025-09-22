@@ -18,9 +18,10 @@ const Topbar = () => {
     (state) => state.channels.byId[groupId],
     shallowEqual
   );
+  const directChannel2 = useSelector((state) => state.direct.directChannel)
 
   const visibility = channel?.visibility || "private";
-  const channel_name = channel?.channel_name || "channel";
+  const channel_name = channel?.channel_name || directChannel2 || "channel";
 
   const query = useSelector((state) => state.search.query);
   const channelMembersState = useSelector(
