@@ -32,6 +32,7 @@ import {
   subscribeToChannelChanges,
   unsubscribeFromChannelChanges,
 } from "@/features/channels/channelsSlice.js";
+import { newDirect } from "@/features/channels/directSlice";
 
 const Sidebar = () => {
   const navigate = useNavigate();
@@ -118,20 +119,20 @@ const Sidebar = () => {
       const channelId = channels[0].id;
       navigate(`/workspace/${workspace_id}/group/${channelId}`);
     }
-  }, [channels, groupId, navigate, workspace_id]);
+  }, [channels, groupId, navigate, workspace_id, user_id]);
 
   const handleIndividualMessage = async (u) => {
     const token = u?.user_id.slice(0, 6) + session?.user?.id.slice(0, 6);
-    console.log(token);
     navigate(`/workspace/${workspace_id}/individual/${token}`);
     const res = {
       sender_id: session?.user?.id,
       receiver_id: u?.user_id,
       token,
     };
-    const { data, error } = await postToSupabase("directMessagesChannel", res);
+    // console.log(u?.user_profiles?.full_name);
+    dispatch(newDirect(u?.user_profiles?.full_name));
+    const { error } = await postToSupabase("directMessagesChannel", res);
     if (error) console.log(error);
-    console.log(data);
   };
 
   return (

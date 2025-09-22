@@ -16,9 +16,10 @@ import {
 import {
   SidebarTrigger
 } from "@/components/ui/sidebar";
+import { directChannel } from '@/features/channels/directSlice.js'
 const Topbar = () => {
   const dispatch = useDispatch();
-  const { groupId, workspace_id } = useParams();
+  const { groupId, workspace_id, user_id } = useParams();
 
   // Get channel from Redux
   const channel = useSelector((state) => state.channels.byId[groupId]);
@@ -37,13 +38,15 @@ const Topbar = () => {
 
   // Get workspace members from Redux state
   const workspaceMembers = useSelector(selectWorkspaceMembers(workspace_id));
-
+  const directChannel2 = useSelector((state) => state.direct.directChannel)
   useEffect(() => {
     if (channel) {
       setChannel_name(channel.channel_name || "channel");
       setVisibility(channel.visibility);
+    } else {
+      setChannel_name(directChannel2)
     }
-  }, [channel]);
+  }, [channel, user_id, directChannel2]);
 
   return (
     <section
