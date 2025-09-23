@@ -1,13 +1,13 @@
 import React, { useState } from "react";
-import InviteWorkspaceUsers from "./steps/inviteWorkspaceUsers";
-import WorkspaceInfo from "./steps/WorkspaceInfo";
-import AddavatarInWS from "./steps/addAvatar";
-import WorkspaceStepIndicator from "./steps/WorkspaceStepIndicator";
+import InviteWorkspaceUsers from "./steps/inviteWorkspaceUsers.jsx";
+import WorkspaceInfo from "./steps/WorkspaceInfo.jsx";
+import AddavatarInWS from "./steps/addAvatar.jsx";
+import WorkspaceStepIndicator from "./steps/WorkspaceStepIndicator.jsx";
 import { Button } from "@/components/ui/button";
-import { workspaceInfoSchema } from "@/validation/authSchema";
+import { workspaceInfoSchema } from "@/validation/authSchema.js";
 import { useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { createWorkspace } from "@/features/workspace/workspaceSlice";
+import { createWorkspace } from "@/features/workspace/workspaceSlice.js";
 import { supabase } from "@/services/supabaseClient";
 const initialState = {
   name: "",
