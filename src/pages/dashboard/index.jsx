@@ -1,16 +1,16 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button.jsx";
 import {
   Card,
   CardHeader,
   CardTitle,
   CardDescription,
   CardContent,
-} from "@/components/ui/card";
+} from "@/components/ui/card.jsx";
 import { Plus } from "lucide-react";
-import Workspace from "./components/workspace";
+import Workspace from "./components/workspace.jsx";
 import { useSelector } from "react-redux";
 import { useState } from "react";
-import CreateWorkspace from "./components/createWorkspace";
+import CreateWorkspace from "./components/createWorkspace.jsx";
 
 const Dashboard = () => {
   const { session } = useSelector((state) => state.auth);

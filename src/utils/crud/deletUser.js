@@ -1,4 +1,4 @@
-import { supabase } from "@/services/supabaseClient";
+import { supabase } from "@/services/supabaseClient.js";
 export async function deleteUser(userId) {
   const { data, error } = await supabase.auth.admin.deleteUser(userId);
 

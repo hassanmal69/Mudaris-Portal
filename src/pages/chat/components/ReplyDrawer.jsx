@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { Drawer } from "vaul";
 import { useDispatch, useSelector } from "react-redux";
-import { closeReplyDrawer } from "@/features/reply/replySlice";
+import { closeReplyDrawer } from "@/features/reply/replySlice.jsx";
 import { supabase } from "@/services/supabaseClient";
-import Editor from "@/components/Editor";
+import Editor from "@/components/Editor.jsx";
 
 export default function ReplyDrawer() {
   const dispatch = useDispatch();

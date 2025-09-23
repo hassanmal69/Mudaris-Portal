@@ -6,8 +6,8 @@ import {
   selectWorkspaceMembers,
   selectLoading,
 } from "@/features/workspaceMembers/WorkspaceMembersSlice.js";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar.jsx";
+import { Button } from "@/components/ui/button.jsx";
 
 // 6 fallback colors
 const fallbackColors = [
