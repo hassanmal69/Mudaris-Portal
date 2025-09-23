@@ -2,7 +2,7 @@ import MessageActions from "./MessageActions.jsx";
 import MessageContent from "./MessageContent.jsx";
 import Reactions from "./Reactions.jsx";
 import { useDispatch } from "react-redux";
-import { openReplyDrawer } from "@/features/reply/replySlice.jsx";
+import { openReplyDrawer } from "@/features/reply/replySlice.js";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar.jsx";
 
 const fallbackColors = [

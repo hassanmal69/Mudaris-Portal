@@ -1,4 +1,4 @@
-import Editor from "@/components/Editor.jsx";
+import Editor from "@/components/Editor/index.jsx";
 import Messages from "./components/index.jsx";
 
 const Chat = () => {
