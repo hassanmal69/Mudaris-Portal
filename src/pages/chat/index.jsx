@@ -1,6 +1,5 @@
 import Editor from "@/components/Editor";
 import Messages from "./components/index";
-import Mudaris from "@/assets/images/mudaris.jpg";
 
 const Chat = () => {
   return (

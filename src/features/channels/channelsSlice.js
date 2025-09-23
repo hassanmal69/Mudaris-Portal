@@ -1,4 +1,8 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import {
+  createSlice,
+  createAsyncThunk,
+  createSelector,
+} from "@reduxjs/toolkit";
 import { supabase } from "@/services/supabaseClient.js";
 
 // Thunks
@@ -15,7 +19,11 @@ const fetchChannels = createAsyncThunk(
     return data;
   }
 );
-
+export const selectChannels = createSelector(
+  (state) => state.channels.allIds,
+  (state) => state.channels.byId,
+  (allIds, byId) => allIds.map((id) => byId[id])
+);
 const createChannel = createAsyncThunk(
   "channels/createChannel",
   async (
