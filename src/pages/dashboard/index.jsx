@@ -7,7 +7,7 @@ import {
   CardContent,
 } from "@/components/ui/card.jsx";
 import { Plus } from "lucide-react";
-import Workspace from "./components/workspace.jsx";
+import Workspace from "./components/workspace/index.jsx";
 import { useSelector } from "react-redux";
 import { useState } from "react";
 import CreateWorkspace from "./components/createWorkspace.jsx";
