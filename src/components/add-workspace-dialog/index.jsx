@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import InviteWorkspaceUsers from "./steps/inviteWorkspaceUsers.jsx";
+import InviteWorkspaceUsers from "./steps/InviteWorkspaceUsers.jsx";
 import WorkspaceInfo from "./steps/WorkspaceInfo.jsx";
 import AddavatarInWS from "./steps/addAvatar.jsx";
 import WorkspaceStepIndicator from "./steps/WorkspaceStepIndicator.jsx";
