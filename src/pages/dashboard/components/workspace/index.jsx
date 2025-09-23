@@ -5,7 +5,7 @@ import {
   addWorkspacesRealtime,
 } from "@/features/workspace/workspaceSlice.js";
 import { supabase } from "@/services/supabaseClient.js";
-import WorkspaceCard from "./WorkspaceCard.jsx";
+import WorkspaceCard from "./workspaceCard.jsx";
 import { ChevronDownIcon, ChevronUpIcon } from "@radix-ui/react-icons";
 
 const Workspace = () => {
