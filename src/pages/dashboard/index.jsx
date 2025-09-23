@@ -12,15 +12,16 @@ import { useSelector } from "react-redux";
 import { useState } from "react";
 import CreateWorkspace from "./components/createWorkspace";
 
-
 const Dashboard = () => {
   const { session } = useSelector((state) => state.auth);
   const [isOpen, setisOpen] = useState(false);
+  const isAdmin = session?.user?.user_metadata?.user_role === "admin";
   return (
     <section>
       <div className="h-dvh z-10 w-dvw absolute overflow-hidden pointer-events-none">
         {isOpen && <CreateWorkspace />}
       </div>
+
       <nav className="sticky top-0 z-10 flex justify-between items-center p-4 border-b border-[#1c1c1c]">
         <span
           className="sm:text-[26px]
@@ -31,11 +32,12 @@ const Dashboard = () => {
           Mudaris Academy
         </span>
         {/* Azure Depths */}
-
-        <CreateWorkspaceButton
-          isOpen={isOpen}
-          onClick={() => setisOpen((prev) => !prev)}
-        />
+        {isAdmin && (
+          <CreateWorkspaceButton
+            isOpen={isOpen}
+            onClick={() => setisOpen((prev) => !prev)}
+          />
+        )}
       </nav>
       <main className="flex-1 container mx-auto p-4 space-y-6 w-full max-w-3xl">
         <div className="my-10">
@@ -51,7 +53,7 @@ const Dashboard = () => {
         <Card className="rounded-2xl border-[#1c1c1c] text-white bg-black/30 relative flex flex-col ">
           <CardHeader>
             <CardTitle className="text-white font-black">Workspace</CardTitle>
-            <CardDescription className="text-white relative z-50">
+            <CardDescription className="text-white ">
               Manage your current workspaces and collaborate with your team.
             </CardDescription>
           </CardHeader>
@@ -59,12 +61,14 @@ const Dashboard = () => {
             <Workspace />
           </CardContent>
         </Card>
-        <div className="rounded-xl border border-primary/30 p-6 text-center space-y-4 bg-primary/5">
-          <div className="text-lg font-medium text-white relative z-50">
-            Want to create workspaces for more batches?
+        {isAdmin && (
+          <div className="rounded-xl border border-primary/30 p-6 text-center space-y-4 bg-primary/5">
+            <div className="text-lg font-medium text-white  z-50">
+              Want to create workspaces for more batches?
+            </div>
+            <CreateWorkspaceButton onClick={() => setisOpen((prev) => !prev)} />
           </div>
-          <CreateWorkspaceButton onClick={() => setisOpen((prev) => !prev)} />
-        </div>
+        )}
       </main>
       <footer className="w-full text-sm relative text-center py-4 border-t border-[#1c1c1c] text-gray-200 mt-8">
         © 2025 <span className="text-white font-medium">Mudaris Academy</span>.

@@ -16,7 +16,7 @@ const InviteWorkspaceUsers = ({ state, setState, errors, onSkip }) => {
   };
   return (
     <div className="space-y-4">
-      <div className="text-black flex flex-col gap-2">
+      <div className="text-[#c7c7c7] flex flex-col gap-2">
         <h6>Enter email's</h6>
         <textarea
           value={input}
@@ -30,7 +30,7 @@ const InviteWorkspaceUsers = ({ state, setState, errors, onSkip }) => {
           }}
           aria-label="Add emails"
           rows={4}
-          className="w-full border border-gray-300 rounded-md p-2 resize-none"
+          className="w-full border border-gray-300 text-[#c7c7c7] rounded-md p-2 resize-none"
         />
       </div>
 
@@ -39,7 +39,7 @@ const InviteWorkspaceUsers = ({ state, setState, errors, onSkip }) => {
       )}
       <div className="flex flex-wrap gap-2">
         {(state.users || []).map((user, idx) => (
-          <span key={idx} className="px-2 py-1 bg-gray-200 rounded text-xs">
+          <span key={idx} className="px-2 py-1 bg-[#444] rounded text-xs">
             {user}
           </span>
         ))}
@@ -51,6 +51,7 @@ const InviteWorkspaceUsers = ({ state, setState, errors, onSkip }) => {
           onClick={onSkip}
           aria-label="Skip invite"
           className="text-[#556cd6] border
+          bg-transparent
           transition delay-200 duration-300 ease-in-out
           border-[#556cd6] hover:bg-[#556cd6] hover:text-white"
         >
