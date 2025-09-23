@@ -8,7 +8,7 @@ import { workspaceInfoSchema } from "@/validation/authSchema.js";
 import { useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { createWorkspace } from "@/features/workspace/workspaceSlice.js";
-import { supabase } from "@/services/supabaseClient";
+import { supabase } from "@/services/supabaseClient.js";
 const initialState = {
   name: "",
   description: "",
