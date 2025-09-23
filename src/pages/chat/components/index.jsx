@@ -21,6 +21,14 @@ const Messages = () => {
       <div ref={loaderRef}>
         {hasMore ? "loading older messages" : "No more messages"}
       </div>
+      <div className="relative ">
+        <h1 className=" text-3xl text-white font-black">JS</h1>
+        <p className="text-white">
+          this channel is created by moiz. This is the very beginning of this
+          channel
+        </p>
+      </div>
+
       <MessageList
         messages={messages}
         currentUserId={currentUserId}

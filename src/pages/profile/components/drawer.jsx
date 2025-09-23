@@ -7,6 +7,7 @@ import EditProfile from "./editProfile.jsx";
 import { fetchChannels } from "@/features/channels/channelsSlice.js";
 import { Clock, Globe, Lock } from "lucide-react";
 import { useParams } from "react-router-dom";
+import { selectChannels } from "@/features/channels/channelsSlice.js";
 export default function VaulDrawer() {
   const { workspace_id } = useParams();
   const { session } = useSelector((state) => state.auth);
@@ -17,9 +18,11 @@ export default function VaulDrawer() {
   const handleLogout = () => {
     dispatch(logOut());
   };
-  const channels = useSelector((state) =>
-    state.channels.allIds.map((id) => state.channels.byId[id])
-  );
+  // const channels = useSelector((state) =>
+  //   state.channels.allIds.map((id) => state.channels.byId[id])
+  // );
+  const channels = useSelector(selectChannels);
+
   const [time, setTime] = useState(new Date());
   const loading = useSelector((state) => state.channels.loading);
 
@@ -34,7 +37,7 @@ export default function VaulDrawer() {
     if (workspace_id) {
       dispatch(fetchChannels(workspace_id));
     }
-  });
+  }, [workspace_id, dispatch]);
 
   return (
     <Drawer.Root direction="right" modal={true}>
