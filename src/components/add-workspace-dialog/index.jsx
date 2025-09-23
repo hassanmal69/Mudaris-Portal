@@ -113,41 +113,41 @@ const AddWorkspaceDialog = ({ open, onClose }) => {
 
       console.log("workspace created", workspace);
 
-      // 2. Now send the invitations with the new workspace_id
-      const res = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-invite`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${session.access_token}`,
-          },
-          body: JSON.stringify({
-            workspace_id: workspace.id,
-            emails: users,
-            workspaceName: workspace?.workspace_name || "Workspace",
-          }),
-        }
-      );
+      // // 2. Now send the invitations with the new workspace_id
+      // const res = await fetch(
+      //   `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-invite`,
+      //   {
+      //     method: "POST",
+      //     headers: {
+      //       "Content-Type": "application/json",
+      //       Authorization: `Bearer ${session.access_token}`,
+      //     },
+      //     body: JSON.stringify({
+      //       workspace_id: workspace.id,
+      //       emails: users,
+      //       workspaceName: workspace?.workspace_name || "Workspace",
+      //     }),
+      //   }
+      // );
 
-      const result = await res.json();
-      console.log("invite response ->", result);
+      // const result = await res.json();
+      // console.log("invite response ->", result);
 
-      if (!res.ok) {
-        console.error("❌ Failed:", result);
-        alert("Server error: " + JSON.stringify(result));
-        return;
-      }
+      // if (!res.ok) {
+      //   console.error("❌ Failed:", result);
+      //   alert("Server error: " + JSON.stringify(result));
+      //   return;
+      // }
 
-      const failed = result.results.filter((r) => r.error);
-      if (failed.length > 0) {
-        alert(
-          "Some invitations failed:\n" +
-            failed.map((f) => `${f.email}: ${f.error}`).join("\n")
-        );
-      } else {
-        alert("✅ All invitations sent successfully!");
-      }
+      // const failed = result.results.filter((r) => r.error);
+      // if (failed.length > 0) {
+      //   alert(
+      //     "Some invitations failed:\n" +
+      //       failed.map((f) => `${f.email}: ${f.error}`).join("\n")
+      //   );
+      // } else {
+      //   alert("✅ All invitations sent successfully!");
+      // }
 
       setTimeout(() => resetWorkspaceState(setWorkspaceData, setStep), 300);
       handleClose();
