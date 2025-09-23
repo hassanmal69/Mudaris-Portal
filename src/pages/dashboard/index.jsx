@@ -12,6 +12,7 @@ import { useSelector } from "react-redux";
 import { useState } from "react";
 import CreateWorkspace from "./components/createWorkspace";
 
+
 const Dashboard = () => {
   const { session } = useSelector((state) => state.auth);
   const [isOpen, setisOpen] = useState(false);
@@ -36,7 +37,6 @@ const Dashboard = () => {
           onClick={() => setisOpen((prev) => !prev)}
         />
       </nav>
-
       <main className="flex-1 container mx-auto p-4 space-y-6 w-full max-w-3xl">
         <div className="my-10">
           <h1 className="relative text-3xl text-[#4d3763] flex flex-col sm:flex-row">
@@ -66,7 +66,6 @@ const Dashboard = () => {
           <CreateWorkspaceButton onClick={() => setisOpen((prev) => !prev)} />
         </div>
       </main>
-
       <footer className="w-full text-sm relative text-center py-4 border-t border-[#1c1c1c] text-gray-200 mt-8">
         © 2025 <span className="text-white font-medium">Mudaris Academy</span>.
         Developed by{" "}
@@ -77,7 +76,7 @@ const Dashboard = () => {
           asrnova.com
         </a>
       </footer>
-    </section >
+    </section>
   );
 };
 
