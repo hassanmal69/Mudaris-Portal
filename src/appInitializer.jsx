@@ -1,7 +1,7 @@
 // AppInitializer.jsx
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { initAuthListener, sessionDetection } from "@/features/auth/authSlice";
+import { initAuthListener, sessionDetection } from "@/features/auth/authSlice.js";
 
 export default function AppInitializer({ children }) {
     const dispatch = useDispatch();
