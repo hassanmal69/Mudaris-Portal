@@ -11,8 +11,7 @@ import Workspace from "./components/workspace";
 import { useSelector } from "react-redux";
 import { useState } from "react";
 import CreateWorkspace from "./components/createWorkspace";
-import Mudaris from "@/assets/images/mudaris.jpg";
-import { deleteUser } from "@/utils/crud/deletUser";
+
 
 const Dashboard = () => {
   const { session } = useSelector((state) => state.auth);

@@ -32,6 +32,7 @@ import {
   subscribeToChannelChanges,
   unsubscribeFromChannelChanges,
 } from "@/features/channels/channelsSlice.js";
+import { newDirect } from "@/features/channels/directSlice";
 
 const Sidebar = () => {
   const navigate = useNavigate();
@@ -117,20 +118,20 @@ const Sidebar = () => {
       const channelId = channels[0].id;
       navigate(`/workspace/${workspace_id}/group/${channelId}`);
     }
-  }, [channels, groupId, navigate, workspace_id]);
+  }, [channels, groupId, navigate, workspace_id, user_id]);
 
   const handleIndividualMessage = async (u) => {
     const token = u?.user_id.slice(0, 6) + session?.user?.id.slice(0, 6);
-    console.log(token);
     navigate(`/workspace/${workspace_id}/individual/${token}`);
     const res = {
       sender_id: session?.user?.id,
       receiver_id: u?.user_id,
       token,
     };
-    const { data, error } = await postToSupabase("directMessagesChannel", res);
+    // console.log(u?.user_profiles?.full_name);
+    dispatch(newDirect(u?.user_profiles?.full_name));
+    const { error } = await postToSupabase("directMessagesChannel", res);
     if (error) console.log(error);
-    console.log(data);
   };
 
   return (
@@ -143,22 +144,27 @@ const Sidebar = () => {
       <InviteDialog open={inviteOpen} onOpenChange={setInviteOpen} />
       <SidebarContent className="h-full bg-[#230423] text-[#EEEEEE] px-2 py-4 flex flex-col gap-4">
         <SidebarHeader className="flex gap-2">
-          {currentWorkspace?.avatar_url ? (
-            <Avatar className="w-16 h-16 rounded-none">
-              <AvatarImage
-                src={currentWorkspace?.avatar_url}
-                alt={currentWorkspace?.workspace_name}
-              />
-              <AvatarFallback>
-                {currentWorkspace.workspace_name?.[0]?.toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
-          ) : (
-            getWorkspaceFallback(
-              currentWorkspace?.workspace_name,
-              currentWorkspace?.id[0]
-            )
-          )}
+          <Link to={`/dashboard/${session?.user?.id}`}>
+
+            {currentWorkspace?.avatar_url ? (
+
+              <Avatar className="w-16 h-16 rounded-none">
+                <AvatarImage
+                  src={currentWorkspace?.avatar_url}
+                  alt={currentWorkspace?.workspace_name}
+                />
+                <AvatarFallback>
+                  {currentWorkspace.workspace_name?.[0]?.toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+
+            ) : (
+              getWorkspaceFallback(
+                currentWorkspace?.workspace_name,
+                currentWorkspace?.id[0]
+              )
+            )}
+          </Link>
 
           <span className="text-lg font-bold tracking-tight">
             {loading
@@ -227,9 +233,8 @@ const Sidebar = () => {
                     {user.user_profiles.full_name}
                   </span>
                   <span
-                    className={`ml-auto w-2 h-2 rounded-full ${
-                      user.status === "online" ? "bg-green-500" : "bg-gray-400"
-                    }`}
+                    className={`ml-auto w-2 h-2 rounded-full ${user.status === "online" ? "bg-green-500" : "bg-gray-400"
+                      }`}
                     title={user.status}
                   ></span>
                 </div>
@@ -251,7 +256,7 @@ const Sidebar = () => {
             ""
           )}
         </SidebarFooter>
-      </SidebarContent>
+      </SidebarContent >
     </>
   );
 };

@@ -1,7 +1,7 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import Profile from "@/pages/profile";
-import { useParams } from "react-router-dom";
+import {  useParams } from "react-router-dom";
 import { Globe, Lock, Search } from "lucide-react";
 import Members from "./members";
 import { useDispatch, useSelector, shallowEqual } from "react-redux";
@@ -12,15 +12,17 @@ import { fetchChannelMembers } from "@/features/channelMembers/channelMembersSli
 const Topbar = () => {
   const dispatch = useDispatch();
   const { groupId } = useParams();
-
+  const [isMobile, setisMobile] = useState(window.innerWidth < 660)
   // Safe selector
+
   const channel = useSelector(
     (state) => state.channels.byId[groupId],
     shallowEqual
   );
+  const directChannel2 = useSelector((state) => state.direct.directChannel)
 
   const visibility = channel?.visibility || "private";
-  const channel_name = channel?.channel_name || "channel";
+  const channel_name = channel?.channel_name || directChannel2 || "channel";
 
   const query = useSelector((state) => state.search.query);
   const channelMembersState = useSelector(
@@ -29,27 +31,41 @@ const Topbar = () => {
   );
 
   const channelMembers = channelMembersState?.data || [];
-  const membersStatus = channelMembersState?.status || "idle";
-
-  console.log("checking channel members", channelMembers, membersStatus);
 
   useEffect(() => {
     if (groupId) {
       dispatch(fetchChannelMembers(groupId));
     }
   }, [groupId, dispatch]);
-  console.log("checking channel members", channelMembers);
+  useEffect(() => {
+    const handleResize = () => {
+      setisMobile(window.innerWidth < 860);
+    };
+
+    // Run on mount
+    handleResize();
+
+    // Listen for window resize
+    window.addEventListener("resize", handleResize);
+
+    // Cleanup on unmount
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
   return (
     <section
       className="top-0 w-full bg-[#2b092b] z-20 shadow-sm topbar-container md:px-6 py-2 flex items-center"
       style={{ minHeight: "56px" }}
     >
-      <div className="p-2">
-        <SidebarTrigger className="text-white border border-white rounded p-2">
-          <span>☰</span>
-        </SidebarTrigger>
-      </div>
-
+      {isMobile &&
+        <div className="p-2">
+          <SidebarTrigger className="text-white border border-white rounded p-2">
+            <span>☰</span>
+          </SidebarTrigger>
+        </div>
+      }
       <div className="flex items-center gap-2 min-w-0">
         <h2 className="text-[#EEEEEE] text-[18px] font-medium flex gap-0.5 items-center">
           {visibility === "public" ? (
@@ -60,7 +76,6 @@ const Topbar = () => {
           {channel_name}
         </h2>
       </div>
-
 
       <div className="hidden sm:flex sm:flex-1 items-center justify-center">
         <div className="relative ">
