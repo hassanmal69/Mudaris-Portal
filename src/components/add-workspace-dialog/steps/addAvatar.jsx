@@ -24,10 +24,15 @@ const AddavatarInWS = ({ state, setState }) => {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center text-black gap-4">
+    <div className="flex flex-col justify-center items-center text-[#c7c7c7] gap-4">
       <h2 className="text-lg font-semibold">Add avatar for workspace</h2>
 
-      <Input type="file" accept="image/*" onChange={handleFileChange} />
+      <Input
+        type="file"
+        accept="image/*"
+        className="bg-[#222] text-gray-500 text-[14px] border-[#111]"
+        onChange={handleFileChange}
+      />
 
       {preview && (
         <div className="mt-4">

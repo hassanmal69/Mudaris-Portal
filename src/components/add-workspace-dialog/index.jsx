@@ -114,40 +114,40 @@ const AddWorkspaceDialog = ({ open, onClose }) => {
       console.log("workspace created", workspace);
 
       // // 2. Now send the invitations with the new workspace_id
-      // const res = await fetch(
-      //   `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-invite`,
-      //   {
-      //     method: "POST",
-      //     headers: {
-      //       "Content-Type": "application/json",
-      //       Authorization: `Bearer ${session.access_token}`,
-      //     },
-      //     body: JSON.stringify({
-      //       workspace_id: workspace.id,
-      //       emails: users,
-      //       workspaceName: workspace?.workspace_name || "Workspace",
-      //     }),
-      //   }
-      // );
+      const res = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-invite`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session.access_token}`,
+          },
+          body: JSON.stringify({
+            workspace_id: workspace.id,
+            emails: users,
+            workspaceName: workspace?.workspace_name || "Workspace",
+          }),
+        }
+      );
 
-      // const result = await res.json();
-      // console.log("invite response ->", result);
+      const result = await res.json();
+      console.log("invite response ->", result);
 
-      // if (!res.ok) {
-      //   console.error("❌ Failed:", result);
-      //   alert("Server error: " + JSON.stringify(result));
-      //   return;
-      // }
+      if (!res.ok) {
+        console.error("❌ Failed:", result);
+        alert("Server error: " + JSON.stringify(result));
+        return;
+      }
 
-      // const failed = result.results.filter((r) => r.error);
-      // if (failed.length > 0) {
-      //   alert(
-      //     "Some invitations failed:\n" +
-      //       failed.map((f) => `${f.email}: ${f.error}`).join("\n")
-      //   );
-      // } else {
-      //   alert("✅ All invitations sent successfully!");
-      // }
+      const failed = result.results.filter((r) => r.error);
+      if (failed.length > 0) {
+        alert(
+          "Some invitations failed:\n" +
+            failed.map((f) => `${f.email}: ${f.error}`).join("\n")
+        );
+      } else {
+        alert("✅ All invitations sent successfully!");
+      }
 
       setTimeout(() => resetWorkspaceState(setWorkspaceData, setStep), 300);
       handleClose();
@@ -185,7 +185,7 @@ const AddWorkspaceDialog = ({ open, onClose }) => {
   if (!open) return null;
 
   return (
-    <div className="dialog p-6 max-w-md mx-auto bg-white rounded shadow">
+    <div className="dialog p-6 max-w-md mx-auto bg-black text-[#c7c7c7] rounded shadow">
       <h2 className="text-center text-xl font-bold text-[#4d3763] mb-2">
         Create a new Workspace
       </h2>
@@ -198,12 +198,16 @@ const AddWorkspaceDialog = ({ open, onClose }) => {
 
       <div className="flex justify-between mt-6">
         {step > 0 && (
-          <Button variant="outline" onClick={handleBack}>
+          <Button className="bg-red-700" onClick={handleBack}>
             Back
           </Button>
         )}
         {step < 2 && <Button onClick={handleNext}>Next</Button>}
-        {step === 2 && <Button onClick={sendEmail}>Finish</Button>}
+        {step === 2 && (
+          <Button className="bg-green-950" onClick={sendEmail}>
+            Finish
+          </Button>
+        )}
       </div>
     </div>
   );
