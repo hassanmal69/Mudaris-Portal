@@ -1,4 +1,4 @@
-import MessageItem from "./MessageItem";
+import MessageItem from "./MessageItem.jsx";
 
 const MessageList = ({
   messages,

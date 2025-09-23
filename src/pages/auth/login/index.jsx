@@ -21,7 +21,6 @@ const Login = () => {
       if (!session || session === undefined) setpageloading(true);
       if (session) {
         if (from) {
-          console.log('from is',from);
           navigate(from, { replace: true });
         } else {
           navigate(`/dashboard/${session.id}`, { replace: true });

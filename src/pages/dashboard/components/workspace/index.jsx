@@ -3,16 +3,16 @@ import { useSelector, useDispatch } from "react-redux";
 import {
   fetchAllWorkspaces,
   addWorkspacesRealtime,
-} from "@/features/workspace/workspaceSlice";
-import { supabase } from "@/services/supabaseClient";
-import WorkspaceCard from "./WorkspaceCard";
+} from "@/features/workspace/workspaceSlice.js";
+import { supabase } from "@/services/supabaseClient.js";
+import WorkspaceCard from "./workspaceCard.jsx";
 import { ChevronDownIcon, ChevronUpIcon } from "@radix-ui/react-icons";
 
 const Workspace = () => {
   const dispatch = useDispatch();
   const { workspaces, loading } = useSelector((state) => state.workSpaces);
   const [showAll, setShowAll] = useState(false);
-
+//  const {workspaceMembers}
   useEffect(() => {
     dispatch(fetchAllWorkspaces());
   }, [dispatch]);

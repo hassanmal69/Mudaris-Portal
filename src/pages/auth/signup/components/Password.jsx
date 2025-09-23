@@ -1,8 +1,7 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { updateField, resetSignupForm } from "@/features/auth/signupSlice.js";
-import { passwordSchema } from "@/validation/authSchema";
+import { passwordSchema } from "@/validation/authSchema.js";
 import { signupUser } from "@/features/auth/authSlice.js";
 import { useNavigate } from "react-router-dom";
 import {

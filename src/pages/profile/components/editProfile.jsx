@@ -2,9 +2,9 @@ import { supabase } from "@/services/supabaseClient";
 import React, { useEffect, useId, useState } from "react";
 import { useSelector } from "react-redux";
 import { ImagePlusIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button.jsx";
+import { Input } from "@/components/ui/input.jsx";
+import { Label } from "@/components/ui/label.jsx";
 import {
   Dialog,
   DialogClose,
@@ -14,7 +14,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
+} from "@/components/ui/dialog.jsx";
 
 const EditProfile = () => {
   const { session } = useSelector((state) => state.auth);

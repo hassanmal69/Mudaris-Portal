@@ -1,4 +1,4 @@
-import { Input } from "@/components/ui/input";
+import { Input } from "@/components/ui/input.jsx";
 import React, { useState } from "react";
 
 const AddavatarInWS = ({ state, setState }) => {

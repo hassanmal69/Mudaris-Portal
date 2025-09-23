@@ -3,7 +3,7 @@ import SignUp from "@/pages/auth/signup/index.jsx";
 import Login from "@/pages/auth/login/index.jsx";
 import Dashboard from "@/pages/dashboard/index.jsx";
 import PrivateRoute from "./privateRoute.jsx";
-import WorkSpaceInd from "@/pages/dashboard/components/workspaceInd.jsx";
+import WorkSpaceInd from "@/pages/dashboard/components/workspaceind.jsx";
 import SidebarLayout from "@/layout/SidebarLayout.jsx";
 import Topbar from "@/layout/topbar/index.jsx";
 import ThemeLayout from "@/layout/ThemeLayout.jsx";
