@@ -103,7 +103,7 @@ const Sidebar = () => {
         unsubscribeFromChannelChanges();
       };
     }
-  }, [workspace_id, dispatch]);
+  }, [workspace_id, dispatch,navigate]);
 
   useEffect(() => {
     if (workspace_id) {

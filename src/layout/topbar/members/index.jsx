@@ -40,6 +40,7 @@ const Members = ({ members }) => {
       </Avatar>
     );
   };
+  console.log('members are ', members);
   const filteredUsers = members.filter((m) => {
     const name = (m.user_profiles?.full_name || "").toLowerCase();
     const email = (m.user_profiles?.email || "").toLowerCase();
