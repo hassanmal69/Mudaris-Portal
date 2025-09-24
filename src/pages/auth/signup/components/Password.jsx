@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import {
   fetchWorkspaceMembers,
   addWorkspaceMember,
-} from "@/features/workspaceMembers/WorkspaceMembersSlice.js"; // <-- import redux slice and thunk
+} from "@/features/workspaceMembers/WorkspaceMembersSlice.js";
 
 const Password = ({ onBack, token, invite }) => {
   const [error, setError] = useState();
@@ -29,6 +29,10 @@ const Password = ({ onBack, token, invite }) => {
         })
       ).unwrap();
       if (!user?.id) throw new Error("user id missing after signup!");
+      // await supabase
+      //   .from("invitations")
+      //   .update({ used: true })
+      //   .eq("token", token);
 
       // Insert workspace member using Redux thunk
       const result = await dispatch(
