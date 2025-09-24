@@ -253,89 +253,13 @@ export default function useMessages() {
     dispatch(setMessages(updatedMessages));
     setPickerOpenFor(null);
   };
-  // useEffect(() => {
-  //   const handleInsert = async (payload) => {
-  //     const newMsg = payload.new;
-  //     let profile = null;
-  //     // if the message is from the current user, we can use session metadata
 
-  //     if (newMsg.send_id === currentUserId) {
-  //       profile = {
-  //         full_name: fullName,
-  //         avatar_url: imageUrl,
-  //       };
-  //     } else {
-  //       // fetch  profile once
-  //       const { data: p, error } = await supabase
-  //         .from("profiles")
-  //         .select("full_name, avatar_url")
-  //         .eq("id", newMsg.sender_id)
-  //         .single();
-
-  //       if (!error && p) {
-  //         profile = p;
-  //         profilesCache.set(newMsg.sender_id, p);
-  //       } else {
-  //         // fallback to minimal shape so UI does not crash
-  //         profile = {
-  //           full_name: "unknown",
-  //           avatar_url: null,
-  //         };
-  //       }
-  //     }
-
-  //     //adding the messages with correct profile data
-
-  //     dispatch(
-  //       addMessage({
-  //         ...newMsg,
-  //         profiles: profile,
-  //         reactions: [],
-  //       })
-  //     );
-
-  //     // scroll to bottom if the user is at bottom
-
-  //     const container = containerRef.current;
-  //     const isAtBottom =
-  //       container.scrollHeight - container.scrollTop <=
-  //       container.clientHeight + 50;
-
-  //     if (isAtBottom) {
-  //       setTimeout(() => {
-  //         container.scrollTop = container.scrollHeight;
-  //       }, 50);
-  //     }
-
-  //     // subscribe only for this channel (filter) so we don't get unrelated messages
-  //     const subscription = supabase
-  //       .channel("public:messages")
-  //       .on(
-  //         "postgres_changes",
-  //         {
-  //           event: "INSERT",
-  //           schema: "public",
-  //           table: "messages",
-  //           // filter by channel if you only want that channel; fallback if groupId missing:
-
-  //           filter: groupId ? `channel_id=eq.${groupId}` : undefined,
-  //         },
-  //         handleInsert
-  //       )
-  //       .subscribe();
-
-  //     return () => supabase.removeChannel(subscription);
-  //   };
-  // }, [dispatch, fullName, imageUrl, currentUserId, groupId]);
-
-  // 👇 Realtime insert subscription
   useEffect(() => {
     const handleInsert = async (payload) => {
       const newMsg = payload.new;
       let profile = null;
 
       if (newMsg.sender_id === currentUserId) {
-        // ✅ use sender_id (not send_id typo)
         profile = {
           full_name: fullName,
           avatar_url: imageUrl,
