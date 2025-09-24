@@ -19,7 +19,7 @@ const Password = ({ onBack, token, invite }) => {
   const handleSubmit = async (values) => {
     try {
       setError(null);
-
+      console.log("values inside password.jsx>sign up are", values);
       const { user } = await dispatch(
         signupUser({
           fullName,
@@ -38,7 +38,7 @@ const Password = ({ onBack, token, invite }) => {
       const result = await dispatch(
         addWorkspaceMember({
           userId: user.id,
-          workspaceId: invite.workspace_id,
+          workspaceId: invite.workspace_id || null,
           role: "user",
         })
       ).unwrap();

@@ -11,7 +11,6 @@ export default function ReplyDrawer() {
   const [replies, setReplies] = useState([]);
 
   useEffect(() => {
-    console.log(message);
     if (!message) return;
 
     const fetchReplies = async () => {

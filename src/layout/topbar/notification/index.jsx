@@ -5,7 +5,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@/components/ui/dropdown-menu.jsx";
 import { useEffect, useState } from "react";
 import { supabase } from "@/services/supabaseClient";
 import { useSelector } from "react-redux";
@@ -36,20 +36,14 @@ export function Notifications() {
       return;
     }
     if (!error && data) {
-      console.log("checking data in notification", data);
       setNotification(data);
     }
   };
   const unreadLogic = (data) => {
-    console.log(
-      "all created_at:",
-      data.map((d) => d.created_at)
-    );
     const unreadData = data.filter(
       (m) => new Date(m.created_at).getTime() > new Date(lastSeen).getTime()
     );
     setUnread(unreadData);
-    console.log("unread count:", unreadData.length, unreadData);
   };
   useEffect(() => {
     unreadLogic(notification);
@@ -62,7 +56,6 @@ export function Notifications() {
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "notifications" },
         (payload) => {
-          console.log("New notification:", payload.new);
           setNotification((prev) => [payload.new, ...prev]); // prepend new
         }
       )

@@ -4,11 +4,11 @@ import { updateField } from "@/features/auth/signupSlice.js";
 import { contactSchema } from "@/validation/authSchema";
 import { Input } from "@/components/ui/input";
 import { MailIcon } from "lucide-react";
+import { useState } from "react";
 
 const EmailAvatar = ({ onNext, onBack, invite }) => {
   const email = invite?.email;
   const dispatch = useDispatch();
-
   return (
     <Formik
       initialValues={{ email, avatarFile: null }}

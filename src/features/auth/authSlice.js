@@ -56,8 +56,9 @@ export const sessionDetection = createAsyncThunk(
 // --- Signup Thunk ---
 export const signupUser = createAsyncThunk(
   "auth/signupUser",
-  async ({ fullName, email, password, token }, { rejectWithValue }) => {
+  async ({ fullName, email, password, avatarUrl }, { rejectWithValue }) => {
     try {
+      console.log(fullName, email, password, avatarUrl);
       const { data, error } = await supabase.auth.signUp({
         email: email.trim(),
         password,
@@ -66,7 +67,7 @@ export const signupUser = createAsyncThunk(
           data: {
             fullName,
             user_role: "user",
-            avatar: null,
+            // avatar: avatarUrl
           },
         },
       });

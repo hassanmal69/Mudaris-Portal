@@ -23,7 +23,7 @@ const Login = () => {
         if (from) {
           navigate(from, { replace: true });
         } else {
-          navigate(`/dashboard/${session.id}`, { replace: true });
+          navigate(`/dashboard/${session?.user?.id}`, { replace: true });
         }
       }
     };
