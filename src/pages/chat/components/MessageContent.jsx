@@ -13,6 +13,7 @@ const MessageContent = ({ attachments, content }) => (
         width="100"
       />
     )}
+
     <div
       className="text-[#c7c7c7]"
       dangerouslySetInnerHTML={{ __html: content }}

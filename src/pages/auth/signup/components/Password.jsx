@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import {
   fetchWorkspaceMembers,
   addWorkspaceMember,
-} from "@/features/workspaceMembers/WorkspaceMembersSlice.js"; // <-- import redux slice and thunk
+} from "@/features/workspaceMembers/WorkspaceMembersSlice.js";
 
 const Password = ({ onBack, token, invite }) => {
   const [error, setError] = useState();

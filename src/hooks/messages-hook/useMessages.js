@@ -6,14 +6,14 @@ import { addMessage, setMessages } from "@/features/messages/messageSlice";
 
 const PAGE_SIZE = 20;
 
-function groupReactions(reactions) {
-  const grouped = {};
-  reactions?.forEach((r) => {
-    if (!grouped[r.reaction_type]) grouped[r.reaction_type] = [];
-    grouped[r.reaction_type].push(r.user_id);
-  });
-  return grouped;
-}
+// function groupReactions(reactions) {
+//   const grouped = {};
+//   reactions?.forEach((r) => {
+//     if (!grouped[r.reaction_type]) grouped[r.reaction_type] = [];
+//     grouped[r.reaction_type].push(r.user_id);
+//   });
+//   return grouped;
+// }
 
 export default function useMessages() {
   const dispatch = useDispatch();
@@ -31,11 +31,13 @@ export default function useMessages() {
   const containerRef = useRef(null);
   const loaderRef = useRef(null);
 
+  const profilesCache = useRef(new Map());
   const filtered = query
     ? messages.filter((msg) =>
         msg.content?.toLowerCase().includes(query.toLowerCase())
       )
     : messages;
+  // 🔹 Load messages with sender profile
 
   const loadMessages = async (pageNum) => {
     const FROM = pageNum * PAGE_SIZE;
@@ -65,7 +67,7 @@ export default function useMessages() {
       .is("reply_to", null);
 
     if (user_id) {
-      queryBuilder = queryBuilder.eq("token", user_id);
+      queryBuilder = queryBuilder.eq("sender_id", user_id);
     } else {
       queryBuilder = queryBuilder.eq("channel_id", groupId);
     }
@@ -80,17 +82,21 @@ export default function useMessages() {
     return messagesWithReplyCount.reverse();
   };
 
+  // initial load
   useEffect(() => {
     (async () => {
       const firstBatch = await loadMessages(0);
       dispatch(setMessages(firstBatch));
       setPage(1);
       setTimeout(() => {
-        containerRef.current.scrollTop = containerRef.current.scrollHeight;
+        if (containerRef.current) {
+          containerRef.current.scrollTop = containerRef.current.scrollHeight;
+        }
       }, 100);
     })();
-  }, [groupId, user_id]);
+  }, [groupId, user_id, dispatch]);
 
+  // load older
   const loadOlder = useCallback(async () => {
     if (!hasMore) return;
     const container = containerRef.current;
@@ -105,8 +111,8 @@ export default function useMessages() {
     setTimeout(() => {
       container.scrollTop = container.scrollHeight - oldScrollHeight;
     }, 50);
-  }, [page, hasMore, messages]);
-
+  }, [page, hasMore, messages, dispatch]);
+  // infinite scroll observer
   useEffect(() => {
     if (!loaderRef.current) return;
     const observer = new window.IntersectionObserver(
@@ -119,35 +125,35 @@ export default function useMessages() {
     return () => observer.disconnect();
   }, [loadOlder]);
 
-  useEffect(() => {
-    const subscription = supabase
-      .channel("public:messages")
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "messages" },
-        (payload) => {
-          dispatch(
-            addMessage({
-              ...payload.new,
-              profiles: { full_name: fullName, avatar_url: imageUrl },
-              reactions: [],
-            })
-          );
-          const container = containerRef.current;
-          const isAtBottom =
-            container.scrollHeight - container.scrollTop <=
-            container.clientHeight + 50;
-          if (isAtBottom) {
-            setTimeout(() => {
-              container.scrollTop = container.scrollHeight;
-            }, 50);
-          }
-        }
-      )
-      .subscribe();
-    return () => supabase.removeChannel(subscription);
-  }, [dispatch, fullName, imageUrl]);
-
+  // useEffect(() => {
+  //   const subscription = supabase
+  //     .channel("public:messages")
+  //     .on(
+  //       "postgres_changes",
+  //       { event: "INSERT", schema: "public", table: "messages" },
+  //       (payload) => {
+  //         dispatch(
+  //           addMessage({
+  //             ...payload.new,
+  //             profiles: { full_name: fullName, avatar_url: imageUrl },
+  //             reactions: [],
+  //           })
+  //         );
+  //         const container = containerRef.current;
+  //         const isAtBottom =
+  //           container.scrollHeight - container.scrollTop <=
+  //           container.clientHeight + 50;
+  //         if (isAtBottom) {
+  //           setTimeout(() => {
+  //             container.scrollTop = container.scrollHeight;
+  //           }, 50);
+  //         }
+  //       }
+  //     )
+  //     .subscribe();
+  //   return () => supabase.removeChannel(subscription);
+  // }, [dispatch, fullName, imageUrl]);
+  // handle reactions realtime updates
   useEffect(() => {
     const subscription = supabase
       .channel("public:message_reactions")
@@ -195,7 +201,7 @@ export default function useMessages() {
       .subscribe();
     return () => supabase.removeChannel(subscription);
   }, [messages, dispatch]);
-
+  // toggle reaction
   const toggleReaction = async (messageId, emoji) => {
     const msg = messages.find((m) => m.id === messageId);
     const alreadyReacted = msg.reactions?.some(
@@ -247,6 +253,151 @@ export default function useMessages() {
     dispatch(setMessages(updatedMessages));
     setPickerOpenFor(null);
   };
+  // useEffect(() => {
+  //   const handleInsert = async (payload) => {
+  //     const newMsg = payload.new;
+  //     let profile = null;
+  //     // if the message is from the current user, we can use session metadata
+
+  //     if (newMsg.send_id === currentUserId) {
+  //       profile = {
+  //         full_name: fullName,
+  //         avatar_url: imageUrl,
+  //       };
+  //     } else {
+  //       // fetch  profile once
+  //       const { data: p, error } = await supabase
+  //         .from("profiles")
+  //         .select("full_name, avatar_url")
+  //         .eq("id", newMsg.sender_id)
+  //         .single();
+
+  //       if (!error && p) {
+  //         profile = p;
+  //         profilesCache.set(newMsg.sender_id, p);
+  //       } else {
+  //         // fallback to minimal shape so UI does not crash
+  //         profile = {
+  //           full_name: "unknown",
+  //           avatar_url: null,
+  //         };
+  //       }
+  //     }
+
+  //     //adding the messages with correct profile data
+
+  //     dispatch(
+  //       addMessage({
+  //         ...newMsg,
+  //         profiles: profile,
+  //         reactions: [],
+  //       })
+  //     );
+
+  //     // scroll to bottom if the user is at bottom
+
+  //     const container = containerRef.current;
+  //     const isAtBottom =
+  //       container.scrollHeight - container.scrollTop <=
+  //       container.clientHeight + 50;
+
+  //     if (isAtBottom) {
+  //       setTimeout(() => {
+  //         container.scrollTop = container.scrollHeight;
+  //       }, 50);
+  //     }
+
+  //     // subscribe only for this channel (filter) so we don't get unrelated messages
+  //     const subscription = supabase
+  //       .channel("public:messages")
+  //       .on(
+  //         "postgres_changes",
+  //         {
+  //           event: "INSERT",
+  //           schema: "public",
+  //           table: "messages",
+  //           // filter by channel if you only want that channel; fallback if groupId missing:
+
+  //           filter: groupId ? `channel_id=eq.${groupId}` : undefined,
+  //         },
+  //         handleInsert
+  //       )
+  //       .subscribe();
+
+  //     return () => supabase.removeChannel(subscription);
+  //   };
+  // }, [dispatch, fullName, imageUrl, currentUserId, groupId]);
+
+  // 👇 Realtime insert subscription
+  useEffect(() => {
+    const handleInsert = async (payload) => {
+      const newMsg = payload.new;
+      let profile = null;
+
+      if (newMsg.sender_id === currentUserId) {
+        // ✅ use sender_id (not send_id typo)
+        profile = {
+          full_name: fullName,
+          avatar_url: imageUrl,
+        };
+      } else {
+        // ✅ check cache first
+        if (profilesCache.current.has(newMsg.sender_id)) {
+          profile = profilesCache.current.get(newMsg.sender_id);
+        } else {
+          const { data: p, error } = await supabase
+            .from("profiles")
+            .select("full_name, avatar_url")
+            .eq("id", newMsg.sender_id)
+            .single();
+
+          if (!error && p) {
+            profile = p;
+            profilesCache.current.set(newMsg.sender_id, p);
+          } else {
+            profile = { full_name: "Unknown", avatar_url: null };
+          }
+        }
+      }
+
+      dispatch(
+        addMessage({
+          ...newMsg,
+          profiles: profile,
+          reactions: [],
+        })
+      );
+
+      // auto-scroll if user is near bottom
+      const container = containerRef.current;
+      const isAtBottom =
+        container.scrollHeight - container.scrollTop <=
+        container.clientHeight + 50;
+      if (isAtBottom) {
+        setTimeout(() => {
+          container.scrollTop = container.scrollHeight;
+        }, 50);
+      }
+    };
+
+    const subscription = supabase
+      .channel("public:messages")
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "messages",
+          filter: groupId ? `channel_id=eq.${groupId}` : undefined,
+        },
+        handleInsert
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(subscription);
+    };
+  }, [dispatch, fullName, imageUrl, currentUserId, groupId]);
 
   return {
     messages: filtered,
