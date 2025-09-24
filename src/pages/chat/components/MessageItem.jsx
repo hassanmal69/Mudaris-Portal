@@ -3,7 +3,11 @@ import MessageContent from "./MessageContent.jsx";
 import Reactions from "./Reactions.jsx";
 import { useDispatch } from "react-redux";
 import { openReplyDrawer } from "@/features/reply/replySlice.js";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar.jsx";
+import {
+  Avatar,
+  AvatarImage,
+  AvatarFallback,
+} from "@/components/ui/avatar.jsx";
 
 const fallbackColors = [
   "bg-rose-200",
@@ -20,6 +24,9 @@ const MessageItem = ({
   pickerOpenFor,
   setPickerOpenFor,
 }) => {
+  const { profiles, content, created_at, user_id } = message || {};
+  const { full_name, avatar_url } = profiles || {};
+
   const dispatch = useDispatch();
   const getUserFallback = (name, idx) => {
     // pick a color based on user id or index
@@ -40,11 +47,15 @@ const MessageItem = ({
       {message.profiles?.avatar_url ? (
         <Avatar className="w-7 h-7 border-2 border-white rounded-none">
           <AvatarImage
-            src={message.profiles?.avatar_url}
-            alt={message.profiles?.full_name}
+            // src={message.profiles?.avatar_url}
+            // alt={message.profiles?.full_name}
+
+            src={avatar_url || ""}
+            alt={full_name || "user"}
           />
           <AvatarFallback>
-            {message.profiles?.full_name?.[0]?.toUpperCase()}
+            {/* {message.profiles?.full_name?.[0]?.toUpperCase()} */}
+            {full_name?.[0]?.toUpperCase() || "U"}
           </AvatarFallback>
         </Avatar>
       ) : (
@@ -63,6 +74,9 @@ const MessageItem = ({
         <strong className="text-[#fff]">
           {message.profiles?.full_name || "Unknown User"}
         </strong>
+        <span className="text-xs text-gray-400">
+          {new Date(created_at).toLocaleTimeString()}
+        </span>
         <MessageContent
           attachments={message.attachments}
           content={message.content}

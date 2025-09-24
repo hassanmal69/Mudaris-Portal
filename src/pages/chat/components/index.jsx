@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import ReplyDrawer from "./ReplyDrawer";
 import MessageList from "./MessageList";
-import useMessages from "../../../hooks/messages-hook/useMessages.js";
+import useMessages from "@/hooks/messages-hook/useMessages.js";
 import "./message.css";
 import { useSelector, shallowEqual } from "react-redux";
 import { useParams } from "react-router-dom";
