@@ -97,11 +97,11 @@ const WorkspaceCard = ({ workspace, index }) => {
                     >
                       <AvatarImage
                         src={m.user_profiles?.avatar_url}
-                        alt={m.user_profiles.full_name}
+                        alt={m.user_profiles?.full_name}
                       />
                     </Avatar>
                   ) : (
-                    getMemberFallback(m.user_profiles.full_name, idx)
+                    getMemberFallback(m.user_profiles?.full_name, idx)
                   )
                 )
               )}

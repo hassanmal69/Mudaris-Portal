@@ -5,36 +5,35 @@ import { passwordSchema } from "@/validation/authSchema.js";
 import { signupUser } from "@/features/auth/authSlice.js";
 import { useNavigate } from "react-router-dom";
 import {
-  fetchWorkspaceMembers,
   addWorkspaceMember,
 } from "@/features/workspaceMembers/WorkspaceMembersSlice.js";
+import { supabase } from "@/services/supabaseClient";
 
-const Password = ({ onBack, token, invite }) => {
+const Password = ({ onBack, token, invite, file }) => {
   const [error, setError] = useState();
   const { fullName } = useSelector((state) => state.signupForm);
-  const { session } = useSelector((state) => state.auth);
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const handleSubmit = async (values) => {
     try {
       setError(null);
-      console.log("values inside password.jsx>sign up are", values);
       const { user } = await dispatch(
         signupUser({
           fullName,
           email: invite.email,
           password: values.password,
-          token,
         })
       ).unwrap();
       if (!user?.id) throw new Error("user id missing after signup!");
-      // await supabase
-      //   .from("invitations")
-      //   .update({ used: true })
-      //   .eq("token", token);
-
+      const { error: tokenUsed } = await supabase
+        .from("invitations")
+        .update({ used: true })
+        .eq("token", token);
+      if (tokenUsed) {
+        console.log('error coming in token update', tokenUsed);
+      }
       // Insert workspace member using Redux thunk
+
       const result = await dispatch(
         addWorkspaceMember({
           userId: user.id,
@@ -47,9 +46,42 @@ const Password = ({ onBack, token, invite }) => {
         throw new Error(`Failed to add to workspace: ${result.error}`);
 
       // Fetch workspace members from Redux for this workspace
-      dispatch(fetchWorkspaceMembers(invite.workspace_id));
+      // dispatch(fetchWorkspaceMembers(invite.workspace_id));
+      if (!file) {
+        throw new Error("No avatar file selected");
+      }
+      const userId = user.id;
+      const fileExt = file.name.split(".").pop();
+      const newFilePath = `pictures/avatar/${userId}-${Date.now()}.${fileExt}`;
+      const { error: uploadError } = await supabase.storage
+        .from("media")
+        .upload(newFilePath, file, { upsert: true });
 
-      navigate(`/dashboard/${session?.user?.id}`);
+      if (uploadError) {
+        console.error("Error uploading file:", uploadError);
+      }
+
+      const {
+        data: { publicUrl },
+      } = await supabase.storage.from("media").getPublicUrl(newFilePath);
+      const { error: updateError } = await supabase.auth.updateUser({
+        data: { avatar_url: publicUrl },
+      });
+      const {
+        error: { profileUpdateError }
+      } = await supabase.from('profiles').insert({
+        full_name: user?.user_metadata.fullName,
+        avatar_url: user?.user_metadata.avatar_url
+      }).eq("id", userId)
+      if (profileUpdateError) {
+        throw new Error(profileUpdateError)
+      }
+      if (updateError) {
+        console.error("Error updating avatar URL:", updateError);
+        return;
+      }
+
+      navigate(`/dashboard/${user?.id}`);
     } catch (err) {
       setError(err.message || "An unexpected error occurred");
     }
