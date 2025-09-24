@@ -44,6 +44,7 @@ const EmailAvatar = ({ onNext, onBack, invite }) => {
             <label>Avatar (Optional)</label>
             <Input
               type="file"
+              accept="image/*"  
               onChange={(event) =>
                 setFieldValue("avatarFile", event.currentTarget.files[0])
               }

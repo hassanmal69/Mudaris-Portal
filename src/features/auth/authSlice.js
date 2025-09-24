@@ -74,8 +74,7 @@ export const signupUser = createAsyncThunk(
       if (error) {
         console.log("error coming in signup of a user", error);
       }
-
-      return { token, user: data.user, session: data.session || null };
+      return { user: data.user, session: data.session || null };
     } catch (err) {
       return rejectWithValue(err.message || "Signup failed");
     }

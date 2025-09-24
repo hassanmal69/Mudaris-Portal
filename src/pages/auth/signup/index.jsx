@@ -10,13 +10,15 @@ const Signup = () => {
   const [step, setStep] = useState(0);
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
+  const [file, setFile] = useState(null); // state to hold file
 
   const navigate = useNavigate();
   const [invite, setInvite] = useState(null);
   const [error, setError] = useState();
   const [wsId, setWsId] = useState();
   const handleNextFromContact = ({ avatarFile }) => {
-    // Store avatarFile in Redux if needed
+    setFile(avatarFile)
+    console.log(file);
     setStep(2);
   };
 
@@ -71,6 +73,7 @@ const Signup = () => {
           <StepPassword
             onBack={() => setStep(1)}
             token={token}
+            file={file}
             invite={invite}
             workspace_id={wsId}
             signUpError={error}
