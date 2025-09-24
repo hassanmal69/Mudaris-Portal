@@ -37,9 +37,7 @@ const AddChannelDialog = ({ open, onOpenChange }) => {
   const members = useSelector(selectWorkspaceMembers(workspace_id));
   const loading = useSelector(selectLoading(workspace_id));
   const error = useSelector(selectError(workspace_id));
-  // const workspaceMembers = useSelector(
-  //   (state) => state.workspaceMembers.byWorkspace[workspace_id]?.members || []
-  // );
+
   const workspaceMembers = useSelector(
     (state) => state.workspaceMembers.byWorkspaceId[workspace_id]?.members || []
   );

@@ -71,12 +71,15 @@ const MessageItem = ({
           setPickerOpenFor={setPickerOpenFor}
           toggleReaction={toggleReaction}
         />
-        <strong className="text-[#fff]">
-          {message.profiles?.full_name || "Unknown User"}
-        </strong>
-        <span className="text-xs text-gray-400">
-          {new Date(created_at).toLocaleTimeString()}
-        </span>
+        <div className="flex gap-2 items-center">
+          <strong className="text-[#fff]">
+            {message.profiles?.full_name || "Unknown User"}
+          </strong>
+          <span className="text-[10px] text-gray-700">
+            {new Date(created_at).toLocaleTimeString()}
+          </span>
+        </div>
+
         <MessageContent
           attachments={message.attachments}
           content={message.content}

@@ -6,6 +6,7 @@ import "./message.css";
 import { useSelector, shallowEqual } from "react-redux";
 import { useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import AddUserInChannel from "./invite-channel-dialog";
 const Messages = () => {
   const {
     messages,
@@ -43,6 +44,10 @@ const Messages = () => {
           <Button onClick={() => setOpenDialog(true)}>add user</Button>
         </div>
       )}
+      <AddUserInChannel
+        open={openDialog}
+        onClose={() => setOpenDialog(false)}
+      />
 
       <MessageList
         messages={messages}
