@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -40,16 +40,12 @@ const Members = ({ members }) => {
       </Avatar>
     );
   };
-  console.log('members are ', members);
   const filteredUsers = members.filter((m) => {
     const name = (m.user_profiles?.full_name || "").toLowerCase();
     const email = (m.user_profiles?.email || "").toLowerCase();
     const term = search.toLowerCase();
     return name.includes(term) || email.includes(term);
   });
-  useEffect(() => {
-    console.log("aa", members);
-  }, [members]);
   return (
     <>
       <div className="flex items-center gap-1 py-1 px-1 border border-[#c1c1c1] rounded-sm member-container">

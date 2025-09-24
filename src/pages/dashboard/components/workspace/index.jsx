@@ -7,12 +7,16 @@ import {
 import { supabase } from "@/services/supabaseClient.js";
 import WorkspaceCard from "./workspaceCard.jsx";
 import { ChevronDownIcon, ChevronUpIcon } from "@radix-ui/react-icons";
-
+import {
+  fetchUserWorkspace
+} from "@/features/workspaceMembers/WorkspaceMembersSlice.js";
 const Workspace = () => {
+  const { session } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
+  const [showWs, setShowWs] = useState([])
   const { workspaces, loading } = useSelector((state) => state.workSpaces);
   const [showAll, setShowAll] = useState(false);
-//  const {workspaceMembers}
+  //  const {workspaceMembers}
   useEffect(() => {
     dispatch(fetchAllWorkspaces());
   }, [dispatch]);
@@ -40,7 +44,17 @@ const Workspace = () => {
     };
   }, [dispatch]);
 
-  const visibleWorkspaces = showAll ? workspaces : workspaces.slice(0, 3);
+
+  const fetching = async () => {
+    const wsMember = await dispatch(fetchUserWorkspace(session.user.id))
+    setShowWs(wsMember?.payload)
+  }
+  useEffect(() => {
+    fetching();
+  }, [])
+  console.log('show ws is ', showWs);
+
+  const visibleWorkspaces = showAll ? showWs : showWs.slice(0, 3);
 
   return (
     <section>
@@ -48,7 +62,7 @@ const Workspace = () => {
         {loading && <p>Loading...</p>}
 
         {visibleWorkspaces.map((w, i) => (
-          <WorkspaceCard key={w.id} workspace={w} index={i} />
+          <WorkspaceCard key={w.workspaces.id} workspace={w.workspaces} index={i} />
         ))}
 
         {/* Toggle button */}

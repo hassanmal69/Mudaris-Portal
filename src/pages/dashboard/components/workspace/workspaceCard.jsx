@@ -64,6 +64,7 @@ const WorkspaceCard = ({ workspace, index }) => {
   return (
     <div className="flex w-full sm:px-4 m-auto flex-col gap-3 sm:gap-0 sm:flex-row justify-between sm:items-center">
       <div className="flex gap-1.5 items-center">
+
         {workspace.avatar_url ? (
           <Avatar className="w-16 h-16 rounded-md">
             <AvatarImage
@@ -125,7 +126,7 @@ const WorkspaceCard = ({ workspace, index }) => {
         </Button>
       </Link>
     </div>
-  );
-};
+  )
 
+}
 export default WorkspaceCard;

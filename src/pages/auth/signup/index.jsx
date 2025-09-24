@@ -2,20 +2,51 @@ import { useEffect, useState } from "react";
 import StepFullName from "./components/FullName.jsx";
 import StepContact from "./components/EmailAvatar.jsx";
 import StepPassword from "./components/Password.jsx";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { supabase } from "@/services/supabaseClient.js";
 import bgImg from "@/assets/images/mudaris.jpg";
+// import { useSelector } from "react-redux";
 
 const Signup = () => {
   const [step, setStep] = useState(0);
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
-  const navigate = useNavigate();
   const [invite, setInvite] = useState(null);
   const [error, setError] = useState();
   const [wsId, setWsId] = useState();
-  const handleNextFromContact = ({ avatarFile }) => {
+  // const { session } = useSelector((state) => state.auth);
+
+  const handleNextFromContact = async ({ avatarFile }) => {
     // Store avatarFile in Redux if needed
+    // console.log(avatarFile);
+    // let file = avatarFile
+    // const userId = session?.user.id;
+    // console.log(session,userId);
+    // const fileExt = file.name.split(".").pop();
+    // const newFilePath = `pictures/avatar/-${Date.now()}.${fileExt}`;
+    // const { error: uploadError } = await supabase.storage
+    //   .from("media")
+    //   .upload(newFilePath, file, { upsert: true });
+
+    // if (uploadError) {
+    //   console.error("Error uploading file:", uploadError);
+    // }
+
+    // // Get public URL
+    // const {
+    //   data: { publicUrl },
+    // } = supabase.storage.from("media").getPublicUrl(newFilePath);
+    // localStorage.setItem('temp', publicUrl)
+    // Update user metadata
+    // const { error: updateError } = await supabase.auth.updateUser({
+    //   data: { avatar_url: publicUrl },
+    // });
+
+    // if (updateError) {
+    //   console.error("Error updating avatar URL:", updateError);
+    //   return;
+    // }
+
     setStep(2);
   };
 
@@ -44,7 +75,6 @@ const Signup = () => {
 
       setInvite(data);
       setWsId(data.workspace_id);
-      console.log("sada invite", invite);
     }
 
     if (token) {
