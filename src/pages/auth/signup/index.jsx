@@ -10,6 +10,7 @@ const Signup = () => {
   const [step, setStep] = useState(0);
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
+
   const navigate = useNavigate();
   const [invite, setInvite] = useState(null);
   const [error, setError] = useState();
@@ -44,7 +45,6 @@ const Signup = () => {
 
       setInvite(data);
       setWsId(data.workspace_id);
-      console.log("sada invite", invite);
     }
 
     if (token) {
