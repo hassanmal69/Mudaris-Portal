@@ -8,6 +8,8 @@ import {
   addWorkspaceMember,
 } from "@/features/workspaceMembers/WorkspaceMembersSlice.js";
 import { supabase } from "@/services/supabaseClient";
+import { fetchChannels } from "@/features/channels/channelsSlice";
+import { addChannelMembers } from "@/features/channelMembers/channelMembersSlice";
 
 const Password = ({ onBack, token, invite, file }) => {
   const [error, setError] = useState();
@@ -44,13 +46,23 @@ const Password = ({ onBack, token, invite, file }) => {
 
       if (result.error)
         throw new Error(`Failed to add to workspace: ${result.error}`);
-
+      //now we have to add a user in all Public Group Members
+      const channelsAre = await dispatch(fetchChannels(invite.workspace_id))
+      console.log('coming channels are', channelsAre?.payload);
+      const filteredChannels = await channelsAre?.payload.filter(channel => channel.visibility === 'public')
       // Fetch workspace members from Redux for this workspace
       // dispatch(fetchWorkspaceMembers(invite.workspace_id));
+      const userId = user.id;
+
+      for (const m of filteredChannels) {
+        const sendingData = await dispatch(addChannelMembers({ channelIds: m.id, userId }));
+        console.log('getting data is', sendingData);
+      }
+
       if (!file) {
         throw new Error("No avatar file selected");
       }
-      const userId = user.id;
+
       const fileExt = file.name.split(".").pop();
       const newFilePath = `pictures/avatar/${userId}-${Date.now()}.${fileExt}`;
       const { error: uploadError } = await supabase.storage

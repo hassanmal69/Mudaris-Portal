@@ -126,7 +126,7 @@ const subscribeToChannelChanges = () => (dispatch) => {
     .channel("channels_changes")
     .on(
       "postgres_changes",
-      { event: "*", schema: "public", table: "channels" },
+      { event: "*", schema: "public", table: "channel_members" },
       (payload) => {
         const { eventType, new: newRow, old: oldRow } = payload;
         if (eventType === "INSERT") {
