@@ -25,7 +25,8 @@ const Messages = () => {
     shallowEqual
   );
   const [openDialog, setOpenDialog] = useState(false);
-
+  const { session } = useSelector((state) => state.auth);
+  const userRole = session.user?.user_metadata?.user_role;
   const channel_name = channel?.channel_name || "channel";
 
   return (
@@ -34,7 +35,7 @@ const Messages = () => {
       <div ref={loaderRef}>
         {hasMore ? "loading older messages" : "No more messages"}
       </div>
-      {channel && (
+      {channel && userRole === "admin" && (
         <div className="relative ">
           <h1 className=" text-3xl text-white font-black">{channel_name}</h1>
           <p className="text-white">

@@ -83,6 +83,7 @@ const MessageItem = ({
         <MessageContent
           attachments={message.attachments}
           content={message.content}
+          id={message.id}
         />
         <div>
           {message.replyCount > 0 && (

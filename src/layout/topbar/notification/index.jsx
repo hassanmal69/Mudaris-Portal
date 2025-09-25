@@ -48,21 +48,69 @@ export function Notifications() {
   useEffect(() => {
     unreadLogic(notification);
   }, [notification, lastSeen]);
+  // useEffect(() => {
+  //   handleDB();
+  //   const channel = supabase
+  //     .channel("notifications-channel")
+  //     .on(
+  //       "postgres_changes",
+  //       { event: "INSERT", schema: "public", table: "notifications" },
+  //       (payload) => {
+  //         setNotification((prev) => [payload.new, ...prev]); // prepend new
+  //       }
+  //     )
+
+  //     .subscribe((status) => {
+  //       if (status === "SUBSCRIBED") {
+  //         console.log("Realtime connected ✅");
+  //       } else if (status === "CHANNEL_ERROR") {
+  //         console.error("Realtime connection error ❌");
+  //       } else if (status === "CLOSED") {
+  //         console.warn("Realtime connection closed ⚠️");
+  //       }
+  //     });
+
+  //   // return () => {
+  //   //   supabase.removeChannel(channel);
+  //   // };
+  // }, []);
   useEffect(() => {
-    handleDB();
-    const channel = supabase
-      .channel("notifications-channel")
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "notifications" },
-        (payload) => {
-          setNotification((prev) => [payload.new, ...prev]); // prepend new
-        }
-      )
-      .subscribe();
+    let channel; // to cleanup later
+
+    const init = async () => {
+      await handleDB(); // fetch existing notifications first
+
+      channel = await new Promise((resolve, reject) => {
+        const ch = supabase
+          .channel("notifications-channel")
+          .on(
+            "postgres_changes",
+            { event: "INSERT", schema: "public", table: "notifications" },
+            (payload) => {
+              setNotification((prev) => [payload.new, ...prev]);
+            }
+          )
+          .subscribe((status) => {
+            if (status === "SUBSCRIBED") {
+              console.log("Realtime connected...");
+              resolve(ch);
+            } else if (status === "CHANNEL_ERROR") {
+              console.error("Realtime error...");
+              reject(new Error("Failed to subscribe"));
+            } else if (status === "CLOSED") {
+              console.warn("Realtime closed...");
+            }
+          });
+      });
+    };
+
+    init();
 
     return () => {
-      supabase.removeChannel(channel);
+      if (channel) {
+        supabase.removeChannel(channel);
+        console.log("Realtime unsubscribed 📴");
+      }
     };
   }, []);
 
