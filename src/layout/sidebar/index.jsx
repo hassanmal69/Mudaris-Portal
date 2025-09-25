@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import AddChannelDialog from "@/components/add-channel-dialog";
 import InviteDialog from "@/components/invite-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -27,14 +27,12 @@ import {
   fetchWorkspaceMembers,
   selectWorkspaceMembers,
 } from "@/features/workspaceMembers/WorkspaceMembersSlice.js";
-import {
-  fetchChannels,
-  subscribeToChannelChanges,
-  unsubscribeFromChannelChanges,
-} from "@/features/channels/channelsSlice.js";
 import { newDirect } from "@/features/channels/directSlice";
+import { fetchChannelMembers } from "@/features/channelMembers/channelMembersSlice";
+import { supabase } from "@/services/supabaseClient";
 
 const Sidebar = () => {
+  //realtime 
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { session } = useSelector((state) => state.auth);
@@ -43,7 +41,7 @@ const Sidebar = () => {
   const { workspace_id } = useParams();
   const { user_id } = useParams();
   const { groupId } = useParams();
-
+  const [visibleChannel, setVisibleChannel] = useState([])
   const { currentWorkspace, loading } = useSelector(
     (state) => state.workSpaces
   );
@@ -84,11 +82,63 @@ const Sidebar = () => {
     );
   };
   const channelState = useSelector((state) => state.channels);
-  // const channels = channelState.allIds.map((id) => ({
-  //   id,
-  //   name: channelState.byId[id]?.channel_name,
-  //   visibility: channelState.byId[id]?.visibility,
-  // }));
+  const channelFind = async () => {
+    const returnedChannels = await dispatch(fetchChannelMembers(session?.user?.id))
+    setVisibleChannel(returnedChannels?.payload?.channel)
+  }
+  useEffect(() => {
+    if (session?.user?.id) {
+      channelFind();
+    }
+  }, [session?.user?.id]);
+
+
+  useEffect(() => {
+    if (!session?.user?.id) return;
+
+    channelFind(); 
+
+    const channelSubscription = supabase
+      .channel("realtime:channel_members")
+      .on(
+        "postgres_changes",
+        {
+          event: "*", // could also use "INSERT" | "UPDATE" | "DELETE"
+          schema: "public",
+          table: "channel_members", // 👈 match your DB table name
+          filter: `user_id=eq.${session.user.id}`, // only for this user
+        },
+        (payload) => {
+          console.log("Realtime update on channel_members:", payload);
+          channelFind(); // refetch channels
+        }
+      )
+      .subscribe();
+
+    const channelsSubscription = supabase
+      .channel("realtime:channels")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "channels",
+          filter: `workspace_id=eq.${workspace_id}`, // 👈 limit to current workspace
+        },
+        (payload) => {
+          console.log("Realtime update on channels:", payload);
+          channelFind(); // refetch channels
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channelSubscription);
+      supabase.removeChannel(channelsSubscription);
+    };
+  }, [session?.user?.id, workspace_id]);
+
+  console.log('visiblechanel is', visibleChannel);
   const channels = React.useMemo(
     () =>
       channelState.allIds.map((id) => ({
@@ -104,16 +154,6 @@ const Sidebar = () => {
       dispatch(fetchWorkspaceById(workspace_id));
     }
   }, [workspace_id, dispatch]);
-
-  useEffect(() => {
-    if (workspace_id) {
-      dispatch(fetchChannels(workspace_id));
-      subscribeToChannelChanges();
-      return () => {
-        unsubscribeFromChannelChanges();
-      };
-    }
-  }, [workspace_id, dispatch, navigate]);
 
   useEffect(() => {
     if (workspace_id) {
@@ -189,22 +229,25 @@ const Sidebar = () => {
             Channels
           </SidebarGroupLabel>
           <SidebarMenu>
-            {channels.map((channel) => (
-              <SidebarMenuItem key={channel.id}>
-                <div className="flex items-center gap-2 px-2 py-1 rounded hover:bg-[#480c48] cursor-pointer">
-                  {channel.visibility === "private" ? (
-                    <LockClosedIcon className="w-4 h-4 " />
-                  ) : (
-                    <GlobeAltIcon className="w-4 h-4 " />
-                  )}
-                  <Link to={`/workspace/${workspace_id}/group/${channel.id}`}>
-                    <span className="font-medium text-sm">
-                      {channel.name || channel.channel_name}
-                    </span>
-                  </Link>
-                </div>
-              </SidebarMenuItem>
-            ))}
+            {Object.values(visibleChannel).map((channel) => {
+              console.log('channel isn a map is', channel);
+              return (
+                <SidebarMenuItem key={channel.id}>
+                  <div className="flex items-center gap-2 px-2 py-1 rounded hover:bg-[#480c48] cursor-pointer">
+                    {channel.channels.visibility === "private" ? (
+                      <LockClosedIcon className="w-4 h-4 " />
+                    ) : (
+                      <GlobeAltIcon className="w-4 h-4 " />
+                    )}
+                    <Link to={`/workspace/${workspace_id}/group/${channel.channels.id}`}>
+                      <span className="font-medium text-sm">
+                        {channel.name || channel.channels.channel_name}
+                      </span>
+                    </Link>
+                  </div>
+                </SidebarMenuItem>
+              )
+            })}
           </SidebarMenu>
           {session.user.user_metadata.user_role === "admin" ? (
             <Button
@@ -245,9 +288,8 @@ const Sidebar = () => {
                     {user.user_profiles.full_name}
                   </span>
                   <span
-                    className={`ml-auto w-2 h-2 rounded-full ${
-                      user.status === "online" ? "bg-green-500" : "bg-gray-400"
-                    }`}
+                    className={`ml-auto w-2 h-2 rounded-full ${user.status === "online" ? "bg-green-500" : "bg-gray-400"
+                      }`}
                     title={user.status}
                   ></span>
                 </div>

@@ -1,43 +1,57 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { supabase } from "@/services/supabaseClient";
+import { supabase } from "@/services/supabaseClient.js";
 
 // Thunk
 export const fetchChannelMembers = createAsyncThunk(
   "channelMembers/fetchChannelMembers",
-  async (channelId) => {
+  async (userId) => {
     const { data, error } = await supabase
       .from("channel_members")
-      .select("id, user_profiles ( id, full_name, email, avatar_url )")
-      .eq("channel_id", channelId);
+      .select("id, channels ( id, channel_name,visibility )")
+      .eq("user_id", userId);
 
     if (error) throw error;
-    return { channelId, members: data };
+    return { userId, channel: data };
   }
 );
 export const addChannelMembers = createAsyncThunk(
   "channelMembers/addChannelMembers",
-  async ({ channelId, userIds }, { rejectWithValue }) => {
+  async ({ channelIds, userId }, { rejectWithValue }) => {
     try {
       // Prepare rows for Supabase insert
-      const rows = userIds.map((userId) => ({
-        channel_id: channelId,
-        user_id: userId,
-      }));
-
+      // const rows = channelIds.map((channelId) => ({
+      //   channel_id: channelId,
+      //   user_id: userId,
+      // }));
+      console.log('getting data in redux of addChannelMembers', channelIds, userId);
       const { data, error } = await supabase
         .from("channel_members")
-        .insert(rows)
-        .select("id, channel_id, user_id");
+        .insert({
+          user_id: userId,
+          channel_id: channelIds
+        })
 
       if (error) return rejectWithValue(error.message);
 
-      return { channelId, members: data }; // return all inserted rows
+      return { channelIds, members: data }; // return all inserted rows
     } catch (err) {
       return rejectWithValue(err.message);
     }
   }
 );
+//will work on this first have to make sure that
+//  chanel members should be updated
+// const isMemberSlice = createAsyncThunk(
+//   "channelMembers/checkMember",
+//   async ({ userId }, { rejectWithValue }) => {
+//     try {
+//       const { data, error } = await supabase.from('channel_members')
 
+//     } catch (error) {
+//       throw new Error(error)
+//     }
+//   }
+// )
 const channelMembersSlice = createSlice({
   name: "channelMembers",
   initialState: {

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import StepFullName from "./components/FullName.jsx";
 import StepContact from "./components/EmailAvatar.jsx";
 import StepPassword from "./components/Password.jsx";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import {  useSearchParams } from "react-router-dom";
 import { supabase } from "@/services/supabaseClient.js";
 import bgImg from "@/assets/images/mudaris.jpg";
 
@@ -12,13 +12,12 @@ const Signup = () => {
   const token = searchParams.get("token");
   const [file, setFile] = useState(null); // state to hold file
 
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const [invite, setInvite] = useState(null);
   const [error, setError] = useState();
   const [wsId, setWsId] = useState();
   const handleNextFromContact = ({ avatarFile }) => {
     setFile(avatarFile)
-    console.log(file);
     setStep(2);
   };
 
@@ -44,7 +43,6 @@ const Signup = () => {
         setError("The invitation link has expired!");
         return;
       }
-
       setInvite(data);
       setWsId(data.workspace_id);
     }
