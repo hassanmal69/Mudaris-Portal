@@ -14,9 +14,7 @@ const WorkSpaceInd = () => {
       >
         <EditProfile />
       </div>
-      <Suspense fallback={<div>Loading Chat...</div>}>
-        <Chat />
-      </Suspense>
+      <Chat />
     </div>
   );
 };

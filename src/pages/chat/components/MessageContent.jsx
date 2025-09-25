@@ -1,4 +1,4 @@
-const MessageContent = ({ attachments, content }) => (
+const MessageContent = ({ attachments, content, id }) => (
   <>
     {attachments?.[0]?.fileType === "video" && (
       <video src={attachments?.[0]?.fileUrl} width="200" controls />
@@ -15,6 +15,7 @@ const MessageContent = ({ attachments, content }) => (
     )}
 
     <div
+      key={id}
       className="text-[#c7c7c7]"
       dangerouslySetInnerHTML={{ __html: content }}
     />

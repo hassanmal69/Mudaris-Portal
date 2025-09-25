@@ -18,11 +18,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { createChannel } from "@/features/channels/channelsSlice.js";
 import InviteChannelUsers from "./steps/InviteChannelUsers";
 import { ChannelStepIndicator } from "./steps/ChannelStepIndicator";
-import {
-  selectWorkspaceMembers,
-  selectLoading,
-  selectError,
-} from "@/features/workspaceMembers/WorkspaceMembersSlice";
+
 const steps = ["Channel Info", "Channel visibility", "Invite Users"];
 
 const initialState = {
@@ -34,12 +30,10 @@ const initialState = {
 const AddChannelDialog = ({ open, onOpenChange }) => {
   const { workspace_id } = useParams();
   const { session } = useSelector((state) => state.auth);
-  const members = useSelector(selectWorkspaceMembers(workspace_id));
-  const loading = useSelector(selectLoading(workspace_id));
-  const error = useSelector(selectError(workspace_id));
-
+  const EmptyArray = [];
   const workspaceMembers = useSelector(
-    (state) => state.workspaceMembers.byWorkspaceId[workspace_id]?.members || []
+    (state) =>
+      state.workspaceMembers.byWorkspaceId[workspace_id]?.members || EmptyArray
   );
 
   let creatorId;

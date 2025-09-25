@@ -6,15 +6,6 @@ import { addMessage, setMessages } from "@/features/messages/messageSlice";
 
 const PAGE_SIZE = 20;
 
-// function groupReactions(reactions) {
-//   const grouped = {};
-//   reactions?.forEach((r) => {
-//     if (!grouped[r.reaction_type]) grouped[r.reaction_type] = [];
-//     grouped[r.reaction_type].push(r.user_id);
-//   });
-//   return grouped;
-// }
-
 export default function useMessages() {
   const dispatch = useDispatch();
   const { groupId, user_id } = useParams();
@@ -24,7 +15,6 @@ export default function useMessages() {
   const imageUrl = session.user?.user_metadata?.avatar_url;
   const fullName = session.user?.user_metadata?.fullName;
   const query = useSelector((state) => state.search.query);
-
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [pickerOpenFor, setPickerOpenFor] = useState(null);
@@ -98,7 +88,7 @@ export default function useMessages() {
 
   // load older
   const loadOlder = useCallback(async () => {
-    if (!hasMore) return;
+    if (!hasMore || !containerRef.current) return;
     const container = containerRef.current;
     const oldScrollHeight = container.scrollHeight;
     const olderBatch = await loadMessages(page);
@@ -114,7 +104,7 @@ export default function useMessages() {
   }, [page, hasMore, messages, dispatch]);
   // infinite scroll observer
   useEffect(() => {
-    if (!loaderRef.current) return;
+    if (!loaderRef.current || !containerRef.curr) return;
     const observer = new window.IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting) loadOlder();
@@ -125,35 +115,6 @@ export default function useMessages() {
     return () => observer.disconnect();
   }, [loadOlder]);
 
-  // useEffect(() => {
-  //   const subscription = supabase
-  //     .channel("public:messages")
-  //     .on(
-  //       "postgres_changes",
-  //       { event: "INSERT", schema: "public", table: "messages" },
-  //       (payload) => {
-  //         dispatch(
-  //           addMessage({
-  //             ...payload.new,
-  //             profiles: { full_name: fullName, avatar_url: imageUrl },
-  //             reactions: [],
-  //           })
-  //         );
-  //         const container = containerRef.current;
-  //         const isAtBottom =
-  //           container.scrollHeight - container.scrollTop <=
-  //           container.clientHeight + 50;
-  //         if (isAtBottom) {
-  //           setTimeout(() => {
-  //             container.scrollTop = container.scrollHeight;
-  //           }, 50);
-  //         }
-  //       }
-  //     )
-  //     .subscribe();
-  //   return () => supabase.removeChannel(subscription);
-  // }, [dispatch, fullName, imageUrl]);
-  // handle reactions realtime updates
   useEffect(() => {
     const subscription = supabase
       .channel("public:message_reactions")
@@ -294,13 +255,15 @@ export default function useMessages() {
 
       // auto-scroll if user is near bottom
       const container = containerRef.current;
-      const isAtBottom =
-        container.scrollHeight - container.scrollTop <=
-        container.clientHeight + 50;
-      if (isAtBottom) {
-        setTimeout(() => {
-          container.scrollTop = container.scrollHeight;
-        }, 50);
+      if (container) {
+        const isAtBottom =
+          container.scrollHeight - container.scrollTop <=
+          container.clientHeight + 50;
+        if (isAtBottom) {
+          setTimeout(() => {
+            container.scrollTop = container.scrollHeight;
+          }, 50);
+        }
       }
     };
 

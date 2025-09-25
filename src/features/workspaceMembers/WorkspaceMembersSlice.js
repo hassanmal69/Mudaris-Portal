@@ -49,7 +49,8 @@ export const fetchUserWorkspace = createAsyncThunk(
   async (userId) => {
     const { data, error } = await supabase
       .from("workspace_members")
-      .select(`
+      .select(
+        `
     workspace_id,
     workspaces (
       id,
@@ -57,7 +58,8 @@ export const fetchUserWorkspace = createAsyncThunk(
       avatar_url,
       description
     )
-  `)
+  `
+      )
       .eq("user_id", userId);
     if (error) throw error;
     return data;
@@ -175,10 +177,11 @@ const workspaceMembersSlice = createSlice({
       });
   },
 });
+const EMPTY_ARRAY = [];
 
 // Selectors
 export const selectWorkspaceMembers = (workspaceId) => (state) =>
-  state.workspaceMembers.byWorkspaceId[workspaceId]?.members || [];
+  state.workspaceMembers.byWorkspaceId[workspaceId]?.members || EMPTY_ARRAY;
 
 export const selectLoading = (workspaceId) => (state) =>
   state.workspaceMembers.byWorkspaceId[workspaceId]?.loading || false;

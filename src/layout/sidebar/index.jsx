@@ -84,11 +84,21 @@ const Sidebar = () => {
     );
   };
   const channelState = useSelector((state) => state.channels);
-  const channels = channelState.allIds.map((id) => ({
-    id,
-    name: channelState.byId[id]?.channel_name,
-    visibility: channelState.byId[id]?.visibility,
-  }));
+  // const channels = channelState.allIds.map((id) => ({
+  //   id,
+  //   name: channelState.byId[id]?.channel_name,
+  //   visibility: channelState.byId[id]?.visibility,
+  // }));
+  const channels = React.useMemo(
+    () =>
+      channelState.allIds.map((id) => ({
+        id,
+        name: channelState.byId[id]?.channel_name,
+        visibility: channelState.byId[id]?.visibility,
+      })),
+    [channelState.allIds, channelState.byId]
+  );
+
   useEffect(() => {
     if (workspace_id) {
       dispatch(fetchWorkspaceById(workspace_id));
@@ -103,7 +113,7 @@ const Sidebar = () => {
         unsubscribeFromChannelChanges();
       };
     }
-  }, [workspace_id, dispatch,navigate]);
+  }, [workspace_id, dispatch, navigate]);
 
   useEffect(() => {
     if (workspace_id) {
@@ -111,7 +121,12 @@ const Sidebar = () => {
     }
   }, [workspace_id, dispatch]);
 
-  const users = useSelector(selectWorkspaceMembers(workspace_id));
+  const selectMembers = React.useMemo(
+    () => selectWorkspaceMembers(workspace_id),
+    [workspace_id]
+  );
+
+  const users = useSelector(selectMembers);
 
   useEffect(() => {
     if (!groupId && !user_id && channels.length > 0) {
@@ -145,9 +160,7 @@ const Sidebar = () => {
       <SidebarContent className="h-full bg-[#230423] text-[#EEEEEE] px-2 py-4 flex flex-col gap-4">
         <SidebarHeader className="flex gap-2">
           <Link to={`/dashboard/${session?.user?.id}`}>
-
             {currentWorkspace?.avatar_url ? (
-
               <Avatar className="w-16 h-16 rounded-none">
                 <AvatarImage
                   src={currentWorkspace?.avatar_url}
@@ -157,7 +170,6 @@ const Sidebar = () => {
                   {currentWorkspace.workspace_name?.[0]?.toUpperCase()}
                 </AvatarFallback>
               </Avatar>
-
             ) : (
               getWorkspaceFallback(
                 currentWorkspace?.workspace_name,
@@ -233,8 +245,9 @@ const Sidebar = () => {
                     {user.user_profiles.full_name}
                   </span>
                   <span
-                    className={`ml-auto w-2 h-2 rounded-full ${user.status === "online" ? "bg-green-500" : "bg-gray-400"
-                      }`}
+                    className={`ml-auto w-2 h-2 rounded-full ${
+                      user.status === "online" ? "bg-green-500" : "bg-gray-400"
+                    }`}
                     title={user.status}
                   ></span>
                 </div>
@@ -256,7 +269,7 @@ const Sidebar = () => {
             ""
           )}
         </SidebarFooter>
-      </SidebarContent >
+      </SidebarContent>
     </>
   );
 };
