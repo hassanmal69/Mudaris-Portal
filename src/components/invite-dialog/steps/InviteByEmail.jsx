@@ -56,7 +56,6 @@ const InviteByEmail = ({ emails, setEmails, onCopyLink, onNext }) => {
       )
     );
 
-    console.log("aa", workspaceMembers);
     if (alreadyMember) {
       setError("One or more of these users are already members.");
       return;

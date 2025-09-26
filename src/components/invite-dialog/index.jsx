@@ -72,6 +72,7 @@ const InviteDialog = ({ open, onOpenChange }) => {
         alert("❌ You must be logged in to invite users.");
         return;
       }
+
       const res = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-invite`,
         {
@@ -84,6 +85,7 @@ const InviteDialog = ({ open, onOpenChange }) => {
             workspace_id,
             emails,
             workspaceName: currentWorkspace?.workspace_name || "Workspace",
+            channels: channels || []
           }),
         }
       );
@@ -94,16 +96,21 @@ const InviteDialog = ({ open, onOpenChange }) => {
         alert("Server error: " + JSON.stringify(data));
         return;
       }
-
+      //adding data in invitations
+      // const { error: upateDataError } = await supabase.from('invitations')
+      //   .update({
+      //     allowedChannels: channels
+      //   })
+      // console.log('error coming in supabase adding ', upateDataError);
       const failed = data.results.filter((r) => r.error);
       if (failed.length > 0) {
         alert(
           "Some invitations failed:\n" +
-            failed.map((f) => `${f.email}: ${f.error}`).join("\n")
+          failed.map((f) => `${f.email}: ${f.error}`).join("\n")
         );
         console.log(
           "Some invitations failed:\n" +
-            failed.map((f) => `${f.email}: ${f.error}`).join("\n")
+          failed.map((f) => `${f.email}: ${f.error}`).join("\n")
         );
       } else {
         alert("✅ All invitations sent successfully!");
