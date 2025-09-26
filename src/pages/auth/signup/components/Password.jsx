@@ -48,51 +48,77 @@ const Password = ({ onBack, token, invite, file }) => {
         throw new Error(`Failed to add to workspace: ${result.error}`);
       //now we have to add a user in all Public Group Members
       const channelsAre = await dispatch(fetchChannels(invite.workspace_id))
-      console.log('coming channels are', channelsAre?.payload);
-      const filteredChannels = await channelsAre?.payload.filter(channel => channel.visibility === 'public')
-      // Fetch workspace members from Redux for this workspace
-      // dispatch(fetchWorkspaceMembers(invite.workspace_id));
+      let filteredChannels = await channelsAre?.payload.filter(channel => channel.visibility === 'public')
       const userId = user.id;
+      //we got token here then we put token in invitaton then 
+      // we get allowed channel
+      const { data: allowedChannel, error: allowedChannelError } = await supabase
+        .from("invitations")
+        .select('allowedChannels')
+        .eq("token", token);
+      if (allowedChannelError) {
+        throw new Error(allowedChannelError)
+      }
+      console.log(allowedChannel[0].allowedChannels);
+      const privateAllowedChannel = []
+      for (const m of allowedChannel[0].allowedChannels) {
+        let gotChannel = await channelsAre?.payload.find(channel => channel.id === m)
+        if (gotChannel) {
+          privateAllowedChannel.push(gotChannel)
+        }
+      }
 
+      if (allowedChannel[0].allowedChannels) {
+        filteredChannels = [
+          ...filteredChannels,
+          ...privateAllowedChannel
+        ];
+      }
+      console.log(filteredChannels);
       for (const m of filteredChannels) {
-        const sendingData = await dispatch(addChannelMembers({ channelIds: m.id, userId }));
+        const sendingData = await dispatch(addChannelMembers({ channelId: m.id, userId }));
         console.log('getting data is', sendingData);
       }
 
-      if (!file) {
-        throw new Error("No avatar file selected");
+      if (file) {
+        const fileExt = file.name.split(".").pop();
+        const newFilePath = `pictures/avatar/${userId}-${Date.now()}.${fileExt}`;
+        const { error: uploadError } = await supabase.storage
+          .from("media")
+          .upload(newFilePath, file, { upsert: true });
+
+        if (uploadError) {
+          console.error("Error uploading file:", uploadError);
+        }
+
+        const {
+          data: { publicUrl },
+        } = await supabase.storage.from("media").getPublicUrl(newFilePath);
+        const { error: updateError } = await supabase.auth.updateUser({
+          data: { avatar_url: publicUrl },
+        });
+        const { error: profileUpdateError } = await supabase.from('profiles')
+          .update({
+            full_name: fullName,
+            avatar_url: publicUrl
+          })
+          .eq("id", userId)
+
+        if (profileUpdateError) {
+          throw new Error(profileUpdateError)
+        }
+        if (updateError) {
+          console.error("Error updating avatar URL:", updateError);
+          return;
+        }
       }
-
-      const fileExt = file.name.split(".").pop();
-      const newFilePath = `pictures/avatar/${userId}-${Date.now()}.${fileExt}`;
-      const { error: uploadError } = await supabase.storage
-        .from("media")
-        .upload(newFilePath, file, { upsert: true });
-
-      if (uploadError) {
-        console.error("Error uploading file:", uploadError);
-      }
-
-      const {
-        data: { publicUrl },
-      } = await supabase.storage.from("media").getPublicUrl(newFilePath);
-      const { error: updateError } = await supabase.auth.updateUser({
-        data: { avatar_url: publicUrl },
-      });
-      const {
-        error: { profileUpdateError }
-      } = await supabase.from('profiles').insert({
-        full_name: user?.user_metadata.fullName,
-        avatar_url: user?.user_metadata.avatar_url
-      }).eq("id", userId)
+      const { error: profileUpdateError } = await supabase.from('profiles')
+        .update({
+          full_name: fullName,
+        }).eq("id", userId)
       if (profileUpdateError) {
         throw new Error(profileUpdateError)
       }
-      if (updateError) {
-        console.error("Error updating avatar URL:", updateError);
-        return;
-      }
-
       navigate(`/dashboard/${user?.id}`);
     } catch (err) {
       setError(err.message || "An unexpected error occurred");

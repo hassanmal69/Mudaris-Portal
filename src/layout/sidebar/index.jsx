@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import AddChannelDialog from "@/components/add-channel-dialog";
 import InviteDialog from "@/components/invite-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -16,7 +16,6 @@ import {
   SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuItem,
-  SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { useParams } from "react-router-dom";
 import { Link, useNavigate } from "react-router-dom";
@@ -60,7 +59,7 @@ const Sidebar = () => {
     return (
       <Avatar className="w-7 h-7 border-2 border-white rounded-sm flex items-center justify-center">
         <AvatarFallback
-          className={`text-[#2b092b]  text-sm rounded-none font-semibold ${color}`}
+          className={`text-[#2b092b] text-sm rounded-none font-semibold ${color}`}
         >
           {name?.[0]?.toUpperCase()}
         </AvatarFallback>

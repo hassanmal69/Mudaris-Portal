@@ -16,42 +16,23 @@ export const fetchChannelMembers = createAsyncThunk(
 );
 export const addChannelMembers = createAsyncThunk(
   "channelMembers/addChannelMembers",
-  async ({ channelIds, userId }, { rejectWithValue }) => {
+  async ({ channelId, userId }, { rejectWithValue }) => {
     try {
-      // Prepare rows for Supabase insert
-      // const rows = channelIds.map((channelId) => ({
-      //   channel_id: channelId,
-      //   user_id: userId,
-      // }));
-      console.log('getting data in redux of addChannelMembers', channelIds, userId);
       const { data, error } = await supabase
         .from("channel_members")
         .insert({
           user_id: userId,
-          channel_id: channelIds
+          channel_id: channelId
         })
 
       if (error) return rejectWithValue(error.message);
 
-      return { channelIds, members: data }; // return all inserted rows
+      return { channelId, members: data }; // return all inserted rows
     } catch (err) {
       return rejectWithValue(err.message);
     }
   }
 );
-//will work on this first have to make sure that
-//  chanel members should be updated
-// const isMemberSlice = createAsyncThunk(
-//   "channelMembers/checkMember",
-//   async ({ userId }, { rejectWithValue }) => {
-//     try {
-//       const { data, error } = await supabase.from('channel_members')
-
-//     } catch (error) {
-//       throw new Error(error)
-//     }
-//   }
-// )
 const channelMembersSlice = createSlice({
   name: "channelMembers",
   initialState: {
@@ -62,40 +43,29 @@ const channelMembersSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchChannelMembers.pending, (state, action) => {
-        const channelId = action.meta.arg;
-        state.byChannelId[channelId] = {
-          data: [],
-          status: "loading",
-        };
-      })
-      .addCase(fetchChannelMembers.fulfilled, (state, action) => {
-        const { channelId, members } = action.payload;
-        state.byChannelId[channelId] = {
-          data: members,
-          status: "succeeded",
-        };
-      })
-      .addCase(addChannelMembers.fulfilled, (state, action) => {
-        const { channelId, members } = action.payload;
+  .addCase(fetchChannelMembers.pending, (state, action) => {
+  const userId = action.meta.arg;
+  state.byChannelId[userId] = {
+    data: [],
+    status: "loading",
+  };
+})
+.addCase(fetchChannelMembers.fulfilled, (state, action) => {
+  const { userId, channel } = action.payload;
+  state.byChannelId[userId] = {
+    data: channel,
+    status: "succeeded",
+  };
+})
+.addCase(fetchChannelMembers.rejected, (state, action) => {
+  const userId = action.meta.arg;
+  state.byChannelId[userId] = {
+    data: [],
+    status: "failed",
+    error: action.error.message,
+  };
+})
 
-        if (!state.byChannelId[channelId]) {
-          state.byChannelId[channelId] = { data: [], status: "succeeded" };
-        }
-
-        // append all new members
-        state.byChannelId[channelId].data.push(...members);
-        state.status = "succeeded";
-      })
-
-      .addCase(fetchChannelMembers.rejected, (state, action) => {
-        const channelId = action.meta.arg;
-        state.byChannelId[channelId] = {
-          data: [],
-          status: "failed",
-          error: action.error.message,
-        };
-      });
   },
 });
 

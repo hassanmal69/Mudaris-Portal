@@ -7,7 +7,7 @@ const Channelinvitation = ({
   setChannels,
   suggestedChannels,
   onBack,
-  onSend,
+  onSend
 }) => {
   const [search, setSearch] = useState("");
   const handleToggle = (channel) => {
