@@ -18,9 +18,7 @@ export default function VaulDrawer() {
   const handleLogout = () => {
     dispatch(logOut());
   };
-  // const channels = useSelector((state) =>
-  //   state.channels.allIds.map((id) => state.channels.byId[id])
-  // );
+
   const channels = useSelector(selectChannels);
 
   const [time, setTime] = useState(new Date());
@@ -41,7 +39,7 @@ export default function VaulDrawer() {
 
   return (
     <Drawer.Root direction="right" modal={true}>
-      <Drawer.Trigger className="relative flex h-10 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded-full bg-white px-4 text-sm font-medium shadow-sm transition-all hover:bg-[#FAFAFA] dark:bg-[#161615] dark:hover:bg-[#1A1A19] dark:text-white">
+      <Drawer.Trigger className="relative flex h-10 flex-shrink-0 items-center justify-center gap-2 rounded-full bg-white px-4 text-sm font-medium shadow-sm transition-all hover:bg-[#FAFAFA] dark:bg-[#161615] dark:hover:bg-[#1A1A19] dark:text-white">
         <img
           src={avatarUrl}
           alt="profileImg"
@@ -49,13 +47,17 @@ export default function VaulDrawer() {
         />
       </Drawer.Trigger>
       <Drawer.Portal>
-        <Drawer.Overlay className="fixed inset-0 bg-black/40" />
+        <Drawer.Overlay className="fixed inset-0 bg-black/40 overflow-scroll" />
         <Drawer.Content
-          className="right-2 top-2 bottom-2 fixed z-10 outline-none w-[400px] rounded-md text-white bg-black/90 flex"
-          // The gap between the edge of the screen and the drawer is 8px in this case.
+          className="right-2 top-2 bottom-2 fixed z-10 h-full
+          after:bottom-0
+
+          after:w-0
+          outline-none w-[400px] rounded-md text-white bg-black/90 flex flex-col "
           style={{ "--initial-transform": "calc(100% + 8px)" }}
         >
-          <div className="flex h-full m-auto w-[90%] sm:w-full flex-col items-center mt-7 px-6">
+          {/* Header */}
+          <div className="px-6 pt-7">
             <Drawer.Title className="font-bold mb-2 text-2xl text-white w-full">
               Profile
             </Drawer.Title>
@@ -64,7 +66,11 @@ export default function VaulDrawer() {
               alt="Profile Image"
               className="w-50 h-50 sm:w-70 sm:h-70 rounded-md object-cover"
             />
-            <div className=" flex w-full flex-col gap-2.5 my-5">
+          </div>
+
+          {/* Scrollable body */}
+          <div className="flex-1 overflow-y-auto px-6 mt-5 scrollbar-thin scrollbar-thumb-zinc-700 scrollbar-track-transparent">
+            <div className="flex w-full flex-col gap-2.5">
               <div className="flex my-3 justify-between">
                 <Drawer.Title className="font-medium mb-2 text-2xl text-white">
                   {session?.user?.user_metadata?.displayName}
@@ -73,9 +79,9 @@ export default function VaulDrawer() {
                   <EditProfile />
                 </div>
               </div>
+
               <Drawer.Description className="text-zinc-600 profile_active_user">
-                active
-                <span className="active_span"></span>
+                active <span className="active_span"></span>
               </Drawer.Description>
 
               <div className="flex flex-col text-zinc-600">
@@ -90,28 +96,28 @@ export default function VaulDrawer() {
                   {time.toLocaleTimeString()}
                 </p>
               </div>
-              <div>
-                <div className="flex flex-col text-zinc-600">
-                  <h4 className="text-white text-[18px]">channels</h4>
 
-                  {channels.map((ch) => (
-                    <p key={ch.id} className="flex gap-1.5 items-center">
-                      {ch.visibility === "public" ? (
-                        <Globe className="w-4 h-4" />
-                      ) : (
-                        <Lock className="w-4 h-4" />
-                      )}
-                      {ch.channel_name}
-                    </p>
-                  ))}
-                </div>
-              </div>
-              <div className="w-full mt-[10%]">
-                <button className="text-[#556cd6] " onClick={handleLogout}>
-                  Sign Out
-                </button>
+              <div className="flex flex-col text-zinc-600">
+                <h4 className="text-white text-[18px]">channels</h4>
+                {channels.map((ch) => (
+                  <p key={ch.id} className="flex gap-1.5 items-center">
+                    {ch.visibility === "public" ? (
+                      <Globe className="w-4 h-4" />
+                    ) : (
+                      <Lock className="w-4 h-4" />
+                    )}
+                    {ch.channel_name}
+                  </p>
+                ))}
               </div>
             </div>
+          </div>
+
+          {/* Footer (always visible) */}
+          <div className="px-6 py-4 border-t border-zinc-800">
+            <button className="text-[#556cd6]" onClick={handleLogout}>
+              Sign Out
+            </button>
           </div>
         </Drawer.Content>
       </Drawer.Portal>

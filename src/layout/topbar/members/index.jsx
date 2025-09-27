@@ -10,7 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 
-const Members = ({ members }) => {
+const Members = ({ members = [] }) => {
   const MAX_RENDER = 3;
 
   const [search, setSearch] = useState("");
@@ -40,37 +40,59 @@ const Members = ({ members }) => {
       </Avatar>
     );
   };
-  const filteredUsers = members.filter((m) => {
+
+  // Placeholder avatar for "no members"
+  const renderEmptyAvatar = () => (
+    <Avatar
+      className="w-8 h-8 border rounded-sm border-[#c1c1c1] bg-transparent flex items-center justify-center"
+      aria-hidden="true"
+    >
+      {/* subtle fallback mark — empty-looking placeholder */}
+      <AvatarFallback className="text-[#999] text-sm rounded-none font-medium">
+        0
+      </AvatarFallback>
+    </Avatar>
+  );
+
+  const filteredUsers = (members || []).filter((m) => {
     const name = (m.user_profiles?.full_name || "").toLowerCase();
     const email = (m.user_profiles?.email || "").toLowerCase();
     const term = search.toLowerCase();
     return name.includes(term) || email.includes(term);
   });
+
   return (
     <>
       <div className="flex items-center gap-1 py-1 px-1 border border-[#c1c1c1] rounded-sm member-container">
         <div className="flex -space-x-3">
-          {members.slice(0, MAX_RENDER).map((user, idx) => {
-            const name = user.user_profiles?.full_name;
-            const avatar = user.user_profiles?.avatar_url;
+          {members.length === 0
+            ? renderEmptyAvatar()
+            : members.slice(0, MAX_RENDER).map((user, idx) => {
+                const name = user.user_profiles?.full_name;
+                const avatar = user.user_profiles?.avatar_url;
 
-            return avatar ? (
-              <Avatar
-                key={user.id}
-                className="w-8 h-8 border rounded-sm border-[#c1c1c1] shadow"
-              >
-                <AvatarImage src={avatar} alt={name} />
-                <AvatarFallback>
-                  {name?.[0]?.toUpperCase() || "?"}
-                </AvatarFallback>
-              </Avatar>
-            ) : (
-              <div key={user.id}>{getUserFallback(name, idx)}</div>
-            );
-          })}
+                return avatar ? (
+                  <Avatar
+                    key={user.id}
+                    className="w-8 h-8 border rounded-sm border-[#c1c1c1] shadow"
+                  >
+                    <AvatarImage src={avatar} alt={name} />
+                    <AvatarFallback>
+                      {name?.[0]?.toUpperCase() || "?"}
+                    </AvatarFallback>
+                  </Avatar>
+                ) : (
+                  <div key={user.id}>{getUserFallback(name, idx)}</div>
+                );
+              })}
         </div>
-        {MAX_RENDER < members.length && (
-          <button onClick={renderMembers} className="text-[#eee] text-[14px]">
+
+        {members.length > MAX_RENDER && (
+          <button
+            onClick={renderMembers}
+            className="text-[#eee] text-[14px]"
+            aria-label={`Show ${members.length - MAX_RENDER} more members`}
+          >
             {members.length - MAX_RENDER}+
           </button>
         )}
@@ -141,45 +163,3 @@ const Members = ({ members }) => {
 };
 
 export default Members;
-[
-  {
-    id: "c7382c90-bd3f-4e98-bab6-668376e050d0",
-    role: "user",
-    user_profiles: {
-      id: "99cb0492-a3f0-4f1d-ac52-b6acc73e0a7e",
-      email: "admin@gmail.com",
-      full_name: "moiz&Hassan",
-      avatar_url: null,
-    },
-  },
-  {
-    id: "95933ec2-23d7-4c7a-a0ef-6fdac8d9cbc2",
-    role: "user",
-    user_profiles: {
-      id: "303178de-1c82-4e23-9f9f-ba58b06b1157",
-      email: "moiza8684@gmail.com",
-      full_name: "Abdul Moiz",
-      avatar_url: null,
-    },
-  },
-  {
-    id: "44b609d3-7139-4dfb-a4c3-cf9e804d32dc",
-    role: "user",
-    user_profiles: {
-      id: "f1c45397-3c5f-43f4-848c-5d80d61f1949",
-      email: "user01@gmail.com",
-      full_name: "nigga02",
-      avatar_url: null,
-    },
-  },
-  {
-    id: "7528adc4-00ef-4eee-89aa-5dcffa01a2b2",
-    role: "user",
-    user_profiles: {
-      id: "eb86eda1-d76a-4b06-b8f9-f2ed785293dd",
-      email: "user02@gmail.com",
-      full_name: "nigga",
-      avatar_url: null,
-    },
-  },
-];
