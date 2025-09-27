@@ -49,9 +49,11 @@ export const router = createBrowserRouter([
 
 function WorkspaceLayout() {
   return (
-    <SidebarLayout>
+    <div className="bg-black">
+    <SidebarLayout >
       <Topbar />
       <Outlet />
     </SidebarLayout>
+    </div>
   );
 }

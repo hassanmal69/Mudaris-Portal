@@ -7,7 +7,7 @@ export const fetchChannelMembers = createAsyncThunk(
   async (userId) => {
     const { data, error } = await supabase
       .from("channel_members")
-      .select("id, channels ( id, channel_name,visibility )")
+      .select("id, channels ( id, channel_name,visibility,workspace_id )")
       .eq("user_id", userId);
 
     if (error) throw error;
@@ -43,28 +43,28 @@ const channelMembersSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-  .addCase(fetchChannelMembers.pending, (state, action) => {
-  const userId = action.meta.arg;
-  state.byChannelId[userId] = {
-    data: [],
-    status: "loading",
-  };
-})
-.addCase(fetchChannelMembers.fulfilled, (state, action) => {
-  const { userId, channel } = action.payload;
-  state.byChannelId[userId] = {
-    data: channel,
-    status: "succeeded",
-  };
-})
-.addCase(fetchChannelMembers.rejected, (state, action) => {
-  const userId = action.meta.arg;
-  state.byChannelId[userId] = {
-    data: [],
-    status: "failed",
-    error: action.error.message,
-  };
-})
+      .addCase(fetchChannelMembers.pending, (state, action) => {
+        const userId = action.meta.arg;
+        state.byChannelId[userId] = {
+          data: [],
+          status: "loading",
+        };
+      })
+      .addCase(fetchChannelMembers.fulfilled, (state, action) => {
+        const { userId, channel } = action.payload;
+        state.byChannelId[userId] = {
+          data: channel,
+          status: "succeeded",
+        };
+      })
+      .addCase(fetchChannelMembers.rejected, (state, action) => {
+        const userId = action.meta.arg;
+        state.byChannelId[userId] = {
+          data: [],
+          status: "failed",
+          error: action.error.message,
+        };
+      })
 
   },
 });
