@@ -8,6 +8,7 @@ import { fetchChannels } from "@/features/channels/channelsSlice.js";
 import { Clock, Globe, Lock } from "lucide-react";
 import { useParams } from "react-router-dom";
 import { selectChannels } from "@/features/channels/channelsSlice.js";
+import "../profile.css";
 export default function VaulDrawer() {
   const { workspace_id } = useParams();
   const { session } = useSelector((state) => state.auth);
@@ -51,9 +52,8 @@ export default function VaulDrawer() {
         <Drawer.Content
           className="right-2 top-2 bottom-2 fixed z-10 h-full
           after:bottom-0
-
           after:w-0
-          outline-none w-[400px] rounded-md text-white bg-black/90 flex flex-col "
+          outline-none w-[400px] responsive_drawer_profile rounded-md text-white bg-black/90 flex flex-col "
           style={{ "--initial-transform": "calc(100% + 8px)" }}
         >
           {/* Header */}
@@ -72,7 +72,7 @@ export default function VaulDrawer() {
           <div className="flex-1 overflow-y-auto px-6 mt-5 scrollbar-thin scrollbar-thumb-zinc-700 scrollbar-track-transparent">
             <div className="flex w-full flex-col gap-2.5">
               <div className="flex my-3 justify-between">
-                <Drawer.Title className="font-medium mb-2 text-2xl text-white">
+                <Drawer.Title className="font-medium mb-2 text-2xl text-white ">
                   {session?.user?.user_metadata?.displayName}
                 </Drawer.Title>
                 <div onClick={() => dispatch(updateValue())}>
@@ -114,7 +114,7 @@ export default function VaulDrawer() {
           </div>
 
           {/* Footer (always visible) */}
-          <div className="px-6 py-4 border-t border-zinc-800">
+          <div className="px-6 py-4">
             <button className="text-[#556cd6]" onClick={handleLogout}>
               Sign Out
             </button>

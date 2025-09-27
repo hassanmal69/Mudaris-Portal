@@ -28,7 +28,10 @@ const FullName = ({ onNext }) => {
               className="text-red-500 text-sm"
             />
           </div>
-          <button type="submit" className="btn bg-purple py-1.5 px-6 rounded-[12px] text-l font-semibold btn-primary">
+          <button
+            type="submit"
+            className="btn bg-purple py-1.5 px-6 rounded-[12px] text-l font-semibold btn-primary"
+          >
             Next
           </button>
         </Form>

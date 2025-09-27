@@ -4,7 +4,6 @@ import EmojiButton from "../EmojiButton.jsx";
 import MentionButton from "../MentionButton.jsx";
 import AudioRecording from "@/components/Editor/components/toolbar/audio";
 import VideoRecording from "@/components/Editor/components/toolbar/video";
-import LectureHandle from "./lecture";
 
 export default function Toolbar({ editor, toolbarStyles }) {
   if (!editor) return null;
@@ -27,7 +26,7 @@ export default function Toolbar({ editor, toolbarStyles }) {
       <VideoRecording toolbarStyles={toolbarStyles} />
       <AudioRecording toolbarStyles={toolbarStyles} />
       <FileUploader toolbarStyles={toolbarStyles} />
-      <LectureHandle />
+      {/* <LectureHandle /> */}
     </div>
   );
 }

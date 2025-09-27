@@ -34,16 +34,12 @@ export const router = createBrowserRouter([
         path: "/workspace/:workspace_id",
         element: (
           <PrivateRoute>
-            {/* <ThemeLayout> */}
             <WorkspaceLayout />
-            {/* </ThemeLayout> */}
           </PrivateRoute>
         ),
         children: [
           { path: "", element: <WorkSpaceInd /> },
           { path: "group/:groupId", element: <WorkSpaceInd /> },
-          //here below user_id is not user_id but basically it's a token which
-          //is made from combining both sender id and reciever id
           { path: "individual/:user_id", element: <WorkSpaceInd /> },
         ],
       },

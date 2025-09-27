@@ -1,0 +1,6 @@
+@media only screen and (max-width: 600px) {
+  .responsive_chat_screen {
+    margin: 0;
+    overflow-y: scroll;
+  }
+}

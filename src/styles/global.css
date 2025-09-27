@@ -17,3 +17,13 @@
 .signup-email-icon {
   margin-left: -30px;
 }
+
+@font-face {
+  font-family: "entezar";
+  src: url(../assets/fonts/entezar/saadopen.ttf);
+}
+
+.Entezar {
+  font-family: "Entezar", sans-serif !important;
+  word-spacing: 6px;
+}
