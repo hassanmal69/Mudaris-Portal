@@ -75,11 +75,11 @@ const AddUserInChannel = ({ open, onClose, workspaceId }) => {
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent>
+      <DialogContent className="bg-black/90 border-[#111] border text-gray-300">
         <DialogHeader>
           <DialogTitle>Add Users to Channel</DialogTitle>
         </DialogHeader>
-        <div className="space-y-3 text-black">
+        <div className="space-y-3 ">
           {emails.map((email, idx) => (
             <div key={idx} className="flex items-center gap-2">
               <span>{email}</span>
@@ -101,11 +101,11 @@ const AddUserInChannel = ({ open, onClose, workspaceId }) => {
             }}
             aria-label="Add emails"
             rows={4}
-            className="w-full border border-gray-300 rounded-md p-2 resize-none"
+            className="w-full border border-[#111] rounded-md p-2 resize-none"
           />
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={onClose}>
+          <Button variant="outline" className="text-black" onClick={onClose}>
             Cancel
           </Button>
           <Button onClick={handleAddUsers}>Add Users</Button>

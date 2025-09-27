@@ -11,27 +11,26 @@ import Workspace from "./components/workspace/index.jsx";
 import { useSelector } from "react-redux";
 import { useState } from "react";
 import CreateWorkspace from "./components/createWorkspace.jsx";
-
+import "./dashboard.css";
 const Dashboard = () => {
   const { session } = useSelector((state) => state.auth);
   const [isOpen, setisOpen] = useState(false);
   const isAdmin = session?.user?.user_metadata?.user_role === "admin";
   return (
-    <section>
+    <section className="flex flex-col min-h-screen">
       <div className="h-dvh z-10 w-dvw absolute overflow-hidden pointer-events-none">
         {isOpen && <CreateWorkspace />}
       </div>
 
-      <nav className="sticky top-0 z-10 flex justify-between items-center p-4 border-b border-[#1c1c1c]">
+      <nav className="sticky top-0 z-10 flex justify-between items-center p-4 border-b border-[#111]">
         <span
           className="sm:text-[26px]
-         block text-right font-extrabold tracking-tight 
-             bg-gradient-to-tr from-[#4d3763] to-[#eee] bg-clip-text text-transparent
-        "
+     block text-right font-extrabold tracking-tight 
+         bg-gradient-to-tr from-[#4d3763] to-[#eee] bg-clip-text text-transparent
+    "
         >
           Mudaris Academy
         </span>
-        {/* Azure Depths */}
         {isAdmin && (
           <CreateWorkspaceButton
             isOpen={isOpen}
@@ -39,21 +38,24 @@ const Dashboard = () => {
           />
         )}
       </nav>
+
+      {/* main should grow to fill available space */}
       <main className="flex-1 container mx-auto p-4 space-y-6 w-full max-w-3xl">
         <div className="my-10">
-          <h1 className="relative text-3xl text-[#4d3763] flex flex-col sm:flex-row">
-            Welcome back{" "}
+          <h1 className="relative text-3xl text-[#4d3763] flex sm:flex-row gap-1 responisve_dashboard_title">
+            Welcome back
             <span className="font-bold">
-              {" "}
-              {session?.user?.user_metadata?.fullName}{" "}
+              {session?.user?.user_metadata?.fullName}
             </span>
           </h1>
         </div>
 
-        <Card className="rounded-2xl border-[#1c1c1c] text-white bg-black/30 relative flex flex-col ">
+        <Card className="rounded-2xl border-[#111] text-gray-300 bg-black/30 relative flex flex-col">
           <CardHeader>
-            <CardTitle className="text-white font-black">Workspace</CardTitle>
-            <CardDescription className="text-white ">
+            <CardTitle className="text-gray-300 font-black">
+              Workspace
+            </CardTitle>
+            <CardDescription className="text-gray-300 responsive_ws_card_desc">
               Manage your current workspaces and collaborate with your team.
             </CardDescription>
           </CardHeader>
@@ -61,21 +63,25 @@ const Dashboard = () => {
             <Workspace />
           </CardContent>
         </Card>
+
         {isAdmin && (
-          <div className="rounded-xl border border-primary/30 p-6 text-center space-y-4 bg-primary/5">
-            <div className="text-lg font-medium text-white  z-50">
+          <div className="rounded-xl text-center space-y-4">
+            <div className="text-lg font-medium text-gray-300 z-50 responsive_create_p">
               Want to create workspaces for more batches?
             </div>
             <CreateWorkspaceButton onClick={() => setisOpen((prev) => !prev)} />
           </div>
         )}
       </main>
-      <footer className="w-full text-sm relative text-center py-4 border-t border-[#1c1c1c] text-gray-200 mt-8">
-        © 2025 <span className="text-white font-medium">Mudaris Academy</span>.
+
+      {/* footer stays at bottom */}
+      <footer className="w-full text-sm text-center py-5 text-gray-300 responsive_footer">
+        © 2025{" "}
+        <span className="text-gray-300 font-medium">Mudaris Academy</span>.
         Developed by{" "}
         <a
           href="https://asrnova.com"
-          className="text-white font-medium underline"
+          className="text-gray-300 font-medium underline"
         >
           asrnova.com
         </a>
@@ -89,7 +95,7 @@ function CreateWorkspaceButton({ onClick, isOpen }) {
   return (
     <Button
       onClick={onClick}
-      className=" text-[#eee] bg-[#4d3763] hover:bg-[#3e2e4f] relative"
+      className=" text-[#eee] bg-[#4d3763] hover:bg-[#3e2e4f] relative responsive_createws_button"
     >
       {isOpen ? (
         "X"

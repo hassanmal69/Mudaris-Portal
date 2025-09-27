@@ -43,18 +43,11 @@ const MessageItem = ({
     );
   };
   return (
-    <div className="flex gap-2 relative border-t border-[#333] py-1 group">
+    <div className="flex gap-2 relative border-t border-[#333] py-2.5 group">
       {message.profiles?.avatar_url ? (
         <Avatar className="w-7 h-7 border-2 border-white rounded-none">
-          <AvatarImage
-            // src={message.profiles?.avatar_url}
-            // alt={message.profiles?.full_name}
-
-            src={avatar_url || ""}
-            alt={full_name || "user"}
-          />
+          <AvatarImage src={avatar_url || ""} alt={full_name || "user"} />
           <AvatarFallback>
-            {/* {message.profiles?.full_name?.[0]?.toUpperCase()} */}
             {full_name?.[0]?.toUpperCase() || "U"}
           </AvatarFallback>
         </Avatar>

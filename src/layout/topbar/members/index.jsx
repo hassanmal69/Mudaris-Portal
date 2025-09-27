@@ -48,9 +48,11 @@ const Members = ({ members = [] }) => {
       aria-hidden="true"
     >
       {/* subtle fallback mark — empty-looking placeholder */}
-      <AvatarFallback className="text-[#999] text-sm rounded-none font-medium">
-        0
-      </AvatarFallback>
+      <AvatarImage
+        src="https://cdn.shadcnstudio.com/ss-assets/avatar/avatar-5.png"
+        alt="Hallie Richards"
+        className="rounded-sm"
+      />
     </Avatar>
   );
 

@@ -1,0 +1,31 @@
+@media only screen and (max-width: 600px) {
+  .responsive_createws_button {
+    height: 30px;
+    padding: 8px;
+  }
+  .responisve_dashboard_title {
+    font-size: 22px;
+    width: 100%;
+  }
+  .responsive_ws_card_desc {
+    color: rgb(192, 192, 192);
+    font-size: 12px;
+  }
+  .responsive_ws_launch_btn {
+    width: 100%;
+  }
+  .responsive_create_p {
+    font-size: 14px;
+  }
+  .responsive_footer {
+    font-size: 12px;
+  }
+}
+@media only screen and (min-width: 600px) and (max-width: 768px) {
+  .responsive_create_p {
+    font-size: 18px;
+  }
+  .responsive_footer {
+    font-size: 14px;
+  }
+}
