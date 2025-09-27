@@ -16,7 +16,7 @@ const MessageContent = ({ attachments, content, id }) => (
 
     <div
       key={id}
-      className="text-[#c7c7c7]"
+      className="text-[#c7c7c7] responsive_message_content"
       dangerouslySetInnerHTML={{ __html: content }}
     />
   </>

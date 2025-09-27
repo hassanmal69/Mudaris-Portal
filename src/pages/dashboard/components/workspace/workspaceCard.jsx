@@ -6,7 +6,11 @@ import {
   selectWorkspaceMembers,
   selectLoading,
 } from "@/features/workspaceMembers/WorkspaceMembersSlice.js";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar.jsx";
+import {
+  Avatar,
+  AvatarImage,
+  AvatarFallback,
+} from "@/components/ui/avatar.jsx";
 import { Button } from "@/components/ui/button.jsx";
 
 // 6 fallback colors
@@ -64,7 +68,6 @@ const WorkspaceCard = ({ workspace, index }) => {
   return (
     <div className="flex w-full sm:px-4 m-auto flex-col gap-3 sm:gap-0 sm:flex-row justify-between sm:items-center">
       <div className="flex gap-1.5 items-center">
-
         {workspace.avatar_url ? (
           <Avatar className="w-16 h-16 rounded-md">
             <AvatarImage
@@ -118,15 +121,11 @@ const WorkspaceCard = ({ workspace, index }) => {
         to={`/workspace/${workspace.id}`}
         style={{ textDecoration: "none" }}
       >
-        <Button
-          // className="bg-[#4d3763] font-semibold py-2 px-4 rounded-sm text-amber-50 hover:bg-[#3e2e4f]"
-          className="bg-transparent border-[#4d3763] border font-semibold py-2 px-4 rounded-sm text-[#4d3763] hover:border-[#3e2e4f] hover:text-[#3e2e4f] hover:bg-transparent"
-        >
+        <Button className="bg-transparent border-[#4d3763] border font-semibold py-2 px-4 rounded-sm text-[#4d3763] hover:border-[#3e2e4f] hover:text-[#3e2e4f] hover:bg-transparent responsive_ws_launch_btn">
           Launch Workspace
         </Button>
       </Link>
     </div>
-  )
-
-}
+  );
+};
 export default WorkspaceCard;

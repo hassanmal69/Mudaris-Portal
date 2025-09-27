@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import Profile from "@/pages/profile";
-import {  useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { Globe, Lock, Search } from "lucide-react";
 import Members from "./members";
 import { useDispatch, useSelector, shallowEqual } from "react-redux";
@@ -9,17 +9,18 @@ import { setQuery } from "@/features/messages/search/searchSlice";
 import { Notifications } from "./notification";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { fetchChannelMembers } from "@/features/channelMembers/channelMembersSlice";
+import "./topbar.css";
 const Topbar = () => {
   const dispatch = useDispatch();
   const { groupId } = useParams();
-  const [isMobile, setisMobile] = useState(window.innerWidth < 660)
+  const [isMobile, setisMobile] = useState(window.innerWidth < 660);
   // Safe selector
 
   const channel = useSelector(
     (state) => state.channels.byId[groupId],
     shallowEqual
   );
-  const directChannel2 = useSelector((state) => state.direct.directChannel)
+  const directChannel2 = useSelector((state) => state.direct.directChannel);
 
   const visibility = channel?.visibility || "private";
   const channel_name = channel?.channel_name || directChannel2 || "channel";
@@ -56,22 +57,22 @@ const Topbar = () => {
 
   return (
     <section
-      className="top-0 w-full bg-[#2b092b] z-20 shadow-sm topbar-container md:px-6 py-2 flex items-center"
+      className="top-0 w-full bg-[#2b092b] z-20 shadow-sm topbar-container md:px-6 py-2 flex items-center "
       style={{ minHeight: "56px" }}
     >
-      {isMobile &&
+      {isMobile && (
         <div className="p-2">
           <SidebarTrigger className="text-white border border-white rounded p-2">
             <span>☰</span>
           </SidebarTrigger>
         </div>
-      }
+      )}
       <div className="flex items-center gap-2 min-w-0">
         <h2 className="text-[#EEEEEE] text-[18px] font-medium flex gap-0.5 items-center">
           {visibility === "public" ? (
-            <Globe className="w-5" />
+            <Globe className="w-[15px]" />
           ) : (
-            <Lock className="w-5" />
+            <Lock className="w-[15px]" />
           )}
           {channel_name}
         </h2>
@@ -89,7 +90,7 @@ const Topbar = () => {
                 dispatch(setQuery(e.target.value));
               }
             }}
-            className="w-[500px] h-[40px] rounded-md text-[#eee] border-[#777] focus:border-primary pl-9"
+            className="w-[500px] h-[40px] rounded-md text-[#eee] border-[#777] focus:border-primary pl-9 responsive_search_input"
           />
         </div>
       </div>
