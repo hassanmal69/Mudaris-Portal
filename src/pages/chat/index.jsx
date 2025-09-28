@@ -4,8 +4,8 @@ import { useParams } from "react-router-dom";
 import "./chat.css";
 
 const Chat = () => {
-  const { groupId } = useParams();
-  if (groupId) {
+  const { groupId, user_id } = useParams();
+  if (groupId || user_id) {
     return (
       <section className="w-full m-2.5 responsive_chat_screen">
         <div
@@ -24,16 +24,25 @@ const Chat = () => {
     return (
       <section>
         <div
-          className="absolute flex items-center justify-center  w-full h-full "
+          className="absolute flex items-center justify-center w-full h-full "
           style={{
             background:
               "radial-gradient(125% 125% at 50% 10%, #000000 40%, #2b092b 100%)",
           }}
         />
-        <h1 className="text-center absolute z-40 text-6xl font-bold text-white">Make a group first</h1>
+        <div
+          className="
+        relative flex items-center justify-center  w-[80vw] h-full 
+        "
+        >
+          <h1 className="text-center font-bold  border  text-4xl p-3.5 rounded-2xl border-[#111] text-gray-400">
+            Please create a group
+          </h1>
+        </div>
+
         <div />
       </section>
-    )
+    );
   }
-}
-export default Chat
+};
+export default Chat;

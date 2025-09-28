@@ -77,10 +77,10 @@ export default function ReplyDrawer() {
           className="right-2 top-2 bottom-2 fixed z-10 outline-none w-[550px] flex"
           style={{ "--initial-transform": "calc(100% + 8px)" }}
         >
-          <div className="bg-white h-full w-full p-5 flex flex-col rounded-[16px]">
+          <div className="bg-black/90 h-full w-full p-5 flex text-gray-300 flex-col rounded-[16px]">
             {/* Parent message */}
             <h1 className="text-[18px] font-bold mb-4">Reply to Message</h1>
-            <div className="mb-4 border-b pb-4">
+            <div className="mb-4 border-b border-[#111] pb-4">
               <div className="flex items-center gap-2">
                 <img
                   src={message.profiles?.avatar_url}
@@ -92,7 +92,7 @@ export default function ReplyDrawer() {
                 </span>
               </div>
               <div
-                className="mt-2 text-sm text-gray-700"
+                className="mt-2 text-sm text-gray-400"
                 dangerouslySetInnerHTML={{ __html: message.content }}
               />
             </div>
@@ -132,7 +132,7 @@ export default function ReplyDrawer() {
             </div>
 
             <button
-              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded"
+              className="mt-4 px-4 py-2 bg-[#2b092b] text-white rounded"
               onClick={() => dispatch(closeReplyDrawer())}
             >
               Close

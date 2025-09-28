@@ -48,8 +48,9 @@ export default function TextEditor({ editor, toolbarStyles }) {
     name: channelState.byId[id]?.channel_name,
     visibility: channelState.byId[id]?.visibility,
   }));
+  const halfUserId = user_id;
   const desiredChannel = useMemo(() => {
-    return channels.find((m) => m.id === groupId);
+    return channels.find((m) => m.id === groupId || halfUserId);
   }, [channels, groupId]);
   const replyMessage = useSelector((state) => state.reply.message);
 
@@ -87,7 +88,7 @@ export default function TextEditor({ editor, toolbarStyles }) {
         workspace_id,
         groupId,
         mentionedPerson,
-        `${displayName} mentioned you in ${desiredChannel.name}`
+        `${displayName} mentioned you in ${desiredChannel?.name}`
       );
     }
     editor.commands.clearContent();

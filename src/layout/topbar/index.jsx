@@ -8,7 +8,10 @@ import { useDispatch, useSelector, shallowEqual } from "react-redux";
 import { setQuery } from "@/features/messages/search/searchSlice";
 import { Notifications } from "./notification";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { fetchChannelMembers } from "@/features/channelMembers/channelMembersSlice";
+import {
+  fetchChannelMembersByChannel,
+  selectChannelMembers,
+} from "@/features/channelMembers/channelMembersSlice";
 import "./topbar.css";
 const Topbar = () => {
   const dispatch = useDispatch();
@@ -20,24 +23,31 @@ const Topbar = () => {
     (state) => state.channels.byId[groupId],
     shallowEqual
   );
+  useEffect(() => {
+    if (groupId) {
+      dispatch(fetchChannelMembersByChannel(groupId));
+    }
+  }, [groupId, dispatch]);
+
+  const channelMembers = useSelector(
+    selectChannelMembers(groupId),
+    shallowEqual
+  );
+
   const directChannel2 = useSelector((state) => state.direct.directChannel);
 
   const visibility = channel?.visibility || "private";
   const channel_name = channel?.channel_name || directChannel2 || "channel";
 
   const query = useSelector((state) => state.search.query);
-  const channelMembersState = useSelector(
-    (state) => state.channelMembers.byChannelId[groupId],
-    shallowEqual
-  );
-
-  const channelMembers = channelMembersState?.data || [];
 
   useEffect(() => {
     if (groupId) {
-      dispatch(fetchChannelMembers(groupId));
+      dispatch(fetchChannelMembersByChannel(groupId));
     }
   }, [groupId, dispatch]);
+  console.log(channelMembers, "aaa members");
+
   useEffect(() => {
     const handleResize = () => {
       setisMobile(window.innerWidth < 860);
