@@ -37,13 +37,16 @@ const Messages = () => {
       <div ref={loaderRef}>
         {hasMore ? "loading older messages" : "No more messages"}
       </div>
-      <div className="relative mb-3 responsive_channel_header">
-        <h1 className=" text-3xl text-white font-black ">{channel_name}</h1>
-        <p className="text-gray-500">{channel_desc}</p>
-        {channel_visbibility === "private" && userRole === "admin" && (
-          <Button onClick={() => setOpenDialog(true)}>add user</Button>
-        )}
-      </div>
+      {channel && (
+        <div className="relative mb-3 responsive_channel_header">
+          <h1 className=" text-3xl text-white font-black ">{channel_name}</h1>
+          <p className="text-gray-500">{channel_desc}</p>
+          {channel_visbibility === "private" && userRole === "admin" && (
+            <Button onClick={() => setOpenDialog(true)}>add user</Button>
+          )}
+        </div>
+      )}
+
       <AddUserInChannel
         open={openDialog}
         onClose={() => setOpenDialog(false)}

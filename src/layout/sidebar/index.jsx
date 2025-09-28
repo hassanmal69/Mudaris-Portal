@@ -26,7 +26,7 @@ import {
   selectWorkspaceMembers,
 } from "@/features/workspaceMembers/WorkspaceMembersSlice.js";
 import { newDirect } from "@/features/channels/directSlice";
-import { fetchChannelMembers } from "@/features/channelMembers/channelMembersSlice";
+import { fetchChannelMembersbyUser } from "@/features/channelMembers/channelMembersSlice";
 import { supabase } from "@/services/supabaseClient";
 import {
   selectActiveChannel,
@@ -49,7 +49,7 @@ const Sidebar = () => {
 
   const channelFind = async () => {
     const returnedChannels = await dispatch(
-      fetchChannelMembers(session?.user?.id)
+      fetchChannelMembersbyUser(session?.user?.id)
     );
 
     const filtered = returnedChannels?.payload?.channel?.filter(
@@ -246,11 +246,11 @@ const Sidebar = () => {
                   onClick={() => handleIndividualMessage(user)}
                   className="flex items-center gap-2 px-2 py-1 rounded hover:bg-[#480c48] cursor-pointer"
                 >
-                  {user.user_profiles.avatar_url ? (
+                  {user.user_profiles?.avatar_url ? (
                     <Avatar className="w-7 h-7">
                       <AvatarImage
-                        src={user.user_profiles.avatar_url}
-                        alt={user.user_profiles.full_name}
+                        src={user.user_profiles?.avatar_url}
+                        alt={user.user_profiles?.full_name}
                       />
                     </Avatar>
                   ) : (
@@ -258,7 +258,7 @@ const Sidebar = () => {
                   )}
 
                   <span className="font-medium text-sm ">
-                    {user.user_profiles.full_name}
+                    {user.user_profiles?.full_name}
                   </span>
                   <span
                     className={`ml-auto w-2 h-2 rounded-full ${

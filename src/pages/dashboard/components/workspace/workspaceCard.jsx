@@ -1,4 +1,5 @@
-import React, { useEffect } from "react";
+// WorkspaceCard.jsx
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -12,6 +13,7 @@ import {
   AvatarFallback,
 } from "@/components/ui/avatar.jsx";
 import { Button } from "@/components/ui/button.jsx";
+import { supabase } from "@/services/supabaseClient.js"; // <-- add this import
 
 // 6 fallback colors
 const fallbackColors = [
@@ -28,9 +30,44 @@ const WorkspaceCard = ({ workspace, index }) => {
   const members = useSelector(selectWorkspaceMembers(workspace.id));
   const membersLoading = useSelector(selectLoading(workspace.id));
 
+  const [firstChannelId, setFirstChannelId] = useState(null);
+  const [channelLoading, setChannelLoading] = useState(true);
+
   useEffect(() => {
     dispatch(fetchWorkspaceMembers(workspace.id));
   }, [dispatch, workspace.id]);
+
+  useEffect(() => {
+    let isMounted = true;
+    const fetchFirstChannel = async () => {
+      setChannelLoading(true);
+      try {
+        // select only id, ordered by created_at ascending, limit 1
+        const { data, error } = await supabase
+          .from("channels")
+          .select("id")
+          .eq("workspace_id", workspace.id)
+          .order("created_at", { ascending: true })
+          .limit(1)
+          .maybeSingle(); // returns null when no row instead of throwing
+
+        if (error) {
+          console.error("Error fetching first channel:", error);
+        } else if (isMounted && data && data.id) {
+          setFirstChannelId(data.id);
+        }
+      } catch (err) {
+        console.error("fetchFirstChannel caught:", err);
+      } finally {
+        if (isMounted) setChannelLoading(false);
+      }
+    };
+
+    fetchFirstChannel();
+    return () => {
+      isMounted = false;
+    };
+  }, [workspace.id]);
 
   // Helper: Workspace fallback avatar
   const getWorkspaceFallback = (name, idx) => {
@@ -64,6 +101,9 @@ const WorkspaceCard = ({ workspace, index }) => {
       </Avatar>
     );
   };
+  const launchTo = firstChannelId
+    ? `/workspace/${workspace.id}/group/${firstChannelId}`
+    : `/workspace/${workspace.id}`;
 
   return (
     <div className="flex w-full sm:px-4 m-auto flex-col gap-3 sm:gap-0 sm:flex-row justify-between sm:items-center">
@@ -118,7 +158,7 @@ const WorkspaceCard = ({ workspace, index }) => {
 
       <Link
         className="flex justify-center"
-        to={`/workspace/${workspace.id}`}
+        to={launchTo}
         style={{ textDecoration: "none" }}
       >
         <Button className="bg-transparent border-[#4d3763] border font-semibold py-2 px-4 rounded-sm text-[#4d3763] hover:border-[#3e2e4f] hover:text-[#3e2e4f] hover:bg-transparent responsive_ws_launch_btn">

@@ -67,11 +67,10 @@
 .is-empty::before {
   content: attr(data-placeholder);
   pointer-events: none;
-  height: 0;
+  height: 1;
   color: #999;
   position: absolute;
   left: 0.75rem;
-  top: 0.5rem;
   font-size: 1rem;
   font-style: italic;
 }

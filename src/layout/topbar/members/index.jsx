@@ -10,9 +10,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 
-const Members = ({ members = [] }) => {
+const Members = ({ members }) => {
   const MAX_RENDER = 3;
-
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
   const renderMembers = () => {
@@ -66,7 +65,10 @@ const Members = ({ members = [] }) => {
   return (
     <>
       <div className="flex items-center gap-1 py-1 px-1 border border-[#c1c1c1] rounded-sm member-container">
-        <div className="flex -space-x-3">
+        <div
+          className="flex items-center gap-2 cursor-pointer"
+          onClick={members.length > 0 ? renderMembers : undefined}
+        >
           {members.length === 0
             ? renderEmptyAvatar()
             : members.slice(0, MAX_RENDER).map((user, idx) => {
@@ -87,17 +89,13 @@ const Members = ({ members = [] }) => {
                   <div key={user.id}>{getUserFallback(name, idx)}</div>
                 );
               })}
-        </div>
 
-        {members.length > MAX_RENDER && (
-          <button
-            onClick={renderMembers}
-            className="text-[#eee] text-[14px]"
-            aria-label={`Show ${members.length - MAX_RENDER} more members`}
-          >
-            {members.length - MAX_RENDER}+
-          </button>
-        )}
+          {members.length > MAX_RENDER && (
+            <span className="text-[#eee] text-[14px]">
+              {members.length - MAX_RENDER}+
+            </span>
+          )}
+        </div>
       </div>
 
       <Dialog open={open} onOpenChange={setOpen}>

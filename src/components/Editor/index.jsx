@@ -15,7 +15,7 @@ export default function EditorWrapper({ width, styles, toolbarStyles }) {
   const { files } = useSelector((state) => state.file);
   const { groupId } = useParams();
   const channel = useSelector((state) => state.channels.byId[groupId]);
-  const channelName = channel?.channel_name;
+  const channelName = channel?.channel_name || "";
 
   const editor = useEditor(
     {

@@ -4,9 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { passwordSchema } from "@/validation/authSchema.js";
 import { signupUser } from "@/features/auth/authSlice.js";
 import { useNavigate } from "react-router-dom";
-import {
-  addWorkspaceMember,
-} from "@/features/workspaceMembers/WorkspaceMembersSlice.js";
+import { addWorkspaceMember } from "@/features/workspaceMembers/WorkspaceMembersSlice.js";
 import { supabase } from "@/services/supabaseClient";
 import { fetchChannels } from "@/features/channels/channelsSlice";
 import { addChannelMembers } from "@/features/channelMembers/channelMembersSlice";
@@ -32,7 +30,7 @@ const Password = ({ onBack, token, invite, file }) => {
         .update({ used: true })
         .eq("token", token);
       if (tokenUsed) {
-        console.log('error coming in token update', tokenUsed);
+        console.log("error coming in token update", tokenUsed);
       }
       // Insert workspace member using Redux thunk
 
@@ -47,37 +45,41 @@ const Password = ({ onBack, token, invite, file }) => {
       if (result.error)
         throw new Error(`Failed to add to workspace: ${result.error}`);
       //now we have to add a user in all Public Group Members
-      const channelsAre = await dispatch(fetchChannels(invite.workspace_id))
-      let filteredChannels = await channelsAre?.payload.filter(channel => channel.visibility === 'public')
+      const channelsAre = await dispatch(fetchChannels(invite.workspace_id));
+      let filteredChannels = await channelsAre?.payload.filter(
+        (channel) => channel.visibility === "public"
+      );
       const userId = user.id;
-      //we got token here then we put token in invitaton then 
+      //we got token here then we put token in invitaton then
       // we get allowed channel
-      const { data: allowedChannel, error: allowedChannelError } = await supabase
-        .from("invitations")
-        .select('allowedChannels')
-        .eq("token", token);
+      const { data: allowedChannel, error: allowedChannelError } =
+        await supabase
+          .from("invitations")
+          .select("allowedChannels")
+          .eq("token", token);
       if (allowedChannelError) {
-        throw new Error(allowedChannelError)
+        throw new Error(allowedChannelError);
       }
       console.log(allowedChannel[0].allowedChannels);
-      const privateAllowedChannel = []
+      const privateAllowedChannel = [];
       for (const m of allowedChannel[0].allowedChannels) {
-        let gotChannel = await channelsAre?.payload.find(channel => channel.id === m)
+        let gotChannel = await channelsAre?.payload.find(
+          (channel) => channel.id === m
+        );
         if (gotChannel) {
-          privateAllowedChannel.push(gotChannel)
+          privateAllowedChannel.push(gotChannel);
         }
       }
 
       if (allowedChannel[0].allowedChannels) {
-        filteredChannels = [
-          ...filteredChannels,
-          ...privateAllowedChannel
-        ];
+        filteredChannels = [...filteredChannels, ...privateAllowedChannel];
       }
       console.log(filteredChannels);
       for (const m of filteredChannels) {
-        const sendingData = await dispatch(addChannelMembers({ channelId: m.id, userId }));
-        console.log('getting data is', sendingData);
+        const sendingData = await dispatch(
+          addChannelMembers({ channelId: m.id, userId })
+        );
+        console.log("getting data is", sendingData);
       }
 
       if (file) {
@@ -97,27 +99,30 @@ const Password = ({ onBack, token, invite, file }) => {
         const { error: updateError } = await supabase.auth.updateUser({
           data: { avatar_url: publicUrl },
         });
-        const { error: profileUpdateError } = await supabase.from('profiles')
+        const { error: profileUpdateError } = await supabase
+          .from("profiles")
           .update({
             full_name: fullName,
-            avatar_url: publicUrl
+            avatar_url: publicUrl,
           })
-          .eq("id", userId)
+          .eq("id", userId);
 
         if (profileUpdateError) {
-          throw new Error(profileUpdateError)
+          throw new Error(profileUpdateError);
         }
         if (updateError) {
           console.error("Error updating avatar URL:", updateError);
           return;
         }
       }
-      const { error: profileUpdateError } = await supabase.from('profiles')
+      const { error: profileUpdateError } = await supabase
+        .from("profiles")
         .update({
           full_name: fullName,
-        }).eq("id", userId)
+        })
+        .eq("id", userId);
       if (profileUpdateError) {
-        throw new Error(profileUpdateError)
+        throw new Error(profileUpdateError);
       }
       navigate(`/dashboard/${user?.id}`);
     } catch (err) {
