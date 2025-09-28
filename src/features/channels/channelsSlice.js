@@ -5,8 +5,7 @@ import {
 } from "@reduxjs/toolkit";
 import { supabase } from "@/services/supabaseClient.js";
 
-// Thunks
-
+// --- Thunks ---
 const fetchChannels = createAsyncThunk(
   "channels/fetchChannels",
   async (workspaceId, { rejectWithValue }) => {
@@ -19,11 +18,7 @@ const fetchChannels = createAsyncThunk(
     return data;
   }
 );
-export const selectChannels = createSelector(
-  (state) => state.channels.allIds,
-  (state) => state.channels.byId,
-  (allIds, byId) => allIds.map((id) => byId[id])
-);
+
 const createChannel = createAsyncThunk(
   "channels/createChannel",
   async (
@@ -52,9 +47,10 @@ const createChannel = createAsyncThunk(
         .single();
 
       if (channelError) return rejectWithValue(channelError.message);
+
+      // --- Add members ---
       let membersSet = new Set();
       if (visibility === "public") {
-        // if visibility is public all members of the specific workspace will be member of the channel
         const { data: workspaceMembers, error: workspaceError } = await supabase
           .from("workspace_members")
           .select("user_id")
@@ -62,14 +58,12 @@ const createChannel = createAsyncThunk(
 
         if (workspaceError) rejectWithValue(workspaceError);
         workspaceMembers.forEach((wm) => membersSet.add(wm.user_id));
-      } else {
-        // private  channel -> only invited users
-        if (channel_members && channel_members.length > 0) {
-          channel_members.forEach((userId) => membersSet.add(userId));
-        }
+      } else if (channel_members && channel_members.length > 0) {
+        channel_members.forEach((userId) => membersSet.add(userId));
       }
+
       if (creator_id) {
-        membersSet.add(creator_id); // adding creator of the channel
+        membersSet.add(creator_id);
       }
 
       const membersToInsert = Array.from(membersSet).map((userId) => ({
@@ -116,7 +110,7 @@ const deleteChannel = createAsyncThunk(
   }
 );
 
-// Real-time subscription handler
+// --- Realtime subscription handler ---
 let channelSubscription = null;
 
 const subscribeToChannelChanges = () => (dispatch) => {
@@ -148,15 +142,16 @@ const unsubscribeFromChannelChanges = () => {
   }
 };
 
-// Initial State
+// --- Initial State ---
 const initialState = {
   byId: {},
   allIds: [],
   loading: false,
   error: null,
+  activeChannelId: null, // 👈 NEW FIELD
 };
 
-// Slice
+// --- Slice ---
 const channelsSlice = createSlice({
   name: "channels",
   initialState,
@@ -178,8 +173,18 @@ const channelsSlice = createSlice({
       const id = action.payload;
       delete state.byId[id];
       state.allIds = state.allIds.filter((cid) => cid !== id);
+
+      // If the active channel was deleted, reset it
+      if (state.activeChannelId === id) {
+        state.activeChannelId = null;
+      }
     },
     resetChannels: () => initialState,
+
+    // 👇 NEW REDUCER
+    setActiveChannel: (state, action) => {
+      state.activeChannelId = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -201,10 +206,6 @@ const channelsSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-      .addCase(createChannel.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
       .addCase(createChannel.fulfilled, (state, action) => {
         state.loading = false;
         state.error = null;
@@ -214,51 +215,49 @@ const channelsSlice = createSlice({
           state.allIds.push(channel.id);
         }
       })
-      .addCase(createChannel.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-      })
-      .addCase(updateChannel.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
       .addCase(updateChannel.fulfilled, (state, action) => {
-        state.loading = false;
-        state.error = null;
         const channel = action.payload;
         if (state.byId[channel.id]) {
           state.byId[channel.id] = channel;
         }
       })
-      .addCase(updateChannel.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-      })
-      .addCase(deleteChannel.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
       .addCase(deleteChannel.fulfilled, (state, action) => {
-        state.loading = false;
-        state.error = null;
         const id = action.payload;
         delete state.byId[id];
         state.allIds = state.allIds.filter((cid) => cid !== id);
-      })
-      .addCase(deleteChannel.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
+
+        if (state.activeChannelId === id) {
+          state.activeChannelId = null;
+        }
       });
   },
 });
 
+// --- Actions ---
 export const {
   channelInserted,
   channelUpdated,
   channelDeleted,
   resetChannels,
+  setActiveChannel, // 👈 NEW ACTION
 } = channelsSlice.actions;
 
+// --- Selectors ---
+export const selectChannels = createSelector(
+  (state) => state.channels.allIds,
+  (state) => state.channels.byId,
+  (allIds, byId) => allIds.map((id) => byId[id])
+);
+
+export const selectActiveChannelId = (state) => state.channels.activeChannelId;
+
+export const selectActiveChannel = createSelector(
+  [selectActiveChannelId, (state) => state.channels.byId],
+  (activeChannelId, byId) =>
+    activeChannelId ? byId[activeChannelId] || null : null
+);
+
+// --- Exports ---
 export {
   fetchChannels,
   createChannel,

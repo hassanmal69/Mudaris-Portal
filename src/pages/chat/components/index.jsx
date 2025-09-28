@@ -30,20 +30,20 @@ const Messages = () => {
 
   const channel_name = channel?.channel_name || "channel";
   const channel_desc = channel?.description || "description";
-
+  const channel_visbibility = channel?.visibility;
   return (
     <section ref={containerRef} className="messages-container">
       <ReplyDrawer />
       <div ref={loaderRef}>
         {hasMore ? "loading older messages" : "No more messages"}
       </div>
-      {channel && userRole === "admin" && (
-        <div className="relative mb-3 responsive_channel_header">
-          <h1 className=" text-3xl text-white font-black ">{channel_name}</h1>
-          <p className="text-gray-500">{channel_desc}</p>
+      <div className="relative mb-3 responsive_channel_header">
+        <h1 className=" text-3xl text-white font-black ">{channel_name}</h1>
+        <p className="text-gray-500">{channel_desc}</p>
+        {channel_visbibility === "private" && userRole === "admin" && (
           <Button onClick={() => setOpenDialog(true)}>add user</Button>
-        </div>
-      )}
+        )}
+      </div>
       <AddUserInChannel
         open={openDialog}
         onClose={() => setOpenDialog(false)}
