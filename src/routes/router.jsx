@@ -40,7 +40,7 @@ export const router = createBrowserRouter([
         children: [
           { path: "", element: <WorkSpaceInd /> },
           { path: "group/:groupId", element: <WorkSpaceInd /> },
-          { path: "individual/:user_id", element: <WorkSpaceInd /> },
+          { path: "individual/:token", element: <WorkSpaceInd /> },
         ],
       },
     ],

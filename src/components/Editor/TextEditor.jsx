@@ -10,6 +10,8 @@ import { useMemo, useState } from "react";
 import HandleSupabaseLogicNotification from "@/layout/topbar/notification/handleSupabaseLogicNotification.jsx";
 import { useEffect } from "react";
 export default function TextEditor({ editor, toolbarStyles }) {
+  const { token } = useParams();
+
   const dispatch = useDispatch();
   const [mentionedPerson, setMentionedPerson] = useState("");
   // const [draftMsg, setDraftMsg] = useState("");
@@ -121,15 +123,24 @@ export default function TextEditor({ editor, toolbarStyles }) {
 
     if (isDirectMessage) {
       // ✅ Direct message payload
-      res = {
+      const directMsgres = {
         sender_id: userId,
         receiver_id: user_id, // from params
-        token: groupId, // we already use groupId as token in URL
+        token: token, // we already use groupId as token in URL
         // attachments: urls,
         // content: messageHTML,
       };
+      res = {
+        // channel_id: token,
+        sender_id: userId,
+        content: messageHTML,
+        reply_to: replyMessage ? replyMessage.id : null,
+        attachments: urls,
+        token: token, 
+      };
 
-      await postToSupabase("directMessagesChannel", res);
+      await postToSupabase("messages", res);
+      await postToSupabase("directMessagesChannel", directMsgres);
     } else {
       // ✅ Normal channel message payload
       res = {

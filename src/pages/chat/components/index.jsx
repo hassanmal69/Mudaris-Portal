@@ -19,7 +19,7 @@ const Messages = () => {
     hasMore,
   } = useMessages();
   const { groupId } = useParams();
-
+  const { token } = useParams();
   const channel = useSelector(
     (state) => state.channels.byId[groupId],
     shallowEqual
