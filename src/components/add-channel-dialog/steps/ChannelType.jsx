@@ -6,14 +6,14 @@ const ChannelType = ({ state, setState }) => (
     <div className="flex gap-2">
       <Button
         type="button"
-        variant={state.visibility === "public" ? "default" : "outline"}
-        className={`flex-1 bg-gray-200 hover:bg-gray-300
+        className={`
+          w-[48%]
           ${
             state.visibility === "public"
               ? "bg-[#556cd6] text-white"
-              : "text-black"
+              : "text-gray-400"
           }
-           border border-gray-400`}
+        `}
         onClick={() => setState({ ...state, visibility: "public" })}
         aria-pressed={state.visibility === "public"}
       >
@@ -22,7 +22,6 @@ const ChannelType = ({ state, setState }) => (
       </Button>
       <Button
         type="button"
-        variant={state.visibility === "private" ? "default" : "outline"}
         className={`flex-1 bg-gray-500 
           ${state.visibility === "private" ? "bg-[#556cd6]" : ""}
 

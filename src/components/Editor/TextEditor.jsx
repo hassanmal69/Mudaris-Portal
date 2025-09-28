@@ -82,15 +82,11 @@ export default function TextEditor({ editor, toolbarStyles }) {
     e.preventDefault();
     const messageHTML = editor.getHTML();
     const jsonVersion = editor.getJSON();
-    if (checkMention(jsonVersion)) {
-      HandleSupabaseLogicNotification(
-        "mention",
-        workspace_id,
-        groupId,
-        mentionedPerson,
-        `${displayName} mentioned you in ${desiredChannel?.name}`
-      );
-    }
+    if (messageHTML === "<p></p>") return;
+
+    // ✅ Detect if this is a direct message route
+    const isDirectMessage = window.location.pathname.includes("/individual/");
+
     editor.commands.clearContent();
     const urls = [];
 
@@ -100,6 +96,7 @@ export default function TextEditor({ editor, toolbarStyles }) {
           const { error: uploadError } = await supabase.storage
             .from("media")
             .upload(m.filePath, m.file, { upsert: true });
+
           if (uploadError) {
             console.error("Error uploading file:", uploadError);
             alert("can not upload your file sorry");
@@ -120,18 +117,32 @@ export default function TextEditor({ editor, toolbarStyles }) {
       dispatch(clearValue());
     }
 
-    const res = {
-      channel_id: groupId,
-      sender_id: userId,
-      content: messageHTML,
-      reply_to: replyMessage ? replyMessage.id : null,
-      attachments: urls,
-      token: user_id,
-    };
-    if (res.content === "<p></p>") return;
-    const { error } = await postToSupabase("messages", res);
-    await handleNotificationforAdmin();
-    if (error) console.error("Error adding message:", error.message);
+    let res;
+
+    if (isDirectMessage) {
+      // ✅ Direct message payload
+      res = {
+        sender_id: userId,
+        receiver_id: user_id, // from params
+        token: groupId, // we already use groupId as token in URL
+        // attachments: urls,
+        // content: messageHTML,
+      };
+
+      await postToSupabase("directMessagesChannel", res);
+    } else {
+      // ✅ Normal channel message payload
+      res = {
+        channel_id: groupId,
+        sender_id: userId,
+        content: messageHTML,
+        reply_to: replyMessage ? replyMessage.id : null,
+        attachments: urls,
+      };
+
+      await postToSupabase("messages", res);
+      await handleNotificationforAdmin();
+    }
   };
 
   return (

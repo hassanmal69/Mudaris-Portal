@@ -32,9 +32,9 @@
 }
 .kumar {
   background: transparent;
-  color: green;
   position: absolute;
   top: 120px;
+  color: green;
   right: 0;
   padding: 5px 10px;
   cursor: pointer;

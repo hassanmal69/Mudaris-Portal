@@ -198,7 +198,7 @@ const AddChannelDialog = ({ open, onOpenChange }) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange} initialFocus={dialogRef}>
-      <DialogContent className="max-w-md  w-full">
+      <DialogContent className="max-w-md bg-black/90 border-[#111] text-gray-400 w-full">
         <DialogHeader>
           <DialogTitle>Add Channel</DialogTitle>
         </DialogHeader>
