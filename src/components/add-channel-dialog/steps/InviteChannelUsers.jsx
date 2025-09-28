@@ -7,6 +7,7 @@ import {
 } from "@/features/workspaceMembers/WorkspaceMembersSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
+import { Link } from "lucide-react";
 const parseUsers = (input) => {
   return input
     .split(",")
@@ -71,12 +72,12 @@ const InviteChannelUsers = ({
 
   return (
     <div className={`space-y-4 `}>
-      <div className="text-black flex flex-col gap-2">
+      <div className="flex flex-col gap-2">
         <h6>Enter email's</h6>
         {emails.map((email, idx) => (
           <span
             key={idx}
-            className="flex items-center px-2 py-1 bg-gray-200 rounded text-xs"
+            className="flex items-center px-2 py-1 bg-[#333] w-fit rounded text-xs"
           >
             {email}
             <button
@@ -119,7 +120,16 @@ const InviteChannelUsers = ({
       <div className="flex gap-2 mt-4">
         <Button
           type="button"
-          variant="outline"
+          className="bg-transparent cursor-pointer"
+          onClick={onCopyLink}
+        >
+          <span>
+            <Link />
+          </span>
+          Copy Invite Link
+        </Button>
+        <Button
+          type="button"
           onClick={onSkip}
           aria-label="Skip invite"
           className="text-[#556cd6] border
@@ -127,9 +137,6 @@ const InviteChannelUsers = ({
           border-[#556cd6] hover:bg-[#556cd6] hover:text-white"
         >
           Skip for now
-        </Button>
-        <Button type="button" variant="secondary" onClick={onCopyLink}>
-          Copy Invite Link
         </Button>
       </div>
     </div>

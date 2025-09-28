@@ -144,7 +144,7 @@ const Sidebar = () => {
   };
 
   const handleIndividualMessage = async (u) => {
-    const token = u?.user_id.slice(0, 6) + session?.user?.id.slice(0, 6);
+    const token = u?.user_id.slice(0, 6) + `${session?.user?.id.slice(0, 6)}`;
     navigate(`/workspace/${workspace_id}/individual/${token}`);
     const res = {
       sender_id: session?.user?.id,

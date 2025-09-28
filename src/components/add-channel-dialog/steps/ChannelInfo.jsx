@@ -17,6 +17,7 @@ const ChannelInfo = ({ state, setState, errors }) => {
           placeholder="Enter channel name"
           required
           aria-invalid={!!errors.name}
+          className="outline-0 border-[#222]"
         />
         {errors.name && (
           <p className="text-xs text-red-500 mt-1">{errors.name}</p>
@@ -31,6 +32,7 @@ const ChannelInfo = ({ state, setState, errors }) => {
           value={state.description || ""}
           onChange={(e) => setState({ ...state, description: e.target.value })}
           placeholder="Optional"
+          className="outline-0 border-[#222]"
         />
       </div>
     </div>

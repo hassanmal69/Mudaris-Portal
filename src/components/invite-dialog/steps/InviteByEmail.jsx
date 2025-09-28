@@ -108,7 +108,7 @@ const InviteByEmail = ({ emails, setEmails, onCopyLink, onNext }) => {
             }}
             aria-label="Add emails"
             rows={4}
-            className="w-full border border-gray-300 rounded-md p-2 resize-none"
+            className="w-full border border-[#111] rounded-md p-2 resize-none"
           />
         </div>
         {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
