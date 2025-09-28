@@ -84,8 +84,7 @@ export default function TextEditor({ editor, toolbarStyles }) {
     e.preventDefault();
     const messageHTML = editor.getHTML();
     const jsonVersion = editor.getJSON();
-    if (messageHTML === "<p></p>") return;
-
+    if (messageHTML === "<p></p>" && (!files || files.length === 0)) return;
     // ✅ Detect if this is a direct message route
     const isDirectMessage = window.location.pathname.includes("/individual/");
 
@@ -136,7 +135,7 @@ export default function TextEditor({ editor, toolbarStyles }) {
         content: messageHTML,
         reply_to: replyMessage ? replyMessage.id : null,
         attachments: urls,
-        token: token, 
+        token: token,
       };
 
       await postToSupabase("messages", res);
