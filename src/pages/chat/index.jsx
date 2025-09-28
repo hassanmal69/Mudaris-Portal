@@ -4,8 +4,8 @@ import { useParams } from "react-router-dom";
 import "./chat.css";
 
 const Chat = () => {
-  const { groupId, user_id } = useParams();
-  if (groupId || user_id) {
+  const { groupId, token } = useParams();
+  if (groupId || token) {
     return (
       <section className="w-full m-2.5 responsive_chat_screen">
         <div

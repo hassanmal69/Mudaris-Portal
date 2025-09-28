@@ -8,7 +8,7 @@ const PAGE_SIZE = 20;
 
 export default function useMessages() {
   const dispatch = useDispatch();
-  const { groupId, user_id } = useParams();
+  const { groupId, user_id, token } = useParams();
   const messages = useSelector((state) => state.messages.items);
   const session = useSelector((state) => state.auth);
   const currentUserId = session.user?.id;
@@ -24,8 +24,8 @@ export default function useMessages() {
   const profilesCache = useRef(new Map());
   const filtered = query
     ? messages.filter((msg) =>
-        msg.content?.toLowerCase().includes(query.toLowerCase())
-      )
+      msg.content?.toLowerCase().includes(query.toLowerCase())
+    )
     : messages;
   // 🔹 Load messages with sender profile
 
@@ -58,6 +58,9 @@ export default function useMessages() {
 
     if (user_id) {
       queryBuilder = queryBuilder.eq("sender_id", user_id);
+    } else if (token) {
+      queryBuilder = queryBuilder.eq("token", token);
+
     } else {
       queryBuilder = queryBuilder.eq("channel_id", groupId);
     }
@@ -84,7 +87,7 @@ export default function useMessages() {
         }
       }, 100);
     })();
-  }, [groupId, user_id, dispatch]);
+  }, [groupId, user_id, dispatch, token]);
 
   // load older
   const loadOlder = useCallback(async () => {
@@ -179,12 +182,12 @@ export default function useMessages() {
       updatedMessages = messages.map((m) =>
         m.id === messageId
           ? {
-              ...m,
-              reactions: m.reactions.filter(
-                (r) =>
-                  !(r.user_id === currentUserId && r.reaction_type === emoji)
-              ),
-            }
+            ...m,
+            reactions: m.reactions.filter(
+              (r) =>
+                !(r.user_id === currentUserId && r.reaction_type === emoji)
+            ),
+          }
           : m
       );
     } else {
@@ -198,16 +201,16 @@ export default function useMessages() {
       updatedMessages = messages.map((m) =>
         m.id === messageId
           ? {
-              ...m,
-              reactions: [
-                ...m.reactions,
-                {
-                  user_id: currentUserId,
-                  reaction_type: emoji,
-                  id: "optimistic",
-                },
-              ],
-            }
+            ...m,
+            reactions: [
+              ...m.reactions,
+              {
+                user_id: currentUserId,
+                reaction_type: emoji,
+                id: "optimistic",
+              },
+            ],
+          }
           : m
       );
     }
