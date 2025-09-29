@@ -60,8 +60,10 @@ const Password = ({ onBack, token, invite, file }) => {
       if (allowedChannelError) {
         throw new Error(allowedChannelError);
       }
-      console.log(allowedChannel[0].allowedChannels);
       const privateAllowedChannel = [];
+      console.log('ye rha console', allowedChannel);
+      console.log('ye rha console', allowedChannel[0]);
+      console.log('ye rha console', allowedChannel[0].allowedChannels);
       for (const m of allowedChannel[0].allowedChannels) {
         let gotChannel = await channelsAre?.payload.find(
           (channel) => channel.id === m
@@ -115,16 +117,17 @@ const Password = ({ onBack, token, invite, file }) => {
           return;
         }
       }
+      console.log(fullName);
       const { error: profileUpdateError } = await supabase
         .from("profiles")
         .update({
           full_name: fullName,
         })
         .eq("id", userId);
-      if (profileUpdateError) {
-        throw new Error(profileUpdateError);
+      if (profileUpdateError) throw new Error(profileUpdateError);
+      if (!profileUpdateError) {
+        navigate(`/dashboard/${user?.id}`);
       }
-      navigate(`/dashboard/${user?.id}`);
     } catch (err) {
       setError(err.message || "An unexpected error occurred");
     }
