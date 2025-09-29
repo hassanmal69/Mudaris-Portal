@@ -14,6 +14,7 @@ import CreateWorkspace from "./components/createWorkspace.jsx";
 import "./dashboard.css";
 const Dashboard = () => {
   const { session } = useSelector((state) => state.auth);
+  console.log(session?.user?.email, "user email");
   const [isOpen, setisOpen] = useState(false);
   const isAdmin = session?.user?.user_metadata?.user_role === "admin";
   return (

@@ -122,7 +122,7 @@ export const logOut = createAsyncThunk(
 const initialState = {
   session: null,
   token: localStorage.getItem("token") || null,
-  loading: false,
+  loading: true,
   user: null,
   error: null,
 };
@@ -134,11 +134,14 @@ export const authSlice = createSlice({
     logout: (state) => {
       state.session = null;
       state.token = null;
+      state.user = null;
+      state.loading = false;
     },
     setSession: (state, action) => {
-      state.session = action.payload.session;
-      state.token = action.payload.token || null;
-      state.user = action.payload.session?.user || null;
+      state.session = action.payload.session ?? null;
+      state.token = action.payload.token ?? null;
+      state.user = action.payload.session?.user ?? null;
+      state.loading = false;
     },
   },
   extraReducers: (builder) => {

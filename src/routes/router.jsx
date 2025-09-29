@@ -2,12 +2,12 @@ import { createBrowserRouter, Outlet } from "react-router-dom";
 import SignUp from "@/pages/auth/signup/index.jsx";
 import Login from "@/pages/auth/login/index.jsx";
 import Dashboard from "@/pages/dashboard/index.jsx";
-import PrivateRoute from "./privateRoute.jsx";
+import OnlyAdmin, { PrivateRoute } from "./privateRoute.jsx";
 import WorkSpaceInd from "@/pages/dashboard/components/workspaceind.jsx";
 import SidebarLayout from "@/layout/SidebarLayout.jsx";
 import Topbar from "@/layout/topbar/index.jsx";
 import ThemeLayout from "@/layout/ThemeLayout.jsx";
-
+import UsersList from "@/pages/admin/index.jsx";
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -31,6 +31,14 @@ export const router = createBrowserRouter([
         ),
       },
       {
+        path: "/seeAllUsers",
+        element: (
+          <OnlyAdmin>
+            <UsersList />
+          </OnlyAdmin>
+        ),
+      },
+      {
         path: "/workspace/:workspace_id",
         element: (
           <PrivateRoute>
@@ -50,10 +58,10 @@ export const router = createBrowserRouter([
 function WorkspaceLayout() {
   return (
     <div className="bg-black">
-    <SidebarLayout >
-      <Topbar />
-      <Outlet />
-    </SidebarLayout>
+      <SidebarLayout>
+        <Topbar />
+        <Outlet />
+      </SidebarLayout>
     </div>
   );
 }

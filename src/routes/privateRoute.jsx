@@ -1,13 +1,37 @@
 import { Navigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
-const PrivateRoute = ({ children }) => {
+export const PrivateRoute = ({ children }) => {
   const location = useLocation();
 
-  const { session } = useSelector((state) => state.auth);
-  if (session === undefined) {
-    return <p>loading.......</p>;
+  const { session, loading } = useSelector((state) => state.auth);
+
+  if (loading) {
+    return <p>Loading…</p>;
   }
-  if (session) return children
-  return <Navigate to="/" state={{ from: location }} replace />;
+
+  if (!session) {
+    return <Navigate to="/" state={{ from: location }} replace />;
+  }
+
+  return children;
 };
-export default PrivateRoute;
+
+// ProtectedRoute.jsx
+
+export default function OnlyAdmin({ children }) {
+  const { session, loading } = useSelector((state) => state.auth);
+
+  // ✅ Wait until auth state is resolved
+  if (loading) {
+    return <p>Loading…</p>;
+  }
+
+  const user = session?.user;
+
+  // ✅ Block if not YOU
+  if (!user || user?.email !== "admin@gmail.com") {
+    return <Navigate to="/" replace />;
+  }
+
+  return children;
+}
