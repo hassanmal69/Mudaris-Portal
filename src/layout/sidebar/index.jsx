@@ -32,6 +32,7 @@ import {
   selectActiveChannel,
   setActiveChannel,
 } from "@/features/channels/channelsSlice";
+import { logOut } from "@/features/auth/authSlice.js";
 
 const Sidebar = () => {
   const navigate = useNavigate();
@@ -68,7 +69,9 @@ const Sidebar = () => {
     );
     setVisibleChannel(filtered || []);
   };
-
+  const handleLogout = () => {
+    dispatch(logOut());
+  };
   useEffect(() => {
     if (session?.user?.id) {
       channelFind();
@@ -209,15 +212,16 @@ const Sidebar = () => {
             {visibleChannel.map((cm) => {
               const channel = cm.channels;
               const isActive = activeChannel?.id === channel.id;
-              console.log('cm opubnk', cm);
+              console.log("cm opubnk", cm);
               return (
                 <SidebarMenuItem key={channel.id}>
                   <div
                     onClick={() => handleChannelClick(channel)}
                     className={`flex items-center gap-2 px-2 py-1 rounded cursor-pointer 
-                      ${isActive
-                        ? "bg-[#480c48] text-white"
-                        : "hover:bg-[#480c48]"
+                      ${
+                        isActive
+                          ? "bg-[#480c48] text-white"
+                          : "hover:bg-[#480c48]"
                       }`}
                   >
                     {channel.visibility === "private" ? (
@@ -232,56 +236,16 @@ const Sidebar = () => {
                 </SidebarMenuItem>
               );
             })}
-          </SidebarMenu>
-
-          {session.user.user_metadata.user_role === "admin" && (
-            <Button
-              size="sm"
-              className="mt-2 bg-[#eee] text-[#2b092b] w-full flex items-center gap-2 justify-center hover:bg-transparent hover:text-white hover:border-[#fff] transition-all delay-150 duration-300 border"
-              onClick={() => setAddChannelOpen(true)}
-            >
-              <PlusIcon className="w-4 h-4" />
-              Add Channel
-            </Button>
-          )}
-        </SidebarGroup>
-        <SidebarGroup className="mt-4">
-          <SidebarGroupLabel className="font-medium text-m text-[#EEEEEE]">
-            Direct Messages
-          </SidebarGroupLabel>
-          <SidebarMenu>
-            {users.map((user, id) => {
-              return (
-                <SidebarMenuItem key={user.user_id}>
-                  <div
-                    onClick={() => handleIndividualMessage(user)}
-                    className="flex items-center gap-2 px-2 py-1 rounded hover:bg-[#480c48] cursor-pointer"
-                  >
-                    {
-                      user.user_profiles?.avatar_url ? (
-                        <Avatar className="w-7 h-7">
-                          <AvatarImage
-                            src={user?.user_profiles?.avatar_url}
-                            alt={user?.user_profiles?.full_name}
-                          />
-                        </Avatar>
-                      ) : (
-                        getUserFallback(user?.user_profiles?.full_name, id)
-                      )}
-
-                    <span className="font-medium text-sm ">
-                      {user?.user_profiles?.full_name}
-                    </span>
-                    <span
-                      className={`ml-auto w-2 h-2 rounded-full ${user.status === "online" ? "bg-green-500" : "bg-gray-400"
-                        }`}
-                      title={user.status}
-                    ></span>
-                  </div>
-                </SidebarMenuItem>
-              )
-            })
-            }
+            {session.user.user_metadata.user_role === "admin" && (
+              <Button
+                size="sm"
+                className="mt-2 p-0 mx-1 my-0 w-[50%] bg-transparent cursor-pointer text-gray-400 text-[14px] flex items-center gap-2 justify-center hover:bg-transparent hover:text-white hover:border-[#fff] transition-all delay-150 duration-300 border-none"
+                onClick={() => setAddChannelOpen(true)}
+              >
+                <PlusIcon className="w-4 h-4 bg-black/40 rounded text-gray-500" />
+                Add Channel
+              </Button>
+            )}
           </SidebarMenu>
         </SidebarGroup>
         <SidebarFooter className="mt-auto pb-2">
@@ -296,6 +260,9 @@ const Sidebar = () => {
             </Button>
           )}
         </SidebarFooter>
+        <button className="text-[#556cd6]" onClick={handleLogout}>
+          Sign Out
+        </button>
       </SidebarContent>
     </>
   );

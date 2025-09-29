@@ -1,5 +1,5 @@
 .messages-container {
-  height: 80%;
+  height: 73vh;
   width: calc(100% - 3%);
   margin: 0 20px;
   scroll-behavior: smooth;
@@ -30,6 +30,7 @@
 @media only screen and (max-width: 600px) {
   .messages-container {
     margin: 0;
+    height: 100vh;
     margin-left: 5px;
   }
   .responsive_channel_header h1 {
