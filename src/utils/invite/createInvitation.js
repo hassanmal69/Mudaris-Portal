@@ -1,8 +1,12 @@
 import { supabase } from "@/services/supabaseClient.js";
-export default async function createInvitation({ email, workspace_id, allowedChannels }) {
+export default async function createInvitation({
+  email,
+  workspace_id,
+  allowedChannels,
+}) {
   const token = crypto.randomUUID();
   const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
-  //handling giving the allowed channels as well for public 
+  //handling giving the allowed channels as well for public
   // channels on workspace
 
   const { error } = await supabase
@@ -22,5 +26,5 @@ export default async function createInvitation({ email, workspace_id, allowedCha
     console.error("Error creating invitation:", error);
     return null;
   }
-  return `${window.location.origin}/invite/verify?token=${token}`;
+  return `https://mudaris-portal.vercel.app/invite/verify?token=${token}`;
 }
