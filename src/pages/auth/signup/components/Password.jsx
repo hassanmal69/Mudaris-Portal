@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { addWorkspaceMember } from "@/features/workspaceMembers/WorkspaceMembersSlice.js";
 import { supabase } from "@/services/supabaseClient";
 import { fetchChannels } from "@/features/channels/channelsSlice";
-import { addChannelMembers } from "@/features/channelMembers/channelMembersSlice";
+import { addChannelMembersonSignUp } from "@/features/channelMembers/channelMembersSlice";
 
 const Password = ({ onBack, token, invite, file }) => {
   const [error, setError] = useState();
@@ -78,8 +78,9 @@ const Password = ({ onBack, token, invite, file }) => {
       }
       console.log(filteredChannels);
       for (const m of filteredChannels) {
+        console.log('data is sending', m);
         const sendingData = await dispatch(
-          addChannelMembers({ channelId: m.id, userId })
+          addChannelMembersonSignUp({ channelId: m.id, userId })
         );
         console.log("getting data is", sendingData);
       }

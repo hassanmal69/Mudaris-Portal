@@ -18,21 +18,39 @@ export const fetchChannelMembersByChannel = createAsyncThunk(
 export const fetchChannelMembersbyUser = createAsyncThunk(
   "channelMembers/fetchByUser",
   async (userId) => {
-    console.log('useridcoming',userId);
+    console.log('useridcoming', userId);
     const { data, error } = await supabase
       .from("channel_members")
       .select("id, channels ( id, channel_name,visibility,workspace_id )")
       .eq("user_id", userId);
-console.log('showinf data when we fetch chnanel',data);
+    console.log('showinf data when we fetch chnanel', data);
     if (error) throw error;
     return { userId, channel: data };
+  }
+);
+export const addChannelMembersonSignUp = createAsyncThunk(
+  "channelMembers/addChannelMembersonSignUp",
+  async ({ channelId, userId }, { rejectWithValue }) => {
+    try {
+      const { data, error } = await supabase
+        .from("channel_members")
+        .insert({
+          channel_id: channelId,
+          user_id: userId
+        });
+
+      if (error) return rejectWithValue(error.message);
+
+      return { data };
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
   }
 );
 export const addChannelMembers = createAsyncThunk(
   "channelMembers/addChannelMembers",
   async ({ channelId, userIds }, { rejectWithValue }) => {
     try {
-    console.log('userids are here',channelId,userIds);
       const rows = userIds.map((id) => ({
         user_id: id,
         channel_id: channelId,
