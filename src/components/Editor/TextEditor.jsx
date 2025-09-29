@@ -11,7 +11,6 @@ import HandleSupabaseLogicNotification from "@/layout/topbar/notification/handle
 import { useEffect } from "react";
 export default function TextEditor({ editor, toolbarStyles }) {
   const { token } = useParams();
-
   const dispatch = useDispatch();
   const [mentionedPerson, setMentionedPerson] = useState("");
   // const [draftMsg, setDraftMsg] = useState("");

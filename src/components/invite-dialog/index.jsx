@@ -47,11 +47,15 @@ const InviteDialog = ({ open, onOpenChange }) => {
     name: channelState.byId[id]?.channel_name,
     visibility: channelState.byId[id]?.visibility,
   }));
+  const allowedChannels = suggestedChannels
+    .filter(ch => ch.visibility === "public")
+    .map(ch => ch.id);
 
   const handleCopyLink = async () => {
     for (const email of emails) {
       const link = await createInvitation({
         email,
+        allowedChannels,
         workspace_id: workspace_id,
       });
       if (link) {
@@ -101,11 +105,11 @@ const InviteDialog = ({ open, onOpenChange }) => {
       if (failed.length > 0) {
         alert(
           "Some invitations failed:\n" +
-            failed.map((f) => `${f.email}: ${f.error}`).join("\n")
+          failed.map((f) => `${f.email}: ${f.error}`).join("\n")
         );
         console.log(
           "Some invitations failed:\n" +
-            failed.map((f) => `${f.email}: ${f.error}`).join("\n")
+          failed.map((f) => `${f.email}: ${f.error}`).join("\n")
         );
       } else {
         alert("✅ All invitations sent successfully!");

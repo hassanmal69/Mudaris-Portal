@@ -46,16 +46,26 @@ const Sidebar = () => {
   const { currentWorkspace, loading } = useSelector(
     (state) => state.workSpaces
   );
-
+  const getUserFallback = (name, idx) => {
+    // pick a color based on user id or index
+    const color = fallbackColors[idx % fallbackColors.length];
+    return (
+      <Avatar className="w-7 h-7 border-2 border-white rounded-sm flex items-center justify-center">
+        <AvatarFallback
+          className={`text-[#2b092b] text-sm rounded-none font-semibold ${color}`}
+        >
+          {name?.[0]?.toUpperCase()}
+        </AvatarFallback>
+      </Avatar>
+    );
+  };
   const channelFind = async () => {
     const returnedChannels = await dispatch(
       fetchChannelMembersbyUser(session?.user?.id)
     );
-
     const filtered = returnedChannels?.payload?.channel?.filter(
       (cm) => cm.channels.workspace_id === workspace_id
     );
-
     setVisibleChannel(filtered || []);
   };
 
@@ -199,15 +209,15 @@ const Sidebar = () => {
             {visibleChannel.map((cm) => {
               const channel = cm.channels;
               const isActive = activeChannel?.id === channel.id;
+              console.log('cm opubnk', cm);
               return (
                 <SidebarMenuItem key={channel.id}>
                   <div
                     onClick={() => handleChannelClick(channel)}
                     className={`flex items-center gap-2 px-2 py-1 rounded cursor-pointer 
-                      ${
-                        isActive
-                          ? "bg-[#480c48] text-white"
-                          : "hover:bg-[#480c48]"
+                      ${isActive
+                        ? "bg-[#480c48] text-white"
+                        : "hover:bg-[#480c48]"
                       }`}
                   >
                     {channel.visibility === "private" ? (
@@ -240,35 +250,38 @@ const Sidebar = () => {
             Direct Messages
           </SidebarGroupLabel>
           <SidebarMenu>
-            {users.map((user, id) => (
-              <SidebarMenuItem key={user.user_id}>
-                <div
-                  onClick={() => handleIndividualMessage(user)}
-                  className="flex items-center gap-2 px-2 py-1 rounded hover:bg-[#480c48] cursor-pointer"
-                >
-                  {user.user_profiles?.avatar_url ? (
-                    <Avatar className="w-7 h-7">
-                      <AvatarImage
-                        src={user.user_profiles?.avatar_url}
-                        alt={user.user_profiles?.full_name}
-                      />
-                    </Avatar>
-                  ) : (
-                    getUserFallback(user.user_profiles.full_name, id)
-                  )}
+            {users.map((user, id) => {
+              return (
+                <SidebarMenuItem key={user.user_id}>
+                  <div
+                    onClick={() => handleIndividualMessage(user)}
+                    className="flex items-center gap-2 px-2 py-1 rounded hover:bg-[#480c48] cursor-pointer"
+                  >
+                    {
+                      user.user_profiles?.avatar_url ? (
+                        <Avatar className="w-7 h-7">
+                          <AvatarImage
+                            src={user?.user_profiles?.avatar_url}
+                            alt={user?.user_profiles?.full_name}
+                          />
+                        </Avatar>
+                      ) : (
+                        getUserFallback(user?.user_profiles?.full_name, id)
+                      )}
 
-                  <span className="font-medium text-sm ">
-                    {user.user_profiles?.full_name}
-                  </span>
-                  <span
-                    className={`ml-auto w-2 h-2 rounded-full ${
-                      user.status === "online" ? "bg-green-500" : "bg-gray-400"
-                    }`}
-                    title={user.status}
-                  ></span>
-                </div>
-              </SidebarMenuItem>
-            ))}
+                    <span className="font-medium text-sm ">
+                      {user?.user_profiles?.full_name}
+                    </span>
+                    <span
+                      className={`ml-auto w-2 h-2 rounded-full ${user.status === "online" ? "bg-green-500" : "bg-gray-400"
+                        }`}
+                      title={user.status}
+                    ></span>
+                  </div>
+                </SidebarMenuItem>
+              )
+            })
+            }
           </SidebarMenu>
         </SidebarGroup>
         <SidebarFooter className="mt-auto pb-2">
