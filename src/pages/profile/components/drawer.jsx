@@ -2,7 +2,6 @@ import { Drawer } from "vaul";
 import { useDispatch, useSelector } from "react-redux";
 import { logOut } from "@/features/auth/authSlice.js";
 import { useEffect, useState } from "react";
-import { updateValue } from "@/features/ui/profileSlice.js";
 import EditProfile from "./editProfile.jsx";
 import { fetchChannels } from "@/features/channels/channelsSlice.js";
 import { Clock, Globe, Lock } from "lucide-react";
@@ -23,7 +22,7 @@ export default function VaulDrawer() {
   const channels = useSelector(selectChannels);
 
   const [time, setTime] = useState(new Date());
-  const loading = useSelector((state) => state.channels.loading);
+  // const loading = useSelector((state) => state.channels.loading);
 
   useEffect(() => {
     const interval = setInterval(() => setTime(new Date()), 1000);
@@ -75,7 +74,7 @@ export default function VaulDrawer() {
                 <Drawer.Title className="font-medium mb-2 text-2xl text-white ">
                   {session?.user?.user_metadata?.displayName}
                 </Drawer.Title>
-                <div onClick={() => dispatch(updateValue())}>
+                <div >
                   <EditProfile />
                 </div>
               </div>

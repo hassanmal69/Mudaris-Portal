@@ -9,13 +9,11 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog.jsx";
-
 const EditProfile = () => {
   const { session } = useSelector((state) => state.auth);
   const [file, setFile] = useState(null);
@@ -28,9 +26,6 @@ const EditProfile = () => {
     session.user.user_metadata.avatar_url
   );
   const id = useId();
-  const editProfileOpen = useSelector(
-    (state) => state?.profile?.editProfileOpen
-  );
   useEffect(() => {
     setSessionAvatarUrl(session.user.user_metadata.avatar_url);
   }, [session]);
@@ -87,11 +82,7 @@ const EditProfile = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        {editProfileOpen ? (
-          ""
-        ) : (
-          <Button className="bg-transparent text-[#556cd6]">edit</Button>
-        )}
+        <Button className="bg-transparent text-[#556cd6]">edit</Button>
       </DialogTrigger>
       <DialogContent className="flex flex-col gap-0 overflow-y-visible p-0 sm:max-w-lg bg-black/95 border-[#222] text-white [&>button:last-child]:top-3.5">
         <DialogHeader className="contents space-y-0 text-left">
@@ -169,7 +160,8 @@ const EditProfile = () => {
             </Button>
           </DialogClose>
           <DialogClose asChild>
-            <Button type="button" onClick={handleSave}>
+            <Button type="button" onClick={handleSave}
+            >
               Save changes
             </Button>
           </DialogClose>
