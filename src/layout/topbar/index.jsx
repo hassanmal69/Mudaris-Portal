@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import Profile from "@/pages/profile";
 import { useParams } from "react-router-dom";
@@ -13,11 +13,18 @@ import {
   selectChannelMembers,
 } from "@/features/channelMembers/channelMembersSlice";
 import "./topbar.css";
+function debounce(fn, delay) {
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);                  
+    timer = setTimeout(() => fn(...args), delay); 
+  };
+}
+
 const Topbar = () => {
   const dispatch = useDispatch();
   const { groupId } = useParams();
   const [isMobile, setisMobile] = useState(window.innerWidth < 660);
-  // Safe selector
 
   const channel = useSelector(
     (state) => state.channels.byId[groupId],
@@ -38,28 +45,25 @@ const Topbar = () => {
 
   const visibility = channel?.visibility || "private";
   const channel_name = channel?.channel_name || directChannel2 || "channel";
-
   const query = useSelector((state) => state.search.query);
-
-  useEffect(() => {
-    if (groupId) {
-      dispatch(fetchChannelMembersByChannel(groupId));
-    }
-  }, [groupId, dispatch]);
-  console.log(channelMembers, "aaa members");
+  const debouncedQuery = useMemo(
+    () =>
+      debounce((value) => {
+        console.log('request going');
+        dispatch(setQuery(value));
+      }, 500),
+    [dispatch]
+  );
 
   useEffect(() => {
     const handleResize = () => {
       setisMobile(window.innerWidth < 860);
     };
 
-    // Run on mount
     handleResize();
 
-    // Listen for window resize
     window.addEventListener("resize", handleResize);
 
-    // Cleanup on unmount
     return () => {
       window.removeEventListener("resize", handleResize);
     };
@@ -95,11 +99,7 @@ const Topbar = () => {
             type="text"
             placeholder="Search messages"
             value={query}
-            onChange={(e) => {
-              if (e.target.value !== query) {
-                dispatch(setQuery(e.target.value));
-              }
-            }}
+            onChange={(e) => debouncedQuery(e.target.value)}
             className="w-[500px] h-[40px] rounded-md text-[#eee] border-[#777] focus:border-primary pl-9 responsive_search_input"
           />
         </div>
