@@ -102,6 +102,7 @@ const AddChannelDialog = ({ open, onOpenChange }) => {
 
   const handleSubmit = async () => {
     const { name, description, visibility, users } = channelData;
+
     let membersSet = new Set();
     if (visibility === "public") {
       // all workspace members
