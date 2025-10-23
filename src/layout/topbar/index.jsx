@@ -13,65 +13,80 @@ import {
   selectChannelMembers,
 } from "@/features/channelMembers/channelMembersSlice";
 import "./topbar.css";
+
+// Debounce utility
 function debounce(fn, delay) {
   let timer;
   return (...args) => {
-    clearTimeout(timer);                  
-    timer = setTimeout(() => fn(...args), delay); 
+    clearTimeout(timer);
+    timer = setTimeout(() => fn(...args), delay);
   };
 }
 
 const Topbar = () => {
   const dispatch = useDispatch();
   const { groupId } = useParams();
-  const [isMobile, setisMobile] = useState(window.innerWidth < 660);
 
-  const channel = useSelector(
-    (state) => state.channels.byId[groupId],
-    shallowEqual
-  );
+  // --- State ---
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 860);
+  const [mode, setMode] = useState(localStorage.getItem("theme") || "dark");
+
+  // --- Fetch channel members ---
   useEffect(() => {
     if (groupId) {
       dispatch(fetchChannelMembersByChannel(groupId));
     }
   }, [groupId, dispatch]);
 
+  // --- Apply initial theme ---
+  useEffect(() => {
+    const root = document.documentElement;
+    if (mode === "dark") {
+      root.classList.add("dark");
+    } else {
+      root.classList.remove("dark");
+    }
+    localStorage.setItem("theme", mode);
+  }, [mode]);
+
+  // --- Theme toggle ---
+  const handleToggle = () => {
+    setMode((prevMode) => (prevMode === "dark" ? "light" : "dark"));
+  };
+
+  // --- Channel data ---
+  const channel = useSelector(
+    (state) => state.channels.byId[groupId],
+    shallowEqual
+  );
   const channelMembers = useSelector(
     selectChannelMembers(groupId),
     shallowEqual
   );
-
   const directChannel2 = useSelector((state) => state.direct.directChannel);
-
   const visibility = channel?.visibility || "private";
   const channel_name = channel?.channel_name || directChannel2 || "channel";
+
+  // --- Search Query ---
   const query = useSelector((state) => state.search.query);
   const debouncedQuery = useMemo(
     () =>
       debounce((value) => {
-        console.log('request going');
         dispatch(setQuery(value));
       }, 500),
     [dispatch]
   );
 
   useEffect(() => {
-    const handleResize = () => {
-      setisMobile(window.innerWidth < 860);
-    };
-
-    handleResize();
-
+    const handleResize = () => setIsMobile(window.innerWidth < 860);
     window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
+    handleResize();
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   return (
     <section
-      className="top-0 w-full bg-[#2b092b] z-20 shadow-sm topbar-container md:px-6 py-2 flex items-center "
+      className="top-0 w-full bg-[#2b092b] z-20 shadow-sm md:px-6 py-2 flex items-center topbar-container"
       style={{ minHeight: "56px" }}
     >
       {isMobile && (
@@ -81,8 +96,9 @@ const Topbar = () => {
           </SidebarTrigger>
         </div>
       )}
+
       <div className="flex items-center gap-2 min-w-0">
-        <h2 className="text-[#EEEEEE] text-[18px] font-medium flex gap-0.5 items-center">
+        <h2 className="text-[var(--foreground)] text-[18px] font-medium flex gap-1 items-center">
           {visibility === "public" ? (
             <Globe className="w-[15px]" />
           ) : (
@@ -93,7 +109,7 @@ const Topbar = () => {
       </div>
 
       <div className="hidden sm:flex sm:flex-1 items-center justify-center">
-        <div className="relative ">
+        <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
           <Input
             type="text"
@@ -105,7 +121,14 @@ const Topbar = () => {
         </div>
       </div>
 
+      {/* Right Section */}
       <div className="flex items-center gap-2 min-w-0">
+        <button
+          onClick={handleToggle}
+          className="text-sm text-white bg-[#444] hover:bg-[#555] px-3 py-1 rounded-md transition"
+        >
+          Toggle {mode === "dark" ? "☀️" : "🌙"}
+        </button>
         <Notifications />
         <Members members={channelMembers} />
         <Profile />
