@@ -48,8 +48,8 @@ const InviteDialog = ({ open, onOpenChange }) => {
     visibility: channelState.byId[id]?.visibility,
   }));
   const allowedChannels = suggestedChannels
-    .filter(ch => ch.visibility === "public")
-    .map(ch => ch.id);
+    .filter((ch) => ch.visibility === "public")
+    .map((ch) => ch.id);
 
   const handleCopyLink = async () => {
     for (const email of emails) {
@@ -78,7 +78,7 @@ const InviteDialog = ({ open, onOpenChange }) => {
       }
 
       const res = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-invite`,
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-invite`, //api
         {
           method: "POST",
           headers: {
@@ -105,11 +105,11 @@ const InviteDialog = ({ open, onOpenChange }) => {
       if (failed.length > 0) {
         alert(
           "Some invitations failed:\n" +
-          failed.map((f) => `${f.email}: ${f.error}`).join("\n")
+            failed.map((f) => `${f.email}: ${f.error}`).join("\n")
         );
         console.log(
           "Some invitations failed:\n" +
-          failed.map((f) => `${f.email}: ${f.error}`).join("\n")
+            failed.map((f) => `${f.email}: ${f.error}`).join("\n")
         );
       } else {
         alert("✅ All invitations sent successfully!");
