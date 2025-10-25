@@ -32,7 +32,7 @@ export const MentionList = forwardRef((props, ref) => {
     return (
       <Avatar className="w-7 h-7 border-2 border-white rounded-sm flex items-center justify-center">
         <AvatarFallback
-          className={`text-[#333]  text-sm rounded-none font-semibold ${color}`}
+          className={`text-[#333]  text-sm font-semibold ${color}`}
         >
           {name?.[0]?.toUpperCase()}
         </AvatarFallback>

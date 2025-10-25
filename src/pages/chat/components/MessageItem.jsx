@@ -78,6 +78,7 @@ const MessageItem = ({
           content={message.content}
           id={message.id}
         />
+
         <div>
           {message.replyCount > 0 && (
             <button
