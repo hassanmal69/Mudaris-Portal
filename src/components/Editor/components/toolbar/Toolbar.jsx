@@ -23,7 +23,7 @@ export default function Toolbar({ editor, toolbarStyles }) {
       ))}
       <EmojiButton editor={editor} toolbarStyles={toolbarStyles} />
       <MentionButton editor={editor} toolbarStyles={toolbarStyles} />
-      <VideoRecording toolbarStyles={toolbarStyles} />
+      {/* <VideoRecording toolbarStyles={toolbarStyles} /> */}
       <AudioRecording toolbarStyles={toolbarStyles} />
       <FileUploader toolbarStyles={toolbarStyles} />
       {/* <LectureHandle /> */}
