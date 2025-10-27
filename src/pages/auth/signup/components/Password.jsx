@@ -61,9 +61,9 @@ const Password = ({ onBack, token, invite, file }) => {
         throw new Error(allowedChannelError);
       }
       const privateAllowedChannel = [];
-      console.log('ye rha console', allowedChannel);
-      console.log('ye rha console', allowedChannel[0]);
-      console.log('ye rha console', allowedChannel[0].allowedChannels);
+      // console.log('ye rha console', allowedChannel);
+      // console.log('ye rha console', allowedChannel[0]);
+      // console.log('ye rha console', allowedChannel[0].allowedChannels);
       for (const m of allowedChannel[0].allowedChannels) {
         let gotChannel = await channelsAre?.payload.find(
           (channel) => channel.id === m
@@ -78,7 +78,7 @@ const Password = ({ onBack, token, invite, file }) => {
       }
       console.log(filteredChannels);
       for (const m of filteredChannels) {
-        console.log('data is sending', m);
+        console.log("data is sending", m);
         const sendingData = await dispatch(
           addChannelMembersonSignUp({ channelId: m.id, userId })
         );
