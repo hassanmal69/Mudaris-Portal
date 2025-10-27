@@ -2,26 +2,70 @@ import React, { useEffect } from "react";
 
 import { useDispatch, useSelector } from "react-redux";
 import { fetchPinnedMessages } from "@/features/messages/pin/pinSlice";
-const PinnedMessages = ({ channelId, userId }) => {
+import { Pin } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import MessageActions from "./MessageActions";
+import { openReplyDrawer } from "@/features/reply/replySlice";
+const PinnedMessages = ({ channelId, message }) => {
   const dispatch = useDispatch();
   const pinnedState = useSelector((state) => state.pinnedMessages);
   const { items, loading } = pinnedState || {};
   useEffect(() => {
     dispatch(fetchPinnedMessages(channelId));
   }, [channelId, dispatch]);
-
+  const { profiles, content, created_at, user_id } = message || {};
+  const { id, full_name, avatar_url } = profiles || {};
   console.log("items", { items });
   return (
-    <section>
+    <section className="bg-(--accent)/50 p-4 rounded-lg space-y max-h-[300px] overflow-y-auto border-(--accent) mb-4.5">
+      <h4 className=" text-xs text-(--accent-foreground)">Pinned Messages</h4>
+
       {loading && <p>Loading...</p>}
 
       {items.map((m, _i) => (
-        <div key={_i} className="relative">
-          <div
-            key={m?.id}
-            className="text-[#c7c7c7]"
-            dangerouslySetInnerHTML={{ __html: m.messages.content }}
-          />
+        <div key={_i} className="hover:bg-(--muted) p-2">
+          <div className="flex flex-col gap-1 text-xs text-(--muted-foreground) mb-1 ">
+            <span className="flex items-center gap-1">
+              <Pin className="h-3 w-3" />
+              <p>Pinned message</p>
+            </span>
+
+            <div className="flex gap-2 relative">
+              <MessageActions
+                messageId={m.message_id}
+                onReply={() => dispatch(openReplyDrawer(message))}
+                userId={m.userId}
+              />
+              <Avatar className="h-10 w-10 mt-0.5">
+                <AvatarImage src={m?.avatar_url} />
+                <AvatarFallback>
+                  {m?.full_name ||
+                    "User"
+                      ?.split(" ")
+                      .map((n) => n[0])
+                      .join("")}
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex flex-col ">
+                <div className="flex items-baseline gap-2">
+                  <span className="text-(--foreground) text-[16px] font-medium">
+                    {m?.full_name || "Unknown User"}
+                  </span>
+                  <span className="text-xs text-(--muted-foreground)">
+                    <LocalTime utcString={m?.pinned_at} />
+                  </span>
+                </div>
+
+                <div
+                  key={m?.id}
+                  className="text-(--foreground) mt-1 whitespace-pre-wrap text-sm "
+                  dangerouslySetInnerHTML={{
+                    __html: m.content || "Loading...",
+                  }}
+                />
+              </div>
+            </div>
+          </div>
         </div>
       ))}
     </section>
@@ -29,3 +73,16 @@ const PinnedMessages = ({ channelId, userId }) => {
 };
 
 export default PinnedMessages;
+
+const LocalTime = ({ utcString }) => {
+  const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  const localTime = new Date(utcString).toLocaleTimeString("en-PK", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+    timeZone: userTimeZone,
+  });
+
+  return <span>{localTime.toUpperCase()}</span>;
+};

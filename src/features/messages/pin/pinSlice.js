@@ -17,7 +17,6 @@ export const fetchPinnedMessages = createAsyncThunk(
           messages (
             id,
             content,
-            sender_id,
             created_at
           ),
           profiles (
@@ -31,7 +30,16 @@ export const fetchPinnedMessages = createAsyncThunk(
         .order("pinned_at", { ascending: false });
 
       if (error) throw error;
-      return data;
+      const simplifiedData = data.map((item) => ({
+        full_name: item.profiles?.full_name || "",
+        avatar_url: item.profiles?.avatar_url || "",
+        pinned_at: item.pinned_at,
+        message_id: item.messages?.id,
+        content: item.messages?.content || "",
+        userId: item.profiles?.sender_id,
+      }));
+
+      return simplifiedData;
     } catch (error) {
       return rejectWithValue(error.message);
     }

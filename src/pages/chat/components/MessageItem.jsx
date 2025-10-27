@@ -25,8 +25,7 @@ const MessageItem = ({
   setPickerOpenFor,
 }) => {
   const { profiles, content, created_at, user_id } = message || {};
-  const { full_name, avatar_url } = profiles || {};
-
+  const { id, full_name, avatar_url } = profiles || {};
   const dispatch = useDispatch();
   const getUserFallback = (name, idx) => {
     // pick a color based on user id or index
@@ -43,7 +42,7 @@ const MessageItem = ({
     );
   };
   return (
-    <div className="flex gap-2 relative border-t border-[#333] py-2.5 group">
+    <div className="flex gap-2  items-start ">
       {message.profiles?.avatar_url ? (
         <Avatar className="w-10 h-10 rounded-full">
           <AvatarImage src={avatar_url || ""} alt={full_name || "user"} />
@@ -55,7 +54,7 @@ const MessageItem = ({
         getUserFallback(message.profiles?.full_name, message.id[0])
       )}
 
-      <div className="message-body relative w-full">
+      <div className="relative message-body w-full">
         <MessageActions
           messageId={message.id}
           onReply={() => dispatch(openReplyDrawer(message))}
@@ -63,6 +62,7 @@ const MessageItem = ({
           pickerOpenFor={pickerOpenFor}
           setPickerOpenFor={setPickerOpenFor}
           toggleReaction={toggleReaction}
+          userId={id}
         />
         <div className="flex gap-2 items-center">
           <strong className="text-(--foreground) font-normal">

@@ -14,7 +14,7 @@ const MessageList = ({
   const userId = useSelector((state) => state.auth.user?.id);
   return (
     <>
-      <PinnedMessages channelId={groupId} userId={userId} />
+      <PinnedMessages channelId={groupId} msg={messages} />
       {messages.map((msg) => (
         <MessageItem
           key={msg.id}
