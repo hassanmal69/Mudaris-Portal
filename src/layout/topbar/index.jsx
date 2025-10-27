@@ -86,7 +86,7 @@ const Topbar = () => {
 
   return (
     <section
-      className="top-0 w-full bg-[#2b092b] z-20 shadow-sm md:px-6 py-2 flex items-center topbar-container"
+      className="top-0 w-full bg-(--sidebar) z-20 shadow-sm md:px-6 py-2 flex items-center topbar-container"
       style={{ minHeight: "56px" }}
     >
       {isMobile && (
