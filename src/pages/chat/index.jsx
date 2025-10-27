@@ -7,13 +7,9 @@ const Chat = () => {
   const { groupId, token } = useParams();
   if (groupId || token) {
     return (
-      <section className="w-full m-2.5 responsive_chat_screen">
+      <section className="w-full bg--(--sidebar) m-2.5 responsive_chat_screen">
         <div
-          className="absolute inset-0 z-0 w-full h-full pointer-events-none"
-          style={{
-            background:
-              "radial-gradient(125% 125% at 50% 10%, #000000 40%, #2b092b 100%)",
-          }}
+          className="absolute  inset-0 z-0 w-full h-full pointer-events-none"
         />
 
         <Messages />
@@ -25,10 +21,6 @@ const Chat = () => {
       <section>
         <div
           className="absolute flex items-center justify-center w-full h-full "
-          style={{
-            background:
-              "radial-gradient(125% 125% at 50% 10%, #000000 40%, #2b092b 100%)",
-          }}
         />
         <div
           className="

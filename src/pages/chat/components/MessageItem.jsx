@@ -45,7 +45,7 @@ const MessageItem = ({
   return (
     <div className="flex gap-2 relative border-t border-[#333] py-2.5 group">
       {message.profiles?.avatar_url ? (
-        <Avatar className="w-7 h-7 border-2 border-white rounded-none">
+        <Avatar className="w-10 h-10 rounded-full">
           <AvatarImage src={avatar_url || ""} alt={full_name || "user"} />
           <AvatarFallback>
             {full_name?.[0]?.toUpperCase() || "U"}
@@ -65,10 +65,10 @@ const MessageItem = ({
           toggleReaction={toggleReaction}
         />
         <div className="flex gap-2 items-center">
-          <strong className="text-[#fff]">
+          <strong className="text-(--foreground) font-normal">
             {message.profiles?.full_name || "Unknown User"}
           </strong>
-          <span className="text-[10px] text-gray-700">
+          <span className="text-xs text-(--muted-foreground)">
             {new Date(created_at).toLocaleTimeString()}
           </span>
         </div>

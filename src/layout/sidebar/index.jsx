@@ -168,7 +168,7 @@ const Sidebar = () => {
     const { error } = await postToSupabase("directMessagesChannel", res);
     if (error) console.log(error);
   };
-
+  //bg is sidebar headings is sidebarforeground normal are simple foreground
   return (
     <>
       <AddChannelDialog
@@ -177,7 +177,7 @@ const Sidebar = () => {
         usedIn={"createChannel"}
       />
       <InviteDialog open={inviteOpen} onOpenChange={setInviteOpen} />
-      <SidebarContent className="h-full bg-[#230423] text-[#EEEEEE] px-2 py-4 flex flex-col gap-4">
+      <SidebarContent className="h-full bg-(--sidebar) text-(--foreground) border-2 border-(--sidebar-border) px-2 py-4 flex flex-col gap-4">
         <SidebarHeader className="flex gap-2">
           <Link to={`/dashboard/${session?.user?.id}`}>
             {currentWorkspace?.avatar_url ? (
@@ -204,32 +204,26 @@ const Sidebar = () => {
               : currentWorkspace?.workspace_name || "Workspace"}
           </span>
         </SidebarHeader>
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-white font-medium text-[16px]">
+        <SidebarGroup className='flex flex-col gap-2 border-y-2 w-full border-(--sidebar-border)'>
+          <SidebarGroupLabel className="text-(--sidebar-foreground) font-normal text-[16px]">
             Channels
           </SidebarGroupLabel>
           <SidebarMenu>
             {visibleChannel.map((cm) => {
               const channel = cm.channels;
               const isActive = activeChannel?.id === channel.id;
-              console.log("cm opubnk", cm);
               return (
                 <SidebarMenuItem key={channel.id}>
                   <div
                     onClick={() => handleChannelClick(channel)}
-                    className={`flex items-center gap-2 px-2 py-1 rounded cursor-pointer 
-                      ${
-                        isActive
-                          ? "bg-[#480c48] text-white"
-                          : "hover:bg-[#480c48]"
+                    className={`flex items-center gap-2 px-2 py-1 cursor-pointer 
+                      ${isActive
+                        ? "bg-(--sidebar-accent) text-white"
+                        : "hover:bg-(--sidebar-accent)"
                       }`}
                   >
-                    {channel.visibility === "private" ? (
-                      <LockClosedIcon className="w-4 h-4 " />
-                    ) : (
-                      <GlobeAltIcon className="w-4 h-4 " />
-                    )}
-                    <span className="font-medium text-sm">
+                    #
+                    <span className="font-normal text-sm">
                       {channel.channel_name}
                     </span>
                   </div>
@@ -243,9 +237,63 @@ const Sidebar = () => {
                 onClick={() => setAddChannelOpen(true)}
               >
                 <PlusIcon className="w-4 h-4 bg-black/40 rounded text-gray-500" />
-                Add Channel
+                Create Channel
               </Button>
             )}
+          </SidebarMenu>
+          <SidebarGroupLabel className="text-(--sidebar-foreground) font-normal text-[16px]">
+            Apps
+          </SidebarGroupLabel>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <div
+                className={`flex items-center gap-2 px-2 py-1 cursor-pointer 
+                    hover:bg-(--sidebar-accent) font-medium text-sm
+                  `}
+              >
+                Market Insight
+
+              </div>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <div
+                className={`flex items-center gap-2 px-2 py-1 cursor-pointer 
+                    hover:bg-(--sidebar-accent) font-medium text-sm
+                  `}
+              >
+                Economic Calendar
+
+              </div>
+            </SidebarMenuItem>
+            <SidebarGroupLabel className="text-(--sidebar-foreground) font-normal text-[16px]">
+              Direct Messages
+            </SidebarGroupLabel>
+            <SidebarMenuItem>
+              <div
+                className={`flex items-center gap-2 px-2 py-1 cursor-pointer 
+                    hover:bg-(--sidebar-accent) font-medium text-sm
+                  `}
+              >
+                Dr Mudaris
+              </div>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <div
+                className={`flex items-center gap-2 px-2 py-1 cursor-pointer 
+                    hover:bg-(--sidebar-accent) font-medium text-sm
+                  `}
+              >
+                Student's Assistant
+              </div>
+            </SidebarMenuItem>
+            <Button
+              size="sm"
+              className="mt-2 p-0 mx-1 my-0 w-[50%] bg-transparent cursor-pointer text-gray-400 text-[14px] flex items-center gap-2 justify-center hover:bg-transparent hover:text-white hover:border-[#fff] transition-all delay-150 duration-300 border-none"
+              onClick={() => setAddChannelOpen(true)}
+            >
+              <PlusIcon className="w-4 h-4 bg-black/40 rounded text-gray-500" />
+              Add Chats
+            </Button>
           </SidebarMenu>
         </SidebarGroup>
         <SidebarFooter className="mt-auto pb-2">
@@ -263,7 +311,7 @@ const Sidebar = () => {
         <button className="text-[#556cd6]" onClick={handleLogout}>
           Sign Out
         </button>
-      </SidebarContent>
+      </SidebarContent >
     </>
   );
 };
