@@ -24,7 +24,7 @@ const MessageItem = ({
   pickerOpenFor,
   setPickerOpenFor,
 }) => {
-  const { profiles, content, created_at, user_id } = message || {};
+  const { profiles, created_at } = message || {};
   const { id, full_name, avatar_url } = profiles || {};
   const dispatch = useDispatch();
   const getUserFallback = (name, idx) => {
@@ -54,22 +54,25 @@ const MessageItem = ({
         getUserFallback(message.profiles?.full_name, message.id[0])
       )}
 
-      <div className="relative message-body w-full">
-        <MessageActions
-          messageId={message.id}
-          onReply={() => dispatch(openReplyDrawer(message))}
-          onEmoji={() => setPickerOpenFor(message.id)}
-          pickerOpenFor={pickerOpenFor}
-          setPickerOpenFor={setPickerOpenFor}
-          toggleReaction={toggleReaction}
-          userId={id}
-        />
+      <div className="relative message-body w-full  text-(--muted-foreground) group">
+        {/* MessageActions: hidden by default, shown when the parent .group is hovered */}
+        <div className="absolute right-2 top-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-150 z-10">
+          <MessageActions
+            messageId={message.id}
+            onReply={() => dispatch(openReplyDrawer(message))}
+            onEmoji={() => setPickerOpenFor(message.id)}
+            pickerOpenFor={pickerOpenFor}
+            setPickerOpenFor={setPickerOpenFor}
+            toggleReaction={toggleReaction}
+            userId={id}
+          />
+        </div>
         <div className="flex gap-2 items-center">
           <strong className="text-(--foreground) font-normal">
             {message.profiles?.full_name || "Unknown User"}
           </strong>
           <span className="text-xs text-(--muted-foreground)">
-            {new Date(created_at).toLocaleTimeString()}
+            <LocalTime utcString={created_at} />
           </span>
         </div>
 
@@ -105,3 +108,15 @@ const MessageItem = ({
 };
 
 export default MessageItem;
+const LocalTime = ({ utcString }) => {
+  const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  const localTime = new Date(utcString).toLocaleTimeString("en-PK", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+    timeZone: userTimeZone,
+  });
+
+  return <span>{localTime.toUpperCase()}</span>;
+};
