@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { SmilePlus, MessageSquareReply, CircleGauge } from "lucide-react";
+import { MessageSquare } from "lucide-react";
 import EmojiPicker from "emoji-picker-react";
 import HandleSupabaseLogicNotification from "@/layout/topbar/notification/handleSupabaseLogicNotification.jsx";
 import { useDispatch, useSelector } from "react-redux";
@@ -17,50 +17,55 @@ import {
   fetchPinnedMessages,
   togglePinMessage,
 } from "@/features/messages/pin/pinSlice";
-const MessageActions = React.memo(({ messageId, onReply, userId }) => {
-  const renderCount = useRef(0);
-  renderCount.current += 1;
-  console.log(`MessageActions renders: ${renderCount.current}`);
-  const dispatch = useDispatch();
-  const { groupId } = useParams();
-  // const displayName = useSelector(
-  //   (state) => state.auth.user?.user_metadata?.displayName
-  // );
-  // const channelState = useSelector((state) => state.channels);
-  // const channels = channelState.allIds.map((id) => ({
-  //   id,
-  //   name: channelState.byId[id]?.channel_name,
-  //   visibility: channelState.byId[id]?.visibility,
-  // }));
-  // const desiredChannel = useMemo(() => {
-  //   return channels.find((m) => m.id === groupId);
-  // }, [channels, groupId]);
-  const handlePin = useCallback(
-    async (messageId) => {
-      await dispatch(
-        togglePinMessage({
-          channelId: groupId,
-          messageId,
-          userId,
-        })
-      );
+const MessageActions = React.memo(
+  ({ messageId, onReply, userId, disableReply }) => {
+    const renderCount = useRef(0);
+    renderCount.current += 1;
+    console.log(`MessageActions renders: ${renderCount.current}`);
+    const dispatch = useDispatch();
+    const { groupId } = useParams();
+    // const displayName = useSelector(
+    //   (state) => state.auth.user?.user_metadata?.displayName
+    // );
+    // const channelState = useSelector((state) => state.channels);
+    // const channels = channelState.allIds.map((id) => ({
+    //   id,
+    //   name: channelState.byId[id]?.channel_name,
+    //   visibility: channelState.byId[id]?.visibility,
+    // }));
+    // const desiredChannel = useMemo(() => {
+    //   return channels.find((m) => m.id === groupId);
+    // }, [channels, groupId]);
+    const handlePin = useCallback(
+      async (messageId) => {
+        await dispatch(
+          togglePinMessage({
+            channelId: groupId,
+            messageId,
+            userId,
+          })
+        );
 
-      dispatch(fetchPinnedMessages(groupId));
-    },
-    [groupId, userId, dispatch]
-  );
+        dispatch(fetchPinnedMessages(groupId));
+      },
+      [groupId, userId, dispatch]
+    );
 
-  return (
-    <div className="absolute top-0 right-0 flex gap-1">
-      <button
-        type="button"
-        className="p-1  text-white transition-colors delay-150 duration-300 hover:bg-white rounded hover:text-[#2b092b]  cursor-pointer"
-        title="Reply"
-        onClick={onReply}
-      >
-        <MessageSquareReply className="w-4 h-4" />
-      </button>
-      {/* <button
+    return (
+      <div className="absolute top-0 right-0 flex gap-1">
+        {/* from moiz --- if it is in pin message, reply button is disabled */}
+        {!disableReply && (
+          <button
+            type="button"
+            className="p-1  text-white transition-colors delay-150 duration-300 hover:bg-(--muted) rounded hover:text-[#2b092b]  cursor-pointer"
+            title="Reply"
+            onClick={onReply}
+          >
+            <MessageSquare className="w-4 h-4" />
+          </button>
+        )}
+
+        {/* <button
           type="button"
           className="p-1 text-white
         transition-colors delay-150 duration-300
@@ -70,7 +75,7 @@ const MessageActions = React.memo(({ messageId, onReply, userId }) => {
         >
           <SmilePlus className="w-4 h-4" />
         </button> */}
-      {/* {pickerOpenFor === messageId && (
+        {/* {pickerOpenFor === messageId && (
           <div className="absolute z-10 top-8 right-0">
             <EmojiPicker
               onEmojiClick={(emojiObj) => {
@@ -87,35 +92,39 @@ const MessageActions = React.memo(({ messageId, onReply, userId }) => {
             />
           </div>
         )} */}
-      <div>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              className="bg-transparent"
-              aria-label="Open menu"
-              size="icon-sm"
+        <div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                className="bg-transparent"
+                aria-label="Open menu"
+                size="icon-sm"
+              >
+                <MoreHorizontalIcon />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="end"
+              className="text-(--muted-foreground) bg-(--accent)/50 border  border-(--accent) rounded-md"
             >
-              <MoreHorizontalIcon />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => handlePin(messageId)}>
-              <Pin className="h-4 w-4 mr-2" />
-              Pin message
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Forward className="h-4 w-4 mr-2" />
-              Forward message
-            </DropdownMenuItem>
-            <DropdownMenuItem className="text-destructive">
-              <Trash2 className="h-4 w-4 mr-2" />
-              Delete message
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+              <DropdownMenuItem onClick={() => handlePin(messageId)}>
+                <Pin className="h-4 w-4 mr-2" />
+                Pin message
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Forward className="h-4 w-4 mr-2" />
+                Forward message
+              </DropdownMenuItem>
+              <DropdownMenuItem className="text-destructive">
+                <Trash2 className="h-4 w-4 mr-2" />
+                Delete message
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
-    </div>
-  );
-});
+    );
+  }
+);
 
 export default MessageActions;

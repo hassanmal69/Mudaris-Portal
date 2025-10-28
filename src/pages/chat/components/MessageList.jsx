@@ -11,7 +11,6 @@ const MessageList = ({
   setPickerOpenFor,
 }) => {
   const { groupId } = useParams();
-  const userId = useSelector((state) => state.auth.user?.id);
   return (
     <>
       <PinnedMessages channelId={groupId} msg={messages} />
