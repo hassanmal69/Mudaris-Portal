@@ -1,10 +1,7 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useRef } from "react";
 import { MessageSquare } from "lucide-react";
-import EmojiPicker from "emoji-picker-react";
-import HandleSupabaseLogicNotification from "@/layout/topbar/notification/handleSupabaseLogicNotification.jsx";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
-import { useRef } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,7 +15,7 @@ import {
   togglePinMessage,
 } from "@/features/messages/pin/pinSlice";
 const MessageActions = React.memo(
-  ({ messageId, onReply, userId, disableReply }) => {
+  ({ messageId, onReply, onDelete, userId, disableReply }) => {
     const renderCount = useRef(0);
     renderCount.current += 1;
     console.log(`MessageActions renders: ${renderCount.current}`);
@@ -92,6 +89,7 @@ const MessageActions = React.memo(
             />
           </div>
         )} */}
+
         <div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -111,14 +109,25 @@ const MessageActions = React.memo(
                 <Pin className="h-4 w-4 mr-2" />
                 Pin message
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Forward className="h-4 w-4 mr-2" />
-                Forward message
-              </DropdownMenuItem>
-              <DropdownMenuItem className="text-destructive">
-                <Trash2 className="h-4 w-4 mr-2" />
-                Delete message
-              </DropdownMenuItem>
+              {!disableReply && (
+                <>
+                  <DropdownMenuItem>
+                    <Forward className="h-4 w-4 mr-2" />
+                    Forward message
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="text-destructive"
+                    onClick={() => {
+                      if (window.confirm("Delete this message?")) {
+                        onDelete?.(messageId);
+                      }
+                    }}
+                  >
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Delete message
+                  </DropdownMenuItem>
+                </>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

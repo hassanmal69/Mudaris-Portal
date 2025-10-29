@@ -17,6 +17,9 @@ const Members = ({ members }) => {
   const renderMembers = () => {
     setOpen(true);
   };
+  const renderCount = React.useRef(0);
+  renderCount.current += 1;
+  console.log(`members renders: ${renderCount.current}`);
   const fallbackColors = [
     "bg-rose-200",
     "bg-sky-200",
@@ -46,7 +49,6 @@ const Members = ({ members }) => {
       className="w-8 h-8 border rounded-sm border-[#c1c1c1] bg-transparent flex items-center justify-center"
       aria-hidden="true"
     >
-      {/* subtle fallback mark — empty-looking placeholder */}
       <AvatarImage
         src="https://cdn.shadcnstudio.com/ss-assets/avatar/avatar-5.png"
         alt="Hallie Richards"
@@ -54,13 +56,15 @@ const Members = ({ members }) => {
       />
     </Avatar>
   );
-console.log('members are ',members);
-  const filteredUsers = (members || []).filter((m) => {
-    const name = (m.user_profiles?.full_name || "").toLowerCase();
-    const email = (m.user_profiles?.email || "").toLowerCase();
+  console.log("members are ", members);
+  const filteredUsers = React.useMemo(() => {
     const term = search.toLowerCase();
-    return name.includes(term) || email.includes(term);
-  });
+    return (members || []).filter((m) => {
+      const name = (m.user_profiles?.full_name || "").toLowerCase();
+      const email = (m.user_profiles?.email || "").toLowerCase();
+      return name.includes(term) || email.includes(term);
+    });
+  }, [members, search]);
 
   return (
     <>
@@ -162,4 +166,4 @@ console.log('members are ',members);
   );
 };
 
-export default Members;
+export default React.memo(Members);

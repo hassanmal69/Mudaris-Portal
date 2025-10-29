@@ -286,8 +286,18 @@ export default function useMessages() {
       }
     };
 
-    const subscription = supabase
-      .channel("public:messages")
+    const handleDelete = async (payload) => {
+      const deletedId = payload.old?.id;
+      if (!deletedId) return;
+      // remove from local state
+      dispatch(
+        setMessages(messagesRef.current.filter((m) => m.id !== deletedId))
+      );
+    };
+
+    const channel = supabase.channel("public:messages");
+
+    channel
       .on(
         "postgres_changes",
         {
@@ -298,12 +308,41 @@ export default function useMessages() {
         },
         handleInsert
       )
+      .on(
+        "postgres_changes",
+        {
+          event: "DELETE",
+          schema: "public",
+          table: "messages",
+          filter: groupId ? `channel_id=eq.${groupId}` : undefined,
+        },
+        handleDelete
+      )
       .subscribe();
 
     return () => {
-      supabase.removeChannel(subscription);
+      supabase.removeChannel(channel);
     };
   }, [dispatch, fullName, imageUrl, currentUserId, groupId]);
+
+  // delete a message (optimistic)
+  const deleteMessage = useCallback(
+    async (messageId) => {
+      const previous = messagesRef.current;
+      // optimistic remove
+      dispatch(setMessages(previous.filter((m) => m.id !== messageId)));
+      const { error } = await supabase
+        .from("messages")
+        .delete()
+        .eq("id", messageId);
+      if (error) {
+        console.error("Failed to delete message", error);
+        // revert
+        dispatch(setMessages(previous));
+      }
+    },
+    [dispatch]
+  );
 
   return {
     messages: filtered,
@@ -316,5 +355,6 @@ export default function useMessages() {
     containerRef,
     loaderRef,
     currentUserId,
+    deleteMessage,
   };
 }

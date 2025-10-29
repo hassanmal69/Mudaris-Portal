@@ -25,6 +25,7 @@ const MessageItem = ({
   toggleReaction,
   pickerOpenFor,
   setPickerOpenFor,
+  onDelete,
 }) => {
   const { profiles, created_at } = message || {};
   const { id, full_name, avatar_url } = profiles || {};
@@ -75,6 +76,7 @@ const MessageItem = ({
             setPickerOpenFor={setPickerOpenFor}
             toggleReaction={toggleReaction}
             userId={id}
+            onDelete={() => onDelete?.(message.id)}
           />
         </div>
         <div className="flex gap-2 items-center">

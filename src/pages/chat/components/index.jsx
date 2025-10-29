@@ -17,6 +17,7 @@ const Messages = () => {
     containerRef,
     loaderRef,
     hasMore,
+    deleteMessage,
   } = useMessages();
   const { groupId } = useParams();
   const { token } = useParams();
@@ -58,6 +59,7 @@ const Messages = () => {
         toggleReaction={toggleReaction}
         pickerOpenFor={pickerOpenFor}
         setPickerOpenFor={setPickerOpenFor}
+        onDelete={deleteMessage}
       />
     </section>
   );
