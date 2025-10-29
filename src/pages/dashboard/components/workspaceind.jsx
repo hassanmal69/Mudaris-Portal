@@ -1,5 +1,4 @@
 import React, { Suspense } from "react";
-import EditProfile from "@/pages/profile/components/editProfile.jsx";
 const Chat = React.lazy(() => import("../../chat/index.jsx"));
 
 const WorkSpaceInd = () => {
