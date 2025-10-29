@@ -9,6 +9,7 @@ const MessageList = ({
   toggleReaction,
   pickerOpenFor,
   setPickerOpenFor,
+  onDelete,
 }) => {
   const { groupId } = useParams();
   return (
@@ -22,6 +23,7 @@ const MessageList = ({
           toggleReaction={toggleReaction}
           pickerOpenFor={pickerOpenFor}
           setPickerOpenFor={setPickerOpenFor}
+          onDelete={onDelete}
         />
       ))}
       {/* <div className="relative pt-[56.25%]">

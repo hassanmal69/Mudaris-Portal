@@ -37,15 +37,20 @@ import { logOut } from "@/features/auth/authSlice.js";
 const Sidebar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { session } = useSelector((state) => state.auth);
   const [addChannelOpen, setAddChannelOpen] = useState(false);
   const [inviteOpen, setInviteOpen] = useState(false);
-  const { workspace_id, user_id, groupId } = useParams();
+  const { workspace_id, groupId } = useParams();
   const [visibleChannel, setVisibleChannel] = useState([]);
   const activeChannel = useSelector(selectActiveChannel);
-
+  const renderCount = React.useRef(0);
+  renderCount.current += 1;
+  console.log(`Sidebar renders: ${renderCount.current}`);
   const { currentWorkspace, loading } = useSelector(
     (state) => state.workSpaces
+  );
+  const sessionUserId = useSelector((state) => state.auth.session?.user?.id);
+  const sessionUserRole = useSelector(
+    (state) => state.auth.session?.user?.user_metadata?.user_role
   );
   const getUserFallback = (name, idx) => {
     // pick a color based on user id or index
@@ -60,26 +65,29 @@ const Sidebar = () => {
       </Avatar>
     );
   };
-  const channelFind = async () => {
+  const channelFind = React.useCallback(async () => {
+    // const userId = session?.user?.id;
+    if (!sessionUserId) return;
+
     const returnedChannels = await dispatch(
-      fetchChannelMembersbyUser(session?.user?.id)
+      fetchChannelMembersbyUser(sessionUserId)
     );
     const filtered = returnedChannels?.payload?.channel?.filter(
       (cm) => cm.channels.workspace_id === workspace_id
     );
     setVisibleChannel(filtered || []);
-  };
+  }, [dispatch, sessionUserId, workspace_id]);
   const handleLogout = () => {
     dispatch(logOut());
   };
   useEffect(() => {
-    if (session?.user?.id) {
+    if (sessionUserId) {
       channelFind();
     }
-  }, [session?.user?.id]);
+  }, [sessionUserId]);
 
   useEffect(() => {
-    if (!session?.user?.id) return;
+    if (!sessionUserId) return;
 
     channelFind(); // initial fetch
 
@@ -91,7 +99,7 @@ const Sidebar = () => {
           event: "*",
           schema: "public",
           table: "channel_members",
-          filter: `user_id=eq.${session.user.id}`,
+          filter: `user_id=eq.${sessionUserId}`,
         },
         () => {
           channelFind(); // refresh on any insert/update/delete
@@ -102,7 +110,7 @@ const Sidebar = () => {
     return () => {
       supabase.removeChannel(subscription);
     };
-  }, [session?.user?.id, workspace_id]);
+  }, [sessionUserId, workspace_id]);
 
   useEffect(() => {
     if (workspace_id) {
@@ -119,7 +127,7 @@ const Sidebar = () => {
   const users = useSelector(selectMembers);
 
   useEffect(() => {
-    if (!groupId && !session.user.id && visibleChannel.length > 0) {
+    if (!groupId && !sessionUserId && visibleChannel.length > 0) {
       const channelId = visibleChannel[0].channels.id;
       if (channelId) {
         navigate(`/workspace/${workspace_id}/group/${channelId}`);
@@ -128,10 +136,13 @@ const Sidebar = () => {
     }
   }, [visibleChannel, workspace_id]);
 
-  const handleChannelClick = (channel) => {
-    dispatch(setActiveChannel(channel.id));
-    navigate(`/workspace/${workspace_id}/group/${channel.id}`);
-  };
+  const handleChannelClick = React.useCallback(
+    (channel) => {
+      dispatch(setActiveChannel(channel.id));
+      navigate(`/workspace/${workspace_id}/group/${channel.id}`);
+    },
+    [dispatch, navigate, workspace_id]
+  );
 
   const fallbackColors = [
     "bg-rose-200",
@@ -157,10 +168,10 @@ const Sidebar = () => {
   };
 
   const handleIndividualMessage = async (u) => {
-    const token = u?.user_id.slice(0, 6) + `${session?.user?.id.slice(0, 6)}`;
+    const token = u?.user_id.slice(0, 6) + `${sessionUserId.slice(0, 6)}`;
     navigate(`/workspace/${workspace_id}/individual/${token}`);
     const res = {
-      sender_id: session?.user?.id,
+      sender_id: sessionUserId,
       receiver_id: u?.user_id,
       token,
     };
@@ -179,7 +190,7 @@ const Sidebar = () => {
       <InviteDialog open={inviteOpen} onOpenChange={setInviteOpen} />
       <SidebarContent className="h-full bg-(--sidebar) text-(--foreground) border-2 border-(--sidebar-border) px-2 py-4 flex flex-col gap-4">
         <SidebarHeader className="flex gap-2">
-          <Link to={`/dashboard/${session?.user?.id}`}>
+          <Link to={`/dashboard/${sessionUserId}`}>
             {currentWorkspace?.avatar_url ? (
               <Avatar className="w-16 h-16 rounded-none">
                 <AvatarImage
@@ -204,33 +215,30 @@ const Sidebar = () => {
               : currentWorkspace?.workspace_name || "Workspace"}
           </span>
         </SidebarHeader>
-        <SidebarGroup className='flex flex-col gap-2 border-y-2 w-full border-(--sidebar-border)'>
+        <SidebarGroup className="flex flex-col gap-2 border-y-2 w-full border-(--sidebar-border)">
           <SidebarGroupLabel className="text-(--sidebar-foreground) font-normal text-[16px]">
             Channels
           </SidebarGroupLabel>
           <SidebarMenu>
-            {visibleChannel.map((cm) => {
-              const channel = cm.channels;
-              const isActive = activeChannel?.id === channel.id;
-              return (
-                <SidebarMenuItem key={channel.id}>
-                  <div
-                    onClick={() => handleChannelClick(channel)}
-                    className={`flex items-center gap-2 px-2 py-1 cursor-pointer 
-                      ${isActive
-                        ? "bg-(--sidebar-accent) text-white"
-                        : "hover:bg-(--sidebar-accent)"
+            {visibleChannel.map(({ channels }) => (
+              <SidebarMenuItem key={channels.id}>
+                <div
+                  onClick={() => handleChannelClick(channels)}
+                  className={`flex items-center gap-2 px-2 py-1 cursor-pointer 
+                      ${
+                        activeChannel?.id === channels.id
+                          ? "bg-(--sidebar-accent) text-white"
+                          : "hover:bg-(--sidebar-accent)"
                       }`}
-                  >
-                    #
-                    <span className="font-normal text-sm">
-                      {channel.channel_name}
-                    </span>
-                  </div>
-                </SidebarMenuItem>
-              );
-            })}
-            {session.user.user_metadata.user_role === "admin" && (
+                >
+                  #
+                  <span className="font-normal text-sm">
+                    {channels.channel_name}
+                  </span>
+                </div>
+              </SidebarMenuItem>
+            ))}
+            {sessionUserRole === "admin" && (
               <Button
                 size="sm"
                 className="mt-2 p-0 mx-1 my-0 w-[50%] bg-transparent cursor-pointer text-gray-400 text-[14px] flex items-center gap-2 justify-center hover:bg-transparent hover:text-white hover:border-[#fff] transition-all delay-150 duration-300 border-none"
@@ -245,7 +253,7 @@ const Sidebar = () => {
             Apps
           </SidebarGroupLabel>
           <SidebarMenu>
-            <SidebarMenuItem>
+            {/*  <SidebarMenuItem>
               <div
                 className={`flex items-center gap-2 px-2 py-1 cursor-pointer 
                     hover:bg-(--sidebar-accent) font-medium text-sm
@@ -270,7 +278,7 @@ const Sidebar = () => {
                 Economic Calendar
 
               </div>
-            </SidebarMenuItem>
+            </SidebarMenuItem> */}
             <SidebarGroupLabel className="text-(--sidebar-foreground) font-normal text-[16px]">
               Direct Messages
             </SidebarGroupLabel>
@@ -295,7 +303,7 @@ const Sidebar = () => {
           </SidebarMenu>
         </SidebarGroup>
         <SidebarFooter className="mt-auto pb-2">
-          {session.user.user_metadata.user_role === "admin" && (
+          {sessionUserRole === "admin" && (
             <Button
               variant="default"
               size="sm"
@@ -309,7 +317,7 @@ const Sidebar = () => {
         <button className="text-[#556cd6]" onClick={handleLogout}>
           Sign Out
         </button>
-      </SidebarContent >
+      </SidebarContent>
     </>
   );
 };
