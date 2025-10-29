@@ -250,6 +250,9 @@ const Sidebar = () => {
                 className={`flex items-center gap-2 px-2 py-1 cursor-pointer 
                     hover:bg-(--sidebar-accent) font-medium text-sm
                   `}
+                onClick={() =>
+                  navigate(`/workspace/${workspace_id}/market`)
+                }
               >
                 Market Insight
 
@@ -260,6 +263,9 @@ const Sidebar = () => {
                 className={`flex items-center gap-2 px-2 py-1 cursor-pointer 
                     hover:bg-(--sidebar-accent) font-medium text-sm
                   `}
+                onClick={() =>
+                  navigate(`/workspace/${workspace_id}/calendar`)
+                }
               >
                 Economic Calendar
 
@@ -286,14 +292,6 @@ const Sidebar = () => {
                 Student's Assistant
               </div>
             </SidebarMenuItem>
-            <Button
-              size="sm"
-              className="mt-2 p-0 mx-1 my-0 w-[50%] bg-transparent cursor-pointer text-gray-400 text-[14px] flex items-center gap-2 justify-center hover:bg-transparent hover:text-white hover:border-[#fff] transition-all delay-150 duration-300 border-none"
-              onClick={() => setAddChannelOpen(true)}
-            >
-              <PlusIcon className="w-4 h-4 bg-black/40 rounded text-gray-500" />
-              Add Chats
-            </Button>
           </SidebarMenu>
         </SidebarGroup>
         <SidebarFooter className="mt-auto pb-2">
