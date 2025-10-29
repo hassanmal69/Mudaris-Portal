@@ -1,3 +1,4 @@
+import React from "react";
 import MessageActions from "./MessageActions.jsx";
 import MessageContent from "./MessageContent.jsx";
 import Reactions from "./Reactions.jsx";
@@ -17,6 +18,7 @@ const fallbackColors = [
   "bg-violet-200",
   "bg-fuchsia-200",
 ];
+
 const MessageItem = ({
   message,
   currentUserId,
@@ -27,10 +29,9 @@ const MessageItem = ({
   const { profiles, created_at } = message || {};
   const { id, full_name, avatar_url } = profiles || {};
   const dispatch = useDispatch();
-  const getUserFallback = (name, idx) => {
-    // pick a color based on user id or index
-    const color = fallbackColors[idx % fallbackColors.length];
 
+  const getUserFallback = React.useCallback((name, idx) => {
+    const color = fallbackColors[idx % fallbackColors.length];
     return (
       <Avatar className="w-7 h-7 border-2 border-white rounded-sm flex items-center justify-center">
         <AvatarFallback
@@ -40,7 +41,16 @@ const MessageItem = ({
         </AvatarFallback>
       </Avatar>
     );
-  };
+  }, []);
+
+  const handleReply = React.useCallback(() => {
+    dispatch(openReplyDrawer(message));
+  }, [dispatch, message]);
+
+  const handleOpenEmoji = React.useCallback(() => {
+    setPickerOpenFor(message.id);
+  }, [setPickerOpenFor, message]);
+
   return (
     <div className="flex gap-2  items-start ">
       {message.profiles?.avatar_url ? (
@@ -59,8 +69,8 @@ const MessageItem = ({
         <div className="absolute right-2 top-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-150 z-10">
           <MessageActions
             messageId={message.id}
-            onReply={() => dispatch(openReplyDrawer(message))}
-            onEmoji={() => setPickerOpenFor(message.id)}
+            onReply={handleReply}
+            onEmoji={handleOpenEmoji}
             pickerOpenFor={pickerOpenFor}
             setPickerOpenFor={setPickerOpenFor}
             toggleReaction={toggleReaction}
@@ -108,6 +118,7 @@ const MessageItem = ({
 };
 
 export default MessageItem;
+
 const LocalTime = ({ utcString }) => {
   const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
