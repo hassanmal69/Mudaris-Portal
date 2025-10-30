@@ -16,6 +16,7 @@ const Market = () => {
         <iframe
           src="https://capital-template.beehiiv.com/"
           width="100%"
+            loading="lazy"
           height="100%"
           style={{ border: "none" }}
           title="Market Insight"

@@ -10,26 +10,28 @@ export const getFromSupabase = async (tableName, data, eqTable, reqTable) => {
   if (typeof tableName !== "string" || !tableName.trim()) {
     return { data: null, error: new Error("Invalid table name") };
   }
-  if (!data) {
+  if (!Array.isArray(data) || data.length === 0) {
     return { data: null, error: new Error("Invalid data payload") };
   }
 
   try {
-    const { data: insertedData, error: sbError } = await supabase
-      .from(tableName)
-      .select(data.join(","))
-      .eq(eqTable, reqTable);
-    if (sbError) {
-      console.error(
-        `Supabase getting error on "${tableName}":`,
-        sbError.message
-      );
-      return { data: null, error: new Error("Database get failed") };
+    let query = supabase.from(tableName).select(data.join(","));
+    
+    // ✅ Only apply .eq() when both values are provided
+    if (eqTable && reqTable) {
+      query = query.eq(eqTable, reqTable);
     }
 
-    return { data: insertedData, error: null };
+    const { data: result, error } = await query;
+    if (error) {
+      console.error(`Supabase getting error on "${tableName}":`, error.message);
+      return { data: null, error };
+    }
+
+    return { data: result, error: null };
   } catch (err) {
-    console.error(`Unexpected error in postToSupabase:`, err);
-    return { data: null, error: new Error("Internal server error") };
+    console.error(`Unexpected error in getFromSupabase:`, err);
+    return { data: null, error: err };
   }
 };
+
