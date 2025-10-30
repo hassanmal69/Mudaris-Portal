@@ -1,9 +1,9 @@
+import React from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { supabase } from "@/services/supabaseClient";
 import { addMessage, setMessages } from "@/features/messages/messageSlice";
-
 const PAGE_SIZE = 20;
 
 export default function useMessages() {
@@ -22,11 +22,21 @@ export default function useMessages() {
   const loaderRef = useRef(null);
 
   const profilesCache = useRef(new Map());
-  const filtered = query
-    ? messages.filter((msg) =>
-        msg.content?.toLowerCase().includes(query.toLowerCase())
-      )
-    : messages;
+  // keep a ref to latest messages so callbacks/subscriptions can access up-to-date data
+  const messagesRef = useRef(messages);
+  useEffect(() => {
+    messagesRef.current = messages;
+  }, [messages]);
+
+  const filtered = React.useMemo(
+    () =>
+      query
+        ? messages.filter((msg) =>
+            msg.content?.toLowerCase().includes(query.toLowerCase())
+          )
+        : messages,
+    [messages, query]
+  );
   // 🔹 Load messages with sender profile
 
   const loadMessages = async (pageNum) => {
@@ -99,7 +109,8 @@ export default function useMessages() {
       setHasMore(false);
       return;
     }
-    dispatch(setMessages([...olderBatch, ...messages]));
+    // use latest messages from ref to avoid stale closure and unnecessary deps
+    dispatch(setMessages([...olderBatch, ...messagesRef.current]));
     setPage((p) => p + 1);
     setTimeout(() => {
       container.scrollTop = container.scrollHeight - oldScrollHeight;
@@ -118,6 +129,7 @@ export default function useMessages() {
     return () => observer.disconnect();
   }, [loadOlder]);
 
+  // listen for reaction changes and update the affected message using the latest messages (via ref)
   useEffect(() => {
     const subscription = supabase
       .channel("public:message_reactions")
@@ -153,7 +165,7 @@ export default function useMessages() {
           if (!error && data) {
             dispatch(
               setMessages(
-                messages.map((msg) =>
+                messagesRef.current.map((msg) =>
                   msg.id === affectedId
                     ? { ...msg, reactions: data.reactions || [] }
                     : msg
@@ -165,59 +177,62 @@ export default function useMessages() {
       )
       .subscribe();
     return () => supabase.removeChannel(subscription);
-  }, [messages, dispatch]);
+  }, [dispatch]);
   // toggle reaction
-  const toggleReaction = async (messageId, emoji) => {
-    const msg = messages.find((m) => m.id === messageId);
-    const alreadyReacted = msg.reactions?.some(
-      (r) => r.user_id === currentUserId && r.reaction_type === emoji
-    );
-    let updatedMessages;
-    if (alreadyReacted) {
-      await supabase
-        .from("message_reactions")
-        .delete()
-        .eq("message_id", messageId)
-        .eq("user_id", currentUserId)
-        .eq("reaction_type", emoji);
-      updatedMessages = messages.map((m) =>
-        m.id === messageId
-          ? {
-              ...m,
-              reactions: m.reactions.filter(
-                (r) =>
-                  !(r.user_id === currentUserId && r.reaction_type === emoji)
-              ),
-            }
-          : m
+  const toggleReaction = useCallback(
+    async (messageId, emoji) => {
+      const msg = messagesRef.current.find((m) => m.id === messageId);
+      const alreadyReacted = msg.reactions?.some(
+        (r) => r.user_id === currentUserId && r.reaction_type === emoji
       );
-    } else {
-      await supabase.from("message_reactions").upsert([
-        {
-          message_id: messageId,
-          user_id: currentUserId,
-          reaction_type: emoji,
-        },
-      ]);
-      updatedMessages = messages.map((m) =>
-        m.id === messageId
-          ? {
-              ...m,
-              reactions: [
-                ...m.reactions,
-                {
-                  user_id: currentUserId,
-                  reaction_type: emoji,
-                  id: "optimistic",
-                },
-              ],
-            }
-          : m
-      );
-    }
-    dispatch(setMessages(updatedMessages));
-    setPickerOpenFor(null);
-  };
+      let updatedMessages;
+      if (alreadyReacted) {
+        await supabase
+          .from("message_reactions")
+          .delete()
+          .eq("message_id", messageId)
+          .eq("user_id", currentUserId)
+          .eq("reaction_type", emoji);
+        updatedMessages = messagesRef.current.map((m) =>
+          m.id === messageId
+            ? {
+                ...m,
+                reactions: m.reactions.filter(
+                  (r) =>
+                    !(r.user_id === currentUserId && r.reaction_type === emoji)
+                ),
+              }
+            : m
+        );
+      } else {
+        await supabase.from("message_reactions").upsert([
+          {
+            message_id: messageId,
+            user_id: currentUserId,
+            reaction_type: emoji,
+          },
+        ]);
+        updatedMessages = messagesRef.current.map((m) =>
+          m.id === messageId
+            ? {
+                ...m,
+                reactions: [
+                  ...m.reactions,
+                  {
+                    user_id: currentUserId,
+                    reaction_type: emoji,
+                    id: "optimistic",
+                  },
+                ],
+              }
+            : m
+        );
+      }
+      dispatch(setMessages(updatedMessages));
+      setPickerOpenFor(null);
+    },
+    [currentUserId, dispatch]
+  );
 
   useEffect(() => {
     const handleInsert = async (payload) => {
@@ -271,8 +286,18 @@ export default function useMessages() {
       }
     };
 
-    const subscription = supabase
-      .channel("public:messages")
+    const handleDelete = async (payload) => {
+      const deletedId = payload.old?.id;
+      if (!deletedId) return;
+      // remove from local state
+      dispatch(
+        setMessages(messagesRef.current.filter((m) => m.id !== deletedId))
+      );
+    };
+
+    const channel = supabase.channel("public:messages");
+
+    channel
       .on(
         "postgres_changes",
         {
@@ -283,12 +308,41 @@ export default function useMessages() {
         },
         handleInsert
       )
+      .on(
+        "postgres_changes",
+        {
+          event: "DELETE",
+          schema: "public",
+          table: "messages",
+          filter: groupId ? `channel_id=eq.${groupId}` : undefined,
+        },
+        handleDelete
+      )
       .subscribe();
 
     return () => {
-      supabase.removeChannel(subscription);
+      supabase.removeChannel(channel);
     };
   }, [dispatch, fullName, imageUrl, currentUserId, groupId]);
+
+  // delete a message (optimistic)
+  const deleteMessage = useCallback(
+    async (messageId) => {
+      const previous = messagesRef.current;
+      // optimistic remove
+      dispatch(setMessages(previous.filter((m) => m.id !== messageId)));
+      const { error } = await supabase
+        .from("messages")
+        .delete()
+        .eq("id", messageId);
+      if (error) {
+        console.error("Failed to delete message", error);
+        // revert
+        dispatch(setMessages(previous));
+      }
+    },
+    [dispatch]
+  );
 
   return {
     messages: filtered,
@@ -301,5 +355,6 @@ export default function useMessages() {
     containerRef,
     loaderRef,
     currentUserId,
+    deleteMessage,
   };
 }

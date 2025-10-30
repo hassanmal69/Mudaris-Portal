@@ -9,22 +9,7 @@ import Topbar from "@/layout/topbar/index.jsx";
 import ThemeLayout from "@/layout/ThemeLayout.jsx";
 import UsersList from "@/pages/admin/index.jsx";
 import Calendar from "@/pages/calendar/index.jsx"
-const Market = () => {
-  return (
-    <div className="overflow-hidden">
-      <div style={{ height: "100vh", width: "100%", backgroundColor: "#fff" }}>
-        <iframe
-          src="https://capital-template.beehiiv.com/"
-          width="100%"
-            loading="lazy"
-          height="100%"
-          style={{ border: "none" }}
-          title="Market Insight"
-        ></iframe>
-      </div>
-    </div>
-  )
-}
+
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -72,7 +57,6 @@ export const router = createBrowserRouter([
         ),
         children: [
           { path: "", element: <WorkSpaceInd /> },
-          { path: "market", element: <Market /> },
           { path: "calendar", element: <Calendar /> },
           { path: "group/:groupId", element: <WorkSpaceInd /> },
           { path: "individual/:token", element: <WorkSpaceInd /> },
