@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { MessageSquare } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
@@ -10,17 +10,19 @@ import {
 } from "@/components/ui/dropdown-menu.jsx";
 import { MoreHorizontalIcon, Pin, Trash2, Forward } from "lucide-react";
 import { Button } from "@/components/ui/button.jsx";
+
 import {
   fetchPinnedMessages,
   togglePinMessage,
 } from "@/features/messages/pin/pinSlice";
 const MessageActions = React.memo(
-  ({ messageId, onReply, onDelete, userId, disableReply }) => {
+  ({ messageId, onReply, handleOpenDeleteDialog, userId, disableReply }) => {
     const renderCount = useRef(0);
     renderCount.current += 1;
     console.log(`MessageActions renders: ${renderCount.current}`);
     const dispatch = useDispatch();
     const { groupId } = useParams();
+
     // const displayName = useSelector(
     //   (state) => state.auth.user?.user_metadata?.displayName
     // );
@@ -49,20 +51,21 @@ const MessageActions = React.memo(
     );
 
     return (
-      <div className="absolute top-0 right-0 flex gap-1">
-        {/* from moiz --- if it is in pin message, reply button is disabled */}
-        {!disableReply && (
-          <button
-            type="button"
-            className="p-1  text-white transition-colors delay-150 duration-300 hover:bg-(--muted) rounded hover:text-[#2b092b]  cursor-pointer"
-            title="Reply"
-            onClick={onReply}
-          >
-            <MessageSquare className="w-4 h-4" />
-          </button>
-        )}
+      <>
+        <div className="absolute top-0 right-0 flex gap-1">
+          {/* from moiz --- if it is in pin message, reply button is disabled */}
+          {!disableReply && (
+            <button
+              type="button"
+              className="p-1  text-white transition-colors delay-150 duration-300 hover:bg-(--muted) rounded hover:text-[#2b092b]  cursor-pointer"
+              title="Reply"
+              onClick={onReply}
+            >
+              <MessageSquare className="w-4 h-4" />
+            </button>
+          )}
 
-        {/* <button
+          {/* <button
           type="button"
           className="p-1 text-white
         transition-colors delay-150 duration-300
@@ -72,7 +75,7 @@ const MessageActions = React.memo(
         >
           <SmilePlus className="w-4 h-4" />
         </button> */}
-        {/* {pickerOpenFor === messageId && (
+          {/* {pickerOpenFor === messageId && (
           <div className="absolute z-10 top-8 right-0">
             <EmojiPicker
               onEmojiClick={(emojiObj) => {
@@ -90,7 +93,6 @@ const MessageActions = React.memo(
           </div>
         )} */}
 
-        <div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -117,11 +119,7 @@ const MessageActions = React.memo(
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     className="text-destructive"
-                    onClick={() => {
-                      if (window.confirm("Delete this message?")) {
-                        onDelete?.(messageId);
-                      }
-                    }}
+                    onClick={() => handleOpenDeleteDialog(messageId)}
                   >
                     <Trash2 className="h-4 w-4 mr-2" />
                     Delete message
@@ -131,7 +129,7 @@ const MessageActions = React.memo(
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-      </div>
+      </>
     );
   }
 );

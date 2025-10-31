@@ -9,6 +9,7 @@ import { DialogTitle } from "@radix-ui/react-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
+import UserFallback from "@/components/ui/userFallback";
 
 const Members = ({ members }) => {
   const MAX_RENDER = 3;
@@ -20,33 +21,11 @@ const Members = ({ members }) => {
   const renderCount = React.useRef(0);
   renderCount.current += 1;
   console.log(`members renders: ${renderCount.current}`);
-  const fallbackColors = [
-    "bg-rose-200",
-    "bg-sky-200",
-    "bg-emerald-200",
-    "bg-amber-200",
-    "bg-violet-200",
-    "bg-fuchsia-200",
-  ];
-  const getUserFallback = (name, idx) => {
-    // pick a color based on user id or index
-    const color = fallbackColors[idx % fallbackColors.length];
-
-    return (
-      <Avatar className="w-7 h-7 border-2 border-white rounded-sm flex items-center justify-center">
-        <AvatarFallback
-          className={`text-[#333]  text-sm rounded-none font-semibold ${color}`}
-        >
-          {name?.[0]?.toUpperCase()}
-        </AvatarFallback>
-      </Avatar>
-    );
-  };
 
   // Placeholder avatar for "no members"
   const renderEmptyAvatar = () => (
     <Avatar
-      className="w-8 h-8 border rounded-sm border-[#c1c1c1] bg-transparent flex items-center justify-center"
+      className="w-8 h-8 border  border-[#c1c1c1] bg-transparent flex items-center justify-center"
       aria-hidden="true"
     >
       <AvatarImage
@@ -82,7 +61,7 @@ const Members = ({ members }) => {
                 return avatar ? (
                   <Avatar
                     key={user.id}
-                    className="w-8 h-8 border rounded-sm border-[#c1c1c1] shadow"
+                    className="w-8 h-8 border border-[#c1c1c1] shadow"
                   >
                     <AvatarImage src={avatar} alt={name} />
                     <AvatarFallback>
@@ -90,7 +69,9 @@ const Members = ({ members }) => {
                     </AvatarFallback>
                   </Avatar>
                 ) : (
-                  <div key={user.id}>{getUserFallback(name, idx)}</div>
+                  <div key={user.id}>
+                    <UserFallback name={name} _idx={idx} />
+                  </div>
                 );
               })}
 
@@ -142,7 +123,9 @@ const Members = ({ members }) => {
                       </Avatar>
                     ) : (
                       // Use fallback if no avatar
-                      <div>{getUserFallback(name, idx)}</div>
+                      <div>
+                        <UserFallback name={name} _idx={idx} />
+                      </div>
                     )}
 
                     <div className="flex flex-col">

@@ -14,16 +14,8 @@ import {
 } from "@/components/ui/avatar.jsx";
 import { Button } from "@/components/ui/button.jsx";
 import { supabase } from "@/services/supabaseClient.js"; // <-- add this import
-
-// 6 fallback colors
-const fallbackColors = [
-  "bg-rose-200",
-  "bg-sky-200",
-  "bg-emerald-200",
-  "bg-amber-200",
-  "bg-violet-200",
-  "bg-fuchsia-200",
-];
+import WorkspaceFallback from "@/components/ui/workspaceFallback";
+import UserFallback from "@/components/ui/userFallback";
 
 const WorkspaceCard = ({ workspace, index }) => {
   const dispatch = useDispatch();
@@ -69,38 +61,6 @@ const WorkspaceCard = ({ workspace, index }) => {
     };
   }, [workspace.id]);
 
-  // Helper: Workspace fallback avatar
-  const getWorkspaceFallback = (name, idx) => {
-    const color = fallbackColors[idx % fallbackColors.length];
-    return (
-      <Avatar
-        className={`w-16 h-16 rounded-sm  flex items-center justify-center`}
-      >
-        <AvatarFallback
-          className={`text-[#222] ${color} rounded-none text-xl font-bold`}
-        >
-          {name?.[0]?.toUpperCase()}
-        </AvatarFallback>
-      </Avatar>
-    );
-  };
-
-  // Helper: Member fallback avatar
-  const getMemberFallback = (name, idx) => {
-    const color = fallbackColors[idx % fallbackColors.length];
-    return (
-      <Avatar
-        key={name + idx}
-        className={`w-7 h-7 border-2 border-white rounded-sm  flex items-center justify-center`}
-      >
-        <AvatarFallback
-          className={`text-[#222] text-sm rounded-none ${color} font-semibold`}
-        >
-          {name?.[0]?.toUpperCase()}
-        </AvatarFallback>
-      </Avatar>
-    );
-  };
   const launchTo = firstChannelId
     ? `/workspace/${workspace.id}/group/${firstChannelId}`
     : `/workspace/${workspace.id}`;
@@ -119,7 +79,7 @@ const WorkspaceCard = ({ workspace, index }) => {
             </AvatarFallback>
           </Avatar>
         ) : (
-          getWorkspaceFallback(workspace.workspace_name, index)
+          <WorkspaceFallback name={workspace.workspace_name} _idx={index} />
         )}
 
         <div className="flex flex-col gap-2">
@@ -144,7 +104,10 @@ const WorkspaceCard = ({ workspace, index }) => {
                       />
                     </Avatar>
                   ) : (
-                    getMemberFallback(m.user_profiles?.full_name, idx)
+                    <UserFallback
+                      name={m.user_profiles?.full_name}
+                      _idx={idx}
+                    />
                   )
                 )
               )}
