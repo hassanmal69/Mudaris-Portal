@@ -6,7 +6,8 @@ import React, {
   useImperativeHandle,
   useState,
 } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import UserFallback from "@/components/ui/userFallback";
 
 export const MentionList = forwardRef((props, ref) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -17,28 +18,7 @@ export const MentionList = forwardRef((props, ref) => {
       props.command({ id: item.id, label: item.label });
     }
   };
-  const fallbackColors = [
-    "bg-rose-200",
-    "bg-sky-200",
-    "bg-emerald-200",
-    "bg-amber-200",
-    "bg-violet-200",
-    "bg-fuchsia-200",
-  ];
-  const getUserFallback = (name, idx) => {
-    // pick a color based on user id or index
-    const color = fallbackColors[idx % fallbackColors.length];
 
-    return (
-      <Avatar className="w-7 h-7 border-2 border-white rounded-sm flex items-center justify-center">
-        <AvatarFallback
-          className={`text-[#333]  text-sm font-semibold ${color}`}
-        >
-          {name?.[0]?.toUpperCase()}
-        </AvatarFallback>
-      </Avatar>
-    );
-  };
   const upHandler = () => {
     setSelectedIndex(
       (selectedIndex + props.items.length - 1) % props.items.length
@@ -93,7 +73,7 @@ export const MentionList = forwardRef((props, ref) => {
                   <AvatarImage src={item.avatar_url} alt={item.full_name} />
                 </Avatar>
               ) : (
-                getUserFallback(item.label, index)
+                <UserFallback name={item.label} _idx={index} />
               )}
               <div className="flex flex-col gap-0">
                 <h2 className="font-bold text-[#eee]">{item.label}</h2>

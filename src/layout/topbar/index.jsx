@@ -113,6 +113,8 @@ const Topbar = () => {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
           <Input
             type="text"
+            name="search"
+            id="search"
             placeholder="Search messages"
             value={query}
             onChange={(e) => debouncedQuery(e.target.value)}
