@@ -81,6 +81,7 @@ const SideBarChannels = ({ session, workspace_id,groupId, setAddChannelOpen }) =
             </SidebarGroupLabel>
             <SidebarMenu>
                 {visibleChannel.map((cm) => {
+                    console.log('channels are',visibleChannel);
                     const channel = cm.channels;
                     const isActive = activeChannel?.id === channel.id;
                     return (
