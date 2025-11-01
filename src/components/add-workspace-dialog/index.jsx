@@ -78,7 +78,6 @@ const AddWorkspaceDialog = ({ open, onClose }) => {
     )
       .unwrap()
       .then((data) => {
-        console.log("workspace created", data);
         setTimeout(() => resetWorkspaceState(setWorkspaceData, setStep), 300);
         handleClose();
       })
@@ -112,7 +111,6 @@ const AddWorkspaceDialog = ({ open, onClose }) => {
         })
       ).unwrap();
 
-      console.log("workspace created", workspace);
 
       // // 2. Now send the invitations with the new workspace_id
       const res = await fetch(

@@ -25,22 +25,29 @@ export const createWorkspace = createAsyncThunk(
 
         avatarUrl = publicUrl;
       }
+      const {
+        data: { session },
+        error,
+      } = await supabase.auth.getSession();
+      if (error) {
+        console.log('error caling session', error);
+      }
+      // 2. Call the Edge Function
+      const res = await fetch(
+        `https://surdziukuzjqthcfqoax.supabase.co/functions/v1/createWorkspace`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session.access_token}`,
+          },
+          body: JSON.stringify({ name, description, avatarUrl, adminId }),
+        }
+      );
 
-      // 2. Create workspace
-      const { data: workspace, error: workspaceError } = await supabase
-        .from("workspaces")
-        .insert({
-          workspace_name: name,
-          description,
-          avatar_url: avatarUrl,
-          owner_id: adminId,
-        })
-        .select()
-        .single();
-
-      if (workspaceError) throw workspaceError;
-
-      return workspace; // return full workspace object
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to create workspace");
+      return data.workspace;
     } catch (error) {
       return rejectWithValue(error.message);
     }

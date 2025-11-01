@@ -18,7 +18,7 @@ const Dashboard = () => {
   const [isOpen, setisOpen] = useState(false);
   const isAdmin = session?.user?.user_metadata?.user_role === "admin";
   return (
-    <section className="flex flex-col min-h-screen">
+    <section className="flex flex-col bg-(--background) text--(--foreground) min-h-screen">
       <div className="h-dvh z-10 w-dvw absolute overflow-hidden pointer-events-none">
         {isOpen && <CreateWorkspace />}
       </div>
@@ -51,12 +51,12 @@ const Dashboard = () => {
           </h1>
         </div>
 
-        <Card className="rounded-2xl border-[#111] text-gray-300 bg-black/30 relative flex flex-col">
+        <Card className="rounded-2xl border-[#111] text-(--foreground) bg-black/30 relative flex flex-col">
           <CardHeader>
-            <CardTitle className="text-gray-300 font-black">
+            <CardTitle className=" font-black">
               Workspace
             </CardTitle>
-            <CardDescription className="text-gray-300 responsive_ws_card_desc">
+            <CardDescription className="responsive_ws_card_desc">
               Manage your current workspaces and collaborate with your team.
             </CardDescription>
           </CardHeader>
@@ -67,7 +67,7 @@ const Dashboard = () => {
 
         {isAdmin && (
           <div className="rounded-xl text-center space-y-4">
-            <div className="text-lg font-medium text-gray-300 z-50 responsive_create_p">
+            <div className="text-lg font-medium text-(--foreground) z-50 responsive_create_p">
               Want to create workspaces for more batches?
             </div>
             <CreateWorkspaceButton onClick={() => setisOpen((prev) => !prev)} />
@@ -76,13 +76,13 @@ const Dashboard = () => {
       </main>
 
       {/* footer stays at bottom */}
-      <footer className="w-full text-sm text-center py-5 text-gray-300 responsive_footer">
+      <footer className="w-full text-sm text-center py-5 text-(--foreground) responsive_footer">
         © 2025{" "}
-        <span className="text-gray-300 font-medium">Mudaris Academy</span>.
+        <span className=" font-medium">Mudaris Academy</span>.
         Developed by{" "}
         <a
           href="https://asrnova.com"
-          className="text-gray-300 font-medium underline"
+          className=" font-medium underline"
         >
           asrnova.com
         </a>
