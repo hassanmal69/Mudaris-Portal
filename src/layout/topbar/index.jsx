@@ -26,7 +26,7 @@ function debounce(fn, delay) {
 const Topbar = () => {
   const dispatch = useDispatch();
   const { groupId } = useParams();
-
+  // const [directChannel, setDirectChannel] = useState('')
   // --- State ---
   const [isMobile, setIsMobile] = useState(window.innerWidth < 860);
   const [mode, setMode] = useState(localStorage.getItem("theme") || "dark");
@@ -63,9 +63,12 @@ const Topbar = () => {
     selectChannelMembers(groupId),
     shallowEqual
   );
-  const directChannel2 = useSelector((state) => state.direct.directChannel);
   const visibility = channel?.visibility || "private";
-  const channel_name = channel?.channel_name || directChannel2 || "channel";
+  // const directChannel = 'Support'
+  // console.log('directChannel2', directChannel);
+  const directChannel = useSelector((state) => state?.direct?.directChannel);
+  console.log('irtahlm',directChannel);
+  const channel_name = channel?.channel_name || directChannel || "channel";
 
   // --- Search Query ---
   const query = useSelector((state) => state.search.query);

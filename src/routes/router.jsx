@@ -9,6 +9,7 @@ import Topbar from "@/layout/topbar/index.jsx";
 import ThemeLayout from "@/layout/ThemeLayout.jsx";
 import UsersList from "@/pages/admin/index.jsx";
 import Calendar from "@/pages/calendar/index.jsx"
+import Market from "@/pages/market/index.jsx";
 
 export const router = createBrowserRouter([
   {
@@ -58,6 +59,7 @@ export const router = createBrowserRouter([
         children: [
           { path: "", element: <WorkSpaceInd /> },
           { path: "calendar", element: <Calendar /> },
+          { path: "market", element: <Market /> },
           { path: "group/:groupId", element: <WorkSpaceInd /> },
           { path: "individual/:token", element: <WorkSpaceInd /> },
         ],
