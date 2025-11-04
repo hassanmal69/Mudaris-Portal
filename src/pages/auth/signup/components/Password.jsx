@@ -107,6 +107,7 @@ const Password = ({ onBack, token, invite, file }) => {
           .update({
             full_name: fullName,
             avatar_url: publicUrl,
+            role: "user"
           })
           .eq("id", userId);
 

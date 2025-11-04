@@ -32,8 +32,6 @@ export const fetchWorkspaceMembers = createAsyncThunk(
 export const addWorkspaceMember = createAsyncThunk(
   "workspaceMembers/addWorkspaceMember",
   async ({ userId, workspaceId, role }, { rejectWithValue }) => {
-    console.log("these values are coming in redux",
-      userId, workspaceId, role);
     const { error } = await supabase
       .from("workspace_members")
       .insert([{ user_id: userId, workspace_id: workspaceId }]);
@@ -44,6 +42,7 @@ export const addWorkspaceMember = createAsyncThunk(
 );
 
 // Async thunk to fetch user's workspace
+//hassan modifing it to make it 
 export const fetchUserWorkspace = createAsyncThunk(
   "workspace/fetchUserWorkspace",
   async (userId) => {
@@ -60,7 +59,7 @@ export const fetchUserWorkspace = createAsyncThunk(
     )
   `
       )
-      .eq("user_id", userId);
+      .eq("user_id", userId)
     if (error) throw error;
     return data;
   }
