@@ -13,6 +13,6 @@ const UserFallback = React.memo(({ name, _idx }) => {
       </AvatarFallback>
     </Avatar>
   );
-}, []);
+});
 
 export default UserFallback;

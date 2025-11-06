@@ -8,7 +8,7 @@ import SidebarLayout from "@/layout/SidebarLayout.jsx";
 import Topbar from "@/layout/topbar/index.jsx";
 import ThemeLayout from "@/layout/ThemeLayout.jsx";
 import UsersList from "@/pages/admin/index.jsx";
-import Calendar from "@/pages/calendar/index.jsx"
+import Calendar from "@/pages/calendar/index.jsx";
 import Market from "@/pages/market/index.jsx";
 
 export const router = createBrowserRouter([

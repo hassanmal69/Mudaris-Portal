@@ -53,9 +53,7 @@ const Dashboard = () => {
 
         <Card className="rounded-2xl border-[#111] text-(--foreground) bg-black/30 relative flex flex-col">
           <CardHeader>
-            <CardTitle className=" font-black">
-              Workspace
-            </CardTitle>
+            <CardTitle className=" font-black">Workspace</CardTitle>
             <CardDescription className="responsive_ws_card_desc">
               Manage your current workspaces and collaborate with your team.
             </CardDescription>
@@ -77,13 +75,9 @@ const Dashboard = () => {
 
       {/* footer stays at bottom */}
       <footer className="w-full text-sm text-center py-5 text-(--foreground) responsive_footer">
-        © 2025{" "}
-        <span className=" font-medium">Mudaris Academy</span>.
-        Developed by{" "}
-        <a
-          href="https://asrnova.com"
-          className=" font-medium underline"
-        >
+        © 2025 <span className=" font-medium">Mudaris Academy</span>. Developed
+        by{" "}
+        <a href="https://asrnova.com" className=" font-medium underline">
           asrnova.com
         </a>
       </footer>

@@ -36,25 +36,46 @@ const Members = ({ members }) => {
     </Avatar>
   );
   console.log("members are ", members);
+  // Sort members alphabetically by full name (fallback to email) and memoize
+  const sortedMembers = React.useMemo(() => {
+    const list = (members || []).slice();
+    list.sort((a, b) => {
+      const aName = (
+        a.user_profiles?.full_name ||
+        a.user_profiles?.email ||
+        ""
+      ).toLowerCase();
+      const bName = (
+        b.user_profiles?.full_name ||
+        b.user_profiles?.email ||
+        ""
+      ).toLowerCase();
+      if (aName < bName) return -1;
+      if (aName > bName) return 1;
+      return 0;
+    });
+    return list;
+  }, [members]);
+
   const filteredUsers = React.useMemo(() => {
     const term = search.toLowerCase();
-    return (members || []).filter((m) => {
+    return sortedMembers.filter((m) => {
       const name = (m.user_profiles?.full_name || "").toLowerCase();
       const email = (m.user_profiles?.email || "").toLowerCase();
       return name.includes(term) || email.includes(term);
     });
-  }, [members, search]);
+  }, [sortedMembers, search]);
 
   return (
     <>
       <div className="flex items-center gap-1 py-1 px-1 border border-[#c1c1c1] rounded-sm member-container">
         <div
           className="flex items-center gap-2 cursor-pointer"
-          onClick={members.length > 0 ? renderMembers : undefined}
+          onClick={sortedMembers.length > 0 ? renderMembers : undefined}
         >
-          {members.length === 0
+          {sortedMembers.length === 0
             ? renderEmptyAvatar()
-            : members.slice(0, MAX_RENDER).map((user, idx) => {
+            : sortedMembers.slice(0, MAX_RENDER).map((user, idx) => {
                 const name = user.user_profiles?.full_name;
                 const avatar = user.user_profiles?.avatar_url;
 
@@ -75,9 +96,9 @@ const Members = ({ members }) => {
                 );
               })}
 
-          {members.length > MAX_RENDER && (
+          {sortedMembers.length > MAX_RENDER && (
             <span className="text-[#eee] text-[14px]">
-              {members.length - MAX_RENDER}+
+              {sortedMembers.length - MAX_RENDER}+
             </span>
           )}
         </div>
