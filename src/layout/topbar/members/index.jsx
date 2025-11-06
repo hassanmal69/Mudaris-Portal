@@ -68,9 +68,9 @@ const Members = ({ members }) => {
 
   return (
     <>
-      <div className="flex items-center gap-1 py-1 px-1 border border-[#c1c1c1] rounded-sm member-container">
+      <div className="flex items-center gap-1 py-1 px-1 border border-(--border) w-[40%] max-w-[100%] rounded-sm member-container mr-1.5">
         <div
-          className="flex items-center gap-2 cursor-pointer"
+          className="flex items-center  cursor-pointer"
           onClick={sortedMembers.length > 0 ? renderMembers : undefined}
         >
           {sortedMembers.length === 0
@@ -82,7 +82,7 @@ const Members = ({ members }) => {
                 return avatar ? (
                   <Avatar
                     key={user.id}
-                    className="w-8 h-8 border border-[#c1c1c1] shadow"
+                    className="w-8 h-8 border border-(--border) shadow mr-[-10px]"
                   >
                     <AvatarImage src={avatar} alt={name} />
                     <AvatarFallback>
@@ -91,7 +91,7 @@ const Members = ({ members }) => {
                   </Avatar>
                 ) : (
                   <div key={user.id}>
-                    <UserFallback name={name} _idx={idx} />
+                    <UserFallback cn={"mr-[-10px]"} name={name} _idx={idx} />
                   </div>
                 );
               })}

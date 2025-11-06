@@ -20,7 +20,6 @@ const Messages = () => {
     deleteMessage,
   } = useMessages();
   const { groupId } = useParams();
-  const { token } = useParams();
   const channel = useSelector(
     (state) => state.channels.byId[groupId],
     shallowEqual
@@ -39,11 +38,17 @@ const Messages = () => {
         {hasMore ? "loading older messages" : "No more messages"}
       </div>
       {channel && (
-        <div className="relative mb-3 responsive_channel_header">
+        <div className="relative mb-3 responsive_channel_header flex flex-col gap-1 p-3.5 border-b border-(--border)">
           <h1 className=" text-3xl text-white font-black ">{channel_name}</h1>
           <p className="text-gray-500">{channel_desc}</p>
           {channel_visbibility === "private" && userRole === "admin" && (
-            <Button onClick={() => setOpenDialog(true)}>add user</Button>
+            <Button
+              variant={"outline"}
+              className="border-gray-500 w-[80px] text-gray-500 hover:bg-(--primary) hover:text-(--primary-foreground)  hover:cursor-pointer"
+              onClick={() => setOpenDialog(true)}
+            >
+              add user
+            </Button>
           )}
         </div>
       )}
