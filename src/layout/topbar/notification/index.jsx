@@ -131,12 +131,12 @@ export function Notifications() {
       <DropdownMenuTrigger className="relative">
         <Bell className="h-6 w-6 text-[#eee]" />
         {unread.length > 0 && (
-          <Badge className="absolute -top-2 -right-2 rounded-full px-2 py-0.5">
+          <Badge className="absolute text-(--foreground) -top-2 -right-2 rounded-full px-2 py-0.5">
             {unread.length}
           </Badge>
         )}
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-64">
+      <DropdownMenuContent className="w-64 text-(--foreground)">
         {notification.length === 0 ? (
           <DropdownMenuItem>No notifications</DropdownMenuItem>
         ) : (

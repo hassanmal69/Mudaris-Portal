@@ -121,7 +121,7 @@ const Login = () => {
               <button
                 type="submit"
                 className="w-full font-poppins  bg-purple/80 bg-[#58259C] backdrop-blur-sm text-white py-2 rounded-lg hover:bg-purple transition flex items-center justify-center font-normal text-[16px] disabled:opacity-60 border border-white/20"
-                disabled={loading || isSubmitting}
+                disabled={loading }
                 aria-busy={loading}
               >
                 {loading ? (

@@ -22,8 +22,8 @@ const SideBarApps = ({ workspace_id }) => {
             .from('profiles')
             .select("full_name,id,avatar_url").eq('role', 'admin')
         if (error) console.log(error);
-        setUsers(data)
-        console.log('data is coming for direct ', data);
+        const filteredUsers = data.filter((m) => m.id != session?.user?.id)
+        setUsers(filteredUsers)
     }
     useEffect(() => {
         handleDirectProfile()
@@ -33,10 +33,9 @@ const SideBarApps = ({ workspace_id }) => {
         navigate(`/workspace/${workspace_id}/individual/${token}`);
         const res = {
             sender_id: session?.user?.id,
-            receiver_id: u?.user_id,
+            receiver_id: u?.id,
             token,
         };
-        console.log("name before dispatch:", u?.full_name);
         dispatch(newDirect(u?.full_name));
         const { error } = await postToSupabase("directMessagesChannel", res);
         if (error) console.log(error);
@@ -89,25 +88,6 @@ const SideBarApps = ({ workspace_id }) => {
                         </div>
                     </SidebarMenuItem>
                 ))}
-                {/* <SidebarMenuItem>
-                    <div
-                        className={`flex items-center gap-2 px-2 py-1 cursor-pointer 
-                    hover:bg-(--sidebar-accent) font-medium text-sm
-                  `}
-                    // onClick={() => }
-                    >
-                        Dr Mudaris
-                    </div>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                    <div
-                        className={`flex items-center gap-2 px-2 py-1 cursor-pointer 
-                    hover:bg-(--sidebar-accent) font-medium text-sm
-                  `}
-                    >
-                        Student's Assistant
-                    </div>
-                </SidebarMenuItem> */}
             </SidebarMenu>
         </SidebarGroup>
     )

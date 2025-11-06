@@ -10,7 +10,6 @@ const directSlice = createSlice({
   reducers: {
     newDirect: (state, action) => {
       state.directChannel = action.payload;
-      console.log("new value is updated in redux", state.directChannel);
     },
     setValue: (state, action) => {
       state.directChannel = action.payload;

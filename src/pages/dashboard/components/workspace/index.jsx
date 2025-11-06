@@ -43,7 +43,7 @@ const Workspace = () => {
   }, [dispatch]);
 
   const fetching = async () => {
-    const wsMember = await dispatch(fetchUserWorkspace(session.user.id));
+    const wsMember = await dispatch(fetchUserWorkspace(session?.user?.id));
     setShowWs(wsMember?.payload);
   };
   useEffect(() => {
