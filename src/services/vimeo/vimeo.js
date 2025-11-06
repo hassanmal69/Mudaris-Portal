@@ -19,8 +19,3 @@ export const fetchPrivateVideos = async (videoId) => {
     return [];
   }
 };
-
-// client identifier: ea889f62734e9123bd796f55e661cbf5e8f3bfdf
-// Client secrets : cF/TPA140eFW5tpBuyfoawFZLnFZvLy2wYELbGV06wsz4MpOWNgBIah6t+/kFemqEzjVfs3p+IZSNcseuJpI1Ef3DmzYIDikDfpxc3sPo2jPdGJvfLqF3ukeBg/Azwv7
-// Authorize URL : https://api.vimeo.com/oauth/authorize
-// Access Token URL : https://api.vimeo.com/oauth/access_token
