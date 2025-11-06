@@ -26,7 +26,6 @@ function debounce(fn, delay) {
 const Topbar = () => {
   const dispatch = useDispatch();
   const { groupId } = useParams();
-  // const [directChannel, setDirectChannel] = useState('')
   // --- State ---
   const [isMobile, setIsMobile] = useState(window.innerWidth < 860);
   const [mode, setMode] = useState(localStorage.getItem("theme") || "dark");
@@ -64,10 +63,7 @@ const Topbar = () => {
     shallowEqual
   );
   const visibility = channel?.visibility || "private";
-  // const directChannel = 'Support'
-  // console.log('directChannel2', directChannel);
   const directChannel = useSelector((state) => state?.direct?.directChannel);
-  console.log('irtahlm',directChannel);
   const channel_name = channel?.channel_name || directChannel || "channel";
 
   // --- Search Query ---
@@ -130,7 +126,7 @@ const Topbar = () => {
       <div className="flex items-center gap-2 min-w-0">
         <button
           onClick={handleToggle}
-          className="text-sm text-white bg-[#444] hover:bg-[#555] px-3 py-1 rounded-md transition"
+          className="text-sm text-(--foreground) bg-[#444] hover:bg-[#555] px-3 py-1 rounded-md transition"
         >
           Toggle {mode === "dark" ? "☀️" : "🌙"}
         </button>
