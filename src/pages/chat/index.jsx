@@ -13,7 +13,7 @@ const Chat = () => {
         <div className="absolute  inset-0 z-0 w-full h-full pointer-events-none" />
 
         <Messages />
-        {/* <VimeoPlayer videoId="1134216199" /> */}
+        <VimeoPlayer videoId="1134216199" />
         <Editor toolbarStyles={{ width: "20px", height: "20px" }} />
       </section>
     );
