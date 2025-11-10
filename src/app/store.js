@@ -11,6 +11,7 @@ import channelsReducer from "@/features/channels/channelsSlice.js";
 import directSliceReducer from "@/features/channels/directSlice.js";
 import channelMembersReducer from "@/features/channelMembers/channelMembersSlice.js";
 import pinnedMessagesReducer from "@/features/messages/pin/pinSlice.js";
+import announcementsReducer from "@/features/announcements/announcementsSlice.js";
 export const store = configureStore({
   reducer: {
     auth: authReducer,
@@ -25,6 +26,7 @@ export const store = configureStore({
     direct: directSliceReducer,
     channelMembers: channelMembersReducer,
     pinnedMessages: pinnedMessagesReducer,
+    announcements: announcementsReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
