@@ -10,6 +10,7 @@ import ThemeLayout from "@/layout/ThemeLayout.jsx";
 import UsersList from "@/pages/admin/index.jsx";
 import Calendar from "@/pages/calendar/index.jsx";
 import Market from "@/pages/market/index.jsx";
+import Announcements from "@/pages/channels/announcements/index.jsx";
 
 export const router = createBrowserRouter([
   {
@@ -33,14 +34,6 @@ export const router = createBrowserRouter([
           </PrivateRoute>
         ),
       },
-      // {
-      //   path: "/market",
-      //   element: (
-      //     <PrivateRoute>
-      //       <Market />
-      //     </PrivateRoute>
-      //   ),
-      // },
       {
         path: "/seeAllUsers",
         element: (
@@ -58,6 +51,7 @@ export const router = createBrowserRouter([
         ),
         children: [
           { path: "", element: <WorkSpaceInd /> },
+          { path: "announcements", element: <Announcements /> },
           { path: "calendar", element: <Calendar /> },
           { path: "market", element: <Market /> },
           { path: "group/:groupId", element: <WorkSpaceInd /> },

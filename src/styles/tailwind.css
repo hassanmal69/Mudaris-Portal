@@ -2,6 +2,8 @@
 @import "tw-animate-css";
 
 @theme {
+  --card: #0f1e3e;
+  --card-foreground: #e8f0f9;
   --font-size: 16px;
   --background: #fafafa;
   --foreground: #1a1a1a;
