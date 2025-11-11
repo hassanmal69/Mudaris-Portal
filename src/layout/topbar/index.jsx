@@ -91,7 +91,7 @@ const Topbar = () => {
 
       <div className="hidden sm:flex sm:flex-1 items-center justify-center">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-(--foreground) w-4 h-4" />
           <Input
             type="text"
             name="search"
@@ -99,16 +99,16 @@ const Topbar = () => {
             placeholder="Search messages"
             value={query}
             onChange={(e) => debouncedQuery(e.target.value)}
-            className="w-[500px] h-10 rounded-md text-[#eee] border-[#777] focus:border-primary pl-9 responsive_search_input"
+            className="w-[500px] h-[40px] rounded-md text-(--foreground) border-(--border) focus:border-primary pl-9 responsive_search_input"
           />
         </div>
       </div>
 
       {/* Right Section */}
-      <div className="flex items-center gap-2 min-w-0">
-        {/* <button
+      <div className="flex items-center gap-2 min-h-0 ">
+        <button
           onClick={handleToggle}
-          className="text-sm text-(--foreground) bg-[#444] hover:bg-[#555] px-3 py-1 rounded-md transition"
+          className="text-sm text-(--foreground) w-full bg-[#444] hover:bg-[#555] px-3 py-1 rounded-md transition"
         >
           Toggle {mode === "dark" ? "☀️" : "🌙"}
         </button> */}
