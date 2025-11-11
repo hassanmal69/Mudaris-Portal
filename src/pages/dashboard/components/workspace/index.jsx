@@ -59,15 +59,15 @@ const Workspace = () => {
 
         {visibleWorkspaces.map((w, i) => (
           <WorkspaceCard
-            key={w.workspaces.id}
-            workspace={w.workspaces}
+            key={w?.workspaces.id}
+            workspace={w?.workspaces}
             index={i}
           />
         ))}
 
         {/* Toggle button */}
         <div className="flex justify-center">
-          {workspaces.length > 3 && (
+          {workspaces?.length > 3 && (
             <button
               onClick={() => setShowAll((prev) => !prev)}
               className="text-[#4d3763] cursor-pointer font-medium mt-2 self-start px-4 flex items-center gap-1"

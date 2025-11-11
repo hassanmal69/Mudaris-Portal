@@ -18,9 +18,9 @@ const Messages = () => {
     loaderRef,
     hasMore,
     deleteMessage,
+    forwardMsg
   } = useMessages();
   const { groupId } = useParams();
-  const { token } = useParams();
   const channel = useSelector(
     (state) => state.channels.byId[groupId],
     shallowEqual
@@ -52,7 +52,6 @@ const Messages = () => {
         open={openDialog}
         onClose={() => setOpenDialog(false)}
       />
-
       <MessageList
         messages={messages}
         currentUserId={currentUserId}
@@ -60,6 +59,7 @@ const Messages = () => {
         pickerOpenFor={pickerOpenFor}
         setPickerOpenFor={setPickerOpenFor}
         onDelete={deleteMessage}
+        forwardMsg={forwardMsg}
       />
     </section>
   );

@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useRef } from "react";
 import { MessageSquare } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
@@ -16,10 +16,9 @@ import {
   togglePinMessage,
 } from "@/features/messages/pin/pinSlice";
 const MessageActions = React.memo(
-  ({ messageId, onReply, handleOpenDeleteDialog, userId, disableReply }) => {
+  ({ messageId, message, onReply, handleOpenDeleteDialog, handleForwardDialog, userId, disableReply }) => {
     const renderCount = useRef(0);
     renderCount.current += 1;
-    console.log(`MessageActions renders: ${renderCount.current}`);
     const dispatch = useDispatch();
     const { groupId } = useParams();
 
@@ -113,7 +112,9 @@ const MessageActions = React.memo(
               </DropdownMenuItem>
               {!disableReply && (
                 <>
-                  <DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => handleForwardDialog(message)}
+                  >
                     <Forward className="h-4 w-4 mr-2" />
                     Forward message
                   </DropdownMenuItem>

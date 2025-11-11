@@ -13,9 +13,9 @@ import { supabase } from '@/services/supabaseClient';
 import { fetchChannelMembersbyUser } from '@/features/channelMembers/channelMembersSlice';
 import { Button } from '@/components/ui/button';
 import {
-  PlusIcon,
+    PlusIcon,
 } from "@heroicons/react/24/outline";
-const SideBarChannels = ({ session, workspace_id,groupId, setAddChannelOpen }) => {
+const SideBarChannels = ({ session, workspace_id, groupId, setAddChannelOpen }) => {
     const dispatch = useDispatch();
     const [visibleChannel, setVisibleChannel] = useState([]);
     const navigate = useNavigate();
@@ -81,7 +81,7 @@ const SideBarChannels = ({ session, workspace_id,groupId, setAddChannelOpen }) =
             </SidebarGroupLabel>
             <SidebarMenu>
                 {visibleChannel.map((cm) => {
-                    console.log('channels are',visibleChannel);
+                    console.log('channels are', visibleChannel);
                     const channel = cm.channels;
                     const isActive = activeChannel?.id === channel.id;
                     return (
