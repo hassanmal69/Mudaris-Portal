@@ -99,7 +99,7 @@ const Topbar = () => {
             placeholder="Search messages"
             value={query}
             onChange={(e) => debouncedQuery(e.target.value)}
-            className="w-[500px] h-[40px] rounded-md text-(--foreground) border-(--border) focus:border-primary pl-9 responsive_search_input"
+            className="w-[500px] h-10 rounded-md text-(--foreground) border-(--border) focus:border-primary pl-9 responsive_search_input"
           />
         </div>
       </div>

@@ -8,8 +8,9 @@ import {
 } from "@/components/ui/sidebar";
 import { useDispatch, useSelector } from 'react-redux';
 import { selectActiveChannel, setActiveChannel } from '@/features/channels/channelsSlice';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/services/supabaseClient';
+import { Megaphone, Link as Chain } from "lucide-react";
 import { fetchChannelMembersbyUser } from '@/features/channelMembers/channelMembersSlice';
 import { Button } from '@/components/ui/button';
 import {
@@ -100,8 +101,10 @@ const SideBarChannels = ({ session, workspace_id, groupId, setAddChannelOpen }) 
                                 </span>
                             </div>
                         </SidebarMenuItem>
+
                     );
                 })}
+
                         {/* temporary code */}
         <SidebarMenuItem>
           <Link to={`/workspace/${workspace_id}/announcements`}>
@@ -132,6 +135,7 @@ const SideBarChannels = ({ session, workspace_id, groupId, setAddChannelOpen }) 
             </div>
           </Link>
         </SidebarMenuItem>
+
                 {session.user.user_metadata.user_role === "admin" && (
                     <Button
                         size="sm"
