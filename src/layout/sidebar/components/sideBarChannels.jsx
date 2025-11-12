@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { selectActiveChannel, setActiveChannel } from '@/features/channels/channelsSlice';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/services/supabaseClient';
+import { Megaphone, Link as Chain } from "lucide-react";
 import { fetchChannelMembersbyUser } from '@/features/channelMembers/channelMembersSlice';
 import { Button } from '@/components/ui/button';
 import {
@@ -103,20 +104,38 @@ const SideBarChannels = ({ session, workspace_id, groupId, setAddChannelOpen }) 
 
                     );
                 })}
-                <SidebarMenuItem>
-                    <Link to={`/workspace/${workspace_id}/announcements`}>
-                        <div
-                            className={`flex items-center gap-2 px-2 py-1 cursor-pointer 
-                      ${activeChannel === "announcements"
-                                    ? "bg-(--sidebar-accent) text-white"
-                                    : "hover:bg-(--sidebar-accent)"
-                                }`}
-                        >
-                            📢
-                            <span className="font-normal text-sm">Announcements</span>
-                        </div>
-                    </Link>
-                </SidebarMenuItem>
+
+                        {/* temporary code */}
+        <SidebarMenuItem>
+          <Link to={`/workspace/${workspace_id}/announcements`}>
+            <div
+              className={`flex items-center gap-2 px-2 py-1 cursor-pointer 
+                      ${
+                        activeChannel === "announcements"
+                          ? "bg-(--sidebar-accent) text-white"
+                          : "hover:bg-(--sidebar-accent)"
+                      }`}
+            >
+              <Megaphone className="w-4 h-4" />
+              <span className="font-normal text-sm">Announcements</span>
+            </div>
+          </Link>
+          <Link to={`/workspace/${workspace_id}/lecturesLink`}>
+            <div
+              className={`flex items-center gap-2 px-2 py-1 cursor-pointer 
+                      ${
+                        activeChannel === "lecturesLink"
+                          ? "bg-(--sidebar-accent) text-white"
+                          : "hover:bg-(--sidebar-accent)"
+                      }`}
+            >
+              <Chain className="w-4 h-4" />
+
+              <span className="font-normal text-sm">Lecture's Links</span>
+            </div>
+          </Link>
+        </SidebarMenuItem>
+
                 {session.user.user_metadata.user_role === "admin" && (
                     <Button
                         size="sm"
