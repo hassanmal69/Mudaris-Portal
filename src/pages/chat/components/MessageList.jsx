@@ -1,7 +1,6 @@
 import { useParams } from "react-router-dom";
 import MessageItem from "./MessageItem.jsx";
 import PinnedMessages from "./PinnedMessages.jsx";
-import { useSelector } from "react-redux";
 
 const MessageList = ({
   messages,
@@ -10,6 +9,7 @@ const MessageList = ({
   pickerOpenFor,
   setPickerOpenFor,
   onDelete,
+  forwardMsg
 }) => {
   const { groupId } = useParams();
 
@@ -25,6 +25,7 @@ const MessageList = ({
           pickerOpenFor={pickerOpenFor}
           setPickerOpenFor={setPickerOpenFor}
           onDelete={onDelete}
+          forwardMsg={forwardMsg}
         />
       ))}
     </>
