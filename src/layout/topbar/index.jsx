@@ -106,12 +106,6 @@ const Topbar = () => {
 
       {/* Right Section */}
       <div className="flex items-center gap-2 min-h-0 ">
-        <button
-          onClick={handleToggle}
-          className="text-sm text-(--foreground) w-full bg-[#444] hover:bg-[#555] px-3 py-1 rounded-md transition"
-        >
-          Toggle {mode === "dark" ? "☀️" : "🌙"}
-        </button> */}
         <Notifications />
         <Members members={channelMembers} />
         <Profile />
