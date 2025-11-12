@@ -99,19 +99,13 @@ const Topbar = () => {
             placeholder="Search messages"
             value={query}
             onChange={(e) => debouncedQuery(e.target.value)}
-            className="w-[500px] h-[40px] rounded-md text-(--foreground) border-(--border) focus:border-primary pl-9 responsive_search_input"
+            className="w-[500px] h-10 rounded-md text-(--foreground) border-(--border) focus:border-primary pl-9 responsive_search_input"
           />
         </div>
       </div>
 
       {/* Right Section */}
       <div className="flex items-center gap-2 min-h-0 ">
-        <button
-          onClick={handleToggle}
-          className="text-sm text-(--foreground) w-full bg-[#444] hover:bg-[#555] px-3 py-1 rounded-md transition"
-        >
-          Toggle {mode === "dark" ? "☀️" : "🌙"}
-        </button> */}
         <Notifications />
         <Members members={channelMembers} />
         <Profile />

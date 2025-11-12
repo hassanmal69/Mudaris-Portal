@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/sidebar";
 import { useDispatch, useSelector } from 'react-redux';
 import { selectActiveChannel, setActiveChannel } from '@/features/channels/channelsSlice';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/services/supabaseClient';
 import { fetchChannelMembersbyUser } from '@/features/channelMembers/channelMembersSlice';
 import { Button } from '@/components/ui/button';
@@ -100,8 +100,23 @@ const SideBarChannels = ({ session, workspace_id, groupId, setAddChannelOpen }) 
                                 </span>
                             </div>
                         </SidebarMenuItem>
+
                     );
                 })}
+                <SidebarMenuItem>
+                    <Link to={`/workspace/${workspace_id}/announcements`}>
+                        <div
+                            className={`flex items-center gap-2 px-2 py-1 cursor-pointer 
+                      ${activeChannel === "announcements"
+                                    ? "bg-(--sidebar-accent) text-white"
+                                    : "hover:bg-(--sidebar-accent)"
+                                }`}
+                        >
+                            📢
+                            <span className="font-normal text-sm">Announcements</span>
+                        </div>
+                    </Link>
+                </SidebarMenuItem>
                 {session.user.user_metadata.user_role === "admin" && (
                     <Button
                         size="sm"

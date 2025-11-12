@@ -10,7 +10,7 @@ const Market = () => {
       if (error) {
         console.log(error)
       }
-      console.log('data coming after we fetch the behive',data)
+      console.log('data coming after we fetch the behive', data)
 
     } catch (error) {
       console.log('error coming in trycatch in behive fetch', error)
@@ -20,7 +20,10 @@ const Market = () => {
     fetchPosts()
   }, [])
   return (
-    <div>Market</div>
+    <div>Market
+
+      <iframe src="https://enayatullahs-newsletter.beehiiv.com/p/test-post" frameborder="0"></iframe>
+    </div>
   )
 }
 
