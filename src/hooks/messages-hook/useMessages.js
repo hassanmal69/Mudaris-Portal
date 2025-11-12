@@ -32,8 +32,8 @@ export default function useMessages() {
     () =>
       query
         ? messages.filter((msg) =>
-            msg.content?.toLowerCase().includes(query.toLowerCase())
-          )
+          msg.content?.toLowerCase().includes(query.toLowerCase())
+        )
         : messages,
     [messages, query]
   );
@@ -50,6 +50,7 @@ export default function useMessages() {
           content,
           attachments,
           created_at,
+          isForward,
           profiles (
             id,
             full_name,
@@ -196,12 +197,12 @@ export default function useMessages() {
         updatedMessages = messagesRef.current.map((m) =>
           m.id === messageId
             ? {
-                ...m,
-                reactions: m.reactions.filter(
-                  (r) =>
-                    !(r.user_id === currentUserId && r.reaction_type === emoji)
-                ),
-              }
+              ...m,
+              reactions: m.reactions.filter(
+                (r) =>
+                  !(r.user_id === currentUserId && r.reaction_type === emoji)
+              ),
+            }
             : m
         );
       } else {
@@ -215,16 +216,16 @@ export default function useMessages() {
         updatedMessages = messagesRef.current.map((m) =>
           m.id === messageId
             ? {
-                ...m,
-                reactions: [
-                  ...m.reactions,
-                  {
-                    user_id: currentUserId,
-                    reaction_type: emoji,
-                    id: "optimistic",
-                  },
-                ],
-              }
+              ...m,
+              reactions: [
+                ...m.reactions,
+                {
+                  user_id: currentUserId,
+                  reaction_type: emoji,
+                  id: "optimistic",
+                },
+              ],
+            }
             : m
         );
       }
@@ -325,6 +326,28 @@ export default function useMessages() {
     };
   }, [dispatch, fullName, imageUrl, currentUserId, groupId]);
 
+  const forwardMsg = useCallback(
+    async (groups, message) => {
+
+      for (const e of groups) {
+        const { error } = await supabase
+          .from('messages')
+          .insert({
+            channel_id: e.id,
+            content: message.content,
+            attachments: message.attachments,
+            isForward: true,
+            sender_id: currentUserId,
+          });
+
+        if (error) console.error('Insert error:', error);
+      }
+
+      console.log('forwarded message:', message.content, message.attachments);
+    },
+    [dispatch]
+  );
+
   // delete a message (optimistic)
   const deleteMessage = useCallback(
     async (messageId) => {
@@ -356,5 +379,6 @@ export default function useMessages() {
     loaderRef,
     currentUserId,
     deleteMessage,
+    forwardMsg
   };
 }

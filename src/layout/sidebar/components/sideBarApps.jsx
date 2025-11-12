@@ -10,7 +10,6 @@ import { supabase } from "@/services/supabaseClient.js";
 import { useDispatch, useSelector } from 'react-redux';
 import { newDirect } from '@/features/channels/directSlice';
 import { postToSupabase } from '@/utils/crud/posttoSupabase';
-
 //direct message handled here
 const SideBarApps = ({ workspace_id }) => {
     const dispatch = useDispatch()

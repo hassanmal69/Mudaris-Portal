@@ -28,7 +28,6 @@ const Topbar = () => {
   const { groupId } = useParams();
   // --- State ---
   const [isMobile, setIsMobile] = useState(window.innerWidth < 860);
-  const [mode, setMode] = useState(localStorage.getItem("theme") || "dark");
 
   // --- Fetch channel members ---
   useEffect(() => {
@@ -37,23 +36,6 @@ const Topbar = () => {
     }
   }, [groupId, dispatch]);
 
-  // --- Apply initial theme ---
-  useEffect(() => {
-    const root = document.documentElement;
-    if (mode === "dark") {
-      root.classList.add("dark");
-    } else {
-      root.classList.remove("dark");
-    }
-    localStorage.setItem("theme", mode);
-  }, [mode]);
-
-  // --- Theme toggle ---
-  const handleToggle = () => {
-    setMode((prevMode) => (prevMode === "dark" ? "light" : "dark"));
-  };
-
-  // --- Channel data ---
   const channel = useSelector(
     (state) => state.channels.byId[groupId],
     shallowEqual
@@ -97,7 +79,7 @@ const Topbar = () => {
       )}
 
       <div className="flex items-center gap-2 min-w-0">
-        <h2 className="text-[var(--foreground)] text-[18px] font-medium flex gap-1 items-center">
+        <h2 className="text-(--foreground) text-[18px] font-medium flex gap-1 items-center">
           {visibility === "public" ? (
             <Globe className="w-[15px]" />
           ) : (
@@ -129,7 +111,7 @@ const Topbar = () => {
           className="text-sm text-(--foreground) w-full bg-[#444] hover:bg-[#555] px-3 py-1 rounded-md transition"
         >
           Toggle {mode === "dark" ? "☀️" : "🌙"}
-        </button>
+        </button> */}
         <Notifications />
         <Members members={channelMembers} />
         <Profile />
