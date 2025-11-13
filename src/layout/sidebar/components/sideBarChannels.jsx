@@ -120,7 +120,7 @@ const SideBarChannels = ({ session, workspace_id, groupId, setAddChannelOpen }) 
               <span className="font-normal text-sm">Announcements</span>
             </div>
           </Link>
-          <Link to={`/workspace/${workspace_id}/lecturesLink`}>
+          {/* <Link to={`/workspace/${workspace_id}/lecturesLink`}>
             <div
               className={`flex items-center gap-2 px-2 py-1 cursor-pointer 
                       ${
@@ -133,7 +133,7 @@ const SideBarChannels = ({ session, workspace_id, groupId, setAddChannelOpen }) 
 
               <span className="font-normal text-sm">Lecture's Links</span>
             </div>
-          </Link>
+          </Link> */}
         </SidebarMenuItem>
 
                 {session.user.user_metadata.user_role === "admin" && (

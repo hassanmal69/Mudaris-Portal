@@ -12,6 +12,8 @@ import Calendar from "@/pages/calendar/index.jsx";
 import Market from "@/pages/market/index.jsx";
 import Announcements from "@/pages/channels/announcements/index.jsx";
 import LecturesLink from "@/pages/channels/lecturesLink/index.jsx";
+import HandleChatsViewer from "@/pages/chatsViewer/index.jsx";
+import ChatGet from "@/pages/chatsViewer/chatGet/index.jsx";
 
 export const router = createBrowserRouter([
   {
@@ -40,6 +42,22 @@ export const router = createBrowserRouter([
         element: (
           <OnlyAdmin>
             <UsersList />
+          </OnlyAdmin>
+        ),
+      },
+      {
+        path: "/seePersonalChats",
+        element: (
+          <OnlyAdmin>
+            <HandleChatsViewer />
+          </OnlyAdmin>
+        ),
+      },
+      {
+        path: "/seePersonalChats/:token",
+        element: (
+          <OnlyAdmin>
+            <ChatGet />
           </OnlyAdmin>
         ),
       },
