@@ -9,7 +9,7 @@ import {
 import { supabase } from "@/services/supabaseClient.js";
 import { useDispatch, useSelector } from 'react-redux';
 import { newDirect } from '@/features/channels/directSlice';
-import { postToSupabase } from '@/utils/crud/posttoSupabase';
+// import { postToSupabase } from '@/utils/crud/posttoSupabase';
 //direct message handled here
 const SideBarApps = ({ workspace_id }) => {
     const dispatch = useDispatch()
@@ -30,14 +30,14 @@ const SideBarApps = ({ workspace_id }) => {
     const handleIndividualMessage = async (u) => {
         const token = u?.id.slice(0, 6) + `${session?.user?.id.slice(0, 6)}`;
         navigate(`/workspace/${workspace_id}/individual/${token}`);
-        const res = {
-            sender_id: session?.user?.id,
-            receiver_id: u?.id,
-            token,
-        };
-        dispatch(newDirect(u?.full_name));
-        const { error } = await postToSupabase("directMessagesChannel", res);
-        if (error) console.log(error);
+        // const res = {
+        //     sender_id: session?.user?.id,
+        //     receiver_id: u?.id,
+        //     token,
+        // };
+        dispatch(newDirect(u));
+        // const { error } = await postToSupabase("directMessagesChannel", res);
+        // if (error) console.log(error);
     };
     return (
 

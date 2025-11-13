@@ -18,10 +18,11 @@ export default function TextEditor({ editor, toolbarStyles }) {
   const displayName = useSelector(
     (state) => state.auth.user?.user_metadata?.displayName
   );
-  const { workspace_id, user_id, groupId } = useParams();
+  const { workspace_id, groupId } = useParams();
   const userRole = useSelector(
     (state) => state.auth.user?.user_metadata?.user_role
   );
+  const directChannel = useSelector((state) => state?.direct?.directChannel);
   const { files } = useSelector((state) => state.file);
   const channelState = useSelector((state) => state.channels);
   useEffect(() => {
@@ -49,9 +50,8 @@ export default function TextEditor({ editor, toolbarStyles }) {
     name: channelState.byId[id]?.channel_name,
     visibility: channelState.byId[id]?.visibility,
   }));
-  const halfUserId = user_id;
   const desiredChannel = useMemo(() => {
-    return channels.find((m) => m.id === groupId || halfUserId);
+    return channels.find((m) => m.id === groupId);
   }, [channels, groupId]);
   const replyMessage = useSelector((state) => state.reply.message);
 
@@ -121,13 +121,26 @@ export default function TextEditor({ editor, toolbarStyles }) {
 
     if (isDirectMessage) {
       // ✅ Direct message payload
-      const directMsgres = {
-        sender_id: userId,
-        receiver_id: user_id, // from params
-        token: token, // we already use groupId as token in URL
-        // attachments: urls,
-        // content: messageHTML,
-      };
+      console.log('token is this before', token)
+      const { data: tokenComing, error: errorinToken } = await supabase.from('directMessagesChannel')
+        .select('token')
+        .eq('token', token)
+      if (errorinToken) {
+        console.log('error coming in getting token', errorinToken)
+      }
+      console.log('token is this', tokenComing)
+
+      if (tokenComing.length === 0) {
+        const directMsgres = {
+          sender_id: userId,
+          receiver_id: directChannel.id, // from params
+          token: token, // we already use groupId as token in URL
+          // attachments: urls,
+          // content: messageHTML,
+        };
+        await postToSupabase("directMessagesChannel", directMsgres);
+      }
+
       res = {
         // channel_id: token,
         sender_id: userId,
@@ -138,7 +151,6 @@ export default function TextEditor({ editor, toolbarStyles }) {
       };
 
       await postToSupabase("messages", res);
-      await postToSupabase("directMessagesChannel", directMsgres);
     } else {
       // ✅ Normal channel message payload
       res = {
