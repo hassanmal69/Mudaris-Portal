@@ -37,9 +37,15 @@ const ChatGet = () => {
     }, [loading, hasMore, msgs.length, token])
 
     useEffect(() => {
-        setMsgs([]) // reset on token change
+        let isMounted = true
+        const load = async () => {
+            if (!isMounted) return
+            await fetchMessages()
+        }
+        setMsgs([])
         setHasMore(true)
-        fetchMessages()
+        load()
+        return () => { isMounted = false }
     }, [token])
 
     useEffect(() => {

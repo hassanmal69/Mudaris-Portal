@@ -1,14 +1,16 @@
 import React from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { supabase } from "@/services/supabaseClient";
 import { addMessage, setMessages } from "@/features/messages/messageSlice";
+import { newDirect } from "@/features/channels/directSlice";
 const PAGE_SIZE = 20;
 
 export default function useMessages() {
   const dispatch = useDispatch();
-  const { groupId, user_id, token } = useParams();
+  const { groupId, user_id, token, workspace_id } = useParams();
+  const navigate = useNavigate();
   const messages = useSelector((state) => state.messages.items);
   const session = useSelector((state) => state.auth);
   const currentUserId = session.user?.id;
@@ -39,7 +41,7 @@ export default function useMessages() {
   );
   // 🔹 Load messages with sender profile
 
-  const loadMessages = async (pageNum) => {
+  const loadMessages = useCallback(async (pageNum) => {
     const FROM = pageNum * PAGE_SIZE;
     const TO = FROM + PAGE_SIZE - 1;
     let queryBuilder = supabase
@@ -84,7 +86,7 @@ export default function useMessages() {
       reactions: msg.reactions || [],
     }));
     return messagesWithReplyCount.reverse();
-  };
+  }, [groupId, user_id, token]);
 
   // initial load
   useEffect(() => {
@@ -98,7 +100,7 @@ export default function useMessages() {
         }
       }, 100);
     })();
-  }, [groupId, user_id, dispatch, token]);
+  }, [groupId, user_id, token,loadMessages]);
 
   // load older
   const loadOlder = useCallback(async () => {
@@ -116,10 +118,10 @@ export default function useMessages() {
     setTimeout(() => {
       container.scrollTop = container.scrollHeight - oldScrollHeight;
     }, 50);
-  }, [page, hasMore, messages, dispatch]);
+  }, [page, hasMore, dispatch]);
   // infinite scroll observer
   useEffect(() => {
-    if (!loaderRef.current || !containerRef.curr) return;
+    if (!loaderRef.current || !containerRef.current) return;
     const observer = new window.IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting) loadOlder();
@@ -347,7 +349,12 @@ export default function useMessages() {
     },
     [dispatch]
   );
-
+  const handleIndividualMessage = async (u) => {
+    console.log('u is hr', u)
+    const token = u?.id.slice(0, 6) + `${session?.user?.id.slice(0, 6)}`;
+    navigate(`/workspace/${workspace_id}/individual/${token}`);
+    dispatch(newDirect(u));
+  };
   // delete a message (optimistic)
   const deleteMessage = useCallback(
     async (messageId) => {
@@ -378,6 +385,7 @@ export default function useMessages() {
     containerRef,
     loaderRef,
     currentUserId,
+    handleIndividualMessage,
     deleteMessage,
     forwardMsg
   };

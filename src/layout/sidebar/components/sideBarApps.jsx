@@ -7,13 +7,14 @@ import {
     SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { supabase } from "@/services/supabaseClient.js";
-import { useDispatch, useSelector } from 'react-redux';
-import { newDirect } from '@/features/channels/directSlice';
+import { useSelector } from 'react-redux';
+import useMessages from "@/hooks/messages-hook/useMessages.js";
+
 // import { postToSupabase } from '@/utils/crud/posttoSupabase';
 //direct message handled here
 const SideBarApps = ({ workspace_id }) => {
-    const dispatch = useDispatch()
     const navigate = useNavigate()
+    const { handleIndividualMessage } = useMessages();
     const { session } = useSelector((state) => state.auth);
     const [users, setUsers] = useState([])
     const handleDirectProfile = async () => {
@@ -27,18 +28,7 @@ const SideBarApps = ({ workspace_id }) => {
     useEffect(() => {
         handleDirectProfile()
     }, [])
-    const handleIndividualMessage = async (u) => {
-        const token = u?.id.slice(0, 6) + `${session?.user?.id.slice(0, 6)}`;
-        navigate(`/workspace/${workspace_id}/individual/${token}`);
-        // const res = {
-        //     sender_id: session?.user?.id,
-        //     receiver_id: u?.id,
-        //     token,
-        // };
-        dispatch(newDirect(u));
-        // const { error } = await postToSupabase("directMessagesChannel", res);
-        // if (error) console.log(error);
-    };
+
     return (
 
         <SidebarGroup >
@@ -76,7 +66,7 @@ const SideBarApps = ({ workspace_id }) => {
                     Direct Messages
                 </SidebarGroupLabel>
                 {users.map((m, i) => (
-                    <SidebarMenuItem onClick={() => handleIndividualMessage(m)} className='flex ' key={i}>
+                    <SidebarMenuItem onClick={() => { console.log('m is',m); handleIndividualMessage(m) }} className='flex ' key={i}>
                         <img className='rounded-full h-9 w-8' src={m.avatar_url} alt="" />
                         <div
                             className={`flex items-center gap-2 px-2 py-1 cursor-pointer 

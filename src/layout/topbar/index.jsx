@@ -47,7 +47,7 @@ const Topbar = () => {
   const visibility = channel?.visibility || "private";
   const directChannel = useSelector((state) => state?.direct?.directChannel);
   // console.log('irj',directChannel)
-  const channel_name = channel?.channel_name || directChannel.full_name || "channel";
+  let channel_name = channel?.channel_name || directChannel.full_name || "channel";
 
   // --- Search Query ---
   const query = useSelector((state) => state.search.query);

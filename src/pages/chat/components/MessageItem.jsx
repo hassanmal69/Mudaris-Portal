@@ -1,4 +1,4 @@
-import React, { useReducer } from "react";
+import React, { useReducer, useState } from "react";
 import MessageActions from "./messageActions/MessageActions.jsx";
 import MessageContent from "./MessageContent.jsx";
 import Reactions from "./Reactions.jsx";
@@ -16,6 +16,7 @@ import {
 } from "./messageActions/components/reducer.js";
 import UserFallback from "@/components/ui/userFallback.jsx";
 import { ForwardDialog } from "./messageActions/components/ForwardDialog.jsx";
+import useMessages from "@/hooks/messages-hook/useMessages.js";
 
 const MessageItem = ({
   message,
@@ -28,7 +29,10 @@ const MessageItem = ({
 }) => {
   const { profiles, created_at } = message || {};
   const { id, full_name, avatar_url } = profiles || {};
+  const [contact, setContact] = useState(false)
   const dispatch = useDispatch();
+  const { handleIndividualMessage } = useMessages();
+
   const [__state_local, __dispatch_local] = useReducer(
     __reducer_local,
     initialState
@@ -116,8 +120,24 @@ const MessageItem = ({
               handleForwardDialog={handleForwardDialog}
             />
           </div>
-          <div className="flex gap-2 items-center">
-            <strong className="text-(--foreground) font-normal">
+          <div
+            // onMouseEnter={() => setContact(true)}
+            // onMouseLeave={() => setContact(false)}
+            onClick={()=>setContact(prev=>!prev)}
+            className="flex relative gap-2 items-center">
+            {
+              contact && (
+                <div
+                  className="bg-(--background) absolute -top-10 w-40 h-20 text-(--foreground)">
+                  contact krlo baway
+                  <button
+                    onClick={() =>{console.log('msg is thi',message.profiles); handleIndividualMessage(message.profiles)}}
+                    className="bg-gray-600 py-2 px-2">message</button>
+                </div>
+              )
+            }
+            <strong
+              className="text-(--foreground) font-normal">
               {message.profiles?.full_name || "Unknown User"}
             </strong>
             {message.isForward ? (
