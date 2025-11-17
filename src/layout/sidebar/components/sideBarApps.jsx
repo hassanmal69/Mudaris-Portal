@@ -30,14 +30,7 @@ const SideBarApps = ({ workspace_id }) => {
     const handleIndividualMessage = async (u) => {
         const token = u?.id.slice(0, 6) + `${session?.user?.id.slice(0, 6)}`;
         navigate(`/workspace/${workspace_id}/individual/${token}`);
-        // const res = {
-        //     sender_id: session?.user?.id,
-        //     receiver_id: u?.id,
-        //     token,
-        // };
         dispatch(newDirect(u));
-        // const { error } = await postToSupabase("directMessagesChannel", res);
-        // if (error) console.log(error);
     };
     return (
 
@@ -92,4 +85,4 @@ const SideBarApps = ({ workspace_id }) => {
     )
 }
 
-export default SideBarApps
+export { SideBarApps, handleIndividualMessage }
