@@ -1,12 +1,12 @@
 import { Drawer } from "vaul";
 import { useDispatch, useSelector } from "react-redux";
-import { logOut } from "@/features/auth/authSlice.js";
+import { logOut } from "@/redux/features/auth/authSlice.js";
 import { useEffect, useState } from "react";
 import EditProfile from "./editProfile.jsx";
-import { fetchChannels } from "@/features/channels/channelsSlice.js";
+import { fetchChannels } from "@/redux/features/channels/channelsSlice.js";
 import { Clock, Globe, Lock } from "lucide-react";
 import { useParams } from "react-router-dom";
-import { selectChannels } from "@/features/channels/channelsSlice.js";
+import { selectChannels } from "@/redux/features/channels/channelsSlice.js";
 import "../profile.css";
 export default function VaulDrawer() {
   const { workspace_id } = useParams();
@@ -74,7 +74,7 @@ export default function VaulDrawer() {
                 <Drawer.Title className="font-medium mb-2 text-2xl text-white ">
                   {session?.user?.user_metadata?.displayName}
                 </Drawer.Title>
-                <div >
+                <div>
                   <EditProfile />
                 </div>
               </div>

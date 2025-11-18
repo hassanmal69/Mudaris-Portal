@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/services/supabaseClient";
-import { addValue } from "@/features/ui/fileSlice";
+import { addValue } from "@/redux/features/ui/fileSlice";
 import { useDispatch } from "react-redux";
 
 const VideoRecording = ({ toolbarStyles }) => {

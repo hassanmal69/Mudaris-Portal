@@ -1,6 +1,6 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useDispatch } from "react-redux";
-import { updateField } from "@/features/auth/signupSlice.js";
+import { updateField } from "@/redux/features/auth/signupSlice.js";
 import { contactSchema } from "@/validation/authSchema";
 import { Input } from "@/components/ui/input";
 import { MailIcon } from "lucide-react";
@@ -44,7 +44,7 @@ const EmailAvatar = ({ onNext, onBack, invite }) => {
             <label>Avatar (Optional)</label>
             <Input
               type="file"
-              accept="image/*"  
+              accept="image/*"
               onChange={(event) =>
                 setFieldValue("avatarFile", event.currentTarget.files[0])
               }

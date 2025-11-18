@@ -1,4 +1,4 @@
-import { newDirect } from "@/features/channels/directSlice";
+import { newDirect } from "@/redux/features/channels/directSlice.js";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 

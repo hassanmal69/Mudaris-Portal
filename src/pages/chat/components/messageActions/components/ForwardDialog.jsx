@@ -11,22 +11,22 @@ import {
 } from "@/components/ui/dialog.jsx";
 import { Button } from "@/components/ui/button";
 import { useParams } from "react-router-dom";
-import { fetchChannels } from "@/features/channels/channelsSlice";
+import { fetchChannels } from "@/redux/features/channels/channelsSlice";
 import { useDispatch } from "react-redux";
 
 export const ForwardDialog = ({ open, onOpenChange, onConfirmForward }) => {
   const { workspace_id } = useParams();
-  const [channels, setChannels] = useState([])
-  const [selectedChannels, setSelectedChannels] = useState([])
-  const dispatch = useDispatch()
+  const [channels, setChannels] = useState([]);
+  const [selectedChannels, setSelectedChannels] = useState([]);
+  const dispatch = useDispatch();
   const recievingData = async () => {
-    const res = await dispatch(fetchChannels(workspace_id))
-    setChannels(res?.payload)
-  }
+    const res = await dispatch(fetchChannels(workspace_id));
+    setChannels(res?.payload);
+  };
 
   useEffect(() => {
-    if (open) recievingData()
-  }, [workspace_id, open])
+    if (open) recievingData();
+  }, [workspace_id, open]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -42,17 +42,17 @@ export const ForwardDialog = ({ open, onOpenChange, onConfirmForward }) => {
                     type="checkbox"
                     onChange={(e) => {
                       if (e.target.checked) {
-                        setSelectedChannels(prev => [...prev, m]); // add
+                        setSelectedChannels((prev) => [...prev, m]); // add
                       } else {
-                        setSelectedChannels(prev => prev.filter(c => c.id !== m.id)); // remove
+                        setSelectedChannels((prev) =>
+                          prev.filter((c) => c.id !== m.id)
+                        ); // remove
                       }
                     }}
-
                   />
                   {m.channel_name}
                 </div>
-              ))
-            }
+              ))}
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="flex justify-end gap-4">
@@ -74,5 +74,5 @@ export const ForwardDialog = ({ open, onOpenChange, onConfirmForward }) => {
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
-}
+  );
+};

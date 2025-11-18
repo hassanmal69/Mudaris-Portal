@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Plus } from "lucide-react";
-import { addValue } from "@/features/ui/fileSlice";
+import { addValue } from "@/redux/features/ui/fileSlice";
 import { useDispatch } from "react-redux";
 
 export default function FileUploader({ toolbarStyles }) {

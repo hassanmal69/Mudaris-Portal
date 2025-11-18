@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { postToSupabase } from "@/utils/crud/posttoSupabase";
 import Toolbar from "./components/toolbar/Toolbar.jsx";
 import { Send } from "lucide-react";
-import { clearValue } from "@/features/ui/fileSlice";
+import { clearValue } from "@/redux/features/ui/fileSlice.js";
 import { useDispatch } from "react-redux";
 import { supabase } from "@/services/supabaseClient.js";
 import { useMemo, useState } from "react";
@@ -121,14 +121,15 @@ export default function TextEditor({ editor, toolbarStyles }) {
 
     if (isDirectMessage) {
       // ✅ Direct message payload
-      console.log('token is this before', token)
-      const { data: tokenComing, error: errorinToken } = await supabase.from('directMessagesChannel')
-        .select('token')
-        .eq('token', token)
+      console.log("token is this before", token);
+      const { data: tokenComing, error: errorinToken } = await supabase
+        .from("directMessagesChannel")
+        .select("token")
+        .eq("token", token);
       if (errorinToken) {
-        console.log('error coming in getting token', errorinToken)
+        console.log("error coming in getting token", errorinToken);
       }
-      console.log('token is this', tokenComing)
+      console.log("token is this", tokenComing);
 
       if (tokenComing.length === 0) {
         const directMsgres = {

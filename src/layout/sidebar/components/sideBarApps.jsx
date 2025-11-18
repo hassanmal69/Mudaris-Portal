@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
-    SidebarGroup,
-    SidebarGroupLabel,
-    SidebarMenu,
-    SidebarMenuItem,
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { supabase } from "@/services/supabaseClient.js";
 import { useSelector } from 'react-redux';
@@ -43,17 +43,14 @@ const SideBarApps = ({ workspace_id }) => {
                         className={`flex items-center gap-2 px-2 py-1 cursor-pointer 
                     hover:bg-(--sidebar-accent) font-medium text-sm
                   `}
-                        onClick={() =>
-                            navigate(`/workspace/${workspace_id}/market`)
-                        }
-                    >
-                        Market Insight
-
-                    </div>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                    <div
-                        className={`flex items-center gap-2 px-2 py-1 cursor-pointer 
+            onClick={() => navigate(`/workspace/${workspace_id}/market`)}
+          >
+            Market Insight
+          </div>
+        </SidebarMenuItem>
+        <SidebarMenuItem>
+          <div
+            className={`flex items-center gap-2 px-2 py-1 cursor-pointer 
                     hover:bg-(--sidebar-accent) font-medium text-sm
                   `}
                         onClick={() =>

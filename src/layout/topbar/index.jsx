@@ -5,13 +5,13 @@ import { useParams } from "react-router-dom";
 import { Globe, Lock, Search } from "lucide-react";
 import Members from "./members";
 import { useDispatch, useSelector, shallowEqual } from "react-redux";
-import { setQuery } from "@/features/messages/search/searchSlice";
+import { setQuery } from "@/redux/features/messages/search/searchSlice";
 import { Notifications } from "./notification";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import {
   fetchChannelMembersByChannel,
   selectChannelMembers,
-} from "@/features/channelMembers/channelMembersSlice";
+} from "@/redux/features/channelMembers/channelMembersSlice";
 import "./topbar.css";
 
 // Debounce utility
@@ -47,7 +47,8 @@ const Topbar = () => {
   const visibility = channel?.visibility || "private";
   const directChannel = useSelector((state) => state?.direct?.directChannel);
   // console.log('irj',directChannel)
-  const channel_name = channel?.channel_name || directChannel.full_name || "channel";
+  const channel_name =
+    channel?.channel_name || directChannel.full_name || "channel";
 
   // --- Search Query ---
   const query = useSelector((state) => state.search.query);

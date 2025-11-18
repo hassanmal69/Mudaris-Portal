@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import {
   selectWorkspaceMembers,
   fetchWorkspaceMembers,
-} from "@/features/workspaceMembers/WorkspaceMembersSlice";
+} from "@/redux/features/workspaceMembers/WorkspaceMembersSlice";
 import { useParams } from "react-router-dom";
 import { Link } from "lucide-react";
 

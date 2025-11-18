@@ -14,9 +14,17 @@ import { Button } from "@/components/ui/button.jsx";
 import {
   fetchPinnedMessages,
   togglePinMessage,
-} from "@/features/messages/pin/pinSlice";
+} from "@/redux/features/messages/pin/pinSlice";
 const MessageActions = React.memo(
-  ({ messageId, message, onReply, handleOpenDeleteDialog, handleForwardDialog, userId, disableReply }) => {
+  ({
+    messageId,
+    message,
+    onReply,
+    handleOpenDeleteDialog,
+    handleForwardDialog,
+    userId,
+    disableReply,
+  }) => {
     const renderCount = useRef(0);
     renderCount.current += 1;
     const dispatch = useDispatch();
