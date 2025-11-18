@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback, useRef } from "react";
 import { supabase } from "@/services/supabaseClient.js";
 import { Link as MoizChain, ExternalLink } from "lucide-react";
 import { tagColors } from "@/constants/fallbackColors";
-import LectureDialog from "@/components/Dialogs/ChannelsDialog/LectureLinks";
+import LectureDialog from "@/components/Dialogs/channelsDialog/LectureLinks";
 import { useSelector } from "react-redux";
 import { Button } from "@/components/ui/button";
 
@@ -105,10 +105,6 @@ const LecturesLink = () => {
     const nextPage = page + 1;
     setPage(nextPage);
     await fetchPage(nextPage, true);
-  };
-  const hanlelcick = () => {
-    console.log("clicked");
-    console.log(dialogOpen);
   };
 
   // render states

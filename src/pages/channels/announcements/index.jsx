@@ -1,88 +1,74 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
-import { supabase } from "@/services/supabaseClient.js";
+import { useSelector, useDispatch } from "react-redux";
 import { Megaphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useSelector } from "react-redux";
 import AddAnnouncementDialog from "@/components/Dialogs/ChannelsDialog/Announcements/index.jsx";
+import { fetchAnnouncements } from "@/redux/features/announcements/announcementsSlice";
+import Actions from "../actions";
 
 const PAGE_SIZE = 10;
 
 const Announcements = () => {
+  const dispatch = useDispatch();
   const { session } = useSelector((state) => state.auth);
-  const isAdmin = session?.user?.user_metadata?.user_role === "admin";
+  const { list: announcements, loading } = useSelector(
+    (state) => state.announcements
+  );
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [selectedAnnouncement, setSelectedAnnouncement] = useState(null);
 
-  // pagination / UI state
-  const [announcements, setAnnouncements] = useState([]);
+  const openEditDialog = (announcement) => {
+    setSelectedAnnouncement(announcement);
+    setEditDialogOpen(true);
+  };
+
+  const closeEditDialog = () => {
+    setEditDialogOpen(false);
+    setSelectedAnnouncement(null);
+  };
+  const isAdmin = session?.user?.user_metadata?.user_role === "admin";
+  // pagination state
   const [page, setPage] = useState(0); // zero-based page index
-  const [loading, setLoading] = useState(false);
-  const [initialLoading, setInitialLoading] = useState(true);
   const [hasMore, setHasMore] = useState(true);
 
-  // dialog state (open/close)
+  // dialog state
   const [dialogOpen, setDialogOpen] = useState(false);
-  const openedDialogRef = useRef(false); // track if dialog was opened to trigger refresh on close
+  const openedDialogRef = useRef(false);
 
   const sentinelRef = useRef(null);
   const observerRef = useRef(null);
 
-  const fetchPage = useCallback(async (pageIndex = 0, append = false) => {
-    const from = pageIndex * PAGE_SIZE;
-    const to = from + PAGE_SIZE - 1;
+  // fetch page from Redux
+  const fetchPage = useCallback(
+    async (pageIndex = 0, append = false) => {
+      const from = pageIndex * PAGE_SIZE;
+      const to = from + PAGE_SIZE - 1;
 
-    try {
-      if (!append) {
-        setInitialLoading(true);
-      } else {
-        setLoading(true);
-      }
+      try {
+        const data = await dispatch(fetchAnnouncements({ from, to })).unwrap();
 
-      const { data, error } = await supabase
-        .from("announcements")
-        .select("*")
-        .order("created_at", { ascending: false })
-        .range(from, to);
-
-      if (error) {
-        console.error("Supabase fetch announcements error:", error);
-        if (!append) setInitialLoading(false);
-        else setLoading(false);
-        return;
-      }
-
-      if (Array.isArray(data)) {
-        if (append) {
-          setAnnouncements((prev) => [...prev, ...data]);
+        if (!append) {
+          setHasMore(data.length === PAGE_SIZE);
         } else {
-          setAnnouncements(data);
+          setHasMore(data.length === PAGE_SIZE);
         }
-
-        // if returned less than page size, there is no more data
-        if (data.length < PAGE_SIZE) {
-          setHasMore(false);
-        } else {
-          setHasMore(true);
-        }
-      } else {
+      } catch (err) {
+        console.error("Failed to fetch announcements", err);
         setHasMore(false);
       }
-    } catch (err) {
-      console.error("Unexpected error fetching announcements:", err);
-      setHasMore(false);
-    } finally {
-      setInitialLoading(false);
-      setLoading(false);
-    }
-  }, []);
+    },
+    [dispatch]
+  );
 
   // initial load
   useEffect(() => {
     fetchPage(0, false);
-    setPage(0);
   }, [fetchPage]);
 
-  // IntersectionObserver that loads next page when sentinel visible
+  // IntersectionObserver for infinite scroll
   useEffect(() => {
     if (observerRef.current) observerRef.current.disconnect();
+
     observerRef.current = new IntersectionObserver(
       (entries) => {
         const first = entries[0];
@@ -98,12 +84,10 @@ const Announcements = () => {
     const current = sentinelRef.current;
     if (current) observerRef.current.observe(current);
 
-    return () => {
-      if (observerRef.current) observerRef.current.disconnect();
-    };
+    return () => observerRef.current.disconnect();
   }, [page, loading, hasMore, fetchPage]);
 
-  // when dialog is opened then closed, refresh the list to show newly added announcement
+  // refresh after dialog closes
   useEffect(() => {
     if (dialogOpen) {
       openedDialogRef.current = true;
@@ -111,7 +95,6 @@ const Announcements = () => {
     }
 
     if (!dialogOpen && openedDialogRef.current) {
-      // dialog was open and now closed -> refresh list (reload first page)
       openedDialogRef.current = false;
       setPage(0);
       setHasMore(true);
@@ -119,7 +102,7 @@ const Announcements = () => {
     }
   }, [dialogOpen, fetchPage]);
 
-  // New: explicit load more handler used by button
+  // explicit load more
   const handleLoadMore = async () => {
     if (loading || !hasMore) return;
     const nextPage = page + 1;
@@ -127,8 +110,7 @@ const Announcements = () => {
     await fetchPage(nextPage, true);
   };
 
-  // render states
-  if (initialLoading)
+  if (loading && page === 0)
     return (
       <section className="flex justify-center items-center h-40 bg-(--background)">
         <p className="text-(--muted)">Loading announcements...</p>
@@ -136,7 +118,7 @@ const Announcements = () => {
     );
 
   return (
-    <section className="max-w-4xl mx-auto p-4 space-y-4 ">
+    <section className="max-w-4xl mx-auto w-full p-4 space-y-4">
       <div className="flex flex-col gap-0 items-center">
         <span className="bg-(--primary) text-(--foreground) w-[65px] rounded-md h-[65px] flex items-center justify-center mb-2">
           <Megaphone className="w-9 h-9" />
@@ -162,11 +144,11 @@ const Announcements = () => {
       {announcements.length === 0 ? (
         <p className="text-(--muted)">No announcements yet.</p>
       ) : (
-        announcements.map((a) => (
+        announcements.map((a, id) => (
           <div
-            key={a.id}
-            className="border border-(--border) gap-2 flex flex-col
-              border-l-4 border-l-(--primary) rounded-2xl bg-(--card) p-4 shadow-sm hover:shadow-md transition-transform duration-200 hover:-translate-y-1"
+            key={id}
+            className="group border border-(--border) gap-2 flex flex-col
+      border-l-4 border-l-(--primary) rounded-2xl bg-(--card) p-4 shadow-sm hover:shadow-md transition-transform duration-200 hover:-translate-y-1 relative"
           >
             <div className="flex flex-col">
               <div className="flex gap-2 items-center">
@@ -194,21 +176,27 @@ const Announcements = () => {
               </p>
             </div>
             <p className="mb-2 text-(--muted-foreground)">{a.description}</p>
+
+            {isAdmin && (
+              <div className="absolute top-3 right-3 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                <Actions
+                  onEdit={() => openEditDialog(a)}
+                  announcementId={a.id}
+                />
+              </div>
+            )}
           </div>
         ))
       )}
 
-      {/* sentinel element for IntersectionObserver to trigger loading more */}
       <div ref={sentinelRef} className="w-full h-6" />
 
-      {/* loading spinner for subsequent pages */}
-      {loading && (
+      {loading && page > 0 && (
         <div className="flex justify-center py-4">
           <div className="w-8 h-8 border-4 border-gray-300 border-t-[--primary] rounded-full animate-spin" />
         </div>
       )}
 
-      {/* Load more button (explicit control) */}
       <div className="flex justify-center mt-2">
         <button
           type="button"
@@ -225,7 +213,15 @@ const Announcements = () => {
         </button>
       </div>
 
-      <AddAnnouncementDialog open={dialogOpen} onOpenChange={setDialogOpen} />
+      <AddAnnouncementDialog
+        open={dialogOpen || editDialogOpen}
+        onOpenChange={() => {
+          setDialogOpen(false);
+          setEditDialogOpen(false);
+          setSelectedAnnouncement(null);
+        }}
+        announcement={selectedAnnouncement}
+      />
     </section>
   );
 };
