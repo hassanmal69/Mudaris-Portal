@@ -7,15 +7,18 @@ import {
     SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { supabase } from "@/services/supabaseClient.js";
-import { useDispatch, useSelector } from 'react-redux';
-import { newDirect } from '@/features/channels/directSlice';
-// import { postToSupabase } from '@/utils/crud/posttoSupabase';
+import { useSelector } from 'react-redux';
+import useHandleIndividual from './useHandleIndividual.js';
+import { Button } from '@/components/ui/button.jsx';
+import SideBarDialogue from './sideBarDialogue.jsx';
+
 //direct message handled here
 const SideBarApps = ({ workspace_id }) => {
-    const dispatch = useDispatch()
     const navigate = useNavigate()
     const { session } = useSelector((state) => state.auth);
+    const [isShow, setIsShow] = useState(false)
     const [users, setUsers] = useState([])
+    const handleFunction = useHandleIndividual()
     const handleDirectProfile = async () => {
         const { data, error } = await supabase
             .from('profiles')
@@ -27,11 +30,7 @@ const SideBarApps = ({ workspace_id }) => {
     useEffect(() => {
         handleDirectProfile()
     }, [])
-    const handleIndividualMessage = async (u) => {
-        const token = u?.id.slice(0, 6) + `${session?.user?.id.slice(0, 6)}`;
-        navigate(`/workspace/${workspace_id}/individual/${token}`);
-        dispatch(newDirect(u));
-    };
+
     return (
 
         <SidebarGroup >
@@ -69,7 +68,7 @@ const SideBarApps = ({ workspace_id }) => {
                     Direct Messages
                 </SidebarGroupLabel>
                 {users.map((m, i) => (
-                    <SidebarMenuItem onClick={() => handleIndividualMessage(m)} className='flex ' key={i}>
+                    <SidebarMenuItem onClick={() => handleFunction(m)} className='flex ' key={i}>
                         <img className='rounded-full h-9 w-8' src={m.avatar_url} alt="" />
                         <div
                             className={`flex items-center gap-2 px-2 py-1 cursor-pointer 
@@ -80,9 +79,19 @@ const SideBarApps = ({ workspace_id }) => {
                         </div>
                     </SidebarMenuItem>
                 ))}
+                <SidebarMenuItem className='flex '>
+                    <Button onClick={() => setIsShow(prev => !prev)}>
+                        See Personal Messages
+                    </Button>
+                </SidebarMenuItem>
             </SidebarMenu>
+            {
+                isShow && (
+                    <SideBarDialogue />
+                )
+            }
         </SidebarGroup>
     )
 }
 
-export { SideBarApps, handleIndividualMessage }
+export default SideBarApps

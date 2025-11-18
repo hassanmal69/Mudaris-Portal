@@ -35,7 +35,6 @@ const Members = ({ members }) => {
       />
     </Avatar>
   );
-  console.log("members are ", members);
   // Sort members alphabetically by full name (fallback to email) and memoize
   const sortedMembers = React.useMemo(() => {
     const list = (members || []).slice();
