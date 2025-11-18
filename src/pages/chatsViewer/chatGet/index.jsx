@@ -21,11 +21,16 @@ const ChatGet = () => {
 
       const { data, error } = await supabase
         .from("messages")
-        .select("*")
+        .select(`
+     content,
+     sender:profiles!messages_sender_id_fkey(
+        full_name
+     )
+  `)
         .eq("token", token)
         .order("created_at", { ascending: true })
         .range(start, end);
-
+      console.log(data)
       if (error) {
         console.error("Supabase error:", error);
         setLoading(false);
@@ -79,11 +84,14 @@ const ChatGet = () => {
 
       {msgs.length > 0 ? (
         msgs.map((m, i) => (
-          <div
-            key={m.id || i}
-            className="border-b border-gray-700 py-2"
-            dangerouslySetInnerHTML={{ __html: m.content }}
-          />
+          <div className="flex w-full items-center gap-2">
+            <p>{m.sender?.full_name}</p>
+            <div
+              key={m.id || i}
+              className="border-b border-gray-700 py-2"
+              dangerouslySetInnerHTML={{ __html: m.content }}
+            />
+          </div>
         ))
       ) : !loading ? (
         <p>No chats found.</p>

@@ -31,7 +31,6 @@ const HandleChatsViewer = () => {
             return
         }
 
-        console.log('Incoming data:', data)
         setIncomingData(data || [])
     }
 

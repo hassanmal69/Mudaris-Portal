@@ -122,7 +122,7 @@ export default function useMessages() {
   }, [page, hasMore, messages, dispatch]);
   // infinite scroll observer
   useEffect(() => {
-    if (!loaderRef.current || !containerRef.curr) return;
+    if (!loaderRef.current || !containerRef.current) return;
     const observer = new window.IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting) loadOlder();

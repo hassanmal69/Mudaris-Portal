@@ -1,14 +1,11 @@
 import {
-    SidebarContent,
-    SidebarFooter,
-    SidebarGroupLabel,
-    SidebarMenu,
+    SidebarFooter
 } from "@/components/ui/sidebar";
 import React from 'react'
 import { Button } from "@/components/ui/button";
 
 const SideBarFooter = ({ session, setInviteOpen, handleLogout, }) => {
-    
+
     return (
         <SidebarFooter className="mt-auto pb-2">
             {session.user.user_metadata.user_role === "admin" && (
