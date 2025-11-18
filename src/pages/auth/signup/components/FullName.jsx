@@ -1,6 +1,6 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useDispatch, useSelector } from "react-redux";
-import { updateField } from "@/features/auth/signupSlice.js";
+import { updateField } from "@/redux/features/auth/signupSlice.js";
 import { fullNameSchema } from "@/validation/authSchema";
 
 const FullName = ({ onNext }) => {

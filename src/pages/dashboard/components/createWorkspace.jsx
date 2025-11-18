@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import AddWorkspaceDialog from "@/components/add-workspace-dialog/index.jsx";
+import AddWorkspaceDialog from "@/components/Dialogs/add-workspace-dialog/index.jsx";
 
 const CreateWorkspace = () => {
   const [open, setOpen] = useState(true);

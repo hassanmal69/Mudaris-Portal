@@ -1,19 +1,22 @@
 // AppInitializer.jsx
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { initAuthListener, sessionDetection } from "@/features/auth/authSlice.js";
+import {
+  initAuthListener,
+  sessionDetection,
+} from "@/redux/features/auth/authSlice.js";
 
 export default function AppInitializer({ children }) {
-    const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
-    useEffect(() => {
-        dispatch(sessionDetection());
-        const subscription = dispatch(initAuthListener());
+  useEffect(() => {
+    dispatch(sessionDetection());
+    const subscription = dispatch(initAuthListener());
 
-        return () => {
-            subscription.unsubscribe();
-        };
-    }, [dispatch]);
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [dispatch]);
 
-    return children;
+  return children;
 }

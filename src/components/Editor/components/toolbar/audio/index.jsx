@@ -12,7 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/services/supabaseClient";
 import { useDispatch } from "react-redux";
-import { addValue } from "@/features/ui/fileSlice";
+import { addValue } from "@/redux/features/ui/fileSlice";
 // import { setValue } from "@/features/ui/fileSlice";
 
 const AudioRecording = ({ toolbarStyles }) => {

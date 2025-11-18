@@ -4,7 +4,7 @@ import {
   selectWorkspaceMembers,
   selectLoading,
   selectError,
-} from "@/features/workspaceMembers/WorkspaceMembersSlice";
+} from "@/redux/features/workspaceMembers/WorkspaceMembersSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import { Link } from "lucide-react";

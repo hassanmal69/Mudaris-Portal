@@ -3,11 +3,11 @@ import { useSelector, useDispatch } from "react-redux";
 import {
   fetchAllWorkspaces,
   addWorkspacesRealtime,
-} from "@/features/workspace/workspaceSlice.js";
+} from "@/redux/features/workspace/workspaceSlice.js";
 import { supabase } from "@/services/supabaseClient.js";
 import WorkspaceCard from "./workspaceCard.jsx";
 import { ChevronDownIcon, ChevronUpIcon } from "@radix-ui/react-icons";
-import { fetchUserWorkspace } from "@/features/workspaceMembers/WorkspaceMembersSlice.js";
+import { fetchUserWorkspace } from "@/redux/features/workspaceMembers/WorkspaceMembersSlice.js";
 const Workspace = () => {
   const { session } = useSelector((state) => state.auth);
   const dispatch = useDispatch();

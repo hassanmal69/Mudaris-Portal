@@ -8,7 +8,7 @@ import suggestion from "./components/toolbar/MentionComponent/suggestion";
 import TextEditor from "./TextEditor";
 import "./styles.scss";
 import "./editor.css";
-import { removeValue } from "@/features/ui/fileSlice";
+import { removeValue } from "@/redux/features/ui/fileSlice";
 export default function EditorWrapper({ width, styles, toolbarStyles }) {
   const dispatch = useDispatch();
   const { workspace_id } = useParams();

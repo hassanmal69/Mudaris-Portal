@@ -3,7 +3,7 @@ import MessageActions from "./messageActions/MessageActions.jsx";
 import MessageContent from "./MessageContent.jsx";
 import Reactions from "./Reactions.jsx";
 import { useDispatch } from "react-redux";
-import { openReplyDrawer } from "@/features/reply/replySlice.js";
+import { openReplyDrawer } from "@/redux/features/reply/replySlice.js";
 import {
   Avatar,
   AvatarImage,
@@ -24,7 +24,7 @@ const MessageItem = ({
   pickerOpenFor,
   setPickerOpenFor,
   onDelete,
-  forwardMsg
+  forwardMsg,
 }) => {
   const { profiles, created_at } = message || {};
   const { id, full_name, avatar_url } = profiles || {};
@@ -36,7 +36,7 @@ const MessageItem = ({
   const handleConfirmDelete = () => {
     __dispatch_local({ type: "SHOW_DELETE_SUCCESS" });
     window.alert("Message deleted successfully");
-    console.log(__state_local.selectedMessageId)
+    console.log(__state_local.selectedMessageId);
 
     setTimeout(() => {
       onDelete?.(__state_local.selectedMessageId);
@@ -62,7 +62,6 @@ const MessageItem = ({
     }, 1200);
   };
 
-
   const handleReply = React.useCallback(() => {
     dispatch(openReplyDrawer(message));
   }, [dispatch, message]);
@@ -81,8 +80,12 @@ const MessageItem = ({
         />
         <ForwardDialog
           open={__state_local.showForwardDialog}
-          onOpenChange={() => __dispatch_local({ type: "CLOSE_FORWARD_DIALOG" })}
-          onConfirmForward={(groups) => handleConfirmForward(groups, __state_local.selectedMessageId)}
+          onOpenChange={() =>
+            __dispatch_local({ type: "CLOSE_FORWARD_DIALOG" })
+          }
+          onConfirmForward={(groups) =>
+            handleConfirmForward(groups, __state_local.selectedMessageId)
+          }
         />
 
         {message.profiles?.avatar_url ? (
@@ -121,7 +124,9 @@ const MessageItem = ({
               {message.profiles?.full_name || "Unknown User"}
             </strong>
             {message.isForward ? (
-              <p className="italic text-xs font-extralight">Message is forwaded</p>
+              <p className="italic text-xs font-extralight">
+                Message is forwaded
+              </p>
             ) : (
               <p></p>
             )}

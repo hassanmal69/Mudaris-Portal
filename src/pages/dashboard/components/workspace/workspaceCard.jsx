@@ -6,7 +6,7 @@ import {
   fetchWorkspaceMembers,
   selectWorkspaceMembers,
   selectLoading,
-} from "@/features/workspaceMembers/WorkspaceMembersSlice.js";
+} from "@/redux/features/workspaceMembers/WorkspaceMembersSlice.js";
 import {
   Avatar,
   AvatarImage,

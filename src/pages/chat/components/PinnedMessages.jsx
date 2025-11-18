@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchPinnedMessages } from "@/features/messages/pin/pinSlice";
+import { fetchPinnedMessages } from "@/redux/features/messages/pin/pinSlice";
 import { Pin } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";

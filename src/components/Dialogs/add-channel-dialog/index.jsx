@@ -15,7 +15,7 @@ import {
 } from "@/validation/authSchema.js";
 import { useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { createChannel } from "@/features/channels/channelsSlice.js";
+import { createChannel } from "@/redux/features/channels/channelsSlice.js";
 import InviteChannelUsers from "./steps/InviteChannelUsers";
 import { ChannelStepIndicator } from "./steps/ChannelStepIndicator";
 

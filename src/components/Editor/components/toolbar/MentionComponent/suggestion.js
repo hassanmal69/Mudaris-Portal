@@ -4,8 +4,8 @@ import { MentionList } from "./MentionList.jsx";
 import {
   selectWorkspaceMembers,
   fetchWorkspaceMembers,
-} from "@/features/workspaceMembers/WorkspaceMembersSlice.js";
-import { store } from "@/app/store.js"; // adjust path if needed
+} from "@/redux/features/workspaceMembers/WorkspaceMembersSlice.js";
+import { store } from "@/redux/app/store.js";
 
 const updatePosition = (editor, element) => {
   const virtualElement = {

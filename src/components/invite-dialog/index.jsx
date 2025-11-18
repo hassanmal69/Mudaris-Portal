@@ -11,8 +11,8 @@ import { useParams } from "react-router-dom";
 import createInvitation from "@/utils/invite/createInvitation";
 import { supabase } from "@/services/supabaseClient";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchWorkspaceById } from "@/features/workspace/workspaceSlice";
-import { fetchChannels } from "@/features/channels/channelsSlice.js";
+import { fetchWorkspaceById } from "@/redux/features/workspace/workspaceSlice";
+import { fetchChannels } from "@/redux/features/channels/channelsSlice.js";
 
 const InviteDialog = ({ open, onOpenChange }) => {
   const [step, setStep] = useState(0);

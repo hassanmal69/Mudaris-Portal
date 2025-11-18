@@ -3,7 +3,10 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { supabase } from "@/services/supabaseClient";
-import { addMessage, setMessages } from "@/features/messages/messageSlice";
+import {
+  addMessage,
+  setMessages,
+} from "@/redux/features/messages/messageSlice";
 const PAGE_SIZE = 20;
 
 export default function useMessages() {
@@ -32,8 +35,8 @@ export default function useMessages() {
     () =>
       query
         ? messages.filter((msg) =>
-          msg.content?.toLowerCase().includes(query.toLowerCase())
-        )
+            msg.content?.toLowerCase().includes(query.toLowerCase())
+          )
         : messages,
     [messages, query]
   );
@@ -197,12 +200,12 @@ export default function useMessages() {
         updatedMessages = messagesRef.current.map((m) =>
           m.id === messageId
             ? {
-              ...m,
-              reactions: m.reactions.filter(
-                (r) =>
-                  !(r.user_id === currentUserId && r.reaction_type === emoji)
-              ),
-            }
+                ...m,
+                reactions: m.reactions.filter(
+                  (r) =>
+                    !(r.user_id === currentUserId && r.reaction_type === emoji)
+                ),
+              }
             : m
         );
       } else {
@@ -216,16 +219,16 @@ export default function useMessages() {
         updatedMessages = messagesRef.current.map((m) =>
           m.id === messageId
             ? {
-              ...m,
-              reactions: [
-                ...m.reactions,
-                {
-                  user_id: currentUserId,
-                  reaction_type: emoji,
-                  id: "optimistic",
-                },
-              ],
-            }
+                ...m,
+                reactions: [
+                  ...m.reactions,
+                  {
+                    user_id: currentUserId,
+                    reaction_type: emoji,
+                    id: "optimistic",
+                  },
+                ],
+              }
             : m
         );
       }
@@ -328,22 +331,19 @@ export default function useMessages() {
 
   const forwardMsg = useCallback(
     async (groups, message) => {
-
       for (const e of groups) {
-        const { error } = await supabase
-          .from('messages')
-          .insert({
-            channel_id: e.id,
-            content: message.content,
-            attachments: message.attachments,
-            isForward: true,
-            sender_id: currentUserId,
-          });
+        const { error } = await supabase.from("messages").insert({
+          channel_id: e.id,
+          content: message.content,
+          attachments: message.attachments,
+          isForward: true,
+          sender_id: currentUserId,
+        });
 
-        if (error) console.error('Insert error:', error);
+        if (error) console.error("Insert error:", error);
       }
 
-      console.log('forwarded message:', message.content, message.attachments);
+      console.log("forwarded message:", message.content, message.attachments);
     },
     [dispatch]
   );
@@ -379,6 +379,6 @@ export default function useMessages() {
     loaderRef,
     currentUserId,
     deleteMessage,
-    forwardMsg
+    forwardMsg,
   };
 }
