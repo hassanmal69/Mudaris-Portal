@@ -2,12 +2,12 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { passwordSchema } from "@/validation/authSchema.js";
-import { signupUser } from "@/features/auth/authSlice.js";
+import { signupUser } from "@/redux/features/auth/authSlice.js";
 import { useNavigate } from "react-router-dom";
-import { addWorkspaceMember } from "@/features/workspaceMembers/WorkspaceMembersSlice.js";
+import { addWorkspaceMember } from "@/redux/features/workspaceMembers/WorkspaceMembersSlice.js";
 import { supabase } from "@/services/supabaseClient";
-import { fetchChannels } from "@/features/channels/channelsSlice";
-import { addChannelMembersonSignUp } from "@/features/channelMembers/channelMembersSlice";
+import { fetchChannels } from "@/redux/features/channels/channelsSlice";
+import { addChannelMembersonSignUp } from "@/redux/features/channelMembers/channelMembersSlice";
 
 const Password = ({ onBack, token, invite, file }) => {
   const [error, setError] = useState();
@@ -107,7 +107,7 @@ const Password = ({ onBack, token, invite, file }) => {
           .update({
             full_name: fullName,
             avatar_url: publicUrl,
-            role: "user"
+            role: "user",
           })
           .eq("id", userId);
 

@@ -7,14 +7,14 @@ import {
 } from "@/components/ui/dialog";
 import AnnouncementForm from "./AnnouncementForm";
 
-const AddAnnouncementDialog = ({ open, onOpenChange }) => {
+const AnnouncementDialog = ({ open, onOpenChange }) => {
   const handleClose = () => {
     onOpenChange(false);
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className=" bg-(--background) max-w-md text-(--foreground) border border-(--border) w-full">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>Add Announcement</DialogTitle>
         </DialogHeader>
@@ -24,4 +24,4 @@ const AddAnnouncementDialog = ({ open, onOpenChange }) => {
   );
 };
 
-export default AddAnnouncementDialog;
+export default AnnouncementDialog;

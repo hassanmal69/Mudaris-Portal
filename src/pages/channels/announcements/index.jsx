@@ -3,7 +3,7 @@ import { supabase } from "@/services/supabaseClient.js";
 import { Megaphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSelector } from "react-redux";
-import AddAnnouncementDialog from "@/components/add-announcement-dialog";
+import AddAnnouncementDialog from "@/components/Dialogs/ChannelsDialog/Announcements/index.jsx";
 
 const PAGE_SIZE = 10;
 

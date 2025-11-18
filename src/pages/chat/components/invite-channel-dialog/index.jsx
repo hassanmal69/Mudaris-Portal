@@ -9,7 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/services/supabaseClient";
 import { useDispatch } from "react-redux";
-import { addChannelMembers } from "@/features/channelMembers/channelMembersSlice";
+import { addChannelMembers } from "@/redux/features/channelMembers/channelMembersSlice";
 import { useParams } from "react-router-dom";
 const AddUserInChannel = ({ open, onClose, workspaceId }) => {
   const [emails, setEmails] = useState([]);
