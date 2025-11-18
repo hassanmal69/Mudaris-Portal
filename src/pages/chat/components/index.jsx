@@ -18,7 +18,7 @@ const Messages = () => {
     loaderRef,
     hasMore,
     deleteMessage,
-    forwardMsg
+    forwardMsg,
   } = useMessages();
   const { groupId } = useParams();
   const channel = useSelector(
@@ -45,7 +45,7 @@ const Messages = () => {
             {channel_visbibility === "private" && userRole === "admin" && (
               <Button
                 variant={"outline"}
-                className="border-gray-500 w-[80px] text-gray-500 hover:bg-(--primary) hover:text-(--primary-foreground)  hover:cursor-pointer"
+                className="border-gray-500 text-gray-500 hover:bg-(--primary) hover:text-(--primary-foreground)  hover:cursor-pointer"
                 onClick={() => setOpenDialog(true)}
               >
                 add user

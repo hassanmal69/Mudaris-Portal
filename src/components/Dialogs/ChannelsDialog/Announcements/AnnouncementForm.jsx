@@ -1,9 +1,13 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useDispatch } from "react-redux";
-import { createAnnouncement } from "@/redux/features/announcements/announcementsSlice";
+import {
+  createAnnouncementDB,
+  updateAnnouncementDB,
+} from "@/redux/features/announcements/announcementsSlice";
 import { Input } from "../../../ui/input";
 import { Textarea } from "../../../ui/textarea";
+import { useParams } from "react-router-dom";
 
 const PRIORITY_OPTIONS = [
   { value: "important", label: "Important" },
@@ -12,25 +16,46 @@ const PRIORITY_OPTIONS = [
   { value: "info", label: "Info" },
 ];
 
-const AnnouncementForm = ({ onClose }) => {
+const AnnouncementForm = ({ onClose, announcement }) => {
+  const { workspace_id } = useParams();
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    priority: "info",
+    title: announcement?.title || "",
+    description: announcement?.description || "",
+    priority: announcement?.tag || "info",
   });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
-
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(createAnnouncement(formData));
+    if (announcement) {
+      // update existing announcement
+      dispatch(
+        updateAnnouncementDB({
+          id: announcement.id,
+          updates: {
+            title: formData.title,
+            description: formData.description,
+            tag: formData.priority,
+          },
+        })
+      );
+    } else {
+      // create new announcement
+      dispatch(
+        createAnnouncementDB({
+          title: formData.title,
+          description: formData.description,
+          tag: formData.priority,
+          workspace_id,
+        })
+      );
+    }
     onClose();
   };
-
   const fields = [
     {
       name: "title",
