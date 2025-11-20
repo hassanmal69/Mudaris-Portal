@@ -13,6 +13,9 @@ import channelMembersReducer from "@/redux/features/channelMembers/channelMember
 import pinnedMessagesReducer from "@/redux/features/messages/pin/pinSlice.js";
 import announcementsReducer from "@/redux/features/announcements/announcementsSlice.js";
 import lectureLinkReducer from "../features/lectureLinks/lecturelinks.js";
+import chapterReducer from "@/redux/features/video&presentations/chapterSlice";
+import videosReducer from "@/redux/features/video&presentations/videoSlice";
+
 export const store = configureStore({
   reducer: {
     auth: authReducer,
@@ -29,6 +32,8 @@ export const store = configureStore({
     pinnedMessages: pinnedMessagesReducer,
     announcements: announcementsReducer,
     lectureLinks: lectureLinkReducer,
+    chapters: chapterReducer,
+    videos: videosReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

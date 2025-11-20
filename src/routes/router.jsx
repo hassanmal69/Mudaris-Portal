@@ -14,6 +14,7 @@ import Announcements from "@/pages/channels/announcements/index.jsx";
 import LecturesLink from "@/pages/channels/lecturesLink/index.jsx";
 import HandleChatsViewer from "@/pages/chatsViewer/index.jsx";
 import ChatGet from "@/pages/chatsViewer/chatGet/index.jsx";
+import VideosPresentations from "@/pages/channels/Videos & Presentations/index.jsx";
 
 export const router = createBrowserRouter([
   {
@@ -69,9 +70,10 @@ export const router = createBrowserRouter([
           </PrivateRoute>
         ),
         children: [
-          { path: "", element: <WorkSpaceInd /> },
+          { path: "group/:groupId/General", element: <WorkSpaceInd /> },
           { path: "announcements", element: <Announcements /> },
           { path: "lecturesLink", element: <LecturesLink /> },
+          { path: "videospresentations", element: <VideosPresentations /> },
           { path: "calendar", element: <Calendar /> },
           { path: "market", element: <Market /> },
           { path: "group/:groupId", element: <WorkSpaceInd /> },

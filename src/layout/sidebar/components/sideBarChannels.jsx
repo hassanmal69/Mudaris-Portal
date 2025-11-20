@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import {
-  SidebarContent,
   SidebarGroup,
   SidebarGroupLabel,
   SidebarMenu,
@@ -13,10 +12,11 @@ import {
 } from "@/redux/features/channels/channelsSlice";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/services/supabaseClient";
-import { Megaphone, Link as Chain } from "lucide-react";
+import { Megaphone, Link as Chain, CameraIcon, Video } from "lucide-react";
 import { fetchChannelMembersbyUser } from "@/redux/features/channelMembers/channelMembersSlice";
 import { Button } from "@/components/ui/button";
 import { PlusIcon } from "@heroicons/react/24/outline";
+import { PersonIcon } from "@radix-ui/react-icons";
 const SideBarChannels = ({
   session,
   workspace_id,
@@ -79,7 +79,10 @@ const SideBarChannels = ({
 
   const handleChannelClick = (channel) => {
     dispatch(setActiveChannel(channel.id));
-    navigate(`/workspace/${workspace_id}/group/${channel.id}`);
+    // const result = .replace(/\s+/g, "");
+    const result = channel.channel_name.replace(/[^a-zA-Z0-9]/g, "");
+
+    navigate(`/workspace/${workspace_id}/group/${channel.id}/${result}`);
   };
   return (
     <SidebarGroup>
@@ -96,13 +99,12 @@ const SideBarChannels = ({
               <div
                 onClick={() => handleChannelClick(channel)}
                 className={`flex items-center gap-2 px-2 py-1 cursor-pointer 
-                      ${
-                        isActive
-                          ? "bg-(--sidebar-accent) text-white"
-                          : "hover:bg-(--sidebar-accent)"
-                      }`}
+                      ${isActive
+                    ? "bg-(--sidebar-accent) text-white"
+                    : "hover:bg-(--sidebar-accent)"
+                  }`}
               >
-                #
+                <PersonIcon className="w-4 h-4" />
                 <span className="font-normal text-sm">
                   {channel.channel_name}
                 </span>
@@ -116,11 +118,10 @@ const SideBarChannels = ({
           <Link to={`/workspace/${workspace_id}/announcements`}>
             <div
               className={`flex items-center gap-2 px-2 py-1 cursor-pointer 
-                      ${
-                        activeChannel === "announcements"
-                          ? "bg-(--sidebar-accent) text-white"
-                          : "hover:bg-(--sidebar-accent)"
-                      }`}
+                      ${activeChannel === "announcements"
+                  ? "bg-(--sidebar-accent) text-white"
+                  : "hover:bg-(--sidebar-accent)"
+                }`}
             >
               <Megaphone className="w-4 h-4" />
               <span className="font-normal text-sm">Announcements</span>
@@ -129,15 +130,27 @@ const SideBarChannels = ({
           <Link to={`/workspace/${workspace_id}/lecturesLink`}>
             <div
               className={`flex items-center gap-2 px-2 py-1 cursor-pointer 
-                      ${
-                        activeChannel === "lecturesLink"
-                          ? "bg-(--sidebar-accent) text-white"
-                          : "hover:bg-(--sidebar-accent)"
-                      }`}
+                      ${activeChannel === "lecturesLink"
+                  ? "bg-(--sidebar-accent) text-white"
+                  : "hover:bg-(--sidebar-accent)"
+                }`}
             >
               <Chain className="w-4 h-4" />
 
               <span className="font-normal text-sm">Lecture's Links</span>
+            </div>
+          </Link>
+          <Link to={`/workspace/${workspace_id}/videospresentations`}>
+            <div
+              className={`flex items-center gap-2 px-2 py-1 cursor-pointer 
+                      ${activeChannel === "lecturesLink"
+                  ? "bg-(--sidebar-accent) text-white"
+                  : "hover:bg-(--sidebar-accent)"
+                }`}
+            >
+              <Video className="w-4 h-4" />
+
+              <span className="font-normal text-sm">Videos & Presentations</span>
             </div>
           </Link>
         </SidebarMenuItem>
