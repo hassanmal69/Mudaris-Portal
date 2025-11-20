@@ -9,23 +9,13 @@ import {
 import { Plus } from "lucide-react";
 import Workspace from "./components/workspace/index.jsx";
 import { useSelector } from "react-redux";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import CreateWorkspace from "./components/createWorkspace.jsx";
 import "./dashboard.css";
 const Dashboard = () => {
   const { session } = useSelector((state) => state.auth);
   console.log(session?.user?.email, "user email");
   const [isOpen, setisOpen] = useState(false);
-  const [mode, setMode] = useState(localStorage.getItem("theme") || "dark");
-  useEffect(() => {
-    const root = document.documentElement;
-    if (mode === "dark") {
-      root.classList.add("dark");
-    } else {
-      root.classList.remove("dark");
-    }
-    localStorage.setItem("theme", mode);
-  }, [mode]);
 
   const isAdmin = session?.user?.user_metadata?.user_role === "admin";
   return (

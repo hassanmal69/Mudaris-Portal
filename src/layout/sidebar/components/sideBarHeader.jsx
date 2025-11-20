@@ -1,4 +1,4 @@
-import React, {  useState } from "react";
+import React, { useState } from "react";
 import { SidebarHeader } from "@/components/ui/sidebar";
 import { useSelector } from "react-redux";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -9,10 +9,17 @@ const SideBarHeader = ({ session }) => {
     (state) => state.workSpaces
   );
   const [mode, setMode] = useState(localStorage.getItem("theme") || "dark");
-  // --- Theme toggle ---
   const handleToggle = () => {
-    setMode((prevMode) => (prevMode === "dark" ? "light" : "dark"));
+    setMode((prevMode) => {
+      const root = document.documentElement;
+      const newMode = prevMode === "dark" ? "light" : "dark";
+      root.classList.remove(prevMode);
+      root.classList.add(newMode);
+      localStorage.setItem("theme", newMode); // store the actual new mode
+      return newMode;
+    });
   };
+
 
   return (
     <SidebarHeader className="flex gap-2">
