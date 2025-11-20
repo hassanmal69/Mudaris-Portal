@@ -118,7 +118,7 @@ const Announcements = () => {
     );
 
   return (
-    <section className="max-w-4xl mx-auto w-full p-4 space-y-4">
+    <section className="max-w-7xl mx-auto w-full p-4 space-y-4">
       <div className="flex flex-col gap-0 items-center">
         <span className="bg-(--primary) text-(--foreground) w-[65px] rounded-md h-[65px] flex items-center justify-center mb-2">
           <Megaphone className="w-9 h-9" />
