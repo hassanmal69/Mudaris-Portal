@@ -120,16 +120,16 @@ const LecturesLink = () => {
         <span className="bg-(--primary) text-(--foreground) w-[65px] rounded-md h-[65px] flex items-center justify-center mb-2">
           <MoizChain className="w-9 h-9" />
         </span>
-        {/* {isAdmin && ( */}
-        <Button
-          variant="secondary"
-          size="sm"
-          className="text-(--muted-foreground) cursor-pointer border"
-          onClick={() => setDialogOpen(true)}
-        >
-          Add links
-        </Button>
-        {/* )} */}
+        {isAdmin && (
+          <Button
+            variant="secondary"
+            size="sm"
+            className="text-(--muted-foreground) cursor-pointer border"
+            onClick={() => setDialogOpen(true)}
+          >
+            Add links
+          </Button>
+        )}
         <h2 className="text-2xl text-(--foreground)">Lecture Links</h2>
         <p className="text-(--muted-foreground)">
           Access all live sessions, webinars, and recorded lectures
