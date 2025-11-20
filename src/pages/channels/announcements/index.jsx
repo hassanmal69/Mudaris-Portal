@@ -3,8 +3,13 @@ import { useSelector, useDispatch } from "react-redux";
 import { Megaphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AddAnnouncementDialog from "@/components/Dialogs/ChannelsDialog/Announcements/index.jsx";
-import { fetchAnnouncements } from "@/redux/features/announcements/announcementsSlice";
+import {
+  clearAnnouncements,
+  fetchAnnouncements,
+} from "@/redux/features/announcements/announcementsSlice";
 import Actions from "../actions";
+import useInfiniteScroll from "@/hooks/infinteScroll-hook/useInfiniteScroll";
+import { deleteAnnouncementDB } from "@/redux/features/announcements/announcementsSlice";
 
 const PAGE_SIZE = 10;
 
@@ -22,10 +27,6 @@ const Announcements = () => {
     setEditDialogOpen(true);
   };
 
-  const closeEditDialog = () => {
-    setEditDialogOpen(false);
-    setSelectedAnnouncement(null);
-  };
   const isAdmin = session?.user?.user_metadata?.user_role === "admin";
   // pagination state
   const [page, setPage] = useState(0); // zero-based page index
@@ -35,8 +36,7 @@ const Announcements = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const openedDialogRef = useRef(false);
 
-  const sentinelRef = useRef(null);
-  const observerRef = useRef(null);
+  const initialLoadRef = useRef(false);
 
   // fetch page from Redux
   const fetchPage = useCallback(
@@ -46,12 +46,7 @@ const Announcements = () => {
 
       try {
         const data = await dispatch(fetchAnnouncements({ from, to })).unwrap();
-
-        if (!append) {
-          setHasMore(data.length === PAGE_SIZE);
-        } else {
-          setHasMore(data.length === PAGE_SIZE);
-        }
+        setHasMore(data.length === PAGE_SIZE);
       } catch (err) {
         console.error("Failed to fetch announcements", err);
         setHasMore(false);
@@ -60,55 +55,52 @@ const Announcements = () => {
     [dispatch]
   );
 
-  // initial load
+  // initial load -- only once
   useEffect(() => {
-    fetchPage(0, false);
-  }, [fetchPage]);
+    if (initialLoadRef.current) return;
+    console.log(initialLoadRef.current, "apka logger");
+    dispatch(clearAnnouncements());
+    fetchPage(0);
+    setPage(0);
+  }, [fetchPage, dispatch]);
 
   // IntersectionObserver for infinite scroll
-  useEffect(() => {
-    if (observerRef.current) observerRef.current.disconnect();
-
-    observerRef.current = new IntersectionObserver(
-      (entries) => {
-        const first = entries[0];
-        if (first.isIntersecting && !loading && hasMore) {
-          const nextPage = page + 1;
-          setPage(nextPage);
-          fetchPage(nextPage, true);
-        }
-      },
-      { root: null, rootMargin: "200px", threshold: 0.1 }
-    );
-
-    const current = sentinelRef.current;
-    if (current) observerRef.current.observe(current);
-
-    return () => observerRef.current.disconnect();
-  }, [page, loading, hasMore, fetchPage]);
-
+  const handleLoadMore = useCallback(() => {
+    const next = page + 1;
+    setPage(next);
+    fetchPage(next);
+  }, [page, fetchPage]);
+  const handleDelete = (id) => {
+    alert("this action can not be undone");
+    dispatch(deleteAnnouncementDB(id));
+  };
+  const { sentinelRef } = useInfiniteScroll({
+    loading,
+    hasMore,
+    onLoadMore: handleLoadMore,
+    deps: [page],
+  });
   // refresh after dialog closes
+  const wasOpenRef = useRef(false);
+
   useEffect(() => {
     if (dialogOpen) {
       openedDialogRef.current = true;
+      wasOpenRef.current = true;
       return;
     }
 
-    if (!dialogOpen && openedDialogRef.current) {
+    if ((!dialogOpen && openedDialogRef.current) || wasOpenRef.current) {
       openedDialogRef.current = false;
+      wasOpenRef.current = false;
+      dispatch(clearAnnouncements());
       setPage(0);
       setHasMore(true);
-      fetchPage(0, false);
+      fetchPage(0);
     }
-  }, [dialogOpen, fetchPage]);
+  }, [dialogOpen, fetchPage, dispatch]);
 
   // explicit load more
-  const handleLoadMore = async () => {
-    if (loading || !hasMore) return;
-    const nextPage = page + 1;
-    setPage(nextPage);
-    await fetchPage(nextPage, true);
-  };
 
   if (loading && page === 0)
     return (
@@ -144,9 +136,9 @@ const Announcements = () => {
       {announcements.length === 0 ? (
         <p className="text-(--muted)">No announcements yet.</p>
       ) : (
-        announcements.map((a, id) => (
+        announcements.map((a) => (
           <div
-            key={id}
+            key={a.id}
             className="group border border-(--border) gap-2 flex flex-col
       border-l-4 border-l-(--primary) rounded-2xl bg-(--card) p-4 shadow-sm hover:shadow-md transition-transform duration-200 hover:-translate-y-1 relative"
           >
@@ -181,7 +173,7 @@ const Announcements = () => {
               <div className="absolute top-3 right-3 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                 <Actions
                   onEdit={() => openEditDialog(a)}
-                  announcementId={a.id}
+                  onDelete={() => handleDelete(a.id)}
                 />
               </div>
             )}

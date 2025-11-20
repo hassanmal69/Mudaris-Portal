@@ -3,21 +3,26 @@ import { Button } from "@/components/ui/button";
 import { useDispatch } from "react-redux";
 import { Input } from "../../../ui/input";
 import { Textarea } from "../../../ui/textarea";
-import { createLectureLink } from "@/redux/features/lectureLinks/lecturelinks";
+import {
+  createLecturesLink,
+  updateLecturesLink,
+} from "@/redux/features/lecturesLink/lecturesLinksSlice";
+import { useParams } from "react-router-dom";
 
 const URL_REGEX =
   /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
 
-const LectureLinksFrom = ({ onClose }) => {
+const LectureLinksFrom = ({ onClose, lecturesLink }) => {
+  const { workspace_id } = useParams();
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    topic: "",
-    lectureLink: "",
+    title: lecturesLink?.title || "",
+    description: lecturesLink?.description || "",
+    topic: lecturesLink?.tag || "",
+    lectureLink: lecturesLink?.lecture_link || "",
   });
   const [linkError, setLinkError] = useState("");
-
+  console.log(lecturesLink, "i am lec");
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -42,8 +47,31 @@ const LectureLinksFrom = ({ onClose }) => {
       return;
     }
 
-    const { lectureLink, ...rest } = formData;
-    dispatch(createLectureLink({ ...rest, link: lectureLink }));
+    if (lecturesLink) {
+      dispatch(
+        updateLecturesLink({
+          id: lecturesLink.id,
+          updates: {
+            title: formData?.title,
+            description: formData?.description,
+            topic: formData?.topic,
+            lectureLink: formData?.lectureLink,
+          },
+        })
+      );
+    } else {
+      const { lectureLink, ...rest } = formData;
+
+      dispatch(
+        createLecturesLink({
+          title: formData?.title,
+          description: formData?.description,
+          topic: formData?.topic,
+          lectureLink: formData?.lectureLink,
+          workspace_id,
+        })
+      );
+    }
     onClose();
   };
 

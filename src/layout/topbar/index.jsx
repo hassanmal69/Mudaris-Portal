@@ -17,14 +17,23 @@ import "./topbar.css";
 // Debounce utility
 function debounce(fn, delay) {
   let timer;
-  return (...args) => {
+
+  function debounced(...args) {
     clearTimeout(timer);
     timer = setTimeout(() => fn(...args), delay);
+  }
+
+  debounced.cancel = () => {
+    clearTimeout(timer);
   };
+
+  return debounced;
 }
 
 const Topbar = () => {
   const dispatch = useDispatch();
+  const [localQuery, setLocalQuery] = useState("");
+
   const { groupId } = useParams();
   // --- State ---
   const [isMobile, setIsMobile] = useState(window.innerWidth < 860);
@@ -52,13 +61,25 @@ const Topbar = () => {
 
   // --- Search Query ---
   const query = useSelector((state) => state.search.query);
-  const debouncedQuery = useMemo(
+  // const debouncedQuery = useMemo(
+  //   () =>
+  //     debounce((value) => {
+  //       dispatch(setQuery(value));
+  //     }, 500),
+  //   [dispatch]
+  // );
+  const debouncedDispatch = useMemo(
     () =>
       debounce((value) => {
         dispatch(setQuery(value));
       }, 500),
     [dispatch]
   );
+
+  useEffect(() => {
+    debouncedDispatch(localQuery);
+    return () => debouncedDispatch.cancel();
+  }, [localQuery, debouncedDispatch]);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 860);
@@ -99,8 +120,8 @@ const Topbar = () => {
             name="search"
             id="search"
             placeholder="Search messages"
-            value={query}
-            onChange={(e) => debouncedQuery(e.target.value)}
+            value={localQuery}
+            onChange={(e) => setLocalQuery(e.target.value)}
             className="w-[500px] h-10 rounded-md text-(--foreground) border-(--border) focus:border-primary pl-9 responsive_search_input"
           />
         </div>
