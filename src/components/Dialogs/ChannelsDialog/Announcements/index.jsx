@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/dialog";
 import AnnouncementForm from "./AnnouncementForm";
 
-const AnnouncementDialog = ({ open, onOpenChange }) => {
+const AnnouncementDialog = ({ open, onOpenChange, announcement }) => {
   const handleClose = () => {
     onOpenChange(false);
   };
@@ -18,7 +18,7 @@ const AnnouncementDialog = ({ open, onOpenChange }) => {
         <DialogHeader>
           <DialogTitle>Add Announcement</DialogTitle>
         </DialogHeader>
-        <AnnouncementForm onClose={handleClose} />
+        <AnnouncementForm onClose={handleClose} announcement={announcement} />
       </DialogContent>
     </Dialog>
   );

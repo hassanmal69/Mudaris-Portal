@@ -9,12 +9,9 @@ import { MoreHorizontalIcon, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useDispatch } from "react-redux";
 import { deleteAnnouncementDB } from "@/redux/features/announcements/announcementsSlice";
-const Actions = ({ onEdit, announcementId }) => {
+const Actions = ({ onEdit, onDelete }) => {
   const dispatch = useDispatch();
-  const handleDelete = (id) => {
-    alert("this action can not be undone");
-    dispatch(deleteAnnouncementDB(id));
-  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -34,10 +31,7 @@ const Actions = ({ onEdit, announcementId }) => {
           <Pencil className="h-4 w-4 mr-2" />
           Edit
         </DropdownMenuItem>
-        <DropdownMenuItem
-          className="text-destructive"
-          onClick={() => handleDelete(announcementId)}
-        >
+        <DropdownMenuItem className="text-destructive" onClick={onDelete}>
           <Trash2 className="h-4 w-4 mr-2 " />
           Delete
         </DropdownMenuItem>

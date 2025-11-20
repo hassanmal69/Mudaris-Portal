@@ -12,7 +12,7 @@ import directSliceReducer from "@/redux/features/channels/directSlice.js";
 import channelMembersReducer from "@/redux/features/channelMembers/channelMembersSlice.js";
 import pinnedMessagesReducer from "@/redux/features/messages/pin/pinSlice.js";
 import announcementsReducer from "@/redux/features/announcements/announcementsSlice.js";
-import lectureLinkReducer from "../features/lectureLinks/lecturelinks.js";
+import lectureLinksReducer from "@/redux/features/lecturesLink/lecturesLinksSlice.js";
 export const store = configureStore({
   reducer: {
     auth: authReducer,
@@ -28,7 +28,7 @@ export const store = configureStore({
     channelMembers: channelMembersReducer,
     pinnedMessages: pinnedMessagesReducer,
     announcements: announcementsReducer,
-    lectureLinks: lectureLinkReducer,
+    lectureLinks: lectureLinksReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
