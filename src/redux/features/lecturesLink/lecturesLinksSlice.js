@@ -4,10 +4,11 @@ import { supabase } from "@/services/supabaseClient";
 // READ (pagination)
 export const fetchLecturesLink = createAsyncThunk(
   "fetchLecturesLink/fetch",
-  async ({ from, to }) => {
+  async ({ from, to, workspace_id }) => {
     const { data, error } = await supabase
       .from("lectures")
       .select("*")
+      .eq("workspace_id", workspace_id)
       .order("lecture_date", { ascending: false })
       .range(from, to);
 

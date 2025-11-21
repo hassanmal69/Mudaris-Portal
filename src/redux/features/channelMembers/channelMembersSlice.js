@@ -18,12 +18,10 @@ export const fetchChannelMembersByChannel = createAsyncThunk(
 export const fetchChannelMembersbyUser = createAsyncThunk(
   "channelMembers/fetchByUser",
   async (userId) => {
-    console.log("useridcoming", userId);
     const { data, error } = await supabase
       .from("channel_members")
       .select("id, channels ( id, channel_name,visibility,workspace_id )")
       .eq("user_id", userId);
-    console.log("showing data when we fetch chnanel", data);
     if (error) throw error;
     return { userId, channel: data };
   }

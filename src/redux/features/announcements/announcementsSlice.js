@@ -4,12 +4,13 @@ import { supabase } from "@/services/supabaseClient";
 // READ (pagination)
 export const fetchAnnouncements = createAsyncThunk(
   "announcements/fetch",
-  async ({ from, to }) => {
+  async ({ from, to, workspace_id }) => {
     const { data, error } = await supabase
       .from("announcements")
       .select("*")
       .order("created_at", { ascending: false })
-      .range(from, to);
+      .range(from, to)
+      .eq("workspace_id", workspace_id);
 
     if (error) throw error;
     return data;
