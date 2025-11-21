@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Button } from "@/components/ui/button";
-import ChapterDialog from '@/components/Dialogs/ChannelsDialog/Videos&Presentations/Chapters';
-import VideoDialog from '@/components/Dialogs/ChannelsDialog/Videos&Presentations/Videos';
-import { fetchChapters } from '@/redux/features/video&presentations/chapterSlice';
-import { fetchVideos } from '@/redux/features/video&presentations/videoSlice';
-import { useParams } from 'react-router-dom';
+import ChapterDialog from "@/components/Dialogs/ChannelsDialog/Videos&Presentations/Chapters";
+import VideoDialog from "@/components/Dialogs/ChannelsDialog/Videos&Presentations/Videos";
+import { fetchChapters } from "@/redux/features/video&presentations/chapterSlice";
+import { fetchVideos } from "@/redux/features/video&presentations/videoSlice";
+import { useParams } from "react-router-dom";
 
 const VideosPresentations = () => {
   const { session } = useSelector((state) => state.auth);
@@ -41,7 +41,7 @@ const VideosPresentations = () => {
   };
 
   return (
-    <div className='bg-(--background) text-(--foreground) h-dvh p-4'>
+    <div className="bg-(--background) text-(--foreground) h-dvh p-4">
       <div className="flex w-full items-center justify-center">
         {session.user.user_metadata.user_role === "admin" && (
           <Button
@@ -59,27 +59,49 @@ const VideosPresentations = () => {
         {chapters.map((chapter, i) => (
           <div key={chapter?.id} className="flex flex-col gap-2">
             <div className="flex gap-2 items-center">
-              <h2>{i + 1}. {chapter?.name}</h2>
+              <h2>
+                {i + 1}. {chapter?.name}
+              </h2>
 
               <Button onClick={() => handleSeeVideos(chapter.id)}>
                 {expandedChapter === chapter.id ? "Hide Videos" : "See Videos"}
               </Button>
 
               {session.user.user_metadata.user_role === "admin" && (
-                <Button onClick={() => handleAddVideo(chapter.id)}>Add Video</Button>
+                <Button onClick={() => handleAddVideo(chapter.id)}>
+                  Add Video
+                </Button>
               )}
             </div>
 
             {expandedChapter === chapter.id && videosList.length > 0 && (
               <ul className="ml-6 mt-2 space-y-1">
                 {videosList
-                  .filter(video => video.chapter_id === chapter.id)
-                  .map(video => (
-                    <li key={video.id} className="text-sm text-(--muted-foreground)">
+                  .filter((video) => video.chapter_id === chapter.id)
+                  .map((video) => (
+                    <li
+                      key={video.id}
+                      className="text-sm text-(--muted-foreground)"
+                    >
                       <strong>{video.name}</strong> — {video.description} |
-                      <a href={video.video_link} target="_blank" rel="noreferrer" className="text-blue-500 ml-1">Video</a> |
+                      <a
+                        href={video.video_link}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-blue-500 ml-1"
+                      >
+                        Video
+                      </a>{" "}
+                      |
                       {video.presentation_link && (
-                        <a href={video.presentation_link} target="_blank" rel="noreferrer" className="text-blue-500 ml-1">Presentation</a>
+                        <a
+                          href={video.presentation_link}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-blue-500 ml-1"
+                        >
+                          Presentation
+                        </a>
                       )}
                     </li>
                   ))}
@@ -89,9 +111,16 @@ const VideosPresentations = () => {
         ))}
       </div>
 
-      <ChapterDialog open={chapterDialogOpen} onOpenChange={setChapterDialogOpen} />
+      <ChapterDialog
+        open={chapterDialogOpen}
+        onOpenChange={setChapterDialogOpen}
+      />
       {activeChapter && (
-        <VideoDialog chapterId={activeChapter} open={videoDialogOpen} onOpenChange={setVideoDialogOpen} />
+        <VideoDialog
+          chapterId={activeChapter}
+          open={videoDialogOpen}
+          onOpenChange={setVideoDialogOpen}
+        />
       )}
     </div>
   );

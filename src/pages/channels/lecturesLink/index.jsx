@@ -11,94 +11,117 @@ import {
 } from "@/redux/features/lecturesLink/lecturesLinksSlice";
 import useInfiniteScroll from "@/hooks/infinteScroll-hook/useInfiniteScroll";
 import Actions from "../actions";
-
-const PAGE_SIZE = 10;
+import { useDispatch } from "react-redux";
+import { isAdmin } from "@/constants/constants";
+import usePaginatiedList from "@/hooks/infinteScroll-hook/usePaginatedList";
+import { useParams } from "react-router-dom";
 
 const LecturesLink = () => {
   const dispatch = useDispatch();
-  const { session } = useSelector((state) => state.auth);
   const { list: lectures, loading } = useSelector(
     (state) => state.lectureLinks
   );
+  const { workspace_id } = useParams();
+  const { state, dispatchLocal, runInitialLoad, loadMore, handleDialogChange } =
+    usePaginatiedList(
+      (payload) => fetchLecturesLink({ workspace_id, ...payload }),
+      clearLecturesLink
+    );
 
-  const isAdmin = session?.user?.user_metadata?.user_role === "admin";
-  const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const [selectedLectureLink, setSeletedLecturesLink] = useState(null);
-  const openEditDialog = (lecture) => {
-    setSeletedLecturesLink(lecture);
-    setEditDialogOpen(true);
-  };
-  const [page, setPage] = useState(0);
-  const [hasMore, setHasMore] = useState(true);
-  const [dialogOpen, setDialogOpen] = useState(false);
-
-  // 👉 Prevent initial fetch from running twice (Strict Mode)
-  const initialLoadRef = useRef(false);
-  const openedDialogRef = useRef(false);
-
-  const fetchPage = useCallback(
-    async (pageIndex = 0) => {
-      const from = pageIndex * PAGE_SIZE;
-      const to = from + PAGE_SIZE - 1;
-
-      try {
-        const data = await dispatch(fetchLecturesLink({ from, to })).unwrap();
-        setHasMore(data.length === PAGE_SIZE);
-      } catch (err) {
-        console.error("Unexpected error fetching lectures:", err);
-        setHasMore(false);
-      }
-    },
-    [dispatch]
-  );
-
-  // 👉 Initial load - only ONCE
+  // initial Load
   useEffect(() => {
-    if (initialLoadRef.current) return;
-    initialLoadRef.current = true;
-
-    dispatch(clearLecturesLink());
-    fetchPage(0);
-    setPage(0);
-  }, [fetchPage, dispatch]);
-
-  // Load more
-  const handleLoadMore = useCallback(() => {
-    const next = page + 1;
-    setPage(next);
-    fetchPage(next);
-  }, [page, fetchPage]);
-
+    runInitialLoad(dispatch);
+  }, []);
+  // dialog refresh logic
+  useEffect(() => {
+    handleDialogChange(state.dialogOpen || state.editDialogOpen, dispatch);
+  }, [state.dialogOpen, state.editDialogOpen]);
+  const onEdit = (item) =>
+    dispatchLocal({ type: "SELECT_ITEM", payload: item });
+  const onDelete = (id) => dispatch(deleteLecturesLink(id));
   const { sentinelRef } = useInfiniteScroll({
     loading,
-    hasMore,
-    onLoadMore: handleLoadMore,
-    deps: [page],
+    hasMore: state.hasMore,
+    onLoadMore: () => loadMore(dispatch),
+    deps: [state.page],
   });
+  // const [editDialogOpen, setEditDialogOpen] = useState(false);
+  // const [selectedLectureLink, setSeletedLecturesLink] = useState(null);
+  // const openEditDialog = (lecture) => {
+  //   setSeletedLecturesLink(lecture);
+  //   setEditDialogOpen(true);
+  // };
+  // const [page, setPage] = useState(0);
+  // const [hasMore, setHasMore] = useState(true);
+  // const [dialogOpen, setDialogOpen] = useState(false);
 
-  // 👉 Refresh only when dialog closes (NOT on mount)
-  const wasOpenRef = useRef(false);
-  const handleDelete = (id) => {
-    alert("this action can not be undone");
-    dispatch(deleteLecturesLink(id));
-  };
-  useEffect(() => {
-    // opening
-    if (dialogOpen) {
-      wasOpenRef.current = true;
-      return;
-    }
+  // // 👉 Prevent initial fetch from running twice (Strict Mode)
+  // const initialLoadRef = useRef(false);
+  // const openedDialogRef = useRef(false);
 
-    // closing → refresh list
-    if ((!dialogOpen && openedDialogRef.current) || wasOpenRef.current) {
-      wasOpenRef.current = false;
+  // const fetchPage = useCallback(
+  //   async (pageIndex = 0) => {
+  //     const from = pageIndex * PAGE_SIZE;
+  //     const to = from + PAGE_SIZE - 1;
 
-      dispatch(clearLecturesLink());
-      setPage(0);
-      setHasMore(true);
-      fetchPage(0);
-    }
-  }, [dialogOpen, fetchPage, dispatch]);
+  //     try {
+  //       const data = await dispatch(fetchLecturesLink({ from, to })).unwrap();
+  //       setHasMore(data.length === PAGE_SIZE);
+  //     } catch (err) {
+  //       console.error("Unexpected error fetching lectures:", err);
+  //       setHasMore(false);
+  //     }
+  //   },
+  //   [dispatch]
+  // );
+
+  // // 👉 Initial load - only ONCE
+  // useEffect(() => {
+  //   if (initialLoadRef.current) return;
+  //   initialLoadRef.current = true;
+
+  //   dispatch(clearLecturesLink());
+  //   fetchPage(0);
+  //   setPage(0);
+  // }, [fetchPage, dispatch]);
+
+  // // Load more
+  // const handleLoadMore = useCallback(() => {
+  //   const next = page + 1;
+  //   setPage(next);
+  //   fetchPage(next);
+  // }, [page, fetchPage]);
+
+  // const { sentinelRef } = useInfiniteScroll({
+  //   loading,
+  //   hasMore,
+  //   onLoadMore: handleLoadMore,
+  //   deps: [page],
+  // });
+
+  // // 👉 Refresh only when dialog closes (NOT on mount)
+  // const wasOpenRef = useRef(false);
+  // const handleDelete = (id) => {
+  //   alert("this action can not be undone");
+  //   dispatch(deleteLecturesLink(id));
+  // };
+  // useEffect(() => {
+  //   // opening
+  //   if (dialogOpen) {
+  //     wasOpenRef.current = true;
+  //     return;
+  //   }
+
+  //   // closing → refresh list
+  //   if ((!dialogOpen && openedDialogRef.current) || wasOpenRef.current) {
+  //     wasOpenRef.current = false;
+
+  //     dispatch(clearLecturesLink());
+  //     setPage(0);
+  //     setHasMore(true);
+  //     fetchPage(0);
+  //   }
+  // }, [dialogOpen, fetchPage, dispatch]);
 
   // Color
   const getColorClass = (id) => {
@@ -111,7 +134,7 @@ const LecturesLink = () => {
     return tagColors[Math.abs(hash) % tagColors.length];
   };
 
-  if (loading && page === 0)
+  if (loading && state.page)
     return (
       <section className="flex justify-center items-center h-40 bg-(--background)">
         <p className="text-(--muted)">Loading lectures...</p>
@@ -130,7 +153,7 @@ const LecturesLink = () => {
             variant="secondary"
             size="sm"
             className="text-(--muted-foreground) cursor-pointer border"
-            onClick={() => setDialogOpen(true)}
+            onClick={() => dispatchLocal({ type: "OPEN_DIALOG" })}
           >
             Add links
           </Button>
@@ -193,8 +216,8 @@ const LecturesLink = () => {
                 {isAdmin && (
                   <div className="absolute top-3 right-3 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                     <Actions
-                      onEdit={() => openEditDialog(lecture)}
-                      onDelete={() => handleDelete(lecture.id)}
+                      onEdit={() => onEdit(lecture)}
+                      onDelete={() => onDelete(lecture.id)}
                     />
                   </div>
                 )}
@@ -204,36 +227,24 @@ const LecturesLink = () => {
         </div>
       )}
 
-      {loading && page > 0 && (
+      {loading && state.page > 0 && (
         <div className="flex justify-center py-4">
           <div className="w-8 h-8 border-4 border-gray-300 border-t-[--primary] rounded-full animate-spin" />
         </div>
       )}
-      <div className="flex justify-center mt-2">
+      {/* <div className="flex justify-center mt-2">
         <Button
-          type="button"
-          onClick={handleLoadMore}
-          disabled={loading || !hasMore}
-          className={`px-4 py-2 rounded-md text-sm font-medium transition
-            ${loading || !hasMore ? "bg-gray-600 text-gray-300 cursor-not-allowed" : "bg-[--primary] text-white hover:opacity-90"}`}
+          onClick={() => loadMore(dispatch)}
+          disabled={loading || !state.hasMore}
         >
-          {loading
-            ? "Loading..."
-            : hasMore
-              ? "Load more"
-              : "No more lectures link"}
+          {loading ? "Loading…" : state.hasMore ? "Load more" : "No more"}
         </Button>
-      </div>
-      <div ref={sentinelRef} className="w-full h-6" />
-
+      </div> */}
+      <div ref={sentinelRef} className="h-10 w-full" />
       <LectureDialog
-        open={dialogOpen || editDialogOpen}
-        onOpenChange={() => {
-          setDialogOpen(false);
-          setEditDialogOpen(false);
-          setSeletedLecturesLink(null);
-        }}
-        lecturesLink={selectedLectureLink}
+        open={state.dialogOpen || state.editDialogOpen}
+        onOpenChange={() => dispatchLocal({ type: "CLOSE_DIALOGS" })}
+        lecturesLink={state.selectedItem}
       />
     </section>
   );
