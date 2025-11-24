@@ -22,7 +22,6 @@ const LectureLinksFrom = ({ onClose, lecturesLink }) => {
     lectureLink: lecturesLink?.lecture_link || "",
   });
   const [linkError, setLinkError] = useState("");
-  console.log(lecturesLink, "i am lec");
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -49,25 +48,21 @@ const LectureLinksFrom = ({ onClose, lecturesLink }) => {
 
     if (lecturesLink) {
       dispatch(
-        updateLecturesLink({
-          id: lecturesLink.id,
-          updates: {
-            title: formData?.title,
-            description: formData?.description,
-            topic: formData?.topic,
-            lectureLink: formData?.lectureLink,
-          },
+        createLecturesLink({
+          title: formData.title,
+          description: formData.description,
+          tag: formData.topic,
+          lecture_link: formData.lectureLink,
+          workspace_id,
         })
       );
     } else {
-      const { lectureLink, ...rest } = formData;
-
       dispatch(
         createLecturesLink({
-          title: formData?.title,
-          description: formData?.description,
-          topic: formData?.topic,
-          lectureLink: formData?.lectureLink,
+          title: formData.title,
+          description: formData.description,
+          tag: formData.topic,
+          lecture_link: formData.lectureLink,
           workspace_id,
         })
       );

@@ -38,7 +38,7 @@ export default function useInfiniteScroll({
     if (el) observerRef.current.observe(el);
 
     return () => observerRef.current?.disconnect();
-  }, [root, rootMargin, threshold]);
+  }, [root, rootMargin, threshold, loading, hasMore]);
 
   return { sentinelRef };
 }
