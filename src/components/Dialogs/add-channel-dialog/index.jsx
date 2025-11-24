@@ -188,7 +188,7 @@ const AddChannelDialog = ({ open, onOpenChange }) => {
       {((step === 1 && channelData.visibility === "public") ||
         (step === 2 && channelData.visibility === "private")) && (
         <Button
-          className="bg-[#008000] transition delay-150 duration-300 ease-in-out hover:bg-transparent hover:text-[#008000] border border-[#008000] text-[#fff]"
+          className="bg-[#008000] transition delay-150 duration-300 ease-in-out hover:bg-transparent hover:text-[#008000] border border-[#008000] "
           onClick={handleSubmit}
         >
           Finish
@@ -199,7 +199,7 @@ const AddChannelDialog = ({ open, onOpenChange }) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange} initialFocus={dialogRef}>
-      <DialogContent className="max-w-md bg-black/90 border-[#111] text-gray-400 w-full">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>Add Channel</DialogTitle>
         </DialogHeader>

@@ -7,6 +7,7 @@ import {
 } from "@/redux/features/workspaceMembers/WorkspaceMembersSlice";
 import { useParams } from "react-router-dom";
 import { Link } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
 
 function isValidEmail(email) {
   return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email);
@@ -81,7 +82,7 @@ const InviteByEmail = ({ emails, setEmails, onCopyLink, onNext }) => {
           {emails.map((email, idx) => (
             <span
               key={idx}
-              className="flex items-center px-2 py-1 bg-gray-200 rounded text-xs"
+              className="flex items-center px-2 py-1 bg-(--chart-2) rounded text-xs"
             >
               {email}
               <button
@@ -96,7 +97,7 @@ const InviteByEmail = ({ emails, setEmails, onCopyLink, onNext }) => {
           ))}
         </div>
         <div className="flex gap-2">
-          <textarea
+          <Textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Enter email(s), comma separated"
@@ -108,7 +109,7 @@ const InviteByEmail = ({ emails, setEmails, onCopyLink, onNext }) => {
             }}
             aria-label="Add emails"
             rows={4}
-            className="w-full border border-[#111] rounded-md p-2 resize-none"
+            className="resize-none"
           />
         </div>
         {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
@@ -116,7 +117,7 @@ const InviteByEmail = ({ emails, setEmails, onCopyLink, onNext }) => {
       <div className="flex gap-2 justify-between">
         <Button
           type="button"
-          className="border-0 outline-0 bg-transparent text-[#333] "
+          variant={"link"}
           onClick={onCopyLink}
           disabled={!input.trim() && emails.length === 0}
         >
@@ -125,6 +126,7 @@ const InviteByEmail = ({ emails, setEmails, onCopyLink, onNext }) => {
         </Button>
         <Button
           type="button"
+          variant="default"
           onClick={onNext}
           disabled={!input.trim() && emails.length === 0}
         >
