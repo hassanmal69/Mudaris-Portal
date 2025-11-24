@@ -10,6 +10,7 @@ import { useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { createWorkspace } from "@/redux/features/workspace/workspaceSlice.js";
 import { supabase } from "@/services/supabaseClient.js";
+import { DialogContent } from "@/components/ui/dialog.jsx";
 const initialState = {
   name: "",
   description: "",
@@ -183,11 +184,11 @@ const AddWorkspaceDialog = ({ open, onClose }) => {
   if (!open) return null;
 
   return (
-    <div className="dialog p-6 max-w-md mx-auto bg-black text-[#c7c7c7] rounded shadow">
-      <h2 className="text-center text-xl font-bold text-[#4d3763] mb-2">
+    <div className="bg-(--background) text-(--foreground)  border-(--border) w-full data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-1/2 left-1/2 z-50 grid max-h-[calc(100%-2rem)] max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 overflow-y-auto rounded-xl border p-6 shadow-lg duration-200 sm:max-w-100">
+      <h2 className="text-center text-xl font-bold  mb-2">
         Create a new Workspace
       </h2>
-      <p className="text-center text-[#4d3763] mb-4">
+      <p className="text-center mb-4">
         Enter the details and your workspace will be ready
       </p>
 
@@ -212,12 +213,3 @@ const AddWorkspaceDialog = ({ open, onClose }) => {
 };
 
 export default AddWorkspaceDialog;
-
-// {
-//     "id": "c8a0ace1-cb42-4bd5-9edd-2e15a565236f",
-//     "created_at": "2025-09-20T18:02:50.072592+00:00",
-//     "workspace_name": "test",
-//     "owner_id": "99cb0492-a3f0-4f1d-ac52-b6acc73e0a7e",
-//     "avatar_url": null,
-//     "description": "this is test"
-// }

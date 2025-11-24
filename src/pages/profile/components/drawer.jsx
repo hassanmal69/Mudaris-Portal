@@ -47,12 +47,12 @@ export default function VaulDrawer() {
         />
       </Drawer.Trigger>
       <Drawer.Portal>
-        <Drawer.Overlay className="fixed inset-0 bg-black/40 overflow-scroll" />
+        <Drawer.Overlay className="fixed inset-0 bg-(--background) overflow-scroll" />
         <Drawer.Content
           className="right-2 top-2 bottom-2 fixed z-10 h-full
           after:bottom-0
           after:w-0
-          outline-none w-[400px] responsive_drawer_profile rounded-md text-white bg-black/90 flex flex-col "
+          outline-none w-[400px] responsive_drawer_profile rounded-md text-white bg-(--dialog) border border-(--border) flex flex-col "
           style={{ "--initial-transform": "calc(100% + 8px)" }}
         >
           {/* Header */}

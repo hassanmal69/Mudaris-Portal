@@ -122,12 +122,7 @@ const InviteDialog = ({ open, onOpenChange }) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        className="max-w-md w-full
-      bg-black/90 text-gray-400 border-[#111]
-      "
-        aria-describedby={undefined}
-      >
+      <DialogContent aria-describedby={undefined}>
         <DialogHeader>
           <DialogTitle>
             Invite people to{" "}

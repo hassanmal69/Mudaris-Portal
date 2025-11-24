@@ -42,10 +42,12 @@
   --sidebar-accent-foreground: #0f1e3e;
   --sidebar-border: #0f1e3e33;
   --sidebar-ring: #1e3a5f;
+  --success: #008235;
 }
 
 .dark {
   --background: #0a1428;
+  --dialog: #071020;
   --foreground: #e8f0f9;
   --card: #0f1e3e;
   --card-foreground: #e8f0f9;
@@ -81,4 +83,5 @@
   --sidebar-accent-foreground: #d4e2f4;
   --sidebar-border: #3d5a804d;
   --sidebar-ring: #3d5a80;
+  --success: #008235;
 }
