@@ -1,19 +1,20 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { supabase } from "@/services/supabaseClient.js";
+import { supabase } from "@/services/supabaseClient";
 
-// FETCH videos by chapter
+// FETCH videos by chapter — with caching
 export const fetchVideos = createAsyncThunk(
   "videos/fetch",
-  async (chapter_id) => {
-    console.log('hhhh',chapter_id)
+  async (chapter_id, { getState }) => {
+    const cache = getState().videos.videosByChapter[chapter_id];
+    if (cache) return cache; 
     const { data, error } = await supabase
       .from("videos")
       .select("*")
-      .eq("chapter_id", chapter_id)
+      .eq("chapter_id", chapter_id);
 
     if (error) throw error;
-    console.log(data)
-    return data;
+
+    return { chapter_id, data };
   }
 );
 
@@ -21,7 +22,6 @@ export const fetchVideos = createAsyncThunk(
 export const createVideoDB = createAsyncThunk(
   "videos/create",
   async (payload) => {
-    console.log('description is',payload)
     const { data, error } = await supabase
       .from("videos")
       .insert(payload)
@@ -66,22 +66,28 @@ export const deleteVideoDB = createAsyncThunk(
 const videosSlice = createSlice({
   name: "videos",
   initialState: {
-    list: [],
+    videosByChapter: {}, // 💡 chapter-level caching
     loading: false,
   },
   reducers: {
     clearVideos: (state) => {
-      state.list = [];
+      state.videosByChapter = {};
     },
   },
   extraReducers: (builder) => {
     builder
+
       // FETCH
       .addCase(fetchVideos.pending, (state) => {
         state.loading = true;
       })
       .addCase(fetchVideos.fulfilled, (state, action) => {
-        state.list = action.payload;
+        const { chapter_id, data } =
+          action.payload?.chapter_id ? action.payload : { chapter_id: null, data: action.payload };
+
+        if (chapter_id) {
+          state.videosByChapter[chapter_id] = data;
+        }
         state.loading = false;
       })
       .addCase(fetchVideos.rejected, (state) => {
@@ -90,20 +96,35 @@ const videosSlice = createSlice({
 
       // CREATE
       .addCase(createVideoDB.fulfilled, (state, action) => {
-        state.list.unshift(action.payload);
+        const video = action.payload;
+        const cid = video.chapter_id;
+
+        if (!state.videosByChapter[cid]) {
+          state.videosByChapter[cid] = [];
+        }
+
+        state.videosByChapter[cid].unshift(video);
       })
 
       // UPDATE
       .addCase(updateVideoDB.fulfilled, (state, action) => {
         const updated = action.payload;
-        state.list = state.list.map((v) =>
+        const cid = updated.chapter_id;
+
+        state.videosByChapter[cid] = state.videosByChapter[cid].map((v) =>
           v.id === updated.id ? updated : v
         );
       })
 
       // DELETE
       .addCase(deleteVideoDB.fulfilled, (state, action) => {
-        state.list = state.list.filter((v) => v.id !== action.payload);
+        const deletedId = action.payload;
+
+        for (const cid in state.videosByChapter) {
+          state.videosByChapter[cid] = state.videosByChapter[cid].filter(
+            (v) => v.id !== deletedId
+          );
+        }
       });
   },
 });

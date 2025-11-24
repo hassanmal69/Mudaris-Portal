@@ -10,7 +10,6 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/services/supabaseClient";
 import { useDispatch } from "react-redux";
 import { addValue } from "@/redux/features/ui/fileSlice";
 // import { setValue } from "@/features/ui/fileSlice";
