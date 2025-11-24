@@ -63,6 +63,17 @@ export const router = createBrowserRouter([
         ),
       },
       {
+        path: "/workspace/:workspace_id/videospresentations",
+        element: (
+          <PrivateRoute>
+            <TopbarOnly />
+          </PrivateRoute>
+        ),
+        children: [
+          { path: "", element: < VideosPresentations /> }
+        ]
+      },
+      {
         path: "/workspace/:workspace_id",
         element: (
           <PrivateRoute>
@@ -73,7 +84,7 @@ export const router = createBrowserRouter([
           { path: "group/:groupId/General", element: <WorkSpaceInd /> },
           { path: "announcements", element: <Announcements /> },
           { path: "lecturesLink", element: <LecturesLink /> },
-          { path: "videospresentations", element: <VideosPresentations /> },
+          // {path: "videospresentations", element: <VideosPresentations /> },
           { path: "calendar", element: <Calendar /> },
           { path: "market", element: <Market /> },
           { path: "group/:groupId", element: <WorkSpaceInd /> },
@@ -89,6 +100,15 @@ function WorkspaceLayout() {
     <div className="bg-black">
       <SidebarLayout>
         <Topbar />
+        <Outlet />
+      </SidebarLayout>
+    </div>
+  );
+}
+function TopbarOnly() {
+  return (
+    <div className="bg-black">
+      <SidebarLayout>
         <Outlet />
       </SidebarLayout>
     </div>
