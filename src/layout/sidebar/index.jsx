@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import AddChannelDialog from "@/components/Dialogs/add-channel-dialog";
-import InviteDialog from "@/components/invite-dialog";
+import InviteDialog from "@/components/Dialogs/invite-dialog";
 import { SidebarContent } from "@/components/ui/sidebar";
 import { useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";

@@ -42,10 +42,10 @@ const Channelinvitation = ({
               <button
                 key={channel.id}
                 type="button"
-                className={`px-2 py-1 rounded text-xs border ${
+                className={`px-2 py-1 rounded text-xs border border-(--border) ${
                   channels.includes(channel.id)
-                    ? "bg-[#556cd6] text-white border-[#556cd6]"
-                    : " text-gray-400 border-[#111]"
+                    ? " text-white  bg-(--ring)"
+                    : " text-(--muted-foreground) bg-(--background) "
                 }`}
                 onClick={() => handleToggle(channel)}
                 aria-pressed={channels.includes(channel.id)}
@@ -59,18 +59,13 @@ const Channelinvitation = ({
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search channels"
-          className="mt-2 outline-none border-[#111]"
         />
       </div>
       <div className="flex gap-2 justify-between">
-        <Button type="button" onClick={onBack}>
+        <Button type="button" variant={"destructive"} onClick={onBack}>
           Back
         </Button>
-        <Button
-          type="button"
-          className="bg-green-950 hover:bg-green-900"
-          onClick={onSend}
-        >
+        <Button type="button" variant={"success"} onClick={onSend}>
           Send
         </Button>
       </div>

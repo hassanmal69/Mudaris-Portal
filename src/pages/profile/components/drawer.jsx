@@ -8,6 +8,7 @@ import { Clock, Globe, Lock } from "lucide-react";
 import { useParams } from "react-router-dom";
 import { selectChannels } from "@/redux/features/channels/channelsSlice.js";
 import "../profile.css";
+import { Button } from "@/components/ui/button.jsx";
 export default function VaulDrawer() {
   const { workspace_id } = useParams();
   const { session } = useSelector((state) => state.auth);
@@ -39,7 +40,7 @@ export default function VaulDrawer() {
 
   return (
     <Drawer.Root direction="right" modal={true}>
-      <Drawer.Trigger className="relative flex h-10 flex-shrink-0 items-center justify-center gap-2 rounded-full bg-white px-4 text-sm font-medium shadow-sm transition-all hover:bg-[#FAFAFA] dark:bg-[#161615] dark:hover:bg-[#1A1A19] dark:text-white">
+      <Drawer.Trigger className="relative flex h-10 flex-shrink-0 items-center justify-center gap-2 rounded-full bg-white px-4 text-sm font-medium shadow-sm transition-all hover:bg-[#FAFAFA] dark:bg-[#161615] dark:hover:bg-[#1A1A19] dark:text-(--sidebar-accent-foreground)">
         <img
           src={avatarUrl}
           alt="profileImg"
@@ -47,17 +48,17 @@ export default function VaulDrawer() {
         />
       </Drawer.Trigger>
       <Drawer.Portal>
-        <Drawer.Overlay className="fixed inset-0 bg-black/40 overflow-scroll" />
+        <Drawer.Overlay className="fixed inset-0 bg-(--background) overflow-scroll" />
         <Drawer.Content
           className="right-2 top-2 bottom-2 fixed z-10 h-full
           after:bottom-0
           after:w-0
-          outline-none w-[400px] responsive_drawer_profile rounded-md text-white bg-black/90 flex flex-col "
+          outline-none w-[400px] responsive_drawer_profile rounded-md text-(--sidebar-accent-foreground) bg-(--dialog) border border-(--border) flex flex-col "
           style={{ "--initial-transform": "calc(100% + 8px)" }}
         >
           {/* Header */}
           <div className="px-6 pt-7">
-            <Drawer.Title className="font-bold mb-2 text-2xl text-white w-full">
+            <Drawer.Title className="font-bold mb-2 text-2xl text-(--sidebar-accent-foreground) w-full">
               Profile
             </Drawer.Title>
             <img
@@ -71,7 +72,7 @@ export default function VaulDrawer() {
           <div className="flex-1 overflow-y-auto px-6 mt-5 scrollbar-thin scrollbar-thumb-zinc-700 scrollbar-track-transparent">
             <div className="flex w-full flex-col gap-2.5">
               <div className="flex my-3 justify-between">
-                <Drawer.Title className="font-medium mb-2 text-2xl text-white ">
+                <Drawer.Title className="font-medium mb-2 text-2xl text-(--sidebar-accent-foreground) ">
                   {session?.user?.user_metadata?.displayName}
                 </Drawer.Title>
                 <div>
@@ -79,27 +80,40 @@ export default function VaulDrawer() {
                 </div>
               </div>
 
-              <Drawer.Description className="text-zinc-600 profile_active_user">
+              <Drawer.Description className="text-(--muted-foreground) profile_active_user">
                 active <span className="active_span"></span>
               </Drawer.Description>
 
-              <div className="flex flex-col text-zinc-600">
-                <h4 className="text-white">Email address</h4>
-                <p>{session?.user?.email}</p>
+              <div className="flex flex-col  ">
+                <h4 className="text-(--sidebar-accent-foreground)">
+                  Email address
+                </h4>
+                <p className="text-(--muted-foreground)">
+                  {session?.user?.email}
+                </p>
               </div>
 
-              <div className="text-zinc-600 flex flex-col w-full mb-2">
-                <h4 className="text-white">Current Time</h4>
-                <p className="flex gap-1 items-center">
+              <div className=" flex flex-col w-full mb-2">
+                <h4 className="text-(--sidebar-accent-foreground)">
+                  Current Time
+                </h4>
+                <p className="flex gap-1 text-(--muted-foreground) items-center">
                   <Clock className="w-5  h-5" />
                   {time.toLocaleTimeString()}
                 </p>
               </div>
 
               <div className="flex flex-col text-zinc-600">
-                <h4 className="text-white text-[18px]">channels</h4>
+                <h4 className="text-(--sidebar-accent-foreground) text-[18px]">
+                  channels
+                </h4>
                 {channels.map((ch) => (
-                  <p key={ch.id} className="flex gap-1.5 items-center">
+                  <p
+                    key={ch.id}
+                    className="flex 
+                  text-(--muted-foreground)
+                  gap-1.5 items-center"
+                  >
                     {ch.visibility === "public" ? (
                       <Globe className="w-4 h-4" />
                     ) : (
@@ -114,9 +128,9 @@ export default function VaulDrawer() {
 
           {/* Footer (always visible) */}
           <div className="px-6 py-4">
-            <button className="text-[#556cd6]" onClick={handleLogout}>
+            <Button variant={"secondary"} onClick={handleLogout}>
               Sign Out
-            </button>
+            </Button>
           </div>
         </Drawer.Content>
       </Drawer.Portal>

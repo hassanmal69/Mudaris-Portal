@@ -15,5 +15,6 @@ export default defineConfig({
       overlay: false,
     },
   },
+
   plugins: [tailwindcss(), react()],
 });

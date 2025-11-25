@@ -59,12 +59,13 @@ const MessageActions = React.memo(
 
     return (
       <>
-        <div className="absolute top-0 right-0 flex gap-1">
+        <div className="absolute top-0 right-0  flex gap-1">
           {/* from moiz --- if it is in pin message, reply button is disabled */}
           {!disableReply && (
             <button
               type="button"
-              className="p-1  text-white transition-colors delay-150 duration-300 hover:bg-(--muted) rounded hover:text-[#2b092b]  cursor-pointer"
+              className={`p-1  text-white
+                transition-colors  delay-150 duration-300 hover:bg-(--muted) rounded hover:text-[#2b092b]  cursor-pointer`}
               title="Reply"
               onClick={onReply}
             >

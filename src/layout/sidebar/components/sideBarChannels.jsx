@@ -12,11 +12,12 @@ import {
 } from "@/redux/features/channels/channelsSlice";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/services/supabaseClient";
-import { Megaphone, Link as Chain, CameraIcon, Video } from "lucide-react";
+import { Megaphone, Link as Chain, Video } from "lucide-react";
 import { fetchChannelMembersbyUser } from "@/redux/features/channelMembers/channelMembersSlice";
 import { Button } from "@/components/ui/button";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { PersonIcon } from "@radix-ui/react-icons";
+import { isAdmin } from "@/constants/constants";
 const SideBarChannels = ({
   session,
   workspace_id,
@@ -84,26 +85,26 @@ const SideBarChannels = ({
   };
   return (
     <SidebarGroup>
-      <SidebarGroupLabel className="text-(--sidebar-foreground) font-normal text-[16px]">
+      <SidebarGroupLabel className="text-(--sidebar-foreground) font-normal text-sm">
         Channels
       </SidebarGroupLabel>
       <SidebarMenu>
         {visibleChannel.map((cm) => {
-          console.log("channels are", visibleChannel);
           const channel = cm.channels;
           const isActive = activeChannel?.id === channel.id;
           return (
             <SidebarMenuItem key={channel.id}>
               <div
                 onClick={() => handleChannelClick(channel)}
-                className={`flex items-center gap-2 px-2 py-1 cursor-pointer 
-                      ${isActive
-                    ? "bg-(--sidebar-accent) text-white"
-                    : "hover:bg-(--sidebar-accent)"
-                  }`}
+                className={`flex items-center gap-2 rounded px-2 py-1  cursor-pointer 
+                      ${
+                        isActive
+                          ? "bg-(--sidebar-accent) text-white"
+                          : "hover:bg-(--sidebar-accent)"
+                      }`}
               >
                 <PersonIcon className="w-4 h-4" />
-                <span className="font-normal text-sm">
+                <span className="font-normal text-[15px]">
                   {channel.channel_name}
                 </span>
               </div>
@@ -116,52 +117,56 @@ const SideBarChannels = ({
           <Link to={`/workspace/${workspace_id}/announcements`}>
             <div
               className={`flex items-center gap-2 px-2 py-1 cursor-pointer 
-                      ${activeChannel === "announcements"
-                  ? "bg-(--sidebar-accent) text-white"
-                  : "hover:bg-(--sidebar-accent)"
-                }`}
+                      ${
+                        activeChannel === "announcements"
+                          ? "bg-(--sidebar-accent) text-white"
+                          : "hover:bg-(--sidebar-accent)"
+                      }`}
             >
               <Megaphone className="w-4 h-4" />
-              <span className="font-normal text-sm">Announcements</span>
+              <span className="font-normal text-[15px]">Announcements</span>
             </div>
           </Link>
           <Link to={`/workspace/${workspace_id}/lecturesLink`}>
             <div
               className={`flex items-center gap-2 px-2 py-1 cursor-pointer 
-                      ${activeChannel === "lecturesLink"
-                  ? "bg-(--sidebar-accent) text-white"
-                  : "hover:bg-(--sidebar-accent)"
-                }`}
+                      ${
+                        activeChannel === "lecturesLink"
+                          ? "bg-(--sidebar-accent) text-white"
+                          : "hover:bg-(--sidebar-accent)"
+                      }`}
             >
               <Chain className="w-4 h-4" />
 
-              <span className="font-normal text-sm">Lecture's Links</span>
+              <span className="font-normal text-[15px]">Lecture's Links</span>
             </div>
           </Link>
           <Link to={`/workspace/${workspace_id}/videospresentations`}>
             <div
               className={`flex items-center gap-2 px-2 py-1 cursor-pointer 
-                      ${activeChannel === "lecturesLink"
-                  ? "bg-(--sidebar-accent) text-white"
-                  : "hover:bg-(--sidebar-accent)"
-                }`}
+                      ${
+                        activeChannel === "lecturesLink"
+                          ? "bg-(--sidebar-accent) text-white"
+                          : "hover:bg-(--sidebar-accent)"
+                      }`}
             >
               <Video className="w-4 h-4" />
 
-              <span className="font-normal text-sm">Videos & Presentations</span>
+              <span className="font-normal text-sm">
+                Videos & Presentations
+              </span>
             </div>
           </Link>
         </SidebarMenuItem>
 
-        {session.user.user_metadata.user_role === "admin" && (
-          <Button
-            size="sm"
-            className="mt-2 p-0 mx-1 my-0 w-[50%] bg-transparent cursor-pointer text-gray-400 text-[14px] flex items-center gap-2 justify-center hover:bg-transparent hover:text-white hover:border-[#fff] transition-all delay-150 duration-300 border-none"
+        {isAdmin && (
+          <button
+            className="flex items-center gap-2 w-full px-2 py-2 rounded hover:bg-(--sidebar-accent) text-(--sidebar-foreground)/70 hover:text-(--sidebar-foreground)"
             onClick={() => setAddChannelOpen(true)}
           >
-            <PlusIcon className="w-4 h-4 bg-black/40 rounded text-gray-500" />
-            Create Channel
-          </Button>
+            <PlusIcon className="w-4 h-4" />
+            <p className="text-[15px]">Create Channel</p>
+          </button>
         )}
       </SidebarMenu>
     </SidebarGroup>

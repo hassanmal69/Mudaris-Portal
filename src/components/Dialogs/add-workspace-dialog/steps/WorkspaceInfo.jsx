@@ -5,7 +5,7 @@ const WorkspaceInfo = ({ state, setState, errors, handleNext }) => {
   return (
     <div className="space-y-4">
       <div className="flex flex-col gap-2">
-        <Label htmlFor="workspace-name" className="text-[#4d3763]">
+        <Label htmlFor="workspace-name">
           Workspace name
           <span className="text-red-500">*</span>
         </Label>
@@ -23,9 +23,7 @@ const WorkspaceInfo = ({ state, setState, errors, handleNext }) => {
         )}
       </div>
       <div className="flex flex-col gap-2">
-        <Label htmlFor="workspace-description" className="text-[#4d3763]">
-          Description
-        </Label>
+        <Label htmlFor="workspace-description">Description</Label>
         <Input
           id="workspace-description"
           value={state.description || ""}

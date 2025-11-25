@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { Link as MoizChain, ExternalLink } from "lucide-react";
 import { tagColors } from "@/constants/fallbackColors";
 import LectureDialog from "@/components/Dialogs/channelsDialog/LectureLinks/index.jsx";
-import { useSelector,useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { Button } from "@/components/ui/button";
 import {
   fetchLecturesLink,
@@ -44,83 +44,6 @@ const LecturesLink = () => {
     onLoadMore: () => loadMore(dispatch),
     deps: [state.page],
   });
-  // const [editDialogOpen, setEditDialogOpen] = useState(false);
-  // const [selectedLectureLink, setSeletedLecturesLink] = useState(null);
-  // const openEditDialog = (lecture) => {
-  //   setSeletedLecturesLink(lecture);
-  //   setEditDialogOpen(true);
-  // };
-  // const [page, setPage] = useState(0);
-  // const [hasMore, setHasMore] = useState(true);
-  // const [dialogOpen, setDialogOpen] = useState(false);
-
-  // // 👉 Prevent initial fetch from running twice (Strict Mode)
-  // const initialLoadRef = useRef(false);
-  // const openedDialogRef = useRef(false);
-
-  // const fetchPage = useCallback(
-  //   async (pageIndex = 0) => {
-  //     const from = pageIndex * PAGE_SIZE;
-  //     const to = from + PAGE_SIZE - 1;
-
-  //     try {
-  //       const data = await dispatch(fetchLecturesLink({ from, to })).unwrap();
-  //       setHasMore(data.length === PAGE_SIZE);
-  //     } catch (err) {
-  //       console.error("Unexpected error fetching lectures:", err);
-  //       setHasMore(false);
-  //     }
-  //   },
-  //   [dispatch]
-  // );
-
-  // // 👉 Initial load - only ONCE
-  // useEffect(() => {
-  //   if (initialLoadRef.current) return;
-  //   initialLoadRef.current = true;
-
-  //   dispatch(clearLecturesLink());
-  //   fetchPage(0);
-  //   setPage(0);
-  // }, [fetchPage, dispatch]);
-
-  // // Load more
-  // const handleLoadMore = useCallback(() => {
-  //   const next = page + 1;
-  //   setPage(next);
-  //   fetchPage(next);
-  // }, [page, fetchPage]);
-
-  // const { sentinelRef } = useInfiniteScroll({
-  //   loading,
-  //   hasMore,
-  //   onLoadMore: handleLoadMore,
-  //   deps: [page],
-  // });
-
-  // // 👉 Refresh only when dialog closes (NOT on mount)
-  // const wasOpenRef = useRef(false);
-  // const handleDelete = (id) => {
-  //   alert("this action can not be undone");
-  //   dispatch(deleteLecturesLink(id));
-  // };
-  // useEffect(() => {
-  //   // opening
-  //   if (dialogOpen) {
-  //     wasOpenRef.current = true;
-  //     return;
-  //   }
-
-  //   // closing → refresh list
-  //   if ((!dialogOpen && openedDialogRef.current) || wasOpenRef.current) {
-  //     wasOpenRef.current = false;
-
-  //     dispatch(clearLecturesLink());
-  //     setPage(0);
-  //     setHasMore(true);
-  //     fetchPage(0);
-  //   }
-  // }, [dialogOpen, fetchPage, dispatch]);
 
   // Color
   const getColorClass = (id) => {
@@ -231,14 +154,6 @@ const LecturesLink = () => {
           <div className="w-8 h-8 border-4 border-gray-300 border-t-[--primary] rounded-full animate-spin" />
         </div>
       )}
-      {/* <div className="flex justify-center mt-2">
-        <Button
-          onClick={() => loadMore(dispatch)}
-          disabled={loading || !state.hasMore}
-        >
-          {loading ? "Loading…" : state.hasMore ? "Load more" : "No more"}
-        </Button>
-      </div> */}
       <div ref={sentinelRef} className="h-10 w-full" />
       <LectureDialog
         open={state.dialogOpen || state.editDialogOpen}

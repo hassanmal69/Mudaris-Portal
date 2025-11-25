@@ -12,23 +12,23 @@ import { useSelector } from "react-redux";
 import { useState } from "react";
 import CreateWorkspace from "./components/createWorkspace.jsx";
 import "./dashboard.css";
+import { isAdmin } from "@/constants/constants.js";
 const Dashboard = () => {
   const { session } = useSelector((state) => state.auth);
   console.log(session?.user?.email, "user email");
   const [isOpen, setisOpen] = useState(false);
 
-  const isAdmin = session?.user?.user_metadata?.user_role === "admin";
   return (
     <section className="flex flex-col bg-(--background) text--(--foreground) min-h-screen">
       <div className="h-dvh z-10 w-dvw absolute overflow-hidden pointer-events-none">
         {isOpen && <CreateWorkspace />}
       </div>
 
-      <nav className="sticky top-0 z-10 flex justify-between items-center p-4 border-b border-[#111]">
+      <nav className="sticky top-0 z-10 flex justify-between items-center p-4 border-b border-(--border)">
         <span
           className="sm:text-[26px]
      block text-right font-extrabold tracking-tight 
-         bg-gradient-to-tr from-[#4d3763] to-[#eee] bg-clip-text text-transparent
+         bg-gradient-to-tr from-(--primary) to-(--primary-foreground) bg-clip-text text-transparent
     "
         >
           Mudaris Academy
@@ -44,7 +44,7 @@ const Dashboard = () => {
       {/* main should grow to fill available space */}
       <main className="flex-1 container mx-auto p-4 space-y-6 w-full max-w-3xl">
         <div className="my-10">
-          <h1 className="relative text-3xl text-[#4d3763] flex sm:flex-row gap-1 responisve_dashboard_title">
+          <h1 className="relative text-3xl text-(--primary-foreground) flex sm:flex-row gap-1 responisve_dashboard_title">
             Welcome back
             <span className="font-bold">
               {session?.user?.user_metadata?.fullName}
@@ -52,7 +52,7 @@ const Dashboard = () => {
           </h1>
         </div>
 
-        <Card className="rounded-2xl border-[#111] text-(--foreground) bg-black/30 relative flex flex-col">
+        <Card className="rounded-2xl border-(--border) text-(--foreground) bg-(--card) relative flex flex-col">
           <CardHeader>
             <CardTitle className=" font-black">Workspace</CardTitle>
             <CardDescription className="responsive_ws_card_desc">
@@ -89,10 +89,7 @@ const Dashboard = () => {
 export default Dashboard;
 function CreateWorkspaceButton({ onClick, isOpen }) {
   return (
-    <Button
-      onClick={onClick}
-      className=" text-[#eee] bg-[#4d3763] hover:bg-[#3e2e4f] relative responsive_createws_button"
-    >
+    <Button onClick={onClick} variant={"default"}>
       {isOpen ? (
         "X"
       ) : (
