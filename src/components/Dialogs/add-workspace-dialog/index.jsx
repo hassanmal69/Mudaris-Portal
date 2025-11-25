@@ -197,13 +197,17 @@ const AddWorkspaceDialog = ({ open, onClose }) => {
 
       <div className="flex justify-between mt-6">
         {step > 0 && (
-          <Button className="bg-red-700" onClick={handleBack}>
+          <Button variant={"destructive"} onClick={handleBack}>
             Back
           </Button>
         )}
-        {step < 2 && <Button onClick={handleNext}>Next</Button>}
+        {step < 2 && (
+          <Button variant={"success"} onClick={handleNext}>
+            Next
+          </Button>
+        )}
         {step === 2 && (
-          <Button className="bg-green-950" onClick={sendEmail}>
+          <Button variant={"success"} onClick={sendEmail}>
             Finish
           </Button>
         )}

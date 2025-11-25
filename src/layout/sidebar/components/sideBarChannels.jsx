@@ -79,10 +79,8 @@ const SideBarChannels = ({
 
   const handleChannelClick = (channel) => {
     dispatch(setActiveChannel(channel.id));
-    // const result = .replace(/\s+/g, "");
-    const result = channel.channel_name.replace(/[^a-zA-Z0-9]/g, "");
 
-    navigate(`/workspace/${workspace_id}/group/${channel.id}/${result}`);
+    navigate(`/workspace/${workspace_id}/group/${channel.id}`);
   };
   return (
     <SidebarGroup>
@@ -99,10 +97,11 @@ const SideBarChannels = ({
               <div
                 onClick={() => handleChannelClick(channel)}
                 className={`flex items-center gap-2 px-2 py-1 cursor-pointer 
-                      ${isActive
-                    ? "bg-(--sidebar-accent) text-white"
-                    : "hover:bg-(--sidebar-accent)"
-                  }`}
+                      ${
+                        isActive
+                          ? "bg-(--sidebar-accent) text-white"
+                          : "hover:bg-(--sidebar-accent)"
+                      }`}
               >
                 <PersonIcon className="w-4 h-4" />
                 <span className="font-normal text-sm">
@@ -118,10 +117,11 @@ const SideBarChannels = ({
           <Link to={`/workspace/${workspace_id}/announcements`}>
             <div
               className={`flex items-center gap-2 px-2 py-1 cursor-pointer 
-                      ${activeChannel === "announcements"
-                  ? "bg-(--sidebar-accent) text-white"
-                  : "hover:bg-(--sidebar-accent)"
-                }`}
+                      ${
+                        activeChannel === "announcements"
+                          ? "bg-(--sidebar-accent) text-white"
+                          : "hover:bg-(--sidebar-accent)"
+                      }`}
             >
               <Megaphone className="w-4 h-4" />
               <span className="font-normal text-sm">Announcements</span>
@@ -130,10 +130,11 @@ const SideBarChannels = ({
           <Link to={`/workspace/${workspace_id}/lecturesLink`}>
             <div
               className={`flex items-center gap-2 px-2 py-1 cursor-pointer 
-                      ${activeChannel === "lecturesLink"
-                  ? "bg-(--sidebar-accent) text-white"
-                  : "hover:bg-(--sidebar-accent)"
-                }`}
+                      ${
+                        activeChannel === "lecturesLink"
+                          ? "bg-(--sidebar-accent) text-white"
+                          : "hover:bg-(--sidebar-accent)"
+                      }`}
             >
               <Chain className="w-4 h-4" />
 
@@ -143,14 +144,17 @@ const SideBarChannels = ({
           <Link to={`/workspace/${workspace_id}/videospresentations`}>
             <div
               className={`flex items-center gap-2 px-2 py-1 cursor-pointer 
-                      ${activeChannel === "lecturesLink"
-                  ? "bg-(--sidebar-accent) text-white"
-                  : "hover:bg-(--sidebar-accent)"
-                }`}
+                      ${
+                        activeChannel === "lecturesLink"
+                          ? "bg-(--sidebar-accent) text-white"
+                          : "hover:bg-(--sidebar-accent)"
+                      }`}
             >
               <Video className="w-4 h-4" />
 
-              <span className="font-normal text-sm">Videos & Presentations</span>
+              <span className="font-normal text-sm">
+                Videos & Presentations
+              </span>
             </div>
           </Link>
         </SidebarMenuItem>

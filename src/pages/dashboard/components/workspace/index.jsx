@@ -8,6 +8,7 @@ import { supabase } from "@/services/supabaseClient.js";
 import WorkspaceCard from "./workspaceCard.jsx";
 import { ChevronDownIcon, ChevronUpIcon } from "@radix-ui/react-icons";
 import { fetchUserWorkspace } from "@/redux/features/workspaceMembers/WorkspaceMembersSlice.js";
+import { Button } from "@/components/ui/button.jsx";
 const Workspace = () => {
   const { session } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
@@ -68,9 +69,10 @@ const Workspace = () => {
         {/* Toggle button */}
         <div className="flex justify-center">
           {workspaces?.length > 3 && (
-            <button
+            <Button
               onClick={() => setShowAll((prev) => !prev)}
-              className="text-[#4d3763] cursor-pointer font-medium mt-2 self-start px-4 flex items-center gap-1"
+              variant={"outline"}
+              // className="text-[#] cursor-pointer font-medium mt-2 self-start px-4 flex items-center gap-1"
             >
               {showAll ? (
                 <>
@@ -81,7 +83,7 @@ const Workspace = () => {
                   See more <ChevronDownIcon className="h-4 w-4" />
                 </>
               )}
-            </button>
+            </Button>
           )}
         </div>
       </div>

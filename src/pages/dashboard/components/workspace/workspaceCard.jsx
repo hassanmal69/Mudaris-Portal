@@ -90,13 +90,13 @@ const WorkspaceCard = ({ workspace, index }) => {
           <div className="flex gap-3 items-center">
             <div className="flex -space-x-4 rtl:space-x-reverse">
               {membersLoading ? (
-                <p className="text-gray-200 text-sm">Loading...</p>
+                <p className="text-(--accent-foreground) text-sm">Loading...</p>
               ) : (
                 members.slice(0, 4).map((m, idx) =>
                   m.user_profiles?.avatar_url ? (
                     <Avatar
                       key={m.user_id}
-                      className="w-7 h-7 border-2 border-white rounded-none"
+                      className="w-7 h-7 border-2 border-(--border) rounded-none"
                     >
                       <AvatarImage
                         src={m.user_profiles?.avatar_url}
@@ -124,9 +124,7 @@ const WorkspaceCard = ({ workspace, index }) => {
         to={launchTo}
         style={{ textDecoration: "none" }}
       >
-        <Button className="bg-transparent border-[#4d3763] border font-semibold py-2 px-4 rounded-sm text-[#4d3763] hover:border-[#3e2e4f] hover:text-[#3e2e4f] hover:bg-transparent responsive_ws_launch_btn">
-          Launch Workspace
-        </Button>
+        <Button variant={"outline"}>Launch Workspace</Button>
       </Link>
     </div>
   );
