@@ -79,10 +79,8 @@ const SideBarChannels = ({
 
   const handleChannelClick = (channel) => {
     dispatch(setActiveChannel(channel.id));
-    // const result = .replace(/\s+/g, "");
-    const result = channel.channel_name.replace(/[^a-zA-Z0-9]/g, "");
 
-    navigate(`/workspace/${workspace_id}/group/${channel.id}/${result}`);
+    navigate(`/workspace/${workspace_id}/group/${channel.id}`);
   };
   return (
     <SidebarGroup>

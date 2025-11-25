@@ -33,10 +33,54 @@ export const createChapterDB = createAsyncThunk(
   }
 );
 
+export const deleteChapterDB = createAsyncThunk(
+  "chapter/deleteWithVideos",
+  async (chapterId) => {
+    const { data: videos, error: fetchErr } = await supabase
+      .from("videos")
+      .select("id")
+      .eq("chapter_id", chapterId);
+
+    if (fetchErr) throw fetchErr;
+    if (videos.length > 0) {
+      const videoIds = videos.map(v => v.id);
+
+      const { error: deleteVideosErr } = await supabase
+        .from("videos")
+        .delete()
+        .in("id", videoIds);
+
+      if (deleteVideosErr) throw deleteVideosErr;
+    }
+
+    const { error: deleteChapterErr } = await supabase
+      .from("chapters_videos_presentations")
+      .delete()
+      .eq("id", chapterId);
+
+    if (deleteChapterErr) throw deleteChapterErr;
+    return
+  }
+);
+export const updateChapterDB = createAsyncThunk(
+  "chapters/update",
+  async ({ id, payload }) => {
+    const { data, error } = await supabase
+      .from("chapters_videos_presentations")
+      .update(payload)
+      .eq("id", id)
+      .select("*")
+      .single();
+
+    if (error) throw error;
+    return data; // updated chapter
+  }
+);
+
 const chaptersSlice = createSlice({
   name: "chapters",
   initialState: {
-    chaptersByWorkspace: {}, 
+    chaptersByWorkspace: {},
     loading: false,
   },
   reducers: {
@@ -70,8 +114,29 @@ const chaptersSlice = createSlice({
         }
 
         state.chaptersByWorkspace[wid].unshift(chapter);
-      });
+      })
+      .addCase(deleteChapterDB.fulfilled, (state, action) => {
+        const deletedId = action.payload;
+        Object.keys(state.chaptersByWorkspace).forEach((wid) => {
+          state.chaptersByWorkspace[wid] = state.chaptersByWorkspace[wid].filter(
+            (chapter) => chapter.id !== deletedId
+          );
+        });
+      })
+      .addCase(updateChapterDB.fulfilled, (state, action) => {
+        const updated = action.payload;
+        const wid = updated.workspace_Id;
+
+        if (!state.chaptersByWorkspace[wid]) return;
+
+        state.chaptersByWorkspace[wid] = state.chaptersByWorkspace[wid].map(
+          (chapter) =>
+            chapter.id === updated.id ? { ...chapter, ...updated } : chapter
+        );
+      })
+
   },
+
 });
 
 export const { clearChapters } = chaptersSlice.actions;

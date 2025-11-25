@@ -1,12 +1,16 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, Suspense } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Button } from "@/components/ui/button";
 import ChapterDialog from "@/components/Dialogs/ChannelsDialog/Videos&Presentations/Chapters";
 import VideoDialog from "@/components/Dialogs/ChannelsDialog/Videos&Presentations/Videos";
-import { fetchChapters } from "@/redux/features/video&presentations/chapterSlice";
+import { deleteChapterDB, fetchChapters } from "@/redux/features/video&presentations/chapterSlice";
 import { fetchVideos } from "@/redux/features/video&presentations/videoSlice";
 import { useParams } from "react-router-dom";
 import { ChevronDown, ChevronUp, PlayCircle } from "lucide-react";
+import { isAdmin } from "@/constants/constants.js";
+import Actions from "../actions/index.jsx";
+import usePaginatiedList from "@/hooks/infinteScroll-hook/usePaginatedList.js";
+import { fetchAnnouncements } from "@/redux/features/announcements/announcementsSlice.js";
 
 const VideoComponent = React.lazy(() => import("./VideoComponent.jsx"));
 
@@ -29,10 +33,10 @@ const VideosPresentations = () => {
 
   const [expandedChapter, setExpandedChapter] = useState(null);
   const [selectedVideo, setSelectedVideo] = useState(null);
-
   const [chapterDialogOpen, setChapterDialogOpen] = useState(false);
   const [videoDialogOpen, setVideoDialogOpen] = useState(false);
   const [activeChapter, setActiveChapter] = useState(null);
+  const [editingChapter, setEditingChapter] = useState(null);
 
   // Fetch chapters (only once thanks to caching)
   useEffect(() => {
@@ -49,6 +53,19 @@ const VideosPresentations = () => {
     setExpandedChapter((prev) => (prev === chapterId ? null : chapterId));
   };
 
+  const handleDialogChange = (isOpen) => {
+    setChapterDialogOpen(isOpen);
+    if (!isOpen) setEditingChapter(null);
+  };
+
+  const onEdit = (chapter) => {
+    setEditingChapter(chapter);
+    setChapterDialogOpen(true);
+  };
+
+  // dispatchLocal({ type: "SELECT_ITEM", payload: item });
+  const onDelete = (id) => dispatch(deleteChapterDB(id))
+
   const handleAddVideo = (chapterId) => {
     setActiveChapter(chapterId);
     setVideoDialogOpen(true);
@@ -56,29 +73,37 @@ const VideosPresentations = () => {
 
   return (
     <div className="bg-(--background) text-(--foreground) p-4 flex gap-6">
-      
+      {isAdmin &&
+        <Button onClick={() => setChapterDialogOpen(true)}>
+          add chapter
+        </Button>
+      }
       {/* LEFT SIDEBAR */}
       <div className="mt-4 w-[35%] h-dvh overflow-y-scroll scroll-smooth">
         {chapters.map((chapter, idx) => {
           const chapterVideos = videosByChapter[chapter.id] || [];
 
           return (
-            <div key={chapter.id} className="flex flex-col">
+            <div key={chapter.id} className="flex flex-col relative">
               {/* Chapter Header */}
+
               <div className="flex p-4 gap-1 hover:bg-(--sidebar-accent)
                               items-center border-2 border-(--sidebar-border)">
                 <Button onClick={() => handleSeeVideos(chapter.id)}>
-                  {expandedChapter === chapter.id 
-                    ? <ChevronUp size={18} /> 
+                  {expandedChapter === chapter.id
+                    ? <ChevronUp size={18} />
                     : <ChevronDown size={18} />}
                 </Button>
 
                 <h2 className="text-lg">{idx + 1}. {chapter.name}</h2>
+                {isAdmin && (
+                  <div className="flex w-[90%] h-full justify-end absolute opacity-0 hover:opacity-100 transition-opacity duration-200">
+                    <Actions
+                      onEdit={() => onEdit(chapter)}
+                      onDelete={() => onDelete(chapter.id)}
+                    />
+                  </div>
 
-                {session.user.user_metadata.user_role === "admin" && (
-                  <Button onClick={() => handleAddVideo(chapter.id)}>
-                    Add Video
-                  </Button>
                 )}
               </div>
 
@@ -115,12 +140,15 @@ const VideosPresentations = () => {
       </div>
 
       {/* RIGHT SIDE: VIDEO PLAYER */}
-      {selectedVideo && <VideoComponent data={selectedVideo} />}
+      <Suspense fallback={<div>Loading video...</div>}>
+        {selectedVideo && <VideoComponent data={selectedVideo} />}
+      </Suspense>
 
       {/* Dialogs */}
-      <ChapterDialog 
-        open={chapterDialogOpen} 
-        onOpenChange={setChapterDialogOpen} 
+      <ChapterDialog
+        open={chapterDialogOpen}
+        editingData={editingChapter}
+        onOpenChange={handleDialogChange}
       />
 
       {activeChapter && (
