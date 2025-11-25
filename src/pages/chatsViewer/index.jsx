@@ -1,14 +1,13 @@
-import { supabase } from '@/services/supabaseClient'
-import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { supabase } from "@/services/supabaseClient";
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 const HandleChatsViewer = () => {
-    const [incomingData, setIncomingData] = useState([])
+  const [incomingData, setIncomingData] = useState([]);
 
-    const handleDataComing = async () => {
-        const { data, error } = await supabase
-            .from('directMessagesChannel')
-            .select(`
+  const handleDataComing = async () => {
+    const { data, error } = await supabase.from("directMessagesChannel")
+      .select(`
       id,
       created_at,
       token,
@@ -24,35 +23,48 @@ const HandleChatsViewer = () => {
         full_name,
         avatar_url
       )
-    `)
+    `);
 
-        if (error) {
-            console.error('Supabase error:', error)
-            return
-        }
-
-        setIncomingData(data || [])
+    if (error) {
+      console.error("Supabase error:", error);
+      return;
     }
 
-    useEffect(() => {
-        handleDataComing()
-    }, [])
+    setIncomingData(data || []);
+  };
 
-    return (
-        <div className='bg-black h-dvh w-full text-white p-4'>
-            <h2 className='mb-4'>Click to see chats</h2>
-            {incomingData.length > 0 ? (
-                incomingData.map((m, i) => (
-                    <div key={i} className='border-b border-gray-700 py-2'>
-                        <Link to={`/seePersonalChats/${m.token}`}>
-                            Chat between {m?.receiver?.full_name} and {m?.sender?.full_name}</Link>
-                    </div>
-                ))
-            ) : (
-                <p>No chats found.</p>
-            )}
-        </div>
-    )
-}
+  useEffect(() => {
+    handleDataComing();
+  }, []);
 
-export default HandleChatsViewer
+  return (
+    <div className="bg-(--background) h-dvh w-full font-bold text-(--primary-foreground) p-4">
+      <h1
+        className="mb-4 text-3xl
+      "
+      >
+        Click to see chats
+      </h1>
+      {incomingData.length > 0 ? (
+        incomingData.map((m, i) => (
+          <div key={i} className="border-b border-(--chart-4)/20 py-2">
+            <Link
+              to={`/seePersonalChats/${m.token}`}
+              className="text-(--secondary-foreground) font-normal"
+            >
+              Chat between {""}
+              <span className="font-bold">
+                {m?.receiver?.full_name}
+              </span> and {""}
+              <span className="font-bold">{m?.sender?.full_name}</span>
+            </Link>
+          </div>
+        ))
+      ) : (
+        <p>No chats found.</p>
+      )}
+    </div>
+  );
+};
+
+export default HandleChatsViewer;

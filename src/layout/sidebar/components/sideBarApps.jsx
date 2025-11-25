@@ -11,6 +11,8 @@ import { useSelector } from "react-redux";
 import useHandleIndividual from "./useHandleIndividual.js";
 import { Button } from "@/components/ui/button.jsx";
 import SideBarDialogue from "./sideBarDialogue.jsx";
+import { Calendar, Telescope } from "lucide-react";
+import { Avatar, AvatarImage } from "@/components/ui/avatar.jsx";
 
 //direct message handled here
 const SideBarApps = ({ workspace_id }) => {
@@ -34,7 +36,7 @@ const SideBarApps = ({ workspace_id }) => {
 
   return (
     <SidebarGroup>
-      <SidebarGroupLabel className="text-(--sidebar-foreground) font-normal text-[16px]">
+      <SidebarGroupLabel className="text-(--sidebar-foreground) font-normal text-sm px-2 py-1 mb-1">
         Apps
       </SidebarGroupLabel>
       <SidebarMenu>
@@ -45,20 +47,32 @@ const SideBarApps = ({ workspace_id }) => {
                   `}
             onClick={() => navigate(`/workspace/${workspace_id}/market`)}
           >
-            Market Insight
+            <span className="bg-(--primary)/10 h-7 w-7 rounded-md flex items-center justify-center">
+              <Telescope className="w-4 h-4 text-(--primary)" />
+            </span>
+            <span className="text-[15px]">Market Insight</span>
           </div>
         </SidebarMenuItem>
         <SidebarMenuItem>
           <div
             className={`flex items-center gap-2 px-2 py-1 cursor-pointer 
-                    hover:bg-(--sidebar-accent) font-medium text-sm
+                    hover:bg-(--sidebar-accent) font-medium 
+                
                   `}
             onClick={() => navigate(`/workspace/${workspace_id}/calendar`)}
           >
-            Economic Calendar
+            <span className="bg-(--primary)/10 h-7 w-7 rounded-md flex items-center justify-center">
+              <Calendar className="w-4 h-4 text-(--primary)" />
+            </span>
+            <span
+              className="
+    text-[15px]"
+            >
+              Economic Calendar
+            </span>
           </div>
         </SidebarMenuItem>
-        <SidebarGroupLabel className="text-(--sidebar-foreground) font-normal text-[16px]">
+        <SidebarGroupLabel className="text-(--sidebar-foreground) font-normal text-sm">
           Direct Messages
         </SidebarGroupLabel>
         {users.map((m, i) => (
@@ -67,14 +81,17 @@ const SideBarApps = ({ workspace_id }) => {
             className="flex "
             key={i}
           >
-            <img className="rounded-full h-9 w-8" src={m.avatar_url} alt="" />
-            <div
+            <Avatar className="h-7 w-7">
+              <AvatarImage src={m.avatar_url} alt="" />
+            </Avatar>
+
+            <p
               className={`flex items-center gap-2 px-2 py-1 cursor-pointer 
-                    hover:bg-(--sidebar-accent) font-medium text-sm
+                    hover:bg-(--sidebar-accent) font-medium text-[15px]
                   `}
             >
               {m.full_name}
-            </div>
+            </p>
           </SidebarMenuItem>
         ))}
         <SidebarMenuItem className="flex ">
