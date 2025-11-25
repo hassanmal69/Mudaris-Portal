@@ -1,7 +1,7 @@
-import React, { useEffect, useState, useCallback, useRef } from "react";
+import React, { useEffect } from "react";
 import { Link as MoizChain, ExternalLink } from "lucide-react";
 import { tagColors } from "@/constants/fallbackColors";
-import LectureDialog from "@/components/Dialogs/channelsDialog/LectureLinks/index.jsx";
+import LectureDialog from "@/components/Dialogs/ChannelsDialog/LectureLinks/index.jsx";
 import { useSelector, useDispatch } from "react-redux";
 import { Button } from "@/components/ui/button";
 import {
