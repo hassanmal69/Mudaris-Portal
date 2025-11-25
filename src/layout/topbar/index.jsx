@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import Profile from "@/pages/profile";
 import { useParams } from "react-router-dom";
-import { Globe, Lock, Search } from "lucide-react";
+import { Globe, Lock, Search, Siren } from "lucide-react";
 import Members from "./members";
 import { useDispatch, useSelector, shallowEqual } from "react-redux";
 import { setQuery } from "@/redux/features/messages/search/searchSlice";
@@ -13,6 +13,7 @@ import {
   selectChannelMembers,
 } from "@/redux/features/channelMembers/channelMembersSlice";
 import "./topbar.css";
+import { PersonIcon } from "@radix-ui/react-icons";
 
 // Debounce utility
 function debounce(fn, delay) {
@@ -55,19 +56,12 @@ const Topbar = () => {
   );
   const visibility = channel?.visibility || "private";
   const directChannel = useSelector((state) => state?.direct?.directChannel);
-  // console.log('irj',directChannel)
   const channel_name =
     channel?.channel_name || directChannel.full_name || "channel";
 
   // --- Search Query ---
   const query = useSelector((state) => state.search.query);
-  // const debouncedQuery = useMemo(
-  //   () =>
-  //     debounce((value) => {
-  //       dispatch(setQuery(value));
-  //     }, 500),
-  //   [dispatch]
-  // );
+
   const debouncedDispatch = useMemo(
     () =>
       debounce((value) => {
@@ -104,7 +98,7 @@ const Topbar = () => {
       <div className="flex items-center gap-2 min-w-0">
         <h2 className="text-(--foreground) text-[18px] font-medium flex gap-1 items-center">
           {visibility === "public" ? (
-            <Globe className="w-[15px]" />
+            <PersonIcon className="w-[15px]" />
           ) : (
             <Lock className="w-[15px]" />
           )}

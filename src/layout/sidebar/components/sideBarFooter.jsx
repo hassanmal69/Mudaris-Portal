@@ -1,28 +1,21 @@
-import {
-    SidebarFooter
-} from "@/components/ui/sidebar";
-import React from 'react'
+import { SidebarFooter } from "@/components/ui/sidebar";
+import React from "react";
 import { Button } from "@/components/ui/button";
+import { isAdmin } from "@/constants/constants";
 
-const SideBarFooter = ({ session, setInviteOpen, handleLogout, }) => {
+const SideBarFooter = ({ setInviteOpen, handleLogout }) => {
+  return (
+    <SidebarFooter className="mt-auto pb-2">
+      {isAdmin && (
+        <Button variant="default" size="sm" onClick={() => setInviteOpen(true)}>
+          Invite new Users
+        </Button>
+      )}
+      <Button variant={"outline"} onClick={handleLogout}>
+        Sign Out
+      </Button>
+    </SidebarFooter>
+  );
+};
 
-    return (
-        <SidebarFooter className="mt-auto pb-2">
-            {session.user.user_metadata.user_role === "admin" && (
-                <Button
-                    variant="default"
-                    size="sm"
-                    className="mt-2 bg-[#eee] text-[#2b092b] w-full flex items-center gap-2 justify-center hover:bg-transparent hover:text-white hover:border-[#fff] transition-all delay-150 duration-300 border"
-                    onClick={() => setInviteOpen(true)}
-                >
-                    Invite new Users
-                </Button>
-            )}
-            <button className="text-[#556cd6]" onClick={handleLogout}>
-                Sign Out
-            </button>
-        </SidebarFooter>
-    )
-}
-
-export default SideBarFooter
+export default SideBarFooter;

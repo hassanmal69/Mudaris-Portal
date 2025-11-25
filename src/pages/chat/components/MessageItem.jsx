@@ -151,7 +151,6 @@ const MessageItem = ({
               <LocalTime utcString={created_at} />
             </span>
           </div>
-          <div dangerouslySetInnerHTML={{ __html: message.content }} />
           <MessageContent
             attachments={message.attachments}
             content={message.content}
@@ -161,7 +160,7 @@ const MessageItem = ({
           <div>
             {message.replyCount > 0 && (
               <button
-                className="text-[13px] text-[#556cd6] mt-1 font-bold cursor-pointer"
+                className="text-[13px] text-(--chart-4) mt-1 font-bold cursor-pointer"
                 onClick={() => dispatch(openReplyDrawer(message))}
                 title="View replies"
                 type="button"

@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { closeReplyDrawer } from "@/redux/features/reply/replySlice.js";
 import { supabase } from "@/services/supabaseClient";
 import Editor from "@/components/Editor/index.jsx";
+import { isRTL } from "@/utils/rtl/rtl";
 
 export default function ReplyDrawer() {
   const dispatch = useDispatch();
@@ -63,6 +64,7 @@ export default function ReplyDrawer() {
   }, [message]);
 
   if (!open || !message) return null;
+  const rtl = isRTL(message?.content);
 
   return (
     <Drawer.Root
@@ -72,15 +74,26 @@ export default function ReplyDrawer() {
       onClose={() => dispatch(closeReplyDrawer())}
     >
       <Drawer.Portal>
-        <Drawer.Overlay className="fixed inset-0 bg-black/40" />
+        <Drawer.Overlay className="fixed inset-0 bg-(--card)" />
         <Drawer.Content
-          className="right-2 top-2 bottom-2 fixed z-10 outline-none w-[550px] flex"
+          className={`top-2 bottom-2 fixed z-10 outline-none w-[550px] flex right-1 `}
           style={{ "--initial-transform": "calc(100% + 8px)" }}
+          dir={rtl ? "rtl" : "ltr"}
         >
-          <div className="bg-black/90 h-full w-full p-5 flex text-gray-300 flex-col rounded-[16px]">
+          <div
+            className={`bg-(--card) h-full w-full p-5 flex text-(--card-foreground) flex-col rounded ${
+              rtl ? "text-right" : "text-left"
+            }`}
+          >
             {/* Parent message */}
-            <h1 className="text-[18px] font-bold mb-4">Reply to Message</h1>
-            <div className="mb-4 border-b border-[#111] pb-4">
+            <Drawer.Title
+              className="
+            text-left
+            text-[18px] font-bold mb-4"
+            >
+              Reply to Message
+            </Drawer.Title>
+            <div className="mb-4 border-b border-(--chart-1) pb-4">
               <div className="flex items-center gap-2">
                 <img
                   src={message.profiles?.avatar_url}
@@ -92,7 +105,7 @@ export default function ReplyDrawer() {
                 </span>
               </div>
               <div
-                className="mt-2 text-sm text-gray-400"
+                className={`mt-2 text-sm  ${rtl ? "text-right" : "text-left"}`}
                 dangerouslySetInnerHTML={{ __html: message.content }}
               />
             </div>
@@ -100,18 +113,23 @@ export default function ReplyDrawer() {
             {/* Replies list */}
             <div className="flex-1 overflow-y-auto space-y-3 mb-4">
               {replies.map((reply) => (
-                <div key={reply.id} className="flex gap-2">
+                <div
+                  key={reply.id}
+                  className={`flex gap-2 ${rtl ? "flex-row-reverse text-right" : ""}`}
+                >
                   <img
                     src={reply.profiles?.avatar_url}
                     alt={reply.profiles?.full_name}
                     className="w-8 h-8 rounded-full"
                   />
-                  <div className="bg-gray-100 p-2 rounded-lg">
+
+                  <div className=" p-2 rounded-lg">
                     <span className="font-medium text-sm">
                       {reply.profiles?.full_name}
                     </span>
+
                     <div
-                      className="text-sm text-gray-700"
+                      className={`text-sm  ${rtl ? "text-right" : "text-left"}`}
                       dangerouslySetInnerHTML={{ __html: reply.content }}
                     />
                   </div>

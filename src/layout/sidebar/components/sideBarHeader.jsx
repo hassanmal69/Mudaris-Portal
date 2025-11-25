@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link } from "react-router-dom";
 import WorkspaceFallback from "@/components/ui/workspaceFallback";
+import { Moon, Sun } from "lucide-react";
 const SideBarHeader = ({ session }) => {
   const { currentWorkspace, loading } = useSelector(
     (state) => state.workSpaces
@@ -20,12 +21,26 @@ const SideBarHeader = ({ session }) => {
     });
   };
 
-
   return (
-    <SidebarHeader className="flex gap-2">
+    <SidebarHeader>
+      <div className="flex gap-4 flex-row">
+        <span className="text-lg font-bold tracking-tight">
+          {loading
+            ? "Loading..."
+            : currentWorkspace?.workspace_name || "Workspace"}
+        </span>
+
+        <button onClick={handleToggle} className="text-sm">
+          {mode === "dark" ? (
+            <Sun className="h-5 w-5" />
+          ) : (
+            <Moon className="w-5 h-5" />
+          )}
+        </button>
+      </div>
       <Link to={`/dashboard/${session?.user?.id}`}>
         {currentWorkspace?.avatar_url ? (
-          <Avatar className="w-16 h-16 rounded-none">
+          <Avatar className="w-16 h-16  rounded-none ">
             <AvatarImage
               src={currentWorkspace?.avatar_url}
               alt={currentWorkspace?.workspace_name}
@@ -41,17 +56,6 @@ const SideBarHeader = ({ session }) => {
           />
         )}
       </Link>
-      <button
-        onClick={handleToggle}
-        className="text-sm"
-      >
-        {mode === "dark" ? "☀️" : "🌙"}
-      </button>
-      <span className="text-lg font-bold tracking-tight">
-        {loading
-          ? "Loading..."
-          : currentWorkspace?.workspace_name || "Workspace"}
-      </span>
     </SidebarHeader>
   );
 };

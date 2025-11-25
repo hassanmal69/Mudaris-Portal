@@ -14,11 +14,11 @@ const MessageContent = ({ attachments, content, id }) => (
       />
     )}
 
-    {/* <div
+    <div
       key={id}
       className="text-(--foreground) font-normal text-[16px] responsive_message_content"
       dangerouslySetInnerHTML={{ __html: content }}
-    /> */}
+    />
   </>
 );
 

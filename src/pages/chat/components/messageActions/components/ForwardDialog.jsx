@@ -57,16 +57,14 @@ export const ForwardDialog = ({ open, onOpenChange, onConfirmForward }) => {
         </DialogHeader>
         <DialogFooter className="flex justify-end gap-4">
           <DialogClose asChild>
-            <Button className="px-3 py-1.5 rounded-md border border-(--border) hover:bg-(--accent)/30 hover:text-(--foreground) transition-colors">
-              Cancel
-            </Button>
+            <Button variant={"destructive"}>Cancel</Button>
           </DialogClose>
           <DialogTrigger>
             <Button
               onClick={() => {
                 onConfirmForward(selectedChannels);
               }}
-              className="bg-(--foreground) text-(--muted) px-3 py-1.5 rounded-md hover:bg-(--foreground)/90 transition-colors"
+              variant={"success"}
             >
               Forward
             </Button>

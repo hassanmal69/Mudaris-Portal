@@ -7,6 +7,7 @@ import { useSelector, shallowEqual } from "react-redux";
 import { useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import AddUserInChannel from "./invite-channel-dialog";
+import { isAdmin } from "@/constants/constants";
 const Messages = () => {
   const {
     messages,
@@ -27,7 +28,6 @@ const Messages = () => {
   );
   const [openDialog, setOpenDialog] = useState(false);
   const { session } = useSelector((state) => state.auth);
-  const userRole = session.user?.user_metadata?.user_role;
 
   const channel_name = channel?.channel_name || "channel";
   const channel_desc = channel?.description || "description";
@@ -39,22 +39,25 @@ const Messages = () => {
         {hasMore ? "loading older messages" : "No more messages"}
       </div> */}
       {channel && (
-        <div className="relative mb-3 responsive_channel_header flex flex-col gap-1 p-3.5 border-b border-(--border)">
-          <div className="flex items-center justify-between">
+        <>
+          <div className="flex flex-col gap-0 items-center">
+            <span className="bg-(--primary) text-(--foreground) font-bold w-[65px] text-2xl rounded-md h-[65px] flex items-center justify-center mb-2">
+              #
+            </span>
+
             <h1 className=" text-2xl text-white font-black ">{channel_name}</h1>
-            {channel_visbibility === "private" && userRole === "admin" && (
+            <p className="text-(--muted-foreground)">{channel_desc}</p>
+            {channel_visbibility === "private" && isAdmin && (
               <Button
                 variant={"outline"}
-                className="border-gray-500 text-gray-500 hover:bg-(--primary) hover:text-(--primary-foreground)  hover:cursor-pointer"
+                className="text-(--muted-foreground) cursor-pointer border"
                 onClick={() => setOpenDialog(true)}
               >
                 add user
               </Button>
             )}
           </div>
-
-          <p className="text-gray-500 text-[14px]">{channel_desc}</p>
-        </div>
+        </>
       )}
 
       <AddUserInChannel
