@@ -5,7 +5,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import VideoForm from "./VideoForm.jsx";
+import VideoForm from "./videoForm.jsx";
 
 const VideoDialog = ({ open, onOpenChange, chapterId }) => {
   const handleClose = () => onOpenChange(false);
