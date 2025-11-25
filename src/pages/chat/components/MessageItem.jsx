@@ -25,6 +25,7 @@ const MessageItem = ({
   setPickerOpenFor,
   onDelete,
   forwardMsg,
+  rtl,
 }) => {
   const { profiles, created_at } = message || {};
   const { id, full_name, avatar_url } = profiles || {};
@@ -104,8 +105,23 @@ const MessageItem = ({
 
         <div className="relative message-body w-full  text-(--muted-foreground) group">
           {/* MessageActions: hidden by default, shown when the parent .group is hovered */}
-          {/* hassan sending msg obj as i need it in forward msg */}
-          <div className="absolute right-2 top-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-150 z-10">
+          {/* hassan sending msg obj as i need it in forward msg
+          
+       
+          
+          */}
+          <div
+            className={`
+    absolute 
+    top-1 
+       opacity-0 invisible 
+    group-hover:opacity-100 group-hover:visible 
+    transition-opacity duration-150 z-10
+
+    ${rtl ? "left-15 gap-0 " : "right-1"}
+  `}
+            dir={rtl ? "rtl" : "ltr"}
+          >
             <MessageActions
               messageId={message.id}
               message={message}
@@ -119,6 +135,7 @@ const MessageItem = ({
               handleForwardDialog={handleForwardDialog}
             />
           </div>
+
           <div className="flex gap-2 items-center">
             <strong className="text-(--foreground) font-normal">
               {message.profiles?.full_name || "Unknown User"}
@@ -134,7 +151,7 @@ const MessageItem = ({
               <LocalTime utcString={created_at} />
             </span>
           </div>
-
+          <div dangerouslySetInnerHTML={{ __html: message.content }} />
           <MessageContent
             attachments={message.attachments}
             content={message.content}

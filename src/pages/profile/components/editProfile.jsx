@@ -82,11 +82,13 @@ const EditProfile = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="bg-transparent text-[#556cd6]">edit</Button>
+        <Button variant={"ghost"} className="text-(--primary-foregroun)">
+          edit
+        </Button>
       </DialogTrigger>
-      <DialogContent className="flex flex-col gap-0 overflow-y-visible p-0 sm:max-w-lg bg-black/95 border-[#222] text-white [&>button:last-child]:top-3.5">
+      <DialogContent className="flex flex-col gap-0 overflow-y-visible p-0 sm:max-w-lg  [&>button:last-child]:top-3.5">
         <DialogHeader className="contents space-y-0 text-left">
-          <DialogTitle className="border-b border-[#222] px-6 py-4 text-gray-300 text-base">
+          <DialogTitle className="border-b border-(--border) px-6 py-4 text-(--muted-foreground) text-base">
             Edit profile
           </DialogTitle>
           {/* <DialogDescription className="">
@@ -96,7 +98,7 @@ const EditProfile = () => {
         </DialogHeader>
         {/* Avatar Upload */}
         <div className="w-full h-full flex justify-center pt-6">
-          <div className="relative flex size-20 items-center justify-center overflow-hidden rounded-full border-4 border-gray-300 shadow-xs shadow-black/10">
+          <div className="relative flex size-20 items-center justify-center overflow-hidden rounded-full border-4 border-(--chart-5) shadow-xs shadow-black/10">
             <img
               src={publicUrl || sessionAvatarUrl}
               className="size-full object-cover"
@@ -104,7 +106,7 @@ const EditProfile = () => {
             />
             <button
               type="button"
-              className="focus-visible:border-ring focus-visible:ring-ring/50 absolute flex size-8 cursor-pointer items-center justify-center rounded-full bg-black/60 text-white hover:bg-black/80 focus-visible:ring-[3px] outline-none"
+              className="focus-visible:border-ring focus-visible:(--ring)-ring/50 absolute flex size-8 cursor-pointer items-center justify-center rounded-full bg-black/60 text-white hover:bg-(--popover) focus-visible:ring-[3px] outline-none"
               onClick={() => document.getElementById("avatarInput").click()}
               aria-label="Change profile picture"
             >
@@ -131,7 +133,7 @@ const EditProfile = () => {
               <Input
                 id={`${id}-fullname`}
                 placeholder="Full Name"
-                className=" border-[#222] text-gray-300"
+                className=" border-(--border) dark:bg-(--input-background) bg-(--switch-background) text-(--accent-foreground)"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 type="text"
@@ -147,7 +149,7 @@ const EditProfile = () => {
                 onChange={(e) => setDisplayName(e.target.value)}
                 type="text"
                 required
-                className=" border-[#222] text-gray-300"
+                className=" border-(--border) dark:bg-(--input-background) bg-(--switch-background) text-(--accent-foreground)"
               />
             </div>
           </form>
@@ -155,13 +157,12 @@ const EditProfile = () => {
         {/* Footer */}
         <DialogFooter className="border-t border-[#222] px-6 py-4">
           <DialogClose asChild>
-            <Button type="button" className="text-black" variant="outline">
+            <Button type="button" variant="destructive">
               Cancel
             </Button>
           </DialogClose>
           <DialogClose asChild>
-            <Button type="button" onClick={handleSave}
-            >
+            <Button type="button" variant={"success"} onClick={handleSave}>
               Save changes
             </Button>
           </DialogClose>

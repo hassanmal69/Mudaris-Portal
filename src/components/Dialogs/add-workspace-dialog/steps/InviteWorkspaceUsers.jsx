@@ -50,10 +50,6 @@ const InviteWorkspaceUsers = ({ state, setState, errors, onSkip }) => {
           variant="outline"
           onClick={onSkip}
           aria-label="Skip invite"
-          className="text-[#556cd6] border
-          bg-transparent
-          transition delay-200 duration-300 ease-in-out
-          border-[#556cd6] hover:bg-[#556cd6] hover:text-white"
         >
           Skip for now
         </Button>
