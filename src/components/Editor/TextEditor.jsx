@@ -168,10 +168,19 @@ export default function TextEditor({ editor, toolbarStyles }) {
   };
 
   return (
-    <div className="control-group relative">
+    <div className="control-group relative border-b border-(--border)">
       <Toolbar editor={editor} toolbarStyles={toolbarStyles} />
-      <button className="kumar" onClick={handleSubmit}>
-        <Send className="text-[42px] relative z-40" />
+      <button
+        className="kumar relative z-40
+        transition-colors duration-300 delay-150
+      "
+        onClick={handleSubmit}
+      >
+        <Send
+          className=" w-5 h-5 text-(--secondary-foreground) hover:text-(--success)
+        transition-colors duration-300 delay-150
+        "
+        />
       </button>
     </div>
   );

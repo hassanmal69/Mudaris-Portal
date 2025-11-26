@@ -15,11 +15,14 @@
   align-items: center;
 }
 .editor-container {
-  background-color: #2b092b;
-  border: 1px solid #111;
+  background-color: var(--background);
+  border: 1px solid var(--border);
   border-radius: 12px;
   z-index: 400;
   position: relative;
+}
+.editor-container.editor-has-file {
+  height: 330px; /* apply when file is image or pdf */
 }
 .control-group {
   position: relative;
@@ -31,18 +34,24 @@
   list-style: decimal;
 }
 .kumar {
-  background: transparent;
+  background: var(--primary);
   position: absolute;
+  border-radius: 12px;
   top: 120px;
-  color: green;
   right: 0;
-  padding: 5px 10px;
+  margin-right: 10px;
+  padding: 10px 10px;
   cursor: pointer;
 }
+.kumar:hover {
+  background: transparent;
+  border: 1px solid var(--success, 0.3);
+}
+
 .tiptap {
   height: 120px;
   max-height: 500px;
-  background-color: #000;
+  background-color: var(--background);
   padding: 4px 15px;
   border: 1px solid #ccc;
   color: #eee;

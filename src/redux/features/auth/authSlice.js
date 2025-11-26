@@ -67,7 +67,7 @@ export const signupUser = createAsyncThunk(
           data: {
             fullName,
             user_role: "user",
-            // avatar: avatarUrl
+            avatar: avatarUrl,
           },
         },
       });

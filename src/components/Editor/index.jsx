@@ -9,11 +9,12 @@ import TextEditor from "./TextEditor";
 import "./styles.scss";
 import "./editor.css";
 import { removeValue } from "@/redux/features/ui/fileSlice";
+import { X } from "lucide-react";
+import { Button } from "../ui/button";
 export default function EditorWrapper({ width, styles, toolbarStyles }) {
   const dispatch = useDispatch();
-  const { workspace_id } = useParams();
+  const { workspace_id, groupId } = useParams();
   const { files } = useSelector((state) => state.file);
-  const { groupId } = useParams();
   const channel = useSelector((state) => state.channels.byId[groupId]);
   const channelName = channel?.channel_name || "";
 
@@ -42,26 +43,70 @@ export default function EditorWrapper({ width, styles, toolbarStyles }) {
         width: width,
         ...styles,
       }}
-      className="editor-container w-full"
+      className={`editor-container w-full ${
+        files.some(
+          (f) => f.fileType.includes("image") || f.fileType.includes("pdf")
+        )
+          ? "editor-has-file"
+          : ""
+      }`}
     >
       <TextEditor editor={editor} toolbarStyles={toolbarStyles} />
       <EditorContent editor={editor} />
-      {files.map((f, index) => (
-        <div key={index} className="bg-gray-300">
-          {f.fileType === "video" && (
-            <video src={f.fileLink} width="200" controls />
-          )}
-          {f.fileType === "audio" && (
-            <audio src={f.fileLink} width="200" controls />
-          )}
-          {f.fileType.startsWith("image") && (
-            <img src={f.fileLink} alt={f.file.name} width="100" />
-          )}
-          <button onClick={() => dispatch(removeValue(index))}>
-            ❌ Remove
-          </button>
-        </div>
-      ))}
+      <div
+        className={`${
+          files.some(
+            (f) => f.fileType.includes("image") || f.fileType.includes("pdf")
+          )
+            ? "file-map-container flex "
+            : ""
+        }`}
+      >
+        {files.map((f, index) => (
+          <div key={index} className="file-map">
+            <div className="relative">
+              {/* PDF */}
+              {f.fileType.includes("pdf") && (
+                <embed
+                  src={f.fileLink}
+                  type="application/pdf"
+                  className="w-25 h-25 rounded border"
+                />
+              )}
+
+              {/* Audio */}
+              {f.fileType === "audio" && (
+                <audio src={f.fileLink} className="h-8" controls />
+              )}
+
+              {/* Image */}
+              {f.fileType.startsWith("image") && (
+                <div className="w-25 h-25 flex items-center justify-center overflow-hidden rounded border">
+                  <img
+                    src={f.fileLink}
+                    alt={f.file.name}
+                    className="w-full h-full object-cover object-center"
+                  />
+                </div>
+              )}
+
+              {/* Remove Button */}
+              <Button
+                onClick={() => dispatch(removeValue(index))}
+                className="text-(--destructive) absolute -top-2 -right-1
+               rounded-full w-5 h-5 bg-(--destructive)/25"
+              >
+                <X className="w-5 h-5" />
+              </Button>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
+}
+{
+  /* {f.fileType === "video" && (
+              <video src={f.fileLink} width="200" controls />
+            )} */
 }
