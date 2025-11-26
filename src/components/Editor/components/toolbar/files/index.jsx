@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus } from "lucide-react";
+import { Paperclip } from "lucide-react";
 import { addValue } from "@/redux/features/ui/fileSlice";
 import { useDispatch } from "react-redux";
 
@@ -42,7 +42,7 @@ export default function FileUploader({ toolbarStyles }) {
       />
 
       <label htmlFor="fileInput">
-        <Plus className="text-white" style={toolbarStyles} />
+        <Paperclip className="text-white h-4 w-4" style={toolbarStyles} />
       </label>
     </div>
   );

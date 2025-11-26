@@ -16,7 +16,7 @@ import { Megaphone, Link as Chain, Video } from "lucide-react";
 import { fetchChannelMembersbyUser } from "@/redux/features/channelMembers/channelMembersSlice";
 import { Button } from "@/components/ui/button";
 import { PlusIcon } from "@heroicons/react/24/outline";
-import { PersonIcon } from "@radix-ui/react-icons";
+import { Users } from "lucide-react";
 import { isAdmin } from "@/constants/constants";
 const SideBarChannels = ({
   session,
@@ -103,7 +103,7 @@ const SideBarChannels = ({
                           : "hover:bg-(--sidebar-accent)"
                       }`}
               >
-                <PersonIcon className="w-4 h-4" />
+                <Users className="w-4 h-4" />
                 <span className="font-normal text-[15px]">
                   {channel.channel_name}
                 </span>

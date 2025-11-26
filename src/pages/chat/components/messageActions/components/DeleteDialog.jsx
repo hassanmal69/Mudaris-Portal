@@ -19,7 +19,7 @@ const DeleteDialog = ({ open, onOpenChange, onConfirmDelete }) => (
           undone.
         </DialogDescription>
       </DialogHeader>
-      <DialogFooter className="flex justify-end gap-4">
+      <DialogFooter className="flex justify-end gap-1">
         <DialogClose asChild>
           <Button className="px-3 py-1.5 rounded-md border border-(--border) hover:bg-(--accent)/30 hover:text-(--foreground) transition-colors">
             Cancel
@@ -27,10 +27,10 @@ const DeleteDialog = ({ open, onOpenChange, onConfirmDelete }) => (
         </DialogClose>
         <DialogTrigger>
           <Button
+            variant={"destructive"}
             onClick={() => {
               onConfirmDelete();
             }}
-            className="bg-(--foreground) text-(--muted) px-3 py-1.5 rounded-md hover:bg-(--foreground)/90 transition-colors"
           >
             Delete
           </Button>
