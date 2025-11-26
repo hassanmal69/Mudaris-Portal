@@ -17,7 +17,6 @@ const VimeoPlayer = ({ videoId }) => {
     };
     loadVideo();
   }, [videoId]);
-  // console.log(nigga.embed.html);
   useEffect(() => {
     if (!videoData || playerRef.current) return;
     const player = new Player(playerRef.current, {
@@ -30,12 +29,11 @@ const VimeoPlayer = ({ videoId }) => {
     return () => player.destroy();
   }, [videoData]);
   return (
-    <>
+    <div className='w-full h-full'>
       {!videoData && <p>Loading lecture video</p>}
       <div ref={playerRef}></div>
-
       <PrivateVimeoPlayer embedHtml={videoData?.embed.html} />
-    </>
+    </div>
   );
 };
 

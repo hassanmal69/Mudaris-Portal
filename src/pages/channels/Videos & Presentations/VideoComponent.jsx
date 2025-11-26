@@ -1,40 +1,9 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { Button } from "@/components/ui/button";
-
-// Convert any YouTube URL format → safe embed URL
-const toEmbedUrl = (url) => {
-  if (!url) return null;
-
-  try {
-    // Short links
-    if (url.includes("youtu.be")) {
-      const id = url.split("/").pop().split("?")[0];
-      return `https://www.youtube.com/embed/${id}`;
-    }
-
-    // Regular watch links
-    if (url.includes("watch?v=")) {
-      const id = new URL(url).searchParams.get("v");
-      return `https://www.youtube.com/embed/${id}`;
-    }
-
-    // Shorts
-    if (url.includes("/shorts/")) {
-      const id = url.split("/shorts/")[1].split("?")[0];
-      return `https://www.youtube.com/embed/${id}`;
-    }
-
-    return url;
-  } catch (e) {
-    console.warn("Invalid YouTube URL", url);
-    return null;
-  }
-};
-
+import VimeoPlayer from "@/services/vimeo/vimeoPlayer";
 const VideoComponent = React.memo(
   ({ data }) => {
     const { video, chp } = data || {};
-
     if (!video) {
       return (
         <div className="flex items-center justify-center w-full h-full text-(--muted-foreground)">
@@ -42,50 +11,24 @@ const VideoComponent = React.memo(
         </div>
       );
     }
-
-    const embedUrl = useMemo(() => toEmbedUrl(video.video_url), [video.video_url]);
-
     return (
       <div className="w-full h-full p-6 space-y-6">
-
         {/* === VIDEO PLAYER === */}
         <div className="w-full h-[350px] bg-black rounded-lg overflow-hidden">
-          {embedUrl ? (
-            <iframe
-              width="100%"
-              height="100%"
-              src={embedUrl}
-              title={video.name}
-              loading="lazy"
-              allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-              referrerPolicy="no-referrer-when-downgrade"
-              sandbox="allow-scripts allow-same-origin allow-presentation"
-              onError={() => console.error("Video could not load")}
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center text-white">
-              Unable to load video.
-            </div>
-          )}
+          <VimeoPlayer videoId={video?.video_link} />
         </div>
-
         {/* === INFO CARD === */}
         <div className="bg-(--card) text-(--card-foreground) p-6 rounded-lg shadow-sm space-y-4">
           <p className="text-sm text-(--muted-foreground)">
             {chp || "Course Module"}
           </p>
-
           <h2 className="text-xl font-bold">{video.name}</h2>
-
           <p className="text-sm text-(--muted-foreground)">
             Duration: {video.duration || "—"}
           </p>
-
           <p className="leading-relaxed text-(--foreground)">
             {video.description}
           </p>
-
           {video.presentation_link && (
             <a
               href={video.presentation_link}

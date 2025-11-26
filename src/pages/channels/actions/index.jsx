@@ -5,10 +5,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu.jsx";
-import { MoreHorizontalIcon, Pencil, Trash2 } from "lucide-react";
+import { MoreHorizontalIcon, Pencil, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useDispatch } from "react-redux";
-const Actions = ({ onEdit, onDelete }) => {
+const Actions = ({ onEdit, onDelete, onAdd }) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -31,6 +30,10 @@ const Actions = ({ onEdit, onDelete }) => {
         <DropdownMenuItem className="text-destructive" onClick={onDelete}>
           <Trash2 className="h-4 w-4 mr-2 " />
           Delete
+        </DropdownMenuItem>
+        <DropdownMenuItem className="text-destructive" onClick={onAdd}>
+          <Plus className="h-4 w-4 mr-2 " />
+          Add
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

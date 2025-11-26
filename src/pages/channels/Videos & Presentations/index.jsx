@@ -9,8 +9,6 @@ import { useParams } from "react-router-dom";
 import { ChevronDown, ChevronUp, PlayCircle } from "lucide-react";
 import { isAdmin } from "@/constants/constants.js";
 import Actions from "../actions/index.jsx";
-import usePaginatiedList from "@/hooks/infinteScroll-hook/usePaginatedList.js";
-import { fetchAnnouncements } from "@/redux/features/announcements/announcementsSlice.js";
 
 const VideoComponent = React.lazy(() => import("./VideoComponent.jsx"));
 
@@ -97,13 +95,13 @@ const VideosPresentations = () => {
 
                 <h2 className="text-lg">{idx + 1}. {chapter.name}</h2>
                 {isAdmin && (
-                  <div className="flex w-[90%] h-full justify-end absolute opacity-0 hover:opacity-100 transition-opacity duration-200">
+                  <div className="flex h-full justify-end absolute right-4">
                     <Actions
                       onEdit={() => onEdit(chapter)}
+                      onAdd={() => handleAddVideo(chapter.id)}
                       onDelete={() => onDelete(chapter.id)}
                     />
                   </div>
-
                 )}
               </div>
 

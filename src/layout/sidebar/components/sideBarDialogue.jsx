@@ -60,7 +60,6 @@ const SideBarDialogue = () => {
                 item.sender?.full_name != session.user.user_metadata.full_name
                   ? item.receiver
                   : item.sender;
-
               return (
                 <div
                   key={index}
@@ -75,10 +74,9 @@ const SideBarDialogue = () => {
                     <h4 className="text-lg font-semibold text-white">
                       {user?.full_name}
                     </h4>
-                    <p>{user?.email || "no email"}</p>
                     <Button
                       onClick={() => handleFunction(user)}
-                      variant={"secondary"}
+                      variant={"primary"}
                     >
                       Tap to view full conversation
                     </Button>

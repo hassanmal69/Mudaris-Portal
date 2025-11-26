@@ -3,7 +3,7 @@ import "./vimeo.css";
 const PrivateVimeoPlayer = ({ embedHtml }) => {
   return (
     <div
-      className="video-container"
+      className="video-container w-full h-full"
       dangerouslySetInnerHTML={{ __html: embedHtml }}
     />
   );

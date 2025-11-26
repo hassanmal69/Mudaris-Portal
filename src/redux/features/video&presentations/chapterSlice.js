@@ -59,7 +59,7 @@ export const deleteChapterDB = createAsyncThunk(
       .eq("id", chapterId);
 
     if (deleteChapterErr) throw deleteChapterErr;
-    return
+    return chapterId;
   }
 );
 export const updateChapterDB = createAsyncThunk(
@@ -117,6 +117,7 @@ const chaptersSlice = createSlice({
       })
       .addCase(deleteChapterDB.fulfilled, (state, action) => {
         const deletedId = action.payload;
+        console.log('deleted id hehe',action,deletedId)
         Object.keys(state.chaptersByWorkspace).forEach((wid) => {
           state.chaptersByWorkspace[wid] = state.chaptersByWorkspace[wid].filter(
             (chapter) => chapter.id !== deletedId
