@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, Suspense } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Button } from "@/components/ui/button";
 import ChapterDialog from "@/components/Dialogs/ChannelsDialog/Videos&Presentations/Chapters";
@@ -16,7 +16,7 @@ const VideosPresentations = () => {
   const dispatch = useDispatch();
   const { workspace_id } = useParams();
 
-  const { session } = useSelector((state) => state.auth);
+  // const { session } = useSelector((state) => state.auth);
 
   // CACHED chapters (by workspace)
   const chapters =
@@ -115,7 +115,7 @@ const VideosPresentations = () => {
                                  hover:bg-(--sidebar-accent) p-4 px-6
                                  flex gap-2 cursor-pointer"
                       onClick={() =>
-                        setSelectedVideo({ video, chp: chapter.name })
+                        setSelectedVideo({ video, index: i, allVideos: chapterVideos, chp: chapter.name })
                       }
                     >
                       <PlayCircle className="h-5 w-5" />
@@ -139,7 +139,9 @@ const VideosPresentations = () => {
 
       {/* RIGHT SIDE: VIDEO PLAYER */}
       <Suspense fallback={<div>Loading video...</div>}>
-        {selectedVideo && <VideoComponent data={selectedVideo} />}
+        {selectedVideo && <VideoComponent data={selectedVideo}
+          onNext={setSelectedVideo}
+        />}
       </Suspense>
 
       {/* Dialogs */}
