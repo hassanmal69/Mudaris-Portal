@@ -15,7 +15,7 @@ import LecturesLink from "@/pages/channels/lecturesLink/index.jsx";
 import HandleChatsViewer from "@/pages/chatsViewer/index.jsx";
 import ChatGet from "@/pages/chatsViewer/chatGet/index.jsx";
 import VideosPresentations from "@/pages/channels/Videos & Presentations/index.jsx";
-import TopbarTwo from "@/layout/topbarTwo/index.jsx";
+import TopbarTwo from "@/layout/TopbarTwo/index.jsx";
 
 export const router = createBrowserRouter([
   {
