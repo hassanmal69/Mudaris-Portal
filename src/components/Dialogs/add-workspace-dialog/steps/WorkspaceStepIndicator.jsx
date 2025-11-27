@@ -7,7 +7,7 @@ const WorkspaceStepIndicator = ({ step, steps }) => {
         <React.Fragment key={label}>
           <div
             className={`w-2 h-2 rounded-full ${
-              step >= idx ? "bg-[#556cd6]" : "bg-gray-300"
+              step >= idx ? "bg-(--primary)" : "bg-(--secondary)"
             }`}
           ></div>
           {idx < steps.length - 1 && (

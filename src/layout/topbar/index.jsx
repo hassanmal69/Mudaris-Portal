@@ -60,7 +60,7 @@ const Topbar = () => {
     channel?.channel_name || directChannel.full_name || "channel";
 
   // --- Search Query ---
-  const query = useSelector((state) => state.search.query);
+  // const query = useSelector((state) => state.search.query);
 
   const debouncedDispatch = useMemo(
     () =>

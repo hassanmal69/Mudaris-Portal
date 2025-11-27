@@ -40,11 +40,11 @@ export default function VaulDrawer() {
 
   return (
     <Drawer.Root direction="right" modal={true}>
-      <Drawer.Trigger className="relative flex h-10 flex-shrink-0 items-center justify-center gap-2 rounded-full bg-white px-4 text-sm font-medium shadow-sm transition-all hover:bg-[#FAFAFA] dark:bg-[#161615] dark:hover:bg-[#1A1A19] dark:text-(--sidebar-accent-foreground)">
+      <Drawer.Trigger className="relative flex w-10 h-10 items-center justify-center gap-2 rounded-full ">
         <img
           src={avatarUrl}
           alt="profileImg"
-          className="absolute rounded-full object-cover"
+          className=" rounded-full hover:cursor-pointer object-cover w-10 h-10"
         />
       </Drawer.Trigger>
       <Drawer.Portal>

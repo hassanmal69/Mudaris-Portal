@@ -16,6 +16,7 @@ import {
 } from "./messageActions/components/reducer.js";
 import UserFallback from "@/components/ui/userFallback.jsx";
 import { ForwardDialog } from "./messageActions/components/ForwardDialog.jsx";
+import { addToast } from "@/redux/features/toast/toastSlice.js";
 
 const MessageItem = ({
   message,
@@ -36,7 +37,13 @@ const MessageItem = ({
   );
   const handleConfirmDelete = () => {
     __dispatch_local({ type: "SHOW_DELETE_SUCCESS" });
-    window.alert("Message deleted successfully");
+    dispatch(
+      addToast({
+        message: "Message deleted successfully",
+        type: "success",
+        duraion: 3000,
+      })
+    );
     console.log(__state_local.selectedMessageId);
 
     setTimeout(() => {

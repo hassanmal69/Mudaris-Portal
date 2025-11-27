@@ -8,7 +8,7 @@ export const fetchChannelMembersByChannel = createAsyncThunk(
   async (channelId, thunkAPI) => {
     const { data, error } = await supabase
       .from("channel_members")
-      .select("id, user_id, user_profiles ( id, full_name, avatar_url )")
+      .select("id, user_id, user_profiles ( id, full_name, avatar_url, email )")
       .eq("channel_id", channelId);
 
     if (error) return thunkAPI.rejectWithValue(error.message);
