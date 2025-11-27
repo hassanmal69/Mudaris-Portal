@@ -20,9 +20,6 @@ const EditProfile = () => {
   const { session } = useSelector((state) => state.auth);
   const [file, setFile] = useState(null);
   const [name, setName] = useState(session.user?.user_metadata?.fullName);
-  const [displayName, setDisplayName] = useState(
-    session.user?.user_metadata.displayName
-  );
   const [publicUrl, setPublicUrl] = useState(undefined);
   const [sessionAvatarUrl, setSessionAvatarUrl] = useState(
     session.user.user_metadata.avatar_url
@@ -35,13 +32,17 @@ const EditProfile = () => {
   const handleSave = async () => {
     // Update names
     const { error } = await supabase.auth.updateUser({
-      data: { fullName: name, displayName: displayName },
+      data: { fullName: name }
     });
     if (error) {
       console.error("Error updating user info", error);
       return;
     }
-
+    const { error: updateErrorinProfile } = await supabase.from('profiles')
+      .update({
+        full_name: name
+      }).eq('id', session.user.id)
+    if (updateErrorinProfile) throw updateErrorinProfile
     // If picture selected → upload
     if (file) {
       await handleEditPic();
@@ -81,7 +82,11 @@ const EditProfile = () => {
       console.error("Error updating avatar URL:", updateError);
       return;
     }
-
+    const { error: updateErrorinProfile } = await supabase.from('profiles')
+      .update({
+        avatar_url: publicUrl
+      }).eq('id', session.user.id)
+    if (updateErrorinProfile) throw updateErrorinProfile
     setPublicUrl(publicUrl);
     setSessionAvatarUrl(publicUrl);
   };
@@ -145,18 +150,6 @@ const EditProfile = () => {
                 onChange={(e) => setName(e.target.value)}
                 type="text"
                 required
-              />
-            </div>
-            <div className="flex flex-col gap-2">
-              <Label htmlFor={`${id}-displayname`}>Display Name</Label>
-              <Input
-                id={`${id}-displayname`}
-                placeholder="Display Name"
-                value={displayName}
-                onChange={(e) => setDisplayName(e.target.value)}
-                type="text"
-                required
-                className=" border-(--border) dark:bg-(--input-background) bg-(--switch-background) text-(--accent-foreground)"
               />
             </div>
           </form>
