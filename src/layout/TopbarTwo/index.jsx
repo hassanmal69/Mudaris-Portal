@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import Profile from "@/pages/profile";
 import { useParams } from "react-router-dom";
-import { Globe, Lock, Search, Siren } from "lucide-react";
+import { Calendar, Globe, Lock, Search, Siren } from "lucide-react";
 import Members from "../topbar/members/index.jsx";
 import { Link as MoizChain, Megaphone } from "lucide-react";
 import "../topbar/topbar.css";
@@ -34,8 +34,10 @@ const TopbarTwo = ({ name, desc }) => {
         <span className="flex gap-2">
           {name === "LecturesLink" ? (
             <MoizChain className="w-5" />
-          ) : (
+          ) : name === "Announcements" ? (
             <Megaphone className="w-5" />
+          ) : (
+            name === "Economic Calender" && <Calendar className="w-5" />
           )}
           <h2 className="text-(--foreground) text-[18px] font-medium flex gap-1 items-center">
             {name}

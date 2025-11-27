@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import InviteWorkspaceUsers from "./steps/InviteWorkspaceUsers.jsx";
 import WorkspaceInfo from "./steps/WorkspaceInfo.jsx";
 import AddavatarInWS from "./steps/addAvatar.jsx";
@@ -6,11 +6,17 @@ import WorkspaceStepIndicator from "./steps/WorkspaceStepIndicator.jsx";
 import { Button } from "@/components/ui/button";
 import { workspaceInfoSchema } from "@/validation/authSchema.js";
 import { useParams } from "react-router-dom";
-
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useDispatch } from "react-redux";
 import { createWorkspace } from "@/redux/features/workspace/workspaceSlice.js";
 import { supabase } from "@/services/supabaseClient.js";
-import { DialogContent } from "@/components/ui/dialog.jsx";
+import { addToast } from "@/redux/features/toast/toastSlice.js";
 const initialState = {
   name: "",
   description: "",
@@ -18,6 +24,8 @@ const initialState = {
   users: [],
 };
 const AddWorkspaceDialog = ({ open, onClose }) => {
+  const dialogRef = useRef();
+
   const dispatch = useDispatch();
   const [step, setStep] = useState(0);
   const [errors, setErrors] = useState({});
@@ -95,7 +103,13 @@ const AddWorkspaceDialog = ({ open, onClose }) => {
       } = await supabase.auth.getSession();
 
       if (error || !session) {
-        alert("❌ You must be logged in to invite users.");
+        dispatch(
+          addToast({
+            message: "You must be logged in to invite users.",
+            type: "destructive",
+            duration: 3000,
+          })
+        );
         return;
       }
 
@@ -140,19 +154,44 @@ const AddWorkspaceDialog = ({ open, onClose }) => {
 
       const failed = result.results.filter((r) => r.error);
       if (failed.length > 0) {
-        alert(
-          "Some invitations failed:\n" +
-            failed.map((f) => `${f.email}: ${f.error}`).join("\n")
+        dispatch(
+          addToast({
+            message:
+              "Some invitations failed:\n" +
+              failed.map((f) => `${f.email}: ${f.error}`).join("\n"),
+            type: "destructive",
+            duration: 3000,
+          })
         );
       } else {
-        alert("✅ All invitations sent successfully!");
+        dispatch(
+          addToast({
+            message: "All invitations sent successfully!",
+            type: "success",
+            duration: 3000,
+          })
+        );
       }
 
       setTimeout(() => resetWorkspaceState(setWorkspaceData, setStep), 300);
+      dispatch(
+        addToast({
+          message: "Workspace created successfully!!!",
+          type: "success",
+          duration: 3000,
+        })
+      );
       handleClose();
     } catch (err) {
       console.error("⚠️ Unexpected error:", err);
       alert("Unexpected error while sending invitations.");
+      dispatch(
+        addToast({
+          message: "Unexpected error while sending invitations.",
+          type: "destructive",
+          duration: 3000,
+        })
+      );
     }
   };
 
@@ -184,35 +223,46 @@ const AddWorkspaceDialog = ({ open, onClose }) => {
   if (!open) return null;
 
   return (
-    <div className="bg-(--background) text-(--foreground)  border-(--border) w-full data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-1/2 left-1/2 z-50 grid max-h-[calc(100%-2rem)] max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 overflow-y-auto rounded-xl border p-6 shadow-lg duration-200 sm:max-w-100">
-      <h2 className="text-center text-xl font-bold  mb-2">
-        Create a new Workspace
-      </h2>
-      <p className="text-center mb-4">
-        Enter the details and your workspace will be ready
-      </p>
+    <Dialog
+      open={open}
+      onOpenChange={(isOpen) => {
+        if (!isOpen) onClose();
+      }}
+      initialFocus={dialogRef}
+    >
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Create a new Workspace</DialogTitle>
+          <DialogDescription>
+            Enter the details and your workspace will be ready
+          </DialogDescription>
+        </DialogHeader>
+        <WorkspaceStepIndicator step={step} steps={steps} />
+        {renderStep()}
 
-      <WorkspaceStepIndicator step={step} steps={steps} />
-      {renderStep()}
-
-      <div className="flex justify-between mt-6">
-        {step > 0 && (
-          <Button variant={"destructive"} onClick={handleBack}>
-            Back
-          </Button>
-        )}
-        {step < 2 && (
-          <Button variant={"success"} onClick={handleNext}>
-            Next
-          </Button>
-        )}
-        {step === 2 && (
-          <Button variant={"success"} onClick={sendEmail}>
-            Finish
-          </Button>
-        )}
-      </div>
-    </div>
+        <div className="flex justify-between mt-6">
+          {step > 0 && (
+            <Button variant={"destructive"} onClick={handleBack}>
+              Back
+            </Button>
+          )}
+          {step < 2 && (
+            <Button variant={"success"} onClick={handleNext}>
+              Next
+            </Button>
+          )}
+          {step === 2 && (
+            <Button
+              variant={"success"}
+              disabled={step === 2 && workspaceData.users.length === 0}
+              onClick={sendEmail}
+            >
+              Finish
+            </Button>
+          )}
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 };
 

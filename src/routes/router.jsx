@@ -97,6 +97,30 @@ export const router = createBrowserRouter([
         children: [{ path: "", element: <Announcements /> }],
       },
       {
+        path: "/workspace/:workspace_id/calendar",
+        element: (
+          <PrivateRoute>
+            <TopBarSecond
+              name="Economic Calender"
+              desc={"Economic events and market calendar"}
+            />
+          </PrivateRoute>
+        ),
+        children: [{ path: "", element: <Calendar /> }],
+      },
+      {
+        path: "/workspace/:workspace_id/market",
+        element: (
+          <PrivateRoute>
+            <TopBarSecond
+              name="Market Insight"
+              desc={"Market Insights of the real world"}
+            />
+          </PrivateRoute>
+        ),
+        children: [{ path: "", element: <Market /> }],
+      },
+      {
         path: "/workspace/:workspace_id",
         element: (
           <PrivateRoute>
@@ -104,9 +128,6 @@ export const router = createBrowserRouter([
           </PrivateRoute>
         ),
         children: [
-          { path: "group/:groupId/General", element: <WorkSpaceInd /> },
-          { path: "calendar", element: <Calendar /> },
-          { path: "market", element: <Market /> },
           { path: "group/:groupId", element: <WorkSpaceInd /> },
           { path: "individual/:token", element: <WorkSpaceInd /> },
         ],

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button.jsx";
+import { Textarea } from "@/components/ui/textarea";
 const parseUsers = (input) => {
   return input
     .split(",")
@@ -18,7 +19,7 @@ const InviteWorkspaceUsers = ({ state, setState, errors, onSkip }) => {
     <div className="space-y-4">
       <div className="text-[#c7c7c7] flex flex-col gap-2">
         <h6>Enter email's</h6>
-        <textarea
+        <Textarea
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Add students with email (comma separated)"
@@ -30,12 +31,12 @@ const InviteWorkspaceUsers = ({ state, setState, errors, onSkip }) => {
           }}
           aria-label="Add emails"
           rows={4}
-          className="w-full border border-gray-300 text-[#c7c7c7] rounded-md p-2 resize-none"
+          className="resize-none"
         />
       </div>
 
       {errors.users && (
-        <p className="text-xs text-red-500 mt-1">{errors.users}</p>
+        <p className="text-xs text-(--destructive) mt-1">{errors.users}</p>
       )}
       <div className="flex flex-wrap gap-2">
         {(state.users || []).map((user, idx) => (
@@ -45,12 +46,7 @@ const InviteWorkspaceUsers = ({ state, setState, errors, onSkip }) => {
         ))}
       </div>
       <div className="flex gap-2 mt-4">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={onSkip}
-          aria-label="Skip invite"
-        >
+        <Button type="button" onClick={onSkip} aria-label="Skip invite">
           Skip for now
         </Button>
       </div>
