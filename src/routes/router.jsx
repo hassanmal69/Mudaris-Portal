@@ -15,6 +15,7 @@ import LecturesLink from "@/pages/channels/lecturesLink/index.jsx";
 import HandleChatsViewer from "@/pages/chatsViewer/index.jsx";
 import ChatGet from "@/pages/chatsViewer/chatGet/index.jsx";
 import VideosPresentations from "@/pages/channels/Videos & Presentations/index.jsx";
+import TopbarTwo from "@/layout/topbarTwo/index.jsx";
 
 export const router = createBrowserRouter([
   {
@@ -69,9 +70,31 @@ export const router = createBrowserRouter([
             <TopbarOnly />
           </PrivateRoute>
         ),
-        children: [
-          { path: "", element: < VideosPresentations /> }
-        ]
+        children: [{ path: "", element: <VideosPresentations /> }],
+      },
+      {
+        path: "/workspace/:workspace_id/lecturesLink",
+        element: (
+          <PrivateRoute>
+            <TopBarSecond
+              name="LecturesLink"
+              desc="Access lecture materials and resources"
+            />
+          </PrivateRoute>
+        ),
+        children: [{ path: "", element: <LecturesLink /> }],
+      },
+      {
+        path: "/workspace/:workspace_id/announcements",
+        element: (
+          <PrivateRoute>
+            <TopBarSecond
+              name="Announcements"
+              desc={"Important academy announcements"}
+            />
+          </PrivateRoute>
+        ),
+        children: [{ path: "", element: <Announcements /> }],
       },
       {
         path: "/workspace/:workspace_id",
@@ -82,9 +105,6 @@ export const router = createBrowserRouter([
         ),
         children: [
           { path: "group/:groupId/General", element: <WorkSpaceInd /> },
-          { path: "announcements", element: <Announcements /> },
-          { path: "lecturesLink", element: <LecturesLink /> },
-          // {path: "videospresentations", element: <VideosPresentations /> },
           { path: "calendar", element: <Calendar /> },
           { path: "market", element: <Market /> },
           { path: "group/:groupId", element: <WorkSpaceInd /> },
@@ -97,20 +117,24 @@ export const router = createBrowserRouter([
 
 function WorkspaceLayout() {
   return (
-    <div className="bg-black">
-      <SidebarLayout>
-        <Topbar />
-        <Outlet />
-      </SidebarLayout>
-    </div>
+    <SidebarLayout>
+      <Topbar />
+      <Outlet />
+    </SidebarLayout>
   );
 }
 function TopbarOnly() {
   return (
-    <div className="bg-black">
-      <SidebarLayout>
-        <Outlet />
-      </SidebarLayout>
-    </div>
+    <SidebarLayout>
+      <Outlet />
+    </SidebarLayout>
+  );
+}
+function TopBarSecond({ name, desc }) {
+  return (
+    <SidebarLayout>
+      <TopbarTwo name={name} desc={desc} />
+      <Outlet />
+    </SidebarLayout>
   );
 }

@@ -123,7 +123,7 @@ const AnnouncementForm = ({ onClose, announcement }) => {
             onChange={handleChange}
             required={field.required}
             placeholder={field.placeholder}
-            className={commonInputClasses}
+            className={`${commonInputClasses} resize-none`}
           />
         )}
         {field.type === "select" && (

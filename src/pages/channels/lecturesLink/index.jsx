@@ -86,7 +86,7 @@ const LecturesLink = () => {
             <Button
               variant="secondary"
               size="sm"
-              className="text-(--primary-foreground) cursor-pointer border"
+              className="text-(--primary-foreground) border-(--border) cursor-pointer border"
               onClick={() => dispatchLocal({ type: "OPEN_DIALOG" })}
             >
               Add links
@@ -109,7 +109,7 @@ const LecturesLink = () => {
               return (
                 <div
                   key={lecture.id}
-                  className="border relative border-(--border) gap-2 flex flex-col w-full rounded-2xl bg-(--card) p-4 shadow-sm hover:shadow-md transition-transform duration-200 hover:-translate-y-1"
+                  className="border group relative border-(--border) gap-2 flex flex-col w-full rounded-2xl bg-(--card) p-4 shadow-sm hover:shadow-md transition-transform duration-200 hover:-translate-y-1"
                 >
                   <div className="flex gap-2">
                     {lecture.tag && (
@@ -148,7 +148,7 @@ const LecturesLink = () => {
                     <ExternalLink className="w-4 h-4" />
                   </a>
                   {isAdmin && (
-                    <div className="absolute top-3 right-3 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-50 duration-200">
+                    <div className="absolute top-3 right-3 flex gap-1 opacity-0 group-hover:opacity-100  transition-opacity z-50 duration-200">
                       <Actions
                         onEdit={() => onEdit(lecture)}
                         onDelete={() => handleDelete(lecture.id)}
