@@ -7,9 +7,7 @@ export const fetchMarkasComplete = createAsyncThunk(
         const { data, error } = await supabase.from('user_video_progress')
             .select('*')
             .eq('user_id', userId)
-            
         if (error) throw error
-        console.log(data)
         return data.map((row) => row.video_id)
     }
 )

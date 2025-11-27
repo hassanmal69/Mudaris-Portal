@@ -23,7 +23,6 @@ export default function VaulDrawer() {
   const channels = useSelector(selectChannels);
 
   const [time, setTime] = useState(new Date());
-  // const loading = useSelector((state) => state.channels.loading);
 
   useEffect(() => {
     const interval = setInterval(() => setTime(new Date()), 1000);
@@ -73,7 +72,7 @@ export default function VaulDrawer() {
             <div className="flex w-full flex-col gap-2.5">
               <div className="flex my-3 justify-between">
                 <Drawer.Title className="font-medium mb-2 text-2xl text-(--sidebar-accent-foreground) ">
-                  {session?.user?.user_metadata?.displayName}
+                  {session?.user?.user_metadata?.fullName}
                 </Drawer.Title>
                 <div>
                   <EditProfile />

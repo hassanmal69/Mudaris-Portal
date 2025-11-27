@@ -15,9 +15,6 @@ const VideoComponent = React.lazy(() => import("./VideoComponent.jsx"));
 const VideosPresentations = () => {
   const dispatch = useDispatch();
   const { workspace_id } = useParams();
-
-  // const { session } = useSelector((state) => state.auth);
-
   // CACHED chapters (by workspace)
   const chapters =
     useSelector(
@@ -122,6 +119,11 @@ const VideosPresentations = () => {
                       <strong className="text-base">
                         {i + 1}. {video.name}
                       </strong>
+                      <Actions
+                        onEdit={() => onEdit(chapter)}
+                        onAdd={() => handleAddVideo(chapter.id)}
+                        onDelete={() => onDelete(chapter.id)}
+                      />
                     </li>
                   ))}
 
@@ -131,7 +133,8 @@ const VideosPresentations = () => {
                     </li>
                   )}
                 </ul>
-              )}
+              )
+              }
             </div>
           );
         })}
@@ -151,14 +154,16 @@ const VideosPresentations = () => {
         onOpenChange={handleDialogChange}
       />
 
-      {activeChapter && (
-        <VideoDialog
-          chapterId={activeChapter}
-          open={videoDialogOpen}
-          onOpenChange={setVideoDialogOpen}
-        />
-      )}
-    </div>
+      {
+        activeChapter && (
+          <VideoDialog
+            chapterId={activeChapter}
+            open={videoDialogOpen}
+            onOpenChange={setVideoDialogOpen}
+          />
+        )
+      }
+    </div >
   );
 };
 
