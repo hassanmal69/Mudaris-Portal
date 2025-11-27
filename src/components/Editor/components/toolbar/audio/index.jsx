@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import { useReactMediaRecorder } from "react-media-recorder";
-import { Mic } from "lucide-react";
+import { Mic, PauseIcon } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -15,6 +15,8 @@ import { addValue } from "@/redux/features/ui/fileSlice";
 // import { setValue } from "@/features/ui/fileSlice";
 
 const AudioRecording = ({ toolbarStyles }) => {
+  const [open, setOpen] = useState(false);
+
   const dispatch = useDispatch();
   const audioPreviewRef = useRef(null);
   const [previewStream, setPreviewStream] = useState(null);
@@ -27,7 +29,7 @@ const AudioRecording = ({ toolbarStyles }) => {
         if (mounted) {
           setPreviewStream(stream);
           if (audioPreviewRef.current) {
-            audioPreviewRef.current.srcObject = stream; // ✅ always show live preview
+            audioPreviewRef.current.srcObject = stream;
           }
         }
       })
@@ -61,14 +63,15 @@ const AudioRecording = ({ toolbarStyles }) => {
         filePath: `audio/${fileName}`,
       })
     );
+    setOpen(false);
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <button className="p-2 rounded hover:bg-gray-200" onClick={VideoStream}>
-          <Mic style={toolbarStyles} />
-        </button>
+        <Button variant={"ghost"} onClick={VideoStream}>
+          <Mic className="h-4 w-4" style={toolbarStyles} />
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
@@ -80,7 +83,6 @@ const AudioRecording = ({ toolbarStyles }) => {
             Status: <strong>{status}</strong>
           </p>
 
-          {/* 🔴 Live Preview works while recording */}
           <audio
             ref={audioPreviewRef}
             autoPlay
@@ -92,15 +94,12 @@ const AudioRecording = ({ toolbarStyles }) => {
           {/* Controls */}
           <div className="flex gap-2">
             <Button onClick={startRecording}>
-              <MicIcon className="w-12 h-12" />
+              <Mic className="w-12 h-12" />
             </Button>
-            <Button onClick={stopRecording}>
+            <Button variant="destructive" onClick={stopRecording}>
               <PauseIcon className="w-6 h-6" />
             </Button>
-            <Button
-              onClick={handleSubmit}
-              className="bg-purple-500 hover:bg-purple-600"
-            >
+            <Button variant="success" onClick={handleSubmit}>
               Send
             </Button>
           </div>
@@ -110,9 +109,8 @@ const AudioRecording = ({ toolbarStyles }) => {
             <div>
               <h4 className="mt-4 mb-1 font-medium">Playback</h4>
               <audio
-                src={mediaBlobUrl}
                 controls
-                className="w-full max-w-md rounded border"
+                className="w-full appearance-none rounded-lg p-2"
               />
             </div>
           )}
@@ -123,83 +121,3 @@ const AudioRecording = ({ toolbarStyles }) => {
 };
 
 export default AudioRecording;
-
-function MicIcon(props) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
-      <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
-      <line x1="12" x2="12" y1="19" y2="22" />
-    </svg>
-  );
-}
-
-function PauseIcon(props) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <rect x="14" y="4" width="4" height="16" rx="1" />
-      <rect x="6" y="4" width="4" height="16" rx="1" />
-    </svg>
-  );
-}
-
-function PlayIcon(props) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <polygon points="6 3 20 12 6 21 6 3" />
-    </svg>
-  );
-}
-
-function SettingsIcon(props) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
-      <circle cx="12" cy="12" r="3" />
-    </svg>
-  );
-}

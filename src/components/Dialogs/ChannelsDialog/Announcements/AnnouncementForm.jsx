@@ -8,6 +8,7 @@ import {
 import { Input } from "../../../ui/input";
 import { Textarea } from "../../../ui/textarea";
 import { useParams } from "react-router-dom";
+import { addToast } from "@/redux/features/toast/toastSlice";
 
 const PRIORITY_OPTIONS = [
   { value: "important", label: "Important" },
@@ -43,6 +44,14 @@ const AnnouncementForm = ({ onClose, announcement }) => {
           },
         })
       );
+
+      dispatch(
+        addToast({
+          message: "Announcement updated successfully!",
+          type: "success",
+          duration: 3000,
+        })
+      );
     } else {
       // create new announcement
       dispatch(
@@ -51,6 +60,14 @@ const AnnouncementForm = ({ onClose, announcement }) => {
           description: formData.description,
           tag: formData.priority,
           workspace_id,
+        })
+      );
+
+      dispatch(
+        addToast({
+          message: "Announcement created successfully!",
+          type: "success",
+          duration: 3000,
         })
       );
     }

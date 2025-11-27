@@ -1,3 +1,4 @@
+import ToastContainer from "@/components/toast/toastContainer";
 import React from "react";
 import { Outlet } from "react-router-dom";
 
@@ -7,6 +8,8 @@ const ThemeLayout = () => {
       <div className="relative z-10">
         <Outlet />
       </div>
+
+      <ToastContainer />
     </section>
   );
 };

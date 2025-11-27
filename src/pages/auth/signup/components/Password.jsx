@@ -22,6 +22,7 @@ const Password = ({ onBack, token, invite, file }) => {
           fullName,
           email: invite.email,
           password: values.password,
+          avtar,
         })
       ).unwrap();
       if (!user?.id) throw new Error("user id missing after signup!");

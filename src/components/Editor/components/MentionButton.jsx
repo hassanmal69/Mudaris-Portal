@@ -1,6 +1,8 @@
-export default function MentionButton({ editor, size }) {
+import { Button } from "@/components/ui/button";
+
+export default function MentionButton({ editor }) {
   return (
-    <button
+    <Button
       type="button"
       title="mention"
       onClick={() => {
@@ -10,9 +12,9 @@ export default function MentionButton({ editor, size }) {
         editor.commands.focus();
       }}
     >
-      <span role="img" aria-label="mention" className={size}>
+      <span role="img" aria-label="mention" className={"text-[18px] p-0"}>
         @
       </span>
-    </button>
+    </Button>
   );
 }

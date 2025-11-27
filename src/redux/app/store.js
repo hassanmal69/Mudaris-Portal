@@ -15,6 +15,8 @@ import announcementsReducer from "@/redux/features/announcements/announcementsSl
 import lectureLinkReducer from "../features/lecturesLink/lecturesLinksSlice.js";
 import chapterReducer from "@/redux/features/video&presentations/chapterSlice";
 import videosReducer from "@/redux/features/video&presentations/videoSlice";
+import toastReducer from "@/redux/features/toast/toastSlice.js";
+
 import markCompleteSlice from "@/redux/features/video&presentations/markcompleteSlice.js";
 export const store = configureStore({
   reducer: {
@@ -34,6 +36,7 @@ export const store = configureStore({
     lectureLinks: lectureLinkReducer,
     chapters: chapterReducer,
     videos: videosReducer,
+    toast: toastReducer,
     markComplete: markCompleteSlice
   },
   middleware: (getDefaultMiddleware) =>
