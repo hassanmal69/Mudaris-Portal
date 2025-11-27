@@ -8,6 +8,7 @@ import {
   updateLecturesLink,
 } from "@/redux/features/lecturesLink/lecturesLinksSlice";
 import { useParams } from "react-router-dom";
+import { addToast } from "@/redux/features/toast/toastSlice";
 
 const URL_REGEX =
   /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
@@ -48,12 +49,19 @@ const LectureLinksFrom = ({ onClose, lecturesLink }) => {
 
     if (lecturesLink) {
       dispatch(
-        createLecturesLink({
+        updateLecturesLink({
           title: formData.title,
           description: formData.description,
           tag: formData.topic,
           lecture_link: formData.lectureLink,
           workspace_id,
+        })
+      );
+      dispatch(
+        addToast({
+          message: "Lecture link updated successfully!",
+          type: "success",
+          duration: 3000,
         })
       );
     } else {
@@ -64,6 +72,13 @@ const LectureLinksFrom = ({ onClose, lecturesLink }) => {
           tag: formData.topic,
           lecture_link: formData.lectureLink,
           workspace_id,
+        })
+      );
+      dispatch(
+        addToast({
+          message: "Lecture link added successfully!",
+          type: "success",
+          duration: 3000,
         })
       );
     }

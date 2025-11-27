@@ -7,6 +7,7 @@ import { useCallback, useReducer, useRef, useState } from "react";
 
 export default function usePaginatiedList(fetchAction, clearAction) {
   const [loading, setLoading] = useState(false);
+  const initialLoadRef = useRef(false);
 
   const [state, dispatchLocal] = useReducer(
     local_channel_reducer,
@@ -36,14 +37,16 @@ export default function usePaginatiedList(fetchAction, clearAction) {
   );
 
   // initial load only once
+
   const runInitialLoad = useCallback(
     (reduxDispatch) => {
-      if (state.initialLoaded) return;
+      if (initialLoadRef.current) return; // prevent double call
+      initialLoadRef.current = true; // mark as loaded
       fetchPage(reduxDispatch, 0);
       dispatchLocal({ type: "SET_PAGE", payload: 0 });
       dispatchLocal({ type: "INITIAL_LOADED" });
     },
-    [state.initialLoaded, clearAction, fetchPage]
+    [fetchPage]
   );
 
   // load more
