@@ -17,6 +17,7 @@ import chapterReducer from "@/redux/features/video&presentations/chapterSlice";
 import videosReducer from "@/redux/features/video&presentations/videoSlice";
 import toastReducer from "@/redux/features/toast/toastSlice.js";
 
+import markCompleteSlice from "@/redux/features/video&presentations/markcompleteSlice.js";
 export const store = configureStore({
   reducer: {
     auth: authReducer,
@@ -36,6 +37,7 @@ export const store = configureStore({
     chapters: chapterReducer,
     videos: videosReducer,
     toast: toastReducer,
+    markComplete: markCompleteSlice
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
