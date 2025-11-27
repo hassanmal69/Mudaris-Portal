@@ -27,7 +27,6 @@ const Messages = () => {
     shallowEqual
   );
   const [openDialog, setOpenDialog] = useState(false);
-  const { session } = useSelector((state) => state.auth);
 
   const channel_name = channel?.channel_name || "channel";
   const channel_desc = channel?.description || "description";
@@ -46,11 +45,11 @@ const Messages = () => {
             </span>
 
             <h1 className=" text-2xl text-white font-black ">{channel_name}</h1>
-            <p className="text-(--muted-foreground)">{channel_desc}</p>
+            <p className="text-(--primary-foreground)">{channel_desc}</p>
             {channel_visbibility === "private" && isAdmin && (
               <Button
                 variant={"outline"}
-                className="text-(--muted-foreground) cursor-pointer border"
+                className="text-(--primary-foreground) cursor-pointer border"
                 onClick={() => setOpenDialog(true)}
               >
                 add user

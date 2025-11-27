@@ -50,13 +50,18 @@ const LectureLinksFrom = ({ onClose, lecturesLink }) => {
     if (lecturesLink) {
       dispatch(
         updateLecturesLink({
-          title: formData.title,
-          description: formData.description,
-          tag: formData.topic,
-          lecture_link: formData.lectureLink,
-          workspace_id,
+          id: lecturesLink.id,
+          updates: {
+            title: formData.title,
+            description: formData.description,
+            tag: formData.topic,
+            lecture_link: formData.lectureLink,
+            workspace_id,
+          },
         })
       );
+
+      console.log(workspace_id, "ws id");
       dispatch(
         addToast({
           message: "Lecture link updated successfully!",
@@ -151,7 +156,7 @@ const LectureLinksFrom = ({ onClose, lecturesLink }) => {
             onChange={handleChange}
             required={field.required}
             placeholder={field.placeholder}
-            className={commonInputClasses}
+            className={`${commonInputClasses} resize-none`}
           />
         )}
       </div>

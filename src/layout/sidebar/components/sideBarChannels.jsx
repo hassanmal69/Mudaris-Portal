@@ -12,7 +12,12 @@ import {
 } from "@/redux/features/channels/channelsSlice";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/services/supabaseClient";
-import { Megaphone, Link as Chain, Video } from "lucide-react";
+import {
+  Megaphone,
+  Link as Chain,
+  Video,
+  MessageSquareLock,
+} from "lucide-react";
 import { fetchChannelMembersbyUser } from "@/redux/features/channelMembers/channelMembersSlice";
 import { Button } from "@/components/ui/button";
 import { PlusIcon } from "@heroicons/react/24/outline";
@@ -103,7 +108,11 @@ const SideBarChannels = ({
                           : "hover:bg-(--sidebar-accent)"
                       }`}
               >
-                <Users className="w-4 h-4" />
+                {channel.visibility === "public" ? (
+                  <Users className="w-4 h-4" />
+                ) : (
+                  <MessageSquareLock className="w-4 h-4" />
+                )}
                 <span className="font-normal text-[15px]">
                   {channel.channel_name}
                 </span>

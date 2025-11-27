@@ -18,6 +18,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { createChannel } from "@/redux/features/channels/channelsSlice.js";
 import InviteChannelUsers from "./steps/InviteChannelUsers";
 import { ChannelStepIndicator } from "./steps/ChannelStepIndicator";
+import { addToast } from "@/redux/features/toast/toastSlice";
 
 const steps = ["Channel Info", "Channel visibility", "Invite Users"];
 
@@ -124,13 +125,21 @@ const AddChannelDialog = ({ open, onOpenChange }) => {
         creator_id: creatorId,
       })
     );
-
+    dispatch(
+      addToast({
+        message: "Channel is created successfully!",
+        type: "success",
+        duration: 3000,
+      })
+    );
     handleClose();
     onOpenChange(false);
     setTimeout(resetStates, 300);
   };
 
-  const handleSkip = () => handleSubmit();
+  const handleSkip = () => {
+    handleSubmit();
+  };
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText("https://mudaris.app/invite-link");
@@ -167,19 +176,12 @@ const AddChannelDialog = ({ open, onOpenChange }) => {
     <div className="flex gap-2 justify-between mt-6">
       <div className="flex gap-2">
         {step > 0 && (
-          <Button
-            className="bg-transparent transition delay-150 duration-300 ease-in-out hover:bg-[#c50000] hover:text-[#eee] border border-[#c50000] text-[#c50000]"
-            variant="outline"
-            onClick={handleBack}
-          >
+          <Button variant="destructive" onClick={handleBack}>
             Back
           </Button>
         )}
         {step < 2 && !(channelData.visibility === "public" && step === 1) && (
-          <Button
-            className="bg-transparent transition delay-150 duration-300 ease-in-out hover:bg-[#556cd6] hover:text-[#eee] border border-[#556cd6] text-[#556cd6]"
-            onClick={handleNext}
-          >
+          <Button variant={"success"} onClick={handleNext}>
             Next
           </Button>
         )}
@@ -188,8 +190,13 @@ const AddChannelDialog = ({ open, onOpenChange }) => {
       {((step === 1 && channelData.visibility === "public") ||
         (step === 2 && channelData.visibility === "private")) && (
         <Button
-          className="bg-[#008000] transition delay-150 duration-300 ease-in-out hover:bg-transparent hover:text-[#008000] border border-[#008000] "
+          variant={"success"}
           onClick={handleSubmit}
+          disabled={
+            step === 2 &&
+            channelData.visibility === "private" &&
+            channelData.users.length === 0
+          }
         >
           Finish
         </Button>
@@ -201,7 +208,9 @@ const AddChannelDialog = ({ open, onOpenChange }) => {
     <Dialog open={open} onOpenChange={onOpenChange} initialFocus={dialogRef}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Add Channel</DialogTitle>
+          <DialogTitle className={"text-(--primary-foreground)"}>
+            Add Channel
+          </DialogTitle>
         </DialogHeader>
         {renderStep()}
         <ChannelStepIndicator step={step} steps={steps} />

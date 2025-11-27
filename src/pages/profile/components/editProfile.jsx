@@ -1,6 +1,6 @@
 import { supabase } from "@/services/supabaseClient";
 import React, { useEffect, useId, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { ImagePlusIcon } from "lucide-react";
 import { Button } from "@/components/ui/button.jsx";
 import { Input } from "@/components/ui/input.jsx";
@@ -14,7 +14,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog.jsx";
+import { addToast } from "@/redux/features/toast/toastSlice";
 const EditProfile = () => {
+  const dispatch = useDispatch();
   const { session } = useSelector((state) => state.auth);
   const [file, setFile] = useState(null);
   const [name, setName] = useState(session.user?.user_metadata?.fullName);
@@ -45,8 +47,13 @@ const EditProfile = () => {
     if (file) {
       await handleEditPic();
     }
-
-    alert("Profile updated successfully!");
+    dispatch(
+      addToast({
+        message: "Profile updated successfully!",
+        type: "success",
+        duration: 3000,
+      })
+    );
   };
 
   const handleEditPic = async () => {
@@ -148,7 +155,7 @@ const EditProfile = () => {
           </form>
         </div>
         {/* Footer */}
-        <DialogFooter className="border-t border-[#222] px-6 py-4">
+        <DialogFooter className="border-t border-(--border) px-6 py-4">
           <DialogClose asChild>
             <Button type="button" variant="destructive">
               Cancel
