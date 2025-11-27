@@ -1,7 +1,6 @@
 import Editor from "@/components/Editor";
 import Messages from "./components/index";
 import "./chat.css";
-import VimeoPlayer from "@/services/vimeo/vimeoPlayer.jsx";
 
 const Chat = () => {
   return (
