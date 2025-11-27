@@ -8,6 +8,7 @@ import {
 import { useSelector, useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import { Link } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
 const parseUsers = (input) => {
   return input
     .split(",")
@@ -77,12 +78,13 @@ const InviteChannelUsers = ({
         {emails.map((email, idx) => (
           <span
             key={idx}
-            className="flex items-center px-2 py-1 bg-[#333] w-fit rounded text-xs"
+            className="flex items-center px-2 py-1 bg-(--secondary) text-(--secondary-foreground) w-fit rounded text-xs"
           >
             {email}
             <button
               type="button"
-              className="ml-1 text-gray-500 hover:text-red-500"
+              variant={"ghost"}
+              className="ml-1 text-(--destructive) hover:text-(--destructive)/80"
               onClick={() => handleRemove(idx)}
               aria-label={`Remove ${email}`}
             >
@@ -90,7 +92,7 @@ const InviteChannelUsers = ({
             </button>
           </span>
         ))}
-        <textarea
+        <Textarea
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Add students with email (comma separated)"
@@ -102,13 +104,15 @@ const InviteChannelUsers = ({
           }}
           aria-label="Add emails"
           rows={4}
-          className="w-full border border-gray-300 rounded-md p-2 resize-none"
+          className="resize-none"
         />
       </div>
-      {lookupError && <p className="text-xs text-red-500">{lookupError}</p>}
+      {lookupError && (
+        <p className="text-xs text-(--destructive)">{lookupError}</p>
+      )}
 
       {errors?.users && (
-        <p className="text-xs text-red-500 mt-1">{errors?.users}</p>
+        <p className="text-xs text-(--destructive) mt-1">{errors?.users}</p>
       )}
       <div className="flex flex-wrap gap-2">
         {(state.users || []).map((user, idx) => (
@@ -118,24 +122,13 @@ const InviteChannelUsers = ({
         ))}
       </div>
       <div className="flex gap-2 mt-4">
-        <Button
-          type="button"
-          className="bg-transparent cursor-pointer"
-          onClick={onCopyLink}
-        >
+        <Button type="button" variant={"link"} onClick={onCopyLink}>
           <span>
             <Link />
           </span>
           Copy Invite Link
         </Button>
-        <Button
-          type="button"
-          onClick={onSkip}
-          aria-label="Skip invite"
-          className="text-[#556cd6] border
-          transition delay-200 duration-300 ease-in-out
-          border-[#556cd6] hover:bg-[#556cd6] hover:text-white"
-        >
+        <Button type="button" onClick={onSkip} aria-label="Skip invite">
           Skip for now
         </Button>
       </div>

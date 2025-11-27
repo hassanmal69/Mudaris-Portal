@@ -5,10 +5,12 @@ export const ChannelStepIndicator = ({ step, steps }) => (
       <React.Fragment key={label}>
         <div
           className={`w-2 h-2 rounded-full ${
-            step >= idx ? "bg-[#556cd6]" : "bg-gray-300"
+            step >= idx ? "bg-(--chart-1)" : "bg-(--muted)"
           }`}
         ></div>
-        {idx < steps.length - 1 && <div className="flex-1 h-0.5 bg-gray-200" />}
+        {idx < steps.length - 1 && (
+          <div className="flex-1 h-0.5 bg-(--secondary)" />
+        )}
       </React.Fragment>
     ))}
   </div>

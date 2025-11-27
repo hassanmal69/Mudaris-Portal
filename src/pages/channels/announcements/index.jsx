@@ -13,6 +13,7 @@ import { deleteAnnouncementDB } from "@/redux/features/announcements/announcemen
 import { isAdmin } from "@/constants/constants";
 import { useParams } from "react-router-dom";
 import usePaginatiedList from "@/hooks/infinteScroll-hook/usePaginatedList";
+import { addToast } from "@/redux/features/toast/toastSlice";
 
 const Announcements = () => {
   const dispatch = useDispatch();
@@ -35,7 +36,16 @@ const Announcements = () => {
   }, [state.dialogOpen, state.editDialogOpen]);
   const onEdit = (item) =>
     dispatchLocal({ type: "SELECT_ITEM", payload: item });
-  const onDelete = (id) => dispatch(deleteAnnouncementDB(id));
+  const handleDelete = (_idx) => {
+    dispatch(deleteAnnouncementDB(_idx));
+    dispatch(
+      addToast({
+        message: "Annoucement has deleted successfully!",
+        type: "destructive",
+        duration: 3000,
+      })
+    );
+  };
 
   const { sentinelRef } = useInfiniteScroll({
     loading: loading || state.loading || false,
@@ -65,7 +75,7 @@ const Announcements = () => {
             <Button
               variant="secondary"
               size="sm"
-              className="text-(--primary-foreground) cursor-pointer border"
+              className="text-(--primary-foreground) border-(--border) cursor-pointer border"
               onClick={() => dispatchLocal({ type: "OPEN_DIALOG" })}
             >
               Add Announcement
@@ -100,7 +110,7 @@ const Announcements = () => {
                         : a.tag === "update"
                           ? "bg-(--primary)"
                           : a.tag === "event"
-                            ? "bg-green-600"
+                            ? "bg-(--success)"
                             : "bg-(--muted)"
                     }`}
                   >
@@ -121,7 +131,7 @@ const Announcements = () => {
                 <div className="absolute top-3 right-3 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                   <Actions
                     onEdit={() => onEdit(a)}
-                    onDelete={() => onDelete(a.id)}
+                    onDelete={() => handleDelete(a.id)}
                   />
                 </div>
               )}

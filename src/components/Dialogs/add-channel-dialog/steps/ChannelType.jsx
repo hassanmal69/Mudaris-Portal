@@ -1,6 +1,6 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { Globe, Lock } from "lucide-react";
+import { Globe, Lock, Users } from "lucide-react";
 const ChannelType = ({ state, setState }) => (
   <div className="flex flex-col gap-4">
     <div className="flex gap-2">
@@ -10,22 +10,21 @@ const ChannelType = ({ state, setState }) => (
           w-[48%]
           ${
             state.visibility === "public"
-              ? "bg-[#556cd6] text-white"
-              : "text-gray-400"
+              ? "bg-(--primary) text-(--primary-foreground) hover:bg-(--secondary)"
+              : "text-(--primary-foreground)"
           }
         `}
         onClick={() => setState({ ...state, visibility: "public" })}
         aria-pressed={state.visibility === "public"}
       >
-        <Globe className="w-4 h-4 mr-2" />
+        <Users className="w-4 h-4 mr-2" />
         Public
       </Button>
       <Button
         type="button"
-        className={`flex-1 bg-gray-500 
-          ${state.visibility === "private" ? "bg-[#556cd6]" : ""}
-
-        hover:bg-gray-600 text-white`}
+        className={`flex-1 bg-(--muted)
+          ${state.visibility === "private" ? "bg-(--primary)" : ""}
+        hover:bg-(--secondary) text-(--secondary-foreground)`}
         onClick={() => setState({ ...state, visibility: "private" })}
         aria-pressed={state.visibility === "private"}
       >
