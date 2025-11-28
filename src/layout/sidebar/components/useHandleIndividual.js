@@ -9,7 +9,6 @@ const useHandleIndividual = () => {
   const dispatch = useDispatch();
   const handleFunction = (u) => {
     const ids = [u.id, session.user.id].sort()
-    console.log(ids)
     const token = ids[0].slice(0, 6) + ids[1].slice(0, 6);
     navigate(`/workspace/${workspace_id}/individual/${token}`);
     dispatch(newDirect(u));

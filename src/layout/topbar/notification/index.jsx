@@ -1,4 +1,4 @@
-import { Bell, ClockFading } from "lucide-react";
+import { Bell } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
@@ -6,144 +6,145 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu.jsx";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useMemo, useCallback } from "react";
 import { supabase } from "@/services/supabaseClient";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
+
 export function Notifications() {
-  const [notification, setNotification] = useState([]);
-  const { workspace_id } = useParams();
-  const { session } = useSelector((state) => state.auth);
-  const lastSeen = session?.user?.user_metadata.last_notification_seen;
-  const userId = session?.user?.id;
+  const [notifications, setNotifications] = useState([]);
   const [unread, setUnread] = useState([]);
-  const handleDB = async () => {
-    const { data, error } = await supabase
+
+  const { workspace_id, token } = useParams();
+  const { session } = useSelector((state) => state.auth);
+
+  const userId = session?.user?.id;
+  const lastSeen = session?.user?.user_metadata?.last_notification_seen;
+
+  const channelRef = useRef(null);
+
+  // --- Determine if this is personal view
+  const isPersonal = useMemo(
+    () => window.location.pathname.includes("/individual/"),
+    [window.location.pathname]
+  );
+
+  // --- Compute unread notifications
+  const computeUnread = useCallback(
+    (list) => {
+      const lastSeenMs = lastSeen ? new Date(lastSeen).getTime() : 0;
+      return list.filter((n) => new Date(n.created_at).getTime() > lastSeenMs);
+    },
+    [lastSeen]
+  );
+
+  // --- Fetch notifications
+  const fetchNotifications = useCallback(async () => {
+    if (!userId) return;
+
+    let queryBuilder = supabase
       .from("notifications")
-      .select(
-        `
-      id,
-      description,
-      created_at,
-      workspaces (workspace_name)
-    `
-      )
-      .eq("workspceId", workspace_id)
-      .eq("userId", userId)
+      .select(`
+        id,
+        description,
+        created_at,
+        expired_at,
+        type,
+        "workspaceId",
+        "channelId",
+        "userId",
+        workspaces (workspace_name)
+      `)
       .order("created_at", { ascending: false });
-    if (error) {
-      console.log("Error fetching:", error);
-      return;
+
+    if (isPersonal) {
+      queryBuilder = queryBuilder.eq("userId", userId);
+    } else {
+      queryBuilder = queryBuilder.eq("workspaceId", workspace_id);
     }
+
+    const { data, error } = await queryBuilder;
+
     if (!error && data) {
-      setNotification(data);
+      setNotifications(data);
+      setUnread(computeUnread(data));
     }
-  };
-  const unreadLogic = (data) => {
-    const unreadData = data.filter(
-      (m) => new Date(m.created_at).getTime() > new Date(lastSeen).getTime()
-    );
-    setUnread(unreadData);
-  };
-  useEffect(() => {
-    unreadLogic(notification);
-  }, [notification, lastSeen]);
-  // useEffect(() => {
-  //   handleDB();
-  //   const channel = supabase
-  //     .channel("notifications-channel")
-  //     .on(
-  //       "postgres_changes",
-  //       { event: "INSERT", schema: "public", table: "notifications" },
-  //       (payload) => {
-  //         setNotification((prev) => [payload.new, ...prev]); // prepend new
-  //       }
-  //     )
+  }, [userId, workspace_id, isPersonal, computeUnread]);
 
-  //     .subscribe((status) => {
-  //       if (status === "SUBSCRIBED") {
-  //         console.log("Realtime connected ✅");
-  //       } else if (status === "CHANNEL_ERROR") {
-  //         console.error("Realtime connection error ❌");
-  //       } else if (status === "CLOSED") {
-  //         console.warn("Realtime connection closed ⚠️");
-  //       }
-  //     });
+  // --- Setup realtime subscription
+  const setupRealtime = useCallback(async () => {
+    if (!userId) return;
 
-  //   // return () => {
-  //   //   supabase.removeChannel(channel);
-  //   // };
-  // }, []);
-  useEffect(() => {
-    let channel; // to cleanup later
+    if (channelRef.current) supabase.removeChannel(channelRef.current);
 
-    const init = async () => {
-      await handleDB(); // fetch existing notifications first
+    const filter = isPersonal
+      ? `userId=eq.${userId}`
+      : `workspaceId=eq.${workspace_id}`;
 
-      channel = await new Promise((resolve, reject) => {
-        const ch = supabase
-          .channel("notifications-channel")
-          .on(
-            "postgres_changes",
-            { event: "INSERT", schema: "public", table: "notifications" },
-            (payload) => {
-              setNotification((prev) => [payload.new, ...prev]);
-            }
-          )
-          .subscribe((status) => {
-            if (status === "SUBSCRIBED") {
-              console.log("Realtime connected...");
-              resolve(ch);
-            } else if (status === "CHANNEL_ERROR") {
-              console.error("Realtime error...");
-              reject(new Error("Failed to subscribe"));
-            } else if (status === "CLOSED") {
-              console.warn("Realtime closed...");
-            }
+    const channel = supabase
+      .channel("notifications-realtime")
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "notifications", filter },
+        (payload) => {
+          setNotifications((prev) => {
+            const updated = [payload.new, ...prev];
+            if (lastSeen) setUnread(computeUnread(updated));
+            return updated;
           });
-      });
-    };
+        }
+      )
+      .subscribe();
 
-    init();
+    channelRef.current = channel;
+  }, [userId, workspace_id, isPersonal, lastSeen, computeUnread]);
+
+  // --- Initialize fetch + realtime
+  useEffect(() => {
+    fetchNotifications();
+    setupRealtime();
 
     return () => {
-      if (channel) {
-        supabase.removeChannel(channel);
-        console.log("Realtime unsubscribed 📴");
-      }
+      if (channelRef.current) supabase.removeChannel(channelRef.current);
     };
-  }, []);
+  }, [fetchNotifications, setupRealtime]);
 
+  // --- Mark notifications as seen
   const handleOpenChange = async (open) => {
-    if (open) {
-      let dateNow = new Date().toISOString();
-      const { error } = await supabase.auth.updateUser({
-        data: { last_notification_seen: dateNow },
-      });
-      if (error) {
-        console.log("error cooming in updating a user lastseen", error);
-      }
-    }
+    if (!open) return;
+
+    const now = new Date().toISOString();
+
+    const { error } = await supabase.auth.updateUser({
+      data: { last_notification_seen: now },
+    });
+
+    if (!error) setUnread([]);
   };
+
+  // --- Memoized dropdown items
+  const notificationItems = useMemo(() => {
+    if (notifications.length === 0) {
+      return [<DropdownMenuItem key="none">No notifications</DropdownMenuItem>];
+    }
+    return notifications.map((n) => (
+      <DropdownMenuItem key={n.id}>{n.description}</DropdownMenuItem>
+    ));
+  }, [notifications]);
 
   return (
     <DropdownMenu onOpenChange={handleOpenChange}>
       <DropdownMenuTrigger className="relative">
         <Bell className="h-6 w-6 text-[#eee]" />
         {unread.length > 0 && (
-          <Badge className="absolute text-(--foreground) -top-2 -right-2 rounded-full px-2 py-0.5">
+          <Badge className="absolute -top-2 -right-2 rounded-full px-2 py-0.5 text-(--foreground)">
             {unread.length}
           </Badge>
         )}
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-64 text-(--foreground)">
-        {notification.length === 0 ? (
-          <DropdownMenuItem>No notifications</DropdownMenuItem>
-        ) : (
-          notification.map((n) => (
-            <DropdownMenuItem key={n.id}>{n.description}</DropdownMenuItem>
-          ))
-        )}
+
+      <DropdownMenuContent className="w-72 text-(--foreground)">
+        {notificationItems}
       </DropdownMenuContent>
     </DropdownMenu>
   );

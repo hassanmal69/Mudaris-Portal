@@ -1,13 +1,13 @@
 import { supabase } from "@/services/supabaseClient";
 
 const HandleSupabaseLogicNotification = (res, workspace_id, groupId, userId, description) => {
-    const supabaseFunctionality = async () => {
+    const supabaseFunctionality = async () => {        
         const { error } = await supabase
             .from('notifications')
             .insert({
                 description,
                 userId,
-                workspceId: workspace_id,
+                workspaceId: workspace_id,
                 channelId: groupId,
                 type: res
             })
