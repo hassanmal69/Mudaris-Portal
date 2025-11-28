@@ -1,4 +1,4 @@
-import ToastContainer from "@/components/toast/toastContainer";
+import ToastContainer from "@/components/toast/ToastContainer";
 import React from "react";
 import { Outlet } from "react-router-dom";
 

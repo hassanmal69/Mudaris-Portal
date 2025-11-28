@@ -15,7 +15,7 @@ import LecturesLink from "@/pages/channels/lecturesLink/index.jsx";
 import HandleChatsViewer from "@/pages/chatsViewer/index.jsx";
 import ChatGet from "@/pages/chatsViewer/chatGet/index.jsx";
 import VideosPresentations from "@/pages/channels/Videos & Presentations/index.jsx";
-import TopbarTwo from "@/layout/topbarTwo/index.jsx";
+import TopbarTwo from "@/layout/TopbarTwo/index.jsx";
 
 export const router = createBrowserRouter([
   {
@@ -97,6 +97,30 @@ export const router = createBrowserRouter([
         children: [{ path: "", element: <Announcements /> }],
       },
       {
+        path: "/workspace/:workspace_id/calendar",
+        element: (
+          <PrivateRoute>
+            <TopBarSecond
+              name="Economic Calender"
+              desc={"Economic events and market calendar"}
+            />
+          </PrivateRoute>
+        ),
+        children: [{ path: "", element: <Calendar /> }],
+      },
+      {
+        path: "/workspace/:workspace_id/market",
+        element: (
+          <PrivateRoute>
+            <TopBarSecond
+              name="Market Insight"
+              desc={"Market Insights of the real world"}
+            />
+          </PrivateRoute>
+        ),
+        children: [{ path: "", element: <Market /> }],
+      },
+      {
         path: "/workspace/:workspace_id",
         element: (
           <PrivateRoute>
@@ -104,9 +128,6 @@ export const router = createBrowserRouter([
           </PrivateRoute>
         ),
         children: [
-          { path: "group/:groupId/General", element: <WorkSpaceInd /> },
-          { path: "calendar", element: <Calendar /> },
-          { path: "market", element: <Market /> },
           { path: "group/:groupId", element: <WorkSpaceInd /> },
           { path: "individual/:token", element: <WorkSpaceInd /> },
         ],

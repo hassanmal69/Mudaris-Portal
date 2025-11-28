@@ -8,11 +8,11 @@ import {
 import { DialogTitle } from "@radix-ui/react-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
+import { Search, Users } from "lucide-react";
 import UserFallback from "@/components/ui/userFallback";
 
 const Members = ({ members }) => {
-  const MAX_RENDER = 3;
+  // const MAX_RENDER = 3;
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
   const renderMembers = () => {
@@ -23,18 +23,18 @@ const Members = ({ members }) => {
   console.log(`members renders: ${renderCount.current}`);
 
   // Placeholder avatar for "no members"
-  const renderEmptyAvatar = () => (
-    <Avatar
-      className="w-8 h-8 border  border-[#c1c1c1] bg-transparent flex items-center justify-center"
-      aria-hidden="true"
-    >
-      <AvatarImage
-        src="https://cdn.shadcnstudio.com/ss-assets/avatar/avatar-5.png"
-        alt="Hallie Richards"
-        className="rounded-sm"
-      />
-    </Avatar>
-  );
+  // const renderEmptyAvatar = () => (
+  //   <Avatar
+  //     className="w-8 h-8 border  border-[#c1c1c1] bg-transparent flex items-center justify-center"
+  //     aria-hidden="true"
+  //   >
+  //     <AvatarImage
+  //       src="https://cdn.shadcnstudio.com/ss-assets/avatar/avatar-5.png"
+  //       alt="Hallie Richards"
+  //       className="rounded-sm"
+  //     />
+  //   </Avatar>
+  // );
   // Sort members alphabetically by full name (fallback to email) and memoize
   const sortedMembers = React.useMemo(() => {
     const list = (members || []).slice();
@@ -67,12 +67,12 @@ const Members = ({ members }) => {
 
   return (
     <>
-      <div className="flex items-center gap-1 py-1 px-1 border border-(--border) w-[40%] max-w-[100%] rounded-sm member-container mr-1.5">
+      <div className="flex items-center gap-1 py-1 px-3 bg-(--primary)   max-w-full rounded member-container mr-1.5">
         <div
           className="flex items-center  cursor-pointer"
           onClick={sortedMembers.length > 0 ? renderMembers : undefined}
         >
-          {sortedMembers.length === 0
+          {/* {sortedMembers.length === 0
             ? renderEmptyAvatar()
             : sortedMembers.slice(0, MAX_RENDER).map((user, idx) => {
                 const name = user.user_profiles?.full_name;
@@ -99,17 +99,24 @@ const Members = ({ members }) => {
             <span className="text-[#eee] text-[14px]">
               {sortedMembers.length - MAX_RENDER}+
             </span>
+          )} */}
+
+          {sortedMembers.length && (
+            <span className="text-(--secondary-foreground) items-center text-sm flex gap-0.5">
+              <Users className="w-4 h-4" />
+              <p> {sortedMembers.length}</p>
+            </span>
           )}
         </div>
       </div>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="sm:max-w-md p-0 bg-black/70 border-[#222]">
-          <DialogHeader className="sticky top-0 z-10  p-4 border-[#222] border-b">
-            <DialogTitle className="text-3xl font-bold text-[#556cd6]">
+        <DialogContent className="sm:max-w-md p-0 bg-(--background) border-(--border)">
+          <DialogHeader className="sticky top-0 z-10  p-4 border-(--border) border-b">
+            <DialogTitle className="text-3xl font-bold text-(--primary-foreground)">
               All Members
             </DialogTitle>
-            <DialogDescription className="text-[16px] text-[#a9a9a9]">
+            <DialogDescription className="text-[14px] text-(--accent-forground)">
               A complete list of all members in this group.
             </DialogDescription>
             <div className="relative mt-2">
@@ -118,7 +125,7 @@ const Members = ({ members }) => {
                 placeholder="Search by name or email..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="pl-9 border-[#333] bg-[#111]"
+                className="pl-9 border-(--border)"
               />
             </div>
           </DialogHeader>
@@ -128,11 +135,11 @@ const Members = ({ members }) => {
               filteredUsers.map((user, idx) => {
                 const name = user.user_profiles?.full_name;
                 const avatar = user.user_profiles?.avatar_url;
-
+                console.log(user.user_profiles?.email, "email");
                 return (
                   <div
                     key={user.id}
-                    className="flex items-center gap-2 border-b border-[#111] py-2"
+                    className="flex items-center gap-2 border-b border-(--border) py-2"
                   >
                     {avatar ? (
                       <Avatar className="w-10 h-10">
@@ -142,14 +149,13 @@ const Members = ({ members }) => {
                         </AvatarFallback>
                       </Avatar>
                     ) : (
-                      // Use fallback if no avatar
                       <div>
                         <UserFallback name={name} _idx={idx} />
                       </div>
                     )}
 
                     <div className="flex flex-col">
-                      <h2 className="text-[#556cd6] font-bold text-[16px]">
+                      <h2 className="text-(--primary-foreground) font-bold ">
                         {name}
                       </h2>
                       <p className="text-[#aaa] text-[12px]">
