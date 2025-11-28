@@ -67,85 +67,103 @@ const VideosPresentations = () => {
   };
 
   return (
-    <div className="bg-(--background) text-(--foreground) p-4 flex gap-6">
+    <div className="bg-(--background) text-(--foreground) p-4 flex flex-col gap-6">
       {isAdmin &&
-        <Button onClick={() => setChapterDialogOpen(true)}>
-          add chapter
-        </Button>
+        <div className="flex w-full justify-center">
+          <Button
+            className=' '
+            variant='secondary'
+            onClick={() => setChapterDialogOpen(true)}>
+            Add Chapter
+          </Button>
+        </div>
       }
-      {/* LEFT SIDEBAR */}
-      <div className="mt-4 w-[35%] h-dvh overflow-y-scroll scroll-smooth">
-        {chapters.map((chapter, idx) => {
-          const chapterVideos = videosByChapter[chapter.id] || [];
+      {chapters && chapters.length > 0 ? (
+        <>
+          {/* LEFT SIDEBAR */}
+          <div className="mt-4 w-[35%] h-dvh overflow-y-scroll scroll-smooth">
+            {chapters.map((chapter, idx) => {
+              const chapterVideos = videosByChapter[chapter.id] || [];
 
-          return (
-            <div key={chapter.id} className="flex flex-col relative">
-              {/* Chapter Header */}
+              return (
+                <div key={chapter.id} className="flex flex-col relative">
+                  {/* Chapter Header */}
+                  <div className="flex p-4 gap-1 hover:bg-(--sidebar-accent)
+                            items-center border-2 border-(--sidebar-border)">
+                    <Button onClick={() => handleSeeVideos(chapter.id)}>
+                      {expandedChapter === chapter.id
+                        ? <ChevronUp size={18} />
+                        : <ChevronDown size={18} />}
+                    </Button>
 
-              <div className="flex p-4 gap-1 hover:bg-(--sidebar-accent)
-                              items-center border-2 border-(--sidebar-border)">
-                <Button onClick={() => handleSeeVideos(chapter.id)}>
-                  {expandedChapter === chapter.id
-                    ? <ChevronUp size={18} />
-                    : <ChevronDown size={18} />}
-                </Button>
+                    <h2 className="text-lg">{idx + 1}. {chapter.name}</h2>
 
-                <h2 className="text-lg">{idx + 1}. {chapter.name}</h2>
-                {isAdmin && (
-                  <div className="flex h-full justify-end absolute right-4">
-                    <Actions
-                      onEdit={() => onEdit(chapter)}
-                      onAdd={() => handleAddVideo(chapter.id)}
-                      onDelete={() => onDelete(chapter.id)}
-                    />
+                    {isAdmin && (
+                      <div className="flex h-full justify-end absolute right-4">
+                        <Actions
+                          onEdit={() => onEdit(chapter)}
+                          onAdd={() => handleAddVideo(chapter.id)}
+                          onDelete={() => onDelete(chapter.id)}
+                        />
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
 
-              {/* Videos List */}
-              {expandedChapter === chapter.id && (
-                <ul className="space-y-1 bg-(--border)">
-                  {chapterVideos.map((video, i) => (
-                    <li
-                      key={video.id}
-                      className="text-sm text-(--muted-foreground)
-                                 hover:bg-(--sidebar-accent) p-4 px-6
-                                 flex gap-2 cursor-pointer"
-                      onClick={() =>
-                        setSelectedVideo({ video, index: i, allVideos: chapterVideos, chp: chapter.name })
-                      }
-                    >
-                      <PlayCircle className="h-5 w-5" />
-                      <strong className="text-base">
-                        {i + 1}. {video.name}
-                      </strong>
-                      <Actions
-                        onEdit={() => onEdit(chapter)}
-                        onAdd={() => handleAddVideo(chapter.id)}
-                        onDelete={() => onDelete(chapter.id)}
-                      />
-                    </li>
-                  ))}
+                  {/* Videos */}
+                  {expandedChapter === chapter.id && (
+                    <ul className="space-y-1 bg-(--border)">
+                      {chapterVideos.map((video, i) => (
+                        <li
+                          key={video.id}
+                          className="text-sm text-(--muted-foreground)
+                              hover:bg-(--sidebar-accent) p-4 px-6
+                              flex gap-2 cursor-pointer"
+                          onClick={() =>
+                            setSelectedVideo({
+                              video,
+                              index: i,
+                              allVideos: chapterVideos,
+                              chp: chapter.name,
+                            })
+                          }
+                        >
+                          <PlayCircle className="h-5 w-5" />
+                          <strong className="text-base">
+                            {i + 1}. {video.name}
+                          </strong>
+                          <Actions
+                            onEdit={() => onEdit(chapter)}
+                            onAdd={() => handleAddVideo(chapter.id)}
+                            onDelete={() => onDelete(chapter.id)}
+                          />
+                        </li>
+                      ))}
 
-                  {chapterVideos.length === 0 && (
-                    <li className="p-4 text-sm opacity-50 italic">
-                      No videos yet.
-                    </li>
+                      {chapterVideos.length === 0 && (
+                        <li className="p-4 text-sm opacity-50 italic">
+                          No videos yet.
+                        </li>
+                      )}
+                    </ul>
                   )}
-                </ul>
-              )
-              }
-            </div>
-          );
-        })}
-      </div>
+                </div>
+              );
+            })}
+          </div>
 
-      {/* RIGHT SIDE: VIDEO PLAYER */}
-      <Suspense fallback={<div>Loading video...</div>}>
-        {selectedVideo && <VideoComponent data={selectedVideo}
-          onNext={setSelectedVideo}
-        />}
-      </Suspense>
+          {/* RIGHT SIDE PLAYER */}
+          <Suspense fallback={<div>Loading video...</div>}>
+            {selectedVideo && (
+              <VideoComponent
+                data={selectedVideo}
+                onNext={setSelectedVideo}
+              />
+            )}
+          </Suspense>
+        </>
+      ) : (
+        <h1 className="text-center h-dvh text-5xl">There are no Videos</h1>
+      )}
 
       {/* Dialogs */}
       <ChapterDialog

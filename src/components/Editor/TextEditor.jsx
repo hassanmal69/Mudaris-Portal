@@ -9,34 +9,32 @@ import { supabase } from "@/services/supabaseClient.js";
 import { useMemo, useState } from "react";
 import HandleSupabaseLogicNotification from "@/layout/topbar/notification/handleSupabaseLogicNotification.jsx";
 import { useEffect } from "react";
+import { isAdmin } from "@/constants/constants.js";
 export default function TextEditor({ editor, toolbarStyles }) {
-  const { token } = useParams();
   const dispatch = useDispatch();
   const [mentionedPerson, setMentionedPerson] = useState("");
-  // const [draftMsg, setDraftMsg] = useState("");
   const userId = useSelector((state) => state.auth.user?.id);
   const displayName = useSelector(
-    (state) => state.auth.user?.user_metadata?.displayName
+    (state) => state.auth.user?.user_metadata?.fullName
   );
-  const { workspace_id, groupId } = useParams();
+  const { workspace_id, groupId, token } = useParams();
   const userRole = useSelector(
     (state) => state.auth.user?.user_metadata?.user_role
   );
   const directChannel = useSelector((state) => state?.direct?.directChannel);
   const { files } = useSelector((state) => state.file);
   const channelState = useSelector((state) => state.channels);
+
   useEffect(() => {
     if (!editor) return;
 
     const savedDraft = localStorage.getItem(`draft`);
     if (savedDraft) {
       editor.commands.setContent(savedDraft);
-      // setDraftMsg(savedDraft);
     }
 
     editor.on("update", () => {
       const html = editor.getHTML();
-      // setDraftMsg(html);
       localStorage.setItem(`draft`, html);
     });
 
@@ -62,7 +60,7 @@ export default function TextEditor({ editor, toolbarStyles }) {
         workspace_id,
         groupId,
         null,
-        `${displayName} admin replied to your message in ${desiredChannel.name} channel`
+        `${displayName} replied to your message in ${desiredChannel.name} channel`
       );
     } else if (userRole === "admin") {
       HandleSupabaseLogicNotification(
@@ -83,6 +81,7 @@ export default function TextEditor({ editor, toolbarStyles }) {
     e.preventDefault();
     const messageHTML = editor.getHTML();
     const jsonVersion = editor.getJSON();
+    const isMention = checkMention(jsonVersion)
     if (messageHTML === "<p></p>" && (!files || files.length === 0)) return;
     // ✅ Detect if this is a direct message route
     const isDirectMessage = window.location.pathname.includes("/individual/");
@@ -117,54 +116,28 @@ export default function TextEditor({ editor, toolbarStyles }) {
       dispatch(clearValue());
     }
 
-    let res;
-
-    if (isDirectMessage) {
-      // ✅ Direct message payload
-      console.log("token is this before", token);
-      const { data: tokenComing, error: errorinToken } = await supabase
-        .from("directMessagesChannel")
-        .select("token")
-        .eq("token", token);
-      if (errorinToken) {
-        console.log("error coming in getting token", errorinToken);
-      }
-      console.log("token is this", tokenComing);
-
-      if (tokenComing.length === 0) {
-        const directMsgres = {
-          sender_id: userId,
-          receiver_id: directChannel.id, // from params
-          token: token, // we already use groupId as token in URL
-          // attachments: urls,
-          // content: messageHTML,
-        };
-        await postToSupabase("directMessagesChannel", directMsgres);
-      }
-
-      res = {
-        // channel_id: token,
-        sender_id: userId,
-        content: messageHTML,
-        reply_to: replyMessage ? replyMessage.id : null,
-        attachments: urls,
-        token: token,
-      };
-
-      await postToSupabase("messages", res);
-    } else {
-      // ✅ Normal channel message payload
-      res = {
-        channel_id: groupId,
-        sender_id: userId,
-        content: messageHTML,
-        reply_to: replyMessage ? replyMessage.id : null,
-        attachments: urls,
-      };
-
-      await postToSupabase("messages", res);
-      await handleNotificationforAdmin();
+    const recId = directChannel.id
+    console.log('mention things just', isMention, mentionedPerson)
+    let payload = {
+      isDirectMessage,
+      userId,
+      recId,
+      groupId,
+      messageHTML,
+      token,
+      isMention,
+      mentionedPerson,
+      replyMessage,
+      urls,
+      userRole,
+      workspace_id,
+      displayName
     }
+    const { data, error } = await supabase.functions.invoke('message-sent', {
+      body: JSON.stringify(payload),
+    })
+    if (error) console.error('error coming when we send a message in edgefucntion', error)
+    console.log(data)
   };
 
   return (
