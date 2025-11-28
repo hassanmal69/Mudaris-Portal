@@ -1,5 +1,11 @@
 import React, { useEffect, useState, useRef } from "react";
 import { supabase } from "@/services/supabaseClient";
+import TradingViewTicker from "./component/TradingViewTicker";
+import TradingViewMiniChart from "./component/TradingViewMiniChart";
+import TradingViewHotlist from "./component/TradingViewHotlist";
+import TradingViewHeatmap from "./component/TradingViewHeatmap";
+import TradingViewCryptoHeatmap from "./component/TradingViewCryptoHeatmap";
+import TradingViewTimeline from "./component/TradingViewTimeline";
 
 /*
   Market.jsx
@@ -79,11 +85,11 @@ const PostModal = ({ open, onClose, url, title }) => {
 const SkeletonCard = () => (
   <div
     className="
-      bg-(--card) rounded-[var(--radius)] overflow-hidden border border-(--border)
+      bg-(--card) rounded-(--radius) overflow-hidden border border-(--border)
       animate-fadeIn shadow-lg
     "
   >
-    <div className="w-full h-44 bg-gradient-to-r from-(--muted) via-(--accent) to-(--muted) animate-pulse" />
+    <div className="w-full h-44 bg-(--gradient)-to-r from-(--muted) via-(--accent) to-(--muted) animate-pulse" />
     <div className="p-4 space-y-2">
       <div className="h-4 w-3/4 bg-(--muted) rounded animate-pulse" />
       <div className="h-3 w-1/2 bg-(--muted) rounded animate-pulse" />
@@ -136,7 +142,9 @@ const PostCard = ({ post, onOpen }) => {
 
         <div className="flex items-center justify-between text-sm text-(--muted-foreground)">
           <div className="flex items-center gap-3">
-            <span className="font-medium">{post.authors?.[0] || "Unknown"}</span>
+            <span className="font-medium">
+              {post.authors?.[0] || "Unknown"}
+            </span>
             <span className="text-xs px-2 py-1 rounded-md bg-(--muted) text-(--muted-foreground)">
               {post.audience || "free"}
             </span>
@@ -187,7 +195,7 @@ const FeaturedSlider = ({ posts = [], onOpen }) => {
           </button>
           <button
             onClick={() => scroll("next")}
-            className="px-3 py-1 bg-(--primary) text-(--primary-foreground) rounded"
+            className="px-3 py-1 bg-(--primary)  text-(--primary-foreground) rounded"
             aria-label="Scroll right"
           >
             ›
@@ -198,18 +206,18 @@ const FeaturedSlider = ({ posts = [], onOpen }) => {
       <div
         ref={ref}
         className="
-          w-full overflow-x-auto scroll-smooth snap-x snap-mandatory
-          -mx-2 px-2 flex gap-4
+          w-full  scroll-smooth snap-x snap-mandatory
+          -mx-2 px-2 flex gap-4 
         "
       >
         {posts.map((p, idx) => (
           <div
             key={p.id || idx}
-            className="snap-start min-w-[320px] max-w-[420px] flex-shrink-0"
+            className="snap-start min-w-[320px] max-w-[420px]"
           >
             <div
               className="
-                rounded-[var(--radius)]
+                rounded-(--radius)
                 overflow-hidden
                 border border-(--border)
                 shadow-lg
@@ -228,14 +236,16 @@ const FeaturedSlider = ({ posts = [], onOpen }) => {
               </div>
 
               <div className="p-3">
-                <h4 className="text-base font-semibold leading-snug line-clamp-2">
+                <h4 className="text-(--primary-foreground) font-semibold leading-snug line-clamp-2">
                   {p.title}
                 </h4>
-                <p className="text-sm text-(--muted-foreground) line-clamp-2 mt-2">
+                <p className="text-sm text-(--secondary-foreground) line-clamp-2 mt-2">
                   {p.subtitle || p.preview_text || ""}
                 </p>
                 <div className="mt-3 flex items-center justify-between">
-                  <span className="text-xs text-(--muted-foreground)">{p.authors?.[0]}</span>
+                  <span className="text-xs text-(--muted-foreground)">
+                    {p.authors?.[0]}
+                  </span>
                   <button
                     onClick={() => onOpen(p.web_url, p.title)}
                     className="text-xs bg-(--primary) text-(--primary-foreground) px-2 py-1 rounded"
@@ -313,49 +323,70 @@ const Market = () => {
 
   return (
     <main className="py-8 bg-(--background) min-h-screen">
-      <div className="max-w-6xl mx-auto px-4">
-        {/* Header */}
-        <header className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-semibold text-(--foreground)">Market</h1>
-          <p className="text-sm text-(--muted-foreground)">Latest posts & highlights</p>
-        </header>
+      <TradingViewTicker />
 
-        {/* Loading skeleton */}
-        {posts === null && (
-          <>
-            <div className="max-w-5xl mx-auto">
-              <div className="space-y-4">
-                <div className="h-6 w-40 bg-(--muted) rounded animate-pulse" />
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
-                  <SkeletonCard />
-                  <SkeletonCard />
-                  <SkeletonCard />
+      <section className="flex">
+        <div className="max-w-6xl mx-auto px-4">
+          {/* Header */}
+          <header className="flex items-center justify-between mb-6">
+            <h1 className="text-2xl font-semibold text-(--foreground)">
+              Market
+            </h1>
+            <p className="text-sm text-(--muted-foreground)">
+              Latest posts & highlights
+            </p>
+          </header>
+
+          {/* Loading skeleton */}
+          {posts === null && (
+            <>
+              <div className="max-w-5xl mx-auto">
+                <div className="space-y-4">
+                  <div className="h-6 w-40 bg-(--muted) rounded animate-pulse" />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
+                    <SkeletonCard />
+                  </div>
                 </div>
               </div>
+            </>
+          )}
+
+          {/* Content */}
+          {posts !== null && posts.length > 0 && (
+            <>
+              {/* Featured slider: top 5 */}
+              <FeaturedSlider posts={posts.slice(0, 6)} onOpen={openPreview} />
+
+              {/* Masonry grid */}
+              <MasonryGrid posts={posts} onOpen={openPreview} />
+            </>
+          )}
+
+          {/* Empty state */}
+          {posts !== null && posts.length === 0 && (
+            <div className="max-w-3xl mx-auto text-center py-20">
+              <div className="text-(--muted-foreground)">No posts yet.</div>
             </div>
-          </>
-        )}
-
-        {/* Content */}
-        {posts !== null && posts.length > 0 && (
-          <>
-            {/* Featured slider: top 5 */}
-            <FeaturedSlider posts={posts.slice(0, 6)} onOpen={openPreview} />
-
-            {/* Masonry grid */}
-            <MasonryGrid posts={posts} onOpen={openPreview} />
-          </>
-        )}
-
-        {/* Empty state */}
-        {posts !== null && posts.length === 0 && (
-          <div className="max-w-3xl mx-auto text-center py-20">
-            <div className="text-(--muted-foreground)">No posts yet.</div>
-          </div>
-        )}
+          )}
+        </div>
+        <div className="flex-col w-full">
+          <TradingViewMiniChart />
+          <TradingViewHotlist />
+        </div>
+      </section>
+      <section className="flex">
+        <TradingViewHeatmap />
+        <TradingViewCryptoHeatmap />
+      </section>
+      <div>
+        <TradingViewTimeline />
       </div>
-
-      <PostModal open={modalOpen} onClose={closePreview} url={modalUrl} title={modalTitle} />
+      <PostModal
+        open={modalOpen}
+        onClose={closePreview}
+        url={modalUrl}
+        title={modalTitle}
+      />
     </main>
   );
 };
