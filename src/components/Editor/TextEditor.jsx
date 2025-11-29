@@ -64,7 +64,7 @@ export default function TextEditor({ editor, toolbarStyles }) {
     e.preventDefault();
     const messageHTML = editor.getHTML();
     const jsonVersion = editor.getJSON();
-    const isMention = checkMention(jsonVersion)
+    const isMention = checkMention(jsonVersion);
     if (messageHTML === "<p></p>" && (!files || files.length === 0)) return;
     const isDirectMessage = window.location.pathname.includes("/individual/");
 
@@ -110,13 +110,17 @@ export default function TextEditor({ editor, toolbarStyles }) {
       urls,
       userRole,
       workspace_id,
-      displayName
-    }
-    const { data, error } = await supabase.functions.invoke('message-sent', {
+      displayName,
+    };
+    const { data, error } = await supabase.functions.invoke("message-sent", {
       body: JSON.stringify(payload),
-    })
-    if (error) console.error('error coming when we send a message in edgefucntion', error)
-    console.log(data)
+    });
+    if (error)
+      console.error(
+        "error coming when we send a message in edgefucntion",
+        error
+      );
+    console.log(data);
   };
 
   return (

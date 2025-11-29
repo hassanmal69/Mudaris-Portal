@@ -148,10 +148,10 @@ const AnnouncementForm = ({ onClose, announcement }) => {
     <form onSubmit={handleSubmit} className="space-y-4 ">
       {fields.map(renderField)}
       <div className="flex justify-between mt-4">
-        <Button type="button" onClick={onClose} className="bg-(--destructive)">
+        <Button type="button" onClick={onClose} variant={"destructive"}>
           Cancel
         </Button>
-        <Button type="submit" className="bg-green-800">
+        <Button type="submit" variant={"success"}>
           Add Announcement
         </Button>
       </div>

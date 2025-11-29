@@ -13,7 +13,7 @@ import {
   selectChannelMembers,
 } from "@/redux/features/channelMembers/channelMembersSlice";
 import "./topbar.css";
-import { PersonIcon } from "@radix-ui/react-icons";
+import { Users } from "lucide-react";
 
 // Debounce utility
 function debounce(fn, delay) {
@@ -98,7 +98,7 @@ const Topbar = () => {
       <div className="flex items-center gap-2 min-w-0">
         <h2 className="text-(--foreground) text-[18px] font-medium flex gap-1 items-center">
           {visibility === "public" ? (
-            <PersonIcon className="w-[15px]" />
+            <Users className="w-[15px]" />
           ) : (
             <Lock className="w-[15px]" />
           )}

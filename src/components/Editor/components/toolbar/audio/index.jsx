@@ -70,7 +70,12 @@ const AudioRecording = ({ toolbarStyles }) => {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant={"ghost"} onClick={VideoStream}>
-          <Mic className="h-4 w-4" style={toolbarStyles} />
+          <Mic
+            className="h-4 w-4
+          text-(--primary-foreground)
+          "
+            style={toolbarStyles}
+          />
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-lg">

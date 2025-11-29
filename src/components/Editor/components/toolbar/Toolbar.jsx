@@ -22,7 +22,12 @@ export default function Toolbar({ editor, toolbarStyles }) {
                 className={isActive && isActive(editor) ? "is-active" : ""}
                 title={name}
               >
-                <Icon style={toolbarStyles} />
+                <Icon
+                  style={toolbarStyles}
+                  className="
+          text-(--primary-foreground)
+                "
+                />
               </Button>
 
               {index === 2 && (

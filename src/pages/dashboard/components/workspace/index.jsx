@@ -72,7 +72,6 @@ const Workspace = () => {
             <Button
               onClick={() => setShowAll((prev) => !prev)}
               variant={"outline"}
-              // className="text-[#] cursor-pointer font-medium mt-2 self-start px-4 flex items-center gap-1"
             >
               {showAll ? (
                 <>
