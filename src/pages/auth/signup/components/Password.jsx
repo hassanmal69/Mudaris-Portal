@@ -14,125 +14,108 @@ const Password = ({ onBack, token, invite, file }) => {
   const { fullName } = useSelector((state) => state.signupForm);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const handleSubmit = async (values) => {
     try {
       setError(null);
+
+      // 1. CREATE USER FIRST
       const { user } = await dispatch(
         signupUser({
           fullName,
           email: invite.email,
           password: values.password,
-          avtar,
-        })
-      ).unwrap();
-      if (!user?.id) throw new Error("user id missing after signup!");
-      const { error: tokenUsed } = await supabase
-        .from("invitations")
-        .update({ used: true })
-        .eq("token", token);
-      if (tokenUsed) {
-        console.log("error coming in token update", tokenUsed);
-      }
-      // Insert workspace member using Redux thunk
-
-      const result = await dispatch(
-        addWorkspaceMember({
-          userId: user.id,
-          workspaceId: invite.workspace_id || null,
-          role: "user",
         })
       ).unwrap();
 
-      if (result.error)
-        throw new Error(`Failed to add to workspace: ${result.error}`);
-      //now we have to add a user in all Public Group Members
-      const channelsAre = await dispatch(fetchChannels(invite.workspace_id));
-      let filteredChannels = await channelsAre?.payload.filter(
-        (channel) => channel.visibility === "public"
-      );
+      if (!user?.id) throw new Error("User ID missing after signup!");
       const userId = user.id;
-      //we got token here then we put token in invitaton then
-      // we get allowed channel
-      const { data: allowedChannel, error: allowedChannelError } =
-        await supabase
-          .from("invitations")
-          .select("allowedChannels")
-          .eq("token", token);
-      if (allowedChannelError) {
-        throw new Error(allowedChannelError);
-      }
-      const privateAllowedChannel = [];
-      // console.log('ye rha console', allowedChannel);
-      // console.log('ye rha console', allowedChannel[0]);
-      // console.log('ye rha console', allowedChannel[0].allowedChannels);
-      for (const m of allowedChannel[0].allowedChannels) {
-        let gotChannel = await channelsAre?.payload.find(
-          (channel) => channel.id === m
-        );
-        if (gotChannel) {
-          privateAllowedChannel.push(gotChannel);
-        }
-      }
+      let avatarUrlLocal = null;
 
-      if (allowedChannel[0].allowedChannels) {
-        filteredChannels = [...filteredChannels, ...privateAllowedChannel];
-      }
-      console.log(filteredChannels);
-      for (const m of filteredChannels) {
-        console.log("data is sending", m);
-        const sendingData = await dispatch(
-          addChannelMembersonSignUp({ channelId: m.id, userId })
-        );
-        console.log("getting data is", sendingData);
-      }
-
+      // 2. UPLOAD AVATAR (IF PROVIDED)
       if (file) {
         const fileExt = file.name.split(".").pop();
         const newFilePath = `pictures/avatar/${userId}-${Date.now()}.${fileExt}`;
+
         const { error: uploadError } = await supabase.storage
           .from("media")
           .upload(newFilePath, file, { upsert: true });
 
-        if (uploadError) {
-          console.error("Error uploading file:", uploadError);
-        }
+        if (uploadError) throw new Error("Avatar upload failed.");
 
-        const {
-          data: { publicUrl },
-        } = await supabase.storage.from("media").getPublicUrl(newFilePath);
-        const { error: updateError } = await supabase.auth.updateUser({
-          data: { avatar_url: publicUrl },
-        });
-        const { error: profileUpdateError } = await supabase
-          .from("profiles")
-          .update({
-            full_name: fullName,
-            avatar_url: publicUrl,
-            role: "user",
-          })
-          .eq("id", userId);
+        const { data: { publicUrl } } = await supabase.storage
+          .from("media")
+          .getPublicUrl(newFilePath);
 
-        if (profileUpdateError) {
-          throw new Error(profileUpdateError);
-        }
-        if (updateError) {
-          console.error("Error updating avatar URL:", updateError);
-          return;
-        }
+        avatarUrlLocal = publicUrl;
       }
-      console.log(fullName);
+
+      // 3. UPDATE PROFILE
       const { error: profileUpdateError } = await supabase
         .from("profiles")
         .update({
           full_name: fullName,
+          avatar_url: avatarUrlLocal,
+          role: "user",
         })
         .eq("id", userId);
-      if (profileUpdateError) throw new Error(profileUpdateError);
-      if (!profileUpdateError) {
-        navigate(`/dashboard/${user?.id}`);
+
+      if (profileUpdateError) throw new Error("Profile update failed.");
+
+      // 4. MARK TOKEN USED
+      await supabase
+        .from("invitations")
+        .update({ used: true })
+        .eq("token", token);
+
+      // 5. ADD TO WORKSPACE
+      await dispatch(
+        addWorkspaceMember({
+          userId,
+          workspaceId: invite.workspace_id,
+          role: "user",
+        })
+      ).unwrap();
+
+      // 6. FETCH CHANNELS
+      const { payload: channels } = await dispatch(
+        fetchChannels(invite.workspace_id)
+      );
+
+      let filteredChannels = channels.filter(
+        (channel) => channel.visibility === "public"
+      );
+
+      // 7. ADD PRIVATE ALLOWED CHANNELS
+      const { data: invitedData } = await supabase
+        .from("invitations")
+        .select("allowedChannels")
+        .eq("token", token)
+        .single();
+
+      if (invitedData?.allowedChannels?.length) {
+        const privateChannels = invitedData.allowedChannels
+          .map((cid) => channels.find((c) => c.id === cid))
+          .filter(Boolean);
+
+        filteredChannels = [...filteredChannels, ...privateChannels];
       }
+
+      // 8. ADD USER TO CHANNELS
+      for (const channel of filteredChannels) {
+        await dispatch(
+          addChannelMembersonSignUp({
+            channelId: channel.id,
+            userId,
+          })
+        );
+      }
+
+      // 9. REDIRECT
+      navigate(`/dashboard/${userId}`);
     } catch (err) {
-      setError(err.message || "An unexpected error occurred");
+      console.error(err);
+      setError(err.message || "Unexpected error occurred.");
     }
   };
 
@@ -145,25 +128,18 @@ const Password = ({ onBack, token, invite, file }) => {
       {() => (
         <Form className="space-y-4 rounded-md">
           <h2 className="text-lg font-bold">Step 3: Password</h2>
+
           <div>
             <label>Password</label>
-            <Field
-              type="password"
-              name="password"
-              className="w-full p-2 border rounded"
-            />
-            <ErrorMessage
-              name="password"
-              component="div"
-              className="text-red-500 text-sm"
-            />
+            <Field type="password" name="password" className="w-full p-2 border rounded" />
+            <ErrorMessage name="password" component="div" className="text-red-500 text-sm" />
           </div>
 
           <div className="flex justify-between">
             <button
               type="button"
               onClick={onBack}
-              className="btn btn-secondary  bg-yellow-50 text-black py-1.5 px-6 rounded-2xl text-l font-semibold"
+              className="btn btn-secondary bg-yellow-50 text-black py-1.5 px-6 rounded-2xl text-l font-semibold"
             >
               Back
             </button>

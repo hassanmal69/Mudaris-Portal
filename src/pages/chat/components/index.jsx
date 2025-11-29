@@ -7,8 +7,9 @@ import { useSelector, shallowEqual } from "react-redux";
 import { useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import AddUserInChannel from "./invite-channel-dialog";
-import { isAdmin } from "@/constants/constants";
+import { useIsAdmin } from "@/constants/constants";
 const Messages = () => {
+  const isAdmin = useIsAdmin();
   const {
     messages,
     currentUserId,

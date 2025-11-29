@@ -19,10 +19,9 @@ import {
   MessageSquareLock,
 } from "lucide-react";
 import { fetchChannelMembersbyUser } from "@/redux/features/channelMembers/channelMembersSlice";
-import { Button } from "@/components/ui/button";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { Users } from "lucide-react";
-import { isAdmin } from "@/constants/constants";
+import { useIsAdmin } from "@/constants/constants.js";
 const SideBarChannels = ({
   session,
   workspace_id,
@@ -32,6 +31,7 @@ const SideBarChannels = ({
   const dispatch = useDispatch();
   const [visibleChannel, setVisibleChannel] = useState([]);
   const navigate = useNavigate();
+  const isAdmin = useIsAdmin();
 
   const activeChannel = useSelector(selectActiveChannel);
   const channelFind = async () => {

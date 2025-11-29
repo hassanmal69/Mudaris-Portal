@@ -11,7 +11,7 @@ import {
 } from "@/redux/features/lecturesLink/lecturesLinksSlice";
 import useInfiniteScroll from "@/hooks/infinteScroll-hook/useInfiniteScroll";
 import Actions from "../actions";
-import { isAdmin } from "@/constants/constants";
+import { useIsAdmin } from "@/constants/constants";
 import usePaginatiedList from "@/hooks/infinteScroll-hook/usePaginatedList";
 import { useParams } from "react-router-dom";
 import { addToast } from "@/redux/features/toast/toastSlice";
@@ -21,6 +21,7 @@ const LecturesLink = () => {
   const { list: lectures, loading } = useSelector(
     (state) => state.lectureLinks
   );
+  const isAdmin = useIsAdmin();
   const { workspace_id } = useParams();
   const { state, dispatchLocal, runInitialLoad, loadMore, handleDialogChange } =
     usePaginatiedList(
