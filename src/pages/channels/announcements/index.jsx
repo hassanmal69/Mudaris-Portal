@@ -98,7 +98,7 @@ const Announcements = () => {
             <div
               key={a.id}
               className="group border border-(--border) gap-2 flex flex-col
-      border-l-4 border-l-(--primary) rounded-2xl bg-(--card) p-4 shadow-sm hover:shadow-md transition-transform duration-200 hover:-translate-y-1 relative"
+      border-l-4 border-l-(--standard) rounded-2xl bg-(--card) p-4 shadow-sm hover:shadow-md transition-transform duration-200 hover:-translate-y-1 relative"
             >
               <div className="flex flex-col">
                 <div className="flex gap-2 items-center">

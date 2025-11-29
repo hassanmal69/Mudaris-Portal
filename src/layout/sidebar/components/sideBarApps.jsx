@@ -47,8 +47,8 @@ const SideBarApps = ({ workspace_id }) => {
                   `}
             onClick={() => navigate(`/workspace/${workspace_id}/market`)}
           >
-            <span className="bg-(--primary)/10 h-7 w-7 rounded-md flex items-center justify-center">
-              <Telescope className="w-4 h-4 text-(--primary)" />
+            <span className="bg-(--standard)/10 h-7 w-7 rounded-md flex items-center justify-center">
+              <Telescope className="w-4 h-4 text-(--sidebar-foreground)" />
             </span>
             <span className="text-[15px]">Market Insight</span>
           </div>
@@ -61,8 +61,8 @@ const SideBarApps = ({ workspace_id }) => {
                   `}
             onClick={() => navigate(`/workspace/${workspace_id}/calendar`)}
           >
-            <span className="bg-(--primary)/10 h-7 w-7 rounded-md flex items-center justify-center">
-              <Calendar className="w-4 h-4 text-(--primary)" />
+            <span className="bg-(--standard)/10 h-7 w-7 rounded-md flex items-center justify-center">
+              <Calendar className="w-4 h-4 text-(--sidebar-foreground)" />
             </span>
             <span
               className="

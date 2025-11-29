@@ -40,11 +40,13 @@ const Messages = () => {
       {channel && (
         <>
           <div className="flex flex-col gap-0 items-center">
-            <span className="bg-(--primary) text-(--foreground) font-bold w-[65px] text-2xl rounded-md h-[65px] flex items-center justify-center mb-2">
+            <span className="bg-(--standard) text-(--standard-foreground) font-bold w-[65px] text-2xl rounded-md h-[65px] flex items-center justify-center mb-2">
               #
             </span>
 
-            <h1 className=" text-2xl text-white font-black ">{channel_name}</h1>
+            <h1 className=" text-2xl text-(--primary-foreground) font-black ">
+              {channel_name}
+            </h1>
             <p className="text-(--primary-foreground)">{channel_desc}</p>
             {channel_visbibility === "private" && isAdmin && (
               <Button

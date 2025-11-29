@@ -12,7 +12,11 @@ export default function MentionButton({ editor }) {
         editor.commands.focus();
       }}
     >
-      <span role="img" aria-label="mention" className={"text-[18px] p-0"}>
+      <span
+        role="img"
+        aria-label="mention"
+        className={"text-[18px] p-0 text-(--primary-foreground)"}
+      >
         @
       </span>
     </Button>

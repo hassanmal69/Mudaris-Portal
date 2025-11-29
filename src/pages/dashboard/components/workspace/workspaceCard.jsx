@@ -23,7 +23,7 @@ const WorkspaceCard = ({ workspace, index }) => {
   const membersLoading = useSelector(selectLoading(workspace.id));
 
   const [firstChannelId, setFirstChannelId] = useState(null);
-  const [channelLoading, setChannelLoading] = useState(true);
+  // const [channelLoading, setChannelLoading] = useState(true);
 
   useEffect(() => {
     dispatch(fetchWorkspaceMembers(workspace.id));
@@ -32,7 +32,6 @@ const WorkspaceCard = ({ workspace, index }) => {
   useEffect(() => {
     let isMounted = true;
     const fetchFirstChannel = async () => {
-      setChannelLoading(true);
       try {
         // select only id, ordered by created_at ascending, limit 1
         const { data, error } = await supabase
@@ -50,8 +49,6 @@ const WorkspaceCard = ({ workspace, index }) => {
         }
       } catch (err) {
         console.error("fetchFirstChannel caught:", err);
-      } finally {
-        if (isMounted) setChannelLoading(false);
       }
     };
 
@@ -66,10 +63,10 @@ const WorkspaceCard = ({ workspace, index }) => {
     : `/workspace/${workspace.id}`;
 
   return (
-    <div className="flex w-full sm:px-4 m-auto flex-col gap-3 sm:gap-0 sm:flex-row justify-between sm:items-center">
+    <div className="flex w-full  sm:px-4 m-auto flex-col gap-3 sm:gap-0 sm:flex-row justify-between sm:items-center">
       <div className="flex gap-1.5 items-center">
         {workspace.avatar_url ? (
-          <Avatar className="w-16 h-16 rounded-md">
+          <Avatar className="w-16 h-16 rounded-full">
             <AvatarImage
               src={workspace.avatar_url}
               alt={workspace.workspace_name}
@@ -83,7 +80,7 @@ const WorkspaceCard = ({ workspace, index }) => {
         )}
 
         <div className="flex flex-col gap-2">
-          <p className="text-l font-medium capitalize">
+          <p className="text-l font-medium capitalize text-(--primary-foreground)">
             {workspace.workspace_name}
           </p>
 
@@ -112,7 +109,7 @@ const WorkspaceCard = ({ workspace, index }) => {
                 )
               )}
             </div>
-            <p className="font-light text-gray-300 text-sm">
+            <p className="font-light text-(--primary-foreground) text-sm">
               {members.length} Members
             </p>
           </div>

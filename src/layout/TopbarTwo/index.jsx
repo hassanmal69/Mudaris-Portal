@@ -1,14 +1,10 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { Input } from "@/components/ui/input";
+import React, { useEffect, useState } from "react";
 import Profile from "@/pages/profile";
-import { useParams } from "react-router-dom";
 import { Calendar, Globe, Lock, Search, Siren } from "lucide-react";
-import Members from "../topbar/members/index.jsx";
 import { Link as MoizChain, Megaphone } from "lucide-react";
 import "../topbar/topbar.css";
 import { Notifications } from "../topbar/notification/index.jsx";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { PersonIcon } from "@radix-ui/react-icons";
 const TopbarTwo = ({ name, desc }) => {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 860);
   useEffect(() => {
@@ -30,10 +26,10 @@ const TopbarTwo = ({ name, desc }) => {
         </div>
       )}
 
-      <div className="flex text-white flex-col min-w-0">
+      <div className="flex dark:text-(--primary-foreground) text-(--primary) flex-col min-w-0">
         <span className="flex gap-2">
           {name === "LecturesLink" ? (
-            <MoizChain className="w-5" />
+            <MoizChain className="w-5 " />
           ) : name === "Announcements" ? (
             <Megaphone className="w-5" />
           ) : (

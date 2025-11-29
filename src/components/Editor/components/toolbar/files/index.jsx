@@ -42,7 +42,13 @@ export default function FileUploader({ toolbarStyles }) {
       />
 
       <label htmlFor="fileInput">
-        <Paperclip className="text-white h-4 w-4" style={toolbarStyles} />
+        <Paperclip
+          className="
+          text-(--primary-foreground)
+        
+        h-4 w-4"
+          style={toolbarStyles}
+        />
       </label>
     </div>
   );
