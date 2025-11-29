@@ -44,7 +44,8 @@ export function Notifications() {
 
     let queryBuilder = supabase
       .from("notifications")
-      .select(`
+      .select(
+        `
         id,
         description,
         created_at,
@@ -54,7 +55,8 @@ export function Notifications() {
         "channelId",
         "userId",
         workspaces (workspace_name)
-      `)
+      `
+      )
       .order("created_at", { ascending: false });
 
     if (isPersonal) {
@@ -135,7 +137,7 @@ export function Notifications() {
   return (
     <DropdownMenu onOpenChange={handleOpenChange}>
       <DropdownMenuTrigger className="relative">
-        <Bell className="h-6 w-6 text-[#eee]" />
+        <Bell className="h-6 w-6 text-(--primary-foreground)" />
         {unread.length > 0 && (
           <Badge className="absolute -top-2 -right-2 rounded-full px-2 py-0.5 text-(--foreground)">
             {unread.length}

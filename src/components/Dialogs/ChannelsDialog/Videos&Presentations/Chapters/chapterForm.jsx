@@ -2,7 +2,10 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useDispatch } from "react-redux";
-import { createChapterDB, updateChapterDB } from "@/redux/features/video&presentations/chapterSlice.js";
+import {
+  createChapterDB,
+  updateChapterDB,
+} from "@/redux/features/video&presentations/chapterSlice.js";
 import { useParams } from "react-router-dom";
 const ChapterForm = ({ onClose, data }) => {
   const dispatch = useDispatch();
@@ -18,7 +21,7 @@ const ChapterForm = ({ onClose, data }) => {
       dispatch(
         updateChapterDB({
           id: data.id,
-          payload: { name: chapterName }
+          payload: { name: chapterName },
         })
       );
     } else {
@@ -26,7 +29,7 @@ const ChapterForm = ({ onClose, data }) => {
       dispatch(
         createChapterDB({
           name: chapterName,
-          workspace_Id: workspace_id
+          workspace_Id: workspace_id,
         })
       );
     }
@@ -46,11 +49,11 @@ const ChapterForm = ({ onClose, data }) => {
       />
 
       <div className="flex justify-between mt-4">
-        <Button type="button" onClick={onClose} className="bg-(--destructive)">
+        <Button type="button" onClick={onClose} variant={"destructive"}>
           Cancel
         </Button>
 
-        <Button type="submit" className="bg-green-800">
+        <Button type="submit" variant={"success"}>
           {data ? "Update Chapter" : "Add Chapter"}
         </Button>
       </div>
@@ -58,4 +61,3 @@ const ChapterForm = ({ onClose, data }) => {
   );
 };
 export default ChapterForm;
-

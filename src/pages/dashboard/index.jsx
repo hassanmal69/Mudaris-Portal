@@ -15,6 +15,8 @@ import "./dashboard.css";
 import { isAdmin } from "@/constants/constants.js";
 const Dashboard = () => {
   const { session } = useSelector((state) => state.auth);
+  const fullName = session?.user?.user_metadata?.fullName;
+
   console.log(session?.user?.email, "user email");
   const [isOpen, setisOpen] = useState(false);
 
@@ -44,11 +46,12 @@ const Dashboard = () => {
       {/* main should grow to fill available space */}
       <main className="flex-1 container mx-auto p-4 space-y-6 w-full max-w-3xl">
         <div className="my-10">
-          <h1 className="relative text-3xl text-(--primary-foreground) flex sm:flex-row gap-1 responisve_dashboard_title">
+          <h1
+            className="relative text-3xl 
+          text-(--primary-foreground)  flex sm:flex-row gap-1 responisve_dashboard_title"
+          >
             Welcome back
-            <span className="font-bold">
-              {session?.user?.user_metadata?.fullName}
-            </span>
+            <span className="font-bold">{fullName}</span>
           </h1>
         </div>
 

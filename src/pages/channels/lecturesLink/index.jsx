@@ -70,7 +70,7 @@ const LecturesLink = () => {
   if (loading && state.page)
     return (
       <section className="flex justify-center items-center h-40 bg-(--background)">
-        <p className="text-(--muted)">Loading lectures...</p>
+        <p className="text-(--primary-foreground)">Loading lectures...</p>
       </section>
     );
 
@@ -100,7 +100,7 @@ const LecturesLink = () => {
         </div>
 
         {lectures.length === 0 ? (
-          <p className="text-(--muted)">No lectures yet.</p>
+          <p className="text-(--primary-foreground)">No lectures yet.</p>
         ) : (
           <div className="space-y-4">
             {lectures.map((lecture) => {
@@ -142,7 +142,7 @@ const LecturesLink = () => {
                     href={lecture.lecture_link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-(--primary) hover:underline mt-2  flex items-center gap-1"
+                    className="text-(--primary-foreground) hover:underline mt-2  flex items-center gap-1"
                   >
                     <MoizChain className="w-4 h-4" /> Join Lecture
                     <ExternalLink className="w-4 h-4" />
@@ -163,7 +163,7 @@ const LecturesLink = () => {
 
         {loading && state.page > 0 && (
           <div className="flex justify-center py-4">
-            <div className="w-8 h-8 border-4 border-gray-300 border-t-[--primary] rounded-full animate-spin" />
+            <div className="w-8 h-8 border-4 border-gray-300 border-t-(--primary) rounded-full animate-spin" />
           </div>
         )}
         <div ref={sentinelRef} className="h-10 w-full" />

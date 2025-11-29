@@ -37,7 +37,9 @@ const VideoForm = ({ onClose, chapterId }) => {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="flex flex-col gap-1">
-        <label className="text-(--muted-foreground) text-[14px]">Video Name</label>
+        <label className="text-(--muted-foreground) text-[14px]">
+          Video Name
+        </label>
         <Input
           type="text"
           name="name"
@@ -50,7 +52,9 @@ const VideoForm = ({ onClose, chapterId }) => {
       </div>
 
       <div className="flex flex-col gap-1">
-        <label className="text-(--muted-foreground) text-[14px]">Description</label>
+        <label className="text-(--muted-foreground) text-[14px]">
+          Description
+        </label>
         <Input
           type="text"
           name="description"
@@ -63,7 +67,9 @@ const VideoForm = ({ onClose, chapterId }) => {
       </div>
 
       <div className="flex flex-col gap-1">
-        <label className="text-(--muted-foreground) text-[14px]">Video Link</label>
+        <label className="text-(--muted-foreground) text-[14px]">
+          Video Link
+        </label>
         <Input
           type="text"
           name="video_link"
@@ -76,7 +82,9 @@ const VideoForm = ({ onClose, chapterId }) => {
       </div>
 
       <div className="flex flex-col gap-1">
-        <label className="text-(--muted-foreground) text-[14px]">Presentation Link</label>
+        <label className="text-(--muted-foreground) text-[14px]">
+          Presentation Link
+        </label>
         <Input
           type="text"
           name="presentation_link"
@@ -88,10 +96,10 @@ const VideoForm = ({ onClose, chapterId }) => {
       </div>
 
       <div className="flex justify-between mt-4">
-        <Button type="button" onClick={onClose} className="bg-(--destructive)">
+        <Button type="button" onClick={onClose} variant={"destructive"}>
           Cancel
         </Button>
-        <Button type="submit" className="bg-green-800">
+        <Button type="submit" variant={"success"}>
           Add Video
         </Button>
       </div>
