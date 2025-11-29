@@ -5,14 +5,11 @@ import StepPassword from "./components/Password.jsx";
 import { useSearchParams } from "react-router-dom";
 import { supabase } from "@/services/supabaseClient.js";
 import "./signup.css";
-import { FarsiQuote } from "@/constants/FarsiQuote.jsx";
 const Signup = () => {
   const [step, setStep] = useState(0);
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
   const [file, setFile] = useState(null); // state to hold file
-
-  // const navigate = useNavigate();
   const [invite, setInvite] = useState(null);
   const [error, setError] = useState();
   const [wsId, setWsId] = useState();
@@ -85,7 +82,6 @@ const Signup = () => {
   return (
     <div className="h-screen overflow-hidden relative w-full md:flex-row bg-black p-8 responsive_signup_container">
       <div className="w-[90%] flex flex-col items-center h-full justify-between md:flex-row relative responsive_signup_wrapper">
-        <FarsiQuote />
         <div className=" w-full max-w-md flex flex-col gap-2 p-8 rounded-xl shadow-2xl border border-white/20 backdrop-blur-md bg-white/10 text-white">
           <h1 className="text-center text-2xl font-bold  bg-gradient-to-br from-[#9855ff] via-purple to-white bg-clip-text text-transparent">
             Welcome to Mudaris Academy

@@ -12,14 +12,12 @@ import { useSelector } from "react-redux";
 import { useState } from "react";
 import CreateWorkspace from "./components/createWorkspace.jsx";
 import "./dashboard.css";
-import { isAdmin } from "@/constants/constants.js";
+import { useIsAdmin } from "@/constants/constants.js";
 const Dashboard = () => {
   const { session } = useSelector((state) => state.auth);
   const fullName = session?.user?.user_metadata?.fullName;
-
-  console.log(session?.user?.email, "user email");
   const [isOpen, setisOpen] = useState(false);
-
+  const isAdmin = useIsAdmin();
   return (
     <section className="flex flex-col bg-(--background) text--(--foreground) min-h-screen">
       <div className="h-dvh z-10 w-dvw absolute overflow-hidden pointer-events-none">

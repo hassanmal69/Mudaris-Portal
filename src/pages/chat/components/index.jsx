@@ -7,8 +7,9 @@ import { useSelector, shallowEqual } from "react-redux";
 import { useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import AddUserInChannel from "./invite-channel-dialog";
-import { isAdmin } from "@/constants/constants";
+import { useIsAdmin } from "@/constants/constants";
 const Messages = () => {
+  const isAdmin = useIsAdmin();
   const {
     messages,
     currentUserId,
@@ -43,7 +44,6 @@ const Messages = () => {
             <span className="bg-(--standard) text-(--standard-foreground) font-bold w-[65px] text-2xl rounded-md h-[65px] flex items-center justify-center mb-2">
               #
             </span>
-
             <h1 className=" text-2xl text-(--primary-foreground) font-black ">
               {channel_name}
             </h1>

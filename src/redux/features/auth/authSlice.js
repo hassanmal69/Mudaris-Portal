@@ -59,6 +59,7 @@ export const signupUser = createAsyncThunk(
   async ({ fullName, email, password, avatarUrl }, { rejectWithValue }) => {
     try {
       console.log(fullName, email, password, avatarUrl);
+
       const { data, error } = await supabase.auth.signUp({
         email: email.trim(),
         password,
@@ -71,10 +72,17 @@ export const signupUser = createAsyncThunk(
           },
         },
       });
+
       if (error) {
-        console.log("error coming in signup of a user", error);
+        console.error("Signup error:", error);
+        return rejectWithValue(error.message || "Signup failed");
       }
-      return { user: data.user, session: data.session || null };
+
+      return {
+        user: data.user,
+        session: data.session || null,
+      };
+
     } catch (err) {
       return rejectWithValue(err.message || "Signup failed");
     }

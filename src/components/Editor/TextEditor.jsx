@@ -1,19 +1,15 @@
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { postToSupabase } from "@/utils/crud/posttoSupabase";
 import Toolbar from "./components/toolbar/Toolbar.jsx";
 import { Send } from "lucide-react";
 import { clearValue } from "@/redux/features/ui/fileSlice.js";
 import { useDispatch } from "react-redux";
 import { supabase } from "@/services/supabaseClient.js";
-import { useMemo, useState } from "react";
-import HandleSupabaseLogicNotification from "@/layout/topbar/notification/handleSupabaseLogicNotification.jsx";
-import { useEffect } from "react";
-import { isAdmin } from "@/constants/constants.js";
+import { useCallback, useEffect } from "react";
 export default function TextEditor({ editor, toolbarStyles }) {
   const dispatch = useDispatch();
-  const [mentionedPerson, setMentionedPerson] = useState("");
   const userId = useSelector((state) => state.auth.user?.id);
+  let mentionPerson
   const displayName = useSelector(
     (state) => state.auth.user?.user_metadata?.fullName
   );
@@ -23,67 +19,53 @@ export default function TextEditor({ editor, toolbarStyles }) {
   );
   const directChannel = useSelector((state) => state?.direct?.directChannel);
   const { files } = useSelector((state) => state.file);
-  const channelState = useSelector((state) => state.channels);
-
   useEffect(() => {
     if (!editor) return;
 
-    const savedDraft = localStorage.getItem(`draft`);
-    if (savedDraft) {
-      editor.commands.setContent(savedDraft);
-    }
+    const handler = () => {
+      localStorage.setItem(`draft-${groupId}`, editor.getHTML());
+    };
 
-    editor.on("update", () => {
-      const html = editor.getHTML();
-      localStorage.setItem(`draft`, html);
-    });
+    editor.on("update", handler);
 
     return () => {
-      editor.off("update");
+      editor.off("update", handler);
     };
   }, [editor, groupId]);
 
-  const channels = channelState.allIds.map((id) => ({
-    id,
-    name: channelState.byId[id]?.channel_name,
-    visibility: channelState.byId[id]?.visibility,
-  }));
-  const desiredChannel = useMemo(() => {
-    return channels.find((m) => m.id === groupId);
-  }, [channels, groupId]);
   const replyMessage = useSelector((state) => state.reply.message);
 
-  const handleNotificationforAdmin = async () => {
-    if (replyMessage) {
-      HandleSupabaseLogicNotification(
-        "reply",
-        workspace_id,
-        groupId,
-        null,
-        `${displayName} replied to your message in ${desiredChannel.name} channel`
-      );
-    } else if (userRole === "admin") {
-      HandleSupabaseLogicNotification(
-        "adminMessage",
-        workspace_id,
-        groupId,
-        null,
-        `${displayName} admin added a message in ${desiredChannel.name} channel`
-      );
+  const extractMention = useCallback((node) => {
+    if (!node) return { isMention: false, mentionedId: null };
+
+    // Check current node
+    if (node.type === "mention") {
+      return { isMention: true, mentionedId: node.attrs?.id };
     }
-  };
+
+    // Recursively search children
+    if (Array.isArray(node.content)) {
+      for (const child of node.content) {
+        const found = extractMention(child);
+        if (found.isMention) return found;
+      }
+    }
+
+    return { isMention: false, mentionedId: null };
+  }, []);
+
   const checkMention = (json) => {
-    var personID = json.content[0]?.content[0]?.attrs?.id;
-    setMentionedPerson(personID);
-    return JSON.stringify(json).includes('"mention"');
+    const { isMention, mentionedId } = extractMention(json);
+    mentionPerson = (mentionedId);
+    return isMention;
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const messageHTML = editor.getHTML();
     const jsonVersion = editor.getJSON();
     const isMention = checkMention(jsonVersion);
     if (messageHTML === "<p></p>" && (!files || files.length === 0)) return;
-    // ✅ Detect if this is a direct message route
     const isDirectMessage = window.location.pathname.includes("/individual/");
 
     editor.commands.clearContent();
@@ -115,18 +97,15 @@ export default function TextEditor({ editor, toolbarStyles }) {
       }
       dispatch(clearValue());
     }
-
-    const recId = directChannel.id;
-    console.log("mention things just", isMention, mentionedPerson);
     let payload = {
       isDirectMessage,
       userId,
-      recId,
+      recId: directChannel?.id ?? null,
       groupId,
       messageHTML,
       token,
       isMention,
-      mentionedPerson,
+      mentionPerson,
       replyMessage,
       urls,
       userRole,

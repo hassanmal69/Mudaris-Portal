@@ -7,12 +7,14 @@ import { deleteChapterDB, fetchChapters } from "@/redux/features/video&presentat
 import { fetchVideos } from "@/redux/features/video&presentations/videoSlice";
 import { useParams } from "react-router-dom";
 import { ChevronDown, ChevronUp, PlayCircle } from "lucide-react";
-import { isAdmin } from "@/constants/constants.js";
+import { useIsAdmin } from "@/constants/constants.js";
 import Actions from "../actions/index.jsx";
 
 const VideoComponent = React.lazy(() => import("./VideoComponent.jsx"));
 
 const VideosPresentations = () => {
+  const isAdmin = useIsAdmin();
+
   const dispatch = useDispatch();
   const { workspace_id } = useParams();
   // CACHED chapters (by workspace)

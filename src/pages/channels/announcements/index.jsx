@@ -10,7 +10,7 @@ import {
 import Actions from "../actions";
 import useInfiniteScroll from "@/hooks/infinteScroll-hook/useInfiniteScroll";
 import { deleteAnnouncementDB } from "@/redux/features/announcements/announcementsSlice";
-import { isAdmin } from "@/constants/constants";
+import { useIsAdmin } from "@/constants/constants.js";
 import { useParams } from "react-router-dom";
 import usePaginatiedList from "@/hooks/infinteScroll-hook/usePaginatedList";
 import { addToast } from "@/redux/features/toast/toastSlice";
@@ -18,6 +18,7 @@ import { addToast } from "@/redux/features/toast/toastSlice";
 const Announcements = () => {
   const dispatch = useDispatch();
   const { workspace_id } = useParams();
+  const isAdmin = useIsAdmin();
 
   const { list: announcements, loading } = useSelector(
     (state) => state.announcements
