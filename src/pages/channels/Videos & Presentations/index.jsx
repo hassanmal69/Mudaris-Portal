@@ -3,7 +3,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { Button } from "@/components/ui/button";
 import ChapterDialog from "@/components/Dialogs/ChannelsDialog/Videos&Presentations/Chapters";
 import VideoDialog from "@/components/Dialogs/ChannelsDialog/Videos&Presentations/Videos";
-import { deleteChapterDB, fetchChapters } from "@/redux/features/video&presentations/chapterSlice";
+import {
+  deleteChapterDB,
+  fetchChapters,
+} from "@/redux/features/video&presentations/chapterSlice";
 import { fetchVideos } from "@/redux/features/video&presentations/videoSlice";
 import { useParams } from "react-router-dom";
 import { ChevronDown, ChevronUp, PlayCircle } from "lucide-react";
@@ -19,14 +22,11 @@ const VideosPresentations = () => {
   const { workspace_id } = useParams();
   // CACHED chapters (by workspace)
   const chapters =
-    useSelector(
-      (state) => state.chapters.chaptersByWorkspace[workspace_id]
-    ) || [];
+    useSelector((state) => state.chapters.chaptersByWorkspace[workspace_id]) ||
+    [];
 
   // CACHED videos (by chapter)
-  const videosByChapter = useSelector(
-    (state) => state.videos.videosByChapter
-  );
+  const videosByChapter = useSelector((state) => state.videos.videosByChapter);
 
   const [expandedChapter, setExpandedChapter] = useState(null);
   const [selectedVideo, setSelectedVideo] = useState(null);
@@ -61,7 +61,7 @@ const VideosPresentations = () => {
   };
 
   // dispatchLocal({ type: "SELECT_ITEM", payload: item });
-  const onDelete = (id) => dispatch(deleteChapterDB(id))
+  const onDelete = (id) => dispatch(deleteChapterDB(id));
 
   const handleAddVideo = (chapterId) => {
     setActiveChapter(chapterId);
@@ -70,35 +70,52 @@ const VideosPresentations = () => {
 
   return (
     <div className="bg-(--background) text-(--foreground) p-4 flex flex-col gap-6">
-      {isAdmin &&
+      {isAdmin && (
         <div className="flex w-full justify-center">
           <Button
-            className=' '
-            variant='secondary'
-            onClick={() => setChapterDialogOpen(true)}>
+            className=" "
+            variant="secondary"
+            onClick={() => setChapterDialogOpen(true)}
+          >
             Add Chapter
           </Button>
         </div>
-      }
+      )}
       {chapters && chapters.length > 0 ? (
         <div className='flex'>
           {/* LEFT SIDEBAR */}
-          <div className="mt-4 w-[35%] h-dvh overflow-y-scroll scroll-smooth">
+          <div
+            className="mt-4 w-[35%] h-dvh overflow-y-scroll scroll-smooth 
+  [scrollbar-width:auto] 
+  [&::-webkit-scrollbar]:w-2 
+  [&::-webkit-scrollbar-track]:bg-(--sidebar-primary) 
+  [&::-webkit-scrollbar-thumb]:bg-(--sidebar-primary) 
+  [&::-webkit-scrollbar-thumb]:rounded-full"
+          >
             {chapters.map((chapter, idx) => {
               const chapterVideos = videosByChapter[chapter.id] || [];
 
               return (
                 <div key={chapter.id} className="flex flex-col relative">
                   {/* Chapter Header */}
-                  <div className="flex p-4 gap-1 hover:bg-(--sidebar-accent)
-                            items-center border-2 border-(--sidebar-border)">
-                    <Button onClick={() => handleSeeVideos(chapter.id)}>
-                      {expandedChapter === chapter.id
-                        ? <ChevronUp size={18} />
-                        : <ChevronDown size={18} />}
+                  <div
+                    className="flex p-4 gap-1 hover:bg-(--sidebar-accent)
+                            items-center border-2 border-(--sidebar-border)"
+                  >
+                    <Button
+                      onClick={() => handleSeeVideos(chapter.id)}
+                      variant={"ghost"}
+                    >
+                      {expandedChapter === chapter.id ? (
+                        <ChevronUp className="w-6 h-6" />
+                      ) : (
+                        <ChevronDown className="w-6 h-6" />
+                      )}
                     </Button>
 
-                    <h2 className="text-lg">{idx + 1}. {chapter.name}</h2>
+                    <h2 className="text-lg">
+                      {idx + 1}. {chapter.name}
+                    </h2>
 
                     {isAdmin && (
                       <div className="flex h-full justify-end absolute right-4">
@@ -156,10 +173,7 @@ const VideosPresentations = () => {
           {/* RIGHT SIDE PLAYER */}
           <Suspense fallback={<div>Loading video...</div>}>
             {selectedVideo && (
-              <VideoComponent
-                data={selectedVideo}
-                onNext={setSelectedVideo}
-              />
+              <VideoComponent data={selectedVideo} onNext={setSelectedVideo} />
             )}
           </Suspense>
         </div>
@@ -174,16 +188,14 @@ const VideosPresentations = () => {
         onOpenChange={handleDialogChange}
       />
 
-      {
-        activeChapter && (
-          <VideoDialog
-            chapterId={activeChapter}
-            open={videoDialogOpen}
-            onOpenChange={setVideoDialogOpen}
-          />
-        )
-      }
-    </div >
+      {activeChapter && (
+        <VideoDialog
+          chapterId={activeChapter}
+          open={videoDialogOpen}
+          onOpenChange={setVideoDialogOpen}
+        />
+      )}
+    </div>
   );
 };
 
