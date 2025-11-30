@@ -103,13 +103,13 @@ const MessageActions = React.memo(
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button
+              {/* <Button
                 className="bg-transparent"
                 aria-label="Open menu"
                 size="icon-sm"
-              >
-                <MoreHorizontalIcon />
-              </Button>
+              > */}
+              <MoreHorizontalIcon />
+              {/* </Button> */}
             </DropdownMenuTrigger>
             <DropdownMenuContent
               align="end"

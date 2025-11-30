@@ -38,7 +38,7 @@ export default function FileUploader({ toolbarStyles }) {
         type="file"
         id="fileInput"
         hidden
-        accept="image/*,video/mp4,application/pdf"
+        accept="image/*,video/mp4"
       />
 
       <label htmlFor="fileInput">
