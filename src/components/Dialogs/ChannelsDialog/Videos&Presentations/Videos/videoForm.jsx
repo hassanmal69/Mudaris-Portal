@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useDispatch } from "react-redux";
 import { createVideoDB } from "@/redux/features/video&presentations/videoSlice";
+import { Label } from "@/components/ui/label";
 // import { createVideoDB } from "@/redux/features/video&presentations/videosSlice.js";
 
 const VideoForm = ({ onClose, chapterId }) => {
@@ -82,9 +83,9 @@ const VideoForm = ({ onClose, chapterId }) => {
       </div>
 
       <div className="flex flex-col gap-1">
-        <label className="text-(--muted-foreground) text-[14px]">
+        <Label className="text-(--muted-foreground) text-[14px]">
           Presentation Link
-        </label>
+        </Label>
         <Input
           type="text"
           name="presentation_link"

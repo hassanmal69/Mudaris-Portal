@@ -12,9 +12,10 @@ const Actions = ({ onEdit, onDelete, onAdd }) => {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
-          className="bg-transparent text-(--primary-foreground)"
+          className="bg-transparent text-(--primary-foreground) border-none hover:bg-transparent hover:border-none hover:text-(--primary-foreground)/90 "
           aria-label="Open menu"
           size="icon-sm"
+          variant={"ghost"}
         >
           <MoreHorizontalIcon />
         </Button>
