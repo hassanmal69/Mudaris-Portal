@@ -19,7 +19,6 @@ const Password = ({ onBack, token, invite, file }) => {
     try {
       setError(null);
 
-      // 1. CREATE USER FIRST
       const { user } = await dispatch(
         signupUser({
           fullName,
