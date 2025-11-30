@@ -5,6 +5,8 @@ import {
   DialogDescription,
   DialogHeader,
 } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+
 import { DialogTitle } from "@radix-ui/react-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
@@ -142,32 +144,36 @@ const Members = ({ members }) => {
                 return (
                   <div
                     key={user.id}
-                    className="flex items-center gap-2 border-b border-(--border) py-2"
+                    className="flex justify-between items-center"
                   >
-                    {avatar ? (
-                      <Avatar className="w-10 h-10">
-                        <AvatarImage src={avatar} alt={name} />
-                        <AvatarFallback>
-                          {name?.[0]?.toUpperCase() || "?"}
-                        </AvatarFallback>
-                      </Avatar>
-                    ) : (
-                      <div>
-                        <UserFallback name={name} _idx={idx} />
-                      </div>
-                    )}
+                    <div className="flex items-center gap-2 border-b border-(--border) py-2">
+                      {avatar ? (
+                        <Avatar className="w-10 h-10">
+                          <AvatarImage src={avatar} alt={name} />
+                          <AvatarFallback>
+                            {name?.[0]?.toUpperCase() || "?"}
+                          </AvatarFallback>
+                        </Avatar>
+                      ) : (
+                        <div>
+                          <UserFallback name={name} _idx={idx} />
+                        </div>
+                      )}
 
-                    <div className="flex flex-col">
-                      <h2 className="text-(--primary-foreground) font-bold ">
-                        {name}
-                      </h2>
-                      <p className="text-[#aaa] text-[12px]">
-                        {user.user_profiles?.email}
-                      </p>
+                      <div className="flex flex-col">
+                        <h2 className="text-(--primary-foreground) font-bold ">
+                          {name}
+                        </h2>
+                        <p className="text-[#aaa] text-[12px]">
+                          {user.user_profiles?.email}
+                        </p>
+                      </div>
                     </div>
-                    <button
-                      onClick={() => handleFunction({ ua: { id: user.user_id } })}
-                    >Message</button>
+
+                      <Button
+                        variant={'ghost'}
+                        onClick={() => handleFunction({ ua: { id: user.user_id } })}
+                      >Message</Button>
                   </div>
                 );
               })

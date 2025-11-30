@@ -49,7 +49,6 @@ export function Notifications() {
         id,
         description,
         created_at,
-        expired_at,
         type,
         "workspaceId",
         "channelId",
