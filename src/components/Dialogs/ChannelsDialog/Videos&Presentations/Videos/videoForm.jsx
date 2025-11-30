@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { useDispatch } from "react-redux";
 import { createVideoDB } from "@/redux/features/video&presentations/videoSlice";
 import { Label } from "@/components/ui/label";
+import { addToast } from "@/redux/features/toast/toastSlice";
 // import { createVideoDB } from "@/redux/features/video&presentations/videosSlice.js";
 
 const VideoForm = ({ onClose, chapterId }) => {
@@ -34,7 +35,13 @@ const VideoForm = ({ onClose, chapterId }) => {
         presentation_file: formData.presentation_file,
       })
     );
-
+    dispatch(
+      addToast({
+        message: "added a video successfully.",
+        type: "success",
+        duration: 3000,
+      })
+    );
     onClose();
   };
 
@@ -90,7 +97,7 @@ const VideoForm = ({ onClose, chapterId }) => {
 
       <div className="flex flex-col gap-1">
         <Label className="text-(--muted-foreground) text-[14px]">
-          Presentation Link
+          Add presentation
         </Label>
         <Input
           name="presentation_ppt"

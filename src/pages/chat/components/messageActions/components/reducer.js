@@ -12,6 +12,8 @@ const initialState = {
 
   showForwardDialog: false,
   showForwardSuccess: false,
+
+  // deleteError: null, // 🆕
 };
 
 function __reducer_local(state, action) {
@@ -29,6 +31,17 @@ function __reducer_local(state, action) {
       return { ...state, showDeleteDialog: false, selectedMessageId: null };
     case CASES.HIDE_DELETE_SUCCESS:
       return { ...state, showDeleteSuccess: false };
+    // case CASES.DELETE_FAILED:
+    //   return {
+    //     ...state,
+    //     deleteError: "You cannot delete this message.",
+    //   };
+
+    // case CASES.CLEAR_DELETE_ERROR:
+    //   return {
+    //     ...state,
+    //     deleteError: null,
+    //   };
 
     // --- 🆕 new forward logic ---
     case CASES.OPEN_FORWARD_DIALOG:
