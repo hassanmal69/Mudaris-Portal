@@ -15,7 +15,7 @@ export function Notifications() {
   const [notifications, setNotifications] = useState([]);
   const [unread, setUnread] = useState([]);
 
-  const { workspace_id, token } = useParams();
+  const { workspace_id } = useParams();
   const { session } = useSelector((state) => state.auth);
 
   const userId = session?.user?.id;

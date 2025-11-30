@@ -10,9 +10,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Search, Users } from "lucide-react";
 import UserFallback from "@/components/ui/userFallback";
+import useHandleIndividual from "@/layout/sidebar/components/useHandleIndividual";
 
 const Members = ({ members }) => {
   // const MAX_RENDER = 3;
+  const handleFunction = useHandleIndividual();
+
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
   const renderMembers = () => {
@@ -162,6 +165,9 @@ const Members = ({ members }) => {
                         {user.user_profiles?.email}
                       </p>
                     </div>
+                    <button
+                      onClick={() => handleFunction({ ua: { id: user.user_id } })}
+                    >Message</button>
                   </div>
                 );
               })
