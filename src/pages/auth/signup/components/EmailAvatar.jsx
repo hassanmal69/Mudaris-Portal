@@ -28,6 +28,7 @@ const EmailAvatar = ({ onNext, onBack, invite }) => {
               <Field
                 name="email"
                 disabled
+                value={email}
                 className="w-full p-2 border rounded"
               />
               <MailIcon className="size-5 signup-email-icon" />

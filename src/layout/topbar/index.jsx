@@ -14,6 +14,7 @@ import {
 } from "@/redux/features/channelMembers/channelMembersSlice";
 import "./topbar.css";
 import { Users } from "lucide-react";
+import { supabase } from "@/services/supabaseClient";
 
 // Debounce utility
 function debounce(fn, delay) {

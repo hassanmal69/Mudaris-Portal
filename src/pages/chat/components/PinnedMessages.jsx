@@ -11,6 +11,7 @@ const PinnedMessages = ({ channelId }) => {
   const pinnedState = useSelector((state) => state.pinnedMessages);
   const { items, loading } = pinnedState || {};
   useEffect(() => {
+    if (!channelId) return
     dispatch(fetchPinnedMessages(channelId));
   }, [channelId, dispatch]);
   return (
