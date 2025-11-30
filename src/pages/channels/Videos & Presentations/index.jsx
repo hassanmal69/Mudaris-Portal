@@ -81,7 +81,7 @@ const VideosPresentations = () => {
         </div>
       }
       {chapters && chapters.length > 0 ? (
-        <>
+        <div className='flex'>
           {/* LEFT SIDEBAR */}
           <div className="mt-4 w-[35%] h-dvh overflow-y-scroll scroll-smooth">
             {chapters.map((chapter, idx) => {
@@ -162,7 +162,7 @@ const VideosPresentations = () => {
               />
             )}
           </Suspense>
-        </>
+        </div>
       ) : (
         <h1 className="text-center h-dvh text-5xl">There are no Videos</h1>
       )}

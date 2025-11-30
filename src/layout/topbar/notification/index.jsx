@@ -54,8 +54,8 @@ export function Notifications() {
         "workspaceId",
         "channelId",
         "userId",
-        workspaces (workspace_name)
-      `
+  workspaces:workspaceId(workspace_name)
+        `
       )
       .order("created_at", { ascending: false });
 
