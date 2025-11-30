@@ -6,7 +6,7 @@ export const fetchVideos = createAsyncThunk(
   "videos/fetch",
   async (chapter_id, { getState }) => {
     const cache = getState().videos.videosByChapter[chapter_id];
-    if (cache) return cache; 
+    if (cache) return cache;
     const { data, error } = await supabase
       .from("videos")
       .select("*")
@@ -22,13 +22,46 @@ export const fetchVideos = createAsyncThunk(
 export const createVideoDB = createAsyncThunk(
   "videos/create",
   async (payload) => {
+    const { name, description, video_link, chapter_id, presentation_file } =
+      payload;
+
+    let presentation_link = null;
+
+    // Upload PPT if provided
+    if (presentation_file) {
+      const fileExt = presentation_file.name.split(".").pop();
+      const fileName = `${crypto.randomUUID()}.${fileExt}`;
+      const filePath = `presentionPpt/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from("media")
+        .upload(filePath, presentation_file);
+
+      if (uploadError) throw uploadError;
+
+      // Get public URL
+      const { data: urlData } = supabase.storage
+        .from("media")
+        .getPublicUrl(filePath);
+
+      presentation_link = urlData.publicUrl;
+    }
+
+    // Insert video record
     const { data, error } = await supabase
       .from("videos")
-      .insert(payload)
+      .insert({
+        name,
+        description,
+        video_link,
+        chapter_id,
+        presentation_link,
+      })
       .select("*")
       .single();
 
     if (error) throw error;
+
     return data;
   }
 );
@@ -50,18 +83,12 @@ export const updateVideoDB = createAsyncThunk(
 );
 
 // DELETE video
-export const deleteVideoDB = createAsyncThunk(
-  "videos/delete",
-  async (id) => {
-    const { error } = await supabase
-      .from("videos")
-      .delete()
-      .eq("id", id);
+export const deleteVideoDB = createAsyncThunk("videos/delete", async (id) => {
+  const { error } = await supabase.from("videos").delete().eq("id", id);
 
-    if (error) throw error;
-    return id;
-  }
-);
+  if (error) throw error;
+  return id;
+});
 
 const videosSlice = createSlice({
   name: "videos",
@@ -82,8 +109,9 @@ const videosSlice = createSlice({
         state.loading = true;
       })
       .addCase(fetchVideos.fulfilled, (state, action) => {
-        const { chapter_id, data } =
-          action.payload?.chapter_id ? action.payload : { chapter_id: null, data: action.payload };
+        const { chapter_id, data } = action.payload?.chapter_id
+          ? action.payload
+          : { chapter_id: null, data: action.payload };
 
         if (chapter_id) {
           state.videosByChapter[chapter_id] = data;

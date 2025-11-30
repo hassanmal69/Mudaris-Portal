@@ -12,8 +12,8 @@ const VideoForm = ({ onClose, chapterId }) => {
   const [formData, setFormData] = useState({
     name: "",
     description: "",
-    video_link: "",
-    presentation_link: "",
+    video_id: "",
+    presentation_file: "",
   });
 
   const handleChange = (e) => {
@@ -27,8 +27,11 @@ const VideoForm = ({ onClose, chapterId }) => {
 
     dispatch(
       createVideoDB({
-        ...formData,
+        name: formData.name,
+        description: formData.description,
+        video_link: formData.video_id,
         chapter_id: chapterId,
+        presentation_file: formData.presentation_file,
       })
     );
 
@@ -68,15 +71,18 @@ const VideoForm = ({ onClose, chapterId }) => {
       </div>
 
       <div className="flex flex-col gap-1">
-        <label className="text-(--muted-foreground) text-[14px]">
-          Video Link
+        <label
+          htmlFor="video_id"
+          className="text-(--muted-foreground) text-[14px]"
+        >
+          Video id
         </label>
         <Input
           type="text"
-          name="video_link"
-          value={formData.video_link}
+          name="video_id"
+          value={formData.video_id}
           onChange={handleChange}
-          placeholder="https://..."
+          placeholder="1137954405"
           required
           className="w-full p-2 border rounded-md border-(--border)"
         />
@@ -87,10 +93,17 @@ const VideoForm = ({ onClose, chapterId }) => {
           Presentation Link
         </Label>
         <Input
-          type="text"
-          name="presentation_link"
-          value={formData.presentation_link}
-          onChange={handleChange}
+          name="presentation_ppt"
+          type="file"
+          accept=".ppt,.pptx"
+          // value={formData.presentation_file}
+          onChange={(e) =>
+            setFormData((prev) => ({
+              ...prev,
+              presentation_file: e.target.files[0],
+            }))
+          }
+          //onChange={handleChange}
           placeholder="https://..."
           className="w-full p-2 border rounded-md border-(--border)"
         />
@@ -109,3 +122,4 @@ const VideoForm = ({ onClose, chapterId }) => {
 };
 
 export default VideoForm;
+//1137954405

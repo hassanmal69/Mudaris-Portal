@@ -2,20 +2,26 @@ import React, { useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import VimeoPlayer from "@/services/vimeo/vimeoPlayer";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchMarkasComplete, markVideoComplete } from "@/redux/features/video&presentations/markcompleteSlice";
+import {
+  fetchMarkasComplete,
+  markVideoComplete,
+} from "@/redux/features/video&presentations/markcompleteSlice";
+import { Download } from "lucide-react";
 
 const VideoComponent = React.memo(
   ({ data, onNext }) => {
     const { video, chp, index, allVideos } = data || {};
     const { session } = useSelector((state) => state.auth);
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
     const nextVideo = useMemo(() => {
       if (!allVideos || index === undefined) return null;
       return allVideos[index + 1] || null;
     }, [allVideos, index]);
     const handleCompleteLogic = async () => {
-      dispatch(markVideoComplete({ userId: session.user.id, videoId: video.id }));
-    }
+      dispatch(
+        markVideoComplete({ userId: session.user.id, videoId: video.id })
+      );
+    };
     useEffect(() => {
       if (session?.user?.id) {
         dispatch(fetchMarkasComplete(session.user.id));
@@ -59,9 +65,9 @@ const VideoComponent = React.memo(
               href={video.presentation_link}
               target="_blank"
               rel="noreferrer"
-              className="text-(--primary) underline text-sm flex items-center gap-2"
+              className="text-(--primary-foreground)  border border-(--border) w-fit p-2 rounded text-sm flex items-center gap-2"
             >
-              📥 Download the Presentation
+              <Download className="w-4 h-4" /> Download the Presentation
             </a>
           )}
         </div>
