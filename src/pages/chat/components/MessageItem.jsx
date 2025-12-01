@@ -35,6 +35,8 @@ const MessageItem = ({
     __reducer_local,
     initialState
   );
+  console.log('msg',message.replyCount);
+  
   // const handleConfirmDelete = async () => {
   //   try {
   //     __dispatch_local({ type: "SHOW_DELETE_SUCCESS" });

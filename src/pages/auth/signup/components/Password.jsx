@@ -45,13 +45,6 @@ const Password = ({ onBack, token, invite, file }) => {
         return;
       }
 
-      dispatch(
-        addToast({
-          message: "Account created. Please log in.",
-          type: "success",
-        })
-      );
-      dispatch(sessionDetection());
       navigate(data.redirect);
     } catch (error) {
       throw new Error(error)

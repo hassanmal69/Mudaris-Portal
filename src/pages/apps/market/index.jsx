@@ -206,7 +206,7 @@ const FeaturedSlider = ({ posts = [], onOpen }) => {
       <div
         ref={ref}
         className="
-          w-full  scroll-smooth snap-x snap-mandatory
+          w-full overflow-x-auto scroll-smooth snap-x snap-mandatory
           -mx-2 px-2 flex gap-4 
         "
       >
@@ -355,7 +355,7 @@ const Market = () => {
           {posts !== null && posts.length > 0 && (
             <>
               {/* Featured slider: top 5 */}
-              <FeaturedSlider posts={posts.slice(0, 6)} onOpen={openPreview} />
+              <FeaturedSlider posts={posts.slice(0,6)} onOpen={openPreview} />
 
               {/* Masonry grid */}
               <MasonryGrid posts={posts} onOpen={openPreview} />

@@ -15,6 +15,8 @@ export default function useMessages() {
   const messages = useSelector((state) => state.messages.items);
   const session = useSelector((state) => state.auth);
   const currentUserId = session.user?.id;
+  console.log('session is', session.user);
+
   const imageUrl = session.user?.user_metadata?.avatar_url;
   const fullName = session.user?.user_metadata?.fullName;
   const query = useSelector((state) => state.search.query);
@@ -35,8 +37,8 @@ export default function useMessages() {
     () =>
       query
         ? messages.filter((msg) =>
-            msg.content?.toLowerCase().includes(query.toLowerCase())
-          )
+          msg.content?.toLowerCase().includes(query.toLowerCase())
+        )
         : messages,
     [messages, query]
   );
@@ -200,12 +202,12 @@ export default function useMessages() {
         updatedMessages = messagesRef.current.map((m) =>
           m.id === messageId
             ? {
-                ...m,
-                reactions: m.reactions.filter(
-                  (r) =>
-                    !(r.user_id === currentUserId && r.reaction_type === emoji)
-                ),
-              }
+              ...m,
+              reactions: m.reactions.filter(
+                (r) =>
+                  !(r.user_id === currentUserId && r.reaction_type === emoji)
+              ),
+            }
             : m
         );
       } else {
@@ -219,16 +221,16 @@ export default function useMessages() {
         updatedMessages = messagesRef.current.map((m) =>
           m.id === messageId
             ? {
-                ...m,
-                reactions: [
-                  ...m.reactions,
-                  {
-                    user_id: currentUserId,
-                    reaction_type: emoji,
-                    id: "optimistic",
-                  },
-                ],
-              }
+              ...m,
+              reactions: [
+                ...m.reactions,
+                {
+                  user_id: currentUserId,
+                  reaction_type: emoji,
+                  id: "optimistic",
+                },
+              ],
+            }
             : m
         );
       }
@@ -267,14 +269,16 @@ export default function useMessages() {
           }
         }
       }
+      if (!newMsg.reply_to) {
+        dispatch(
+          addMessage({
+            ...newMsg,
+            profiles: profile,
+            reactions: [],
+          })
+        );
+      }
 
-      dispatch(
-        addMessage({
-          ...newMsg,
-          profiles: profile,
-          reactions: [],
-        })
-      );
 
       // auto-scroll if user is near bottom
       const container = containerRef.current;
