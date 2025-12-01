@@ -45,17 +45,14 @@ const Password = ({ onBack, token, invite, file }) => {
         return;
       }
 
-<<<<<<< HEAD
-=======
-const { error:loginEror } = await supabase.auth.signInWithPassword({
-  email: invite.email,
-  password: values.password,
-});
-if (loginEror) {
-  dispatch(addToast("Login failed. Please try again."));
-  return;
-}
->>>>>>> 8207eea1cab50a6eae151f98c68b49580bfa484b
+      const { error: loginEror } = await supabase.auth.signInWithPassword({
+        email: invite.email,
+        password: values.password,
+      });
+      if (loginEror) {
+        dispatch(addToast("Login failed. Please try again."));
+        return;
+      }
       navigate(data.redirect);
     } catch (error) {
       throw new Error(error)

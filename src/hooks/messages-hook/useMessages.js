@@ -15,12 +15,7 @@ export default function useMessages() {
   const messages = useSelector((state) => state.messages.items);
   const session = useSelector((state) => state.auth);
   const currentUserId = session.user?.id;
-<<<<<<< HEAD
   console.log('session is', session.user);
-
-=======
-    console.log('session is',session.user);
->>>>>>> 8207eea1cab50a6eae151f98c68b49580bfa484b
   const imageUrl = session.user?.user_metadata?.avatar_url;
   const fullName = session.user?.user_metadata?.fullName;
   const query = useSelector((state) => state.search.query);
