@@ -328,7 +328,7 @@ const Market = () => {
       <section className="flex">
         <div className="max-w-6xl mx-auto px-4">
           {/* Header */}
-          <header className="flex items-center justify-between mb-6">
+          <header className="flex items-center justify-between mb-6 mt-3">
             <h1 className="text-2xl font-semibold text-(--foreground)">
               Market
             </h1>
