@@ -1,5 +1,5 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import {  useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { passwordSchema } from "@/validation/authSchema.js";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/services/supabaseClient";
@@ -31,7 +31,7 @@ const Password = ({ onBack, token, invite, file }) => {
         }
       );
       if (!error) navigate(data.redirect);
-
+      console.log('ata aftr',data)
     } catch (error) {
       throw new Error(error)
     }
