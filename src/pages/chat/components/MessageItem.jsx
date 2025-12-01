@@ -35,39 +35,7 @@ const MessageItem = ({
     __reducer_local,
     initialState
   );
-  console.log('msg',message.replyCount);
-  
-  // const handleConfirmDelete = async () => {
-  //   try {
-  //     __dispatch_local({ type: "SHOW_DELETE_SUCCESS" });
 
-  //     const result = await onDelete?.(__state_local.selectedMessageId);
-
-  //     if (!result) {
-  //       throw new Error("Delete failed");
-  //     }
-
-  //     dispatch(
-  //       addToast({
-  //         message: "Message deleted successfully",
-  //         type: "success",
-  //         duraion: 3000,
-  //       })
-  //     );
-
-  //     setTimeout(() => {
-  //       __dispatch_local({ type: "HIDE_DELETE_SUCCESS" });
-  //     }, 1200);
-  //   } catch (err) {
-  //     dispatch(
-  //       addToast({
-  //         message: "You cannot delete this message",
-  //         type: "destructive",
-  //         duraion: 3000,
-  //       })
-  //     );
-  //   }
-  // };
   const handleConfirmDelete = () => {
     __dispatch_local({ type: "SHOW_DELETE_SUCCESS" });
     dispatch(
