@@ -1,9 +1,12 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { passwordSchema } from "@/validation/authSchema.js";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/services/supabaseClient";
+import { addToast } from "@/redux/features/toast/toastSlice";
+import { sessionDetection } from "@/redux/features/auth/authSlice";
 const Password = ({ onBack, token, invite, file }) => {
+  const dispatch = useDispatch()
   const { fullName } = useSelector((state) => state.signupForm);
   const navigate = useNavigate();
   const toBase64 = (file) =>
@@ -30,8 +33,26 @@ const Password = ({ onBack, token, invite, file }) => {
           },
         }
       );
-      if (!error) navigate(data.redirect);
-      console.log('ata aftr',data)
+      // now session exists
+
+      if (error) {
+        dispatch(
+          addToast({
+            message: "Signup failed. Try again.",
+            type: "error",
+          })
+        );
+        return;
+      }
+
+      dispatch(
+        addToast({
+          message: "Account created. Please log in.",
+          type: "success",
+        })
+      );
+      dispatch(sessionDetection());
+      navigate(data.redirect);
     } catch (error) {
       throw new Error(error)
     }
