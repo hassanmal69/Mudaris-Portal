@@ -35,70 +35,77 @@ const SideBarApps = ({ workspace_id }) => {
   }, []);
 
   return (
-    <SidebarGroup>
-      <SidebarGroupLabel className="text-(--sidebar-foreground) font-normal text-sm px-2 py-1 mb-1">
-        Apps
-      </SidebarGroupLabel>
+    <SidebarGroup className='flex flex-col gap-2'>
       <SidebarMenu>
-        <SidebarMenuItem>
-          <div
-            className={`flex items-center gap-2 px-2 py-1 cursor-pointer 
+        <SidebarGroupLabel className="text-(--sidebar-foreground) font-normal text-sm py-1">
+          Apps
+        </SidebarGroupLabel>
+
+        <div className="flex flex-col gap-0">
+          <SidebarMenuItem>
+            <div
+              className={`flex items-center gap-2 px-2 py-1 cursor-pointer 
                     hover:bg-(--sidebar-accent) font-medium text-sm
                   `}
-            onClick={() => navigate(`/workspace/${workspace_id}/market`)}
-          >
-            <span className="bg-(--standard)/10 h-7 w-7 rounded-md flex items-center justify-center">
-              <Telescope className="w-4 h-4 text-(--sidebar-foreground)" />
-            </span>
-            <span className="text-[15px]">Market Insight</span>
-          </div>
-        </SidebarMenuItem>
-        <SidebarMenuItem>
-          <div
-            className={`flex items-center gap-2 px-2 py-1 cursor-pointer 
+              onClick={() => navigate(`/workspace/${workspace_id}/market`)}
+            >
+              <span className="bg-(--standard)/10 h-7 w-5 rounded-md flex items-center justify-center">
+                <Telescope className="w-4 h-4 text-(--sidebar-foreground)" />
+              </span>
+              <span className="text-[15px]">Market Insight</span>
+            </div>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <div
+              className={`flex items-center gap-2 px-2 py-1 cursor-pointer 
                     hover:bg-(--sidebar-accent) font-medium 
                 
                   `}
-            onClick={() => navigate(`/workspace/${workspace_id}/calendar`)}
-          >
-            <span className="bg-(--standard)/10 h-7 w-7 rounded-md flex items-center justify-center">
-              <Calendar className="w-4 h-4 text-(--sidebar-foreground)" />
-            </span>
-            <span
-              className="
-    text-[15px]"
+              onClick={() => navigate(`/workspace/${workspace_id}/calendar`)}
             >
-              Economic Calendar
-            </span>
-          </div>
-        </SidebarMenuItem>
-        <SidebarGroupLabel className="text-(--sidebar-foreground) font-normal text-sm">
-          Direct Messages
-        </SidebarGroupLabel>
-        {users.map((m, i) => (
-          <SidebarMenuItem
-            onClick={() => handleFunction(m)}
-            className="flex "
-            key={i}
-          >
-            <Avatar className="h-7 w-7">
-              <AvatarImage src={m.avatar_url} alt="" />
-            </Avatar>
+              <span className="bg-(--standard)/10 h-7 w-5 rounded-md flex items-center justify-center">
+                <Calendar className="w-4 h-4 text-(--sidebar-foreground)" />
+              </span>
+              <span
+                className="
+    text-[15px]"
+              >
+                Economic Calendar
+              </span>
+            </div>
+          </SidebarMenuItem>
+        </div>
+      </SidebarMenu>
+      <SidebarMenu>
+        <div className="flex flex-col gap-2">
+          <SidebarGroupLabel className="text-(--sidebar-foreground) font-normal text-sm">
+            Direct Messages
+          </SidebarGroupLabel>
+          {users.map((m, i) => (
+            <SidebarMenuItem
+              onClick={() => handleFunction(m)}
+              className="flex px-2 "
+              key={i}
+            >
+              <Avatar className="h-7 w-7">
+                <AvatarImage src={m.avatar_url} alt="" />
+              </Avatar>
 
-            <p
-              className={`flex items-center gap-2 px-2 py-1 cursor-pointer 
+              <p
+                className={`flex items-center gap-2 px-2 py-1 cursor-pointer 
                     hover:bg-(--sidebar-accent) font-medium text-[15px]
                   `}
-            >
-              {m.full_name}
-            </p>
+              >
+                {m.full_name}
+              </p>
+            </SidebarMenuItem>
+          ))}
+          <SidebarMenuItem className="flex ">
+            <Button variant={"success"} onClick={() => setIsShow((prev) => !prev)}>
+              See Personal Messages
+            </Button>
           </SidebarMenuItem>
-        ))}
-        <SidebarMenuItem className="flex ">
-          <Button variant={"ghost"} onClick={() => setIsShow((prev) => !prev)}>
-            See Personal Messages
-          </Button>
-        </SidebarMenuItem>
+        </div>
       </SidebarMenu>
       {isShow && <SideBarDialogue />}
     </SidebarGroup>

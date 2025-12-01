@@ -106,24 +106,26 @@ const Announcements = () => {
                 <div className="flex gap-2 items-center">
                   <h3 className="text-lg text-(--foreground)">{a.title}</h3>
                   <span
-                    className={`px-2 text-[12px] py-1 font-medium rounded-md capitalize text-(--primary-foreground) ${
-                      a.tag === "important"
+                    className={`px-2 text-[12px] py-1 font-medium rounded-md capitalize text-(--primary-foreground) ${a.tag === "important"
                         ? "bg-(--destructive) hover:bg-(--destructive)/90 focus-visible:ring-destructive/20  dark:focus-visible:ring-destructive/40 dark:bg-(--destructive)/60"
                         : a.tag === "update"
                           ? "bg-(--primary)"
                           : a.tag === "event"
                             ? "bg-(--success)"
                             : "bg-(--muted)"
-                    }`}
+                      }`}
                   >
                     {a.tag}
                   </span>
                 </div>
                 <p className="text-sm text-(--muted-foreground)">
-                  {new Date(a.created_at).toLocaleDateString(undefined, {
+                  {new Date(a.created_at).toLocaleString(undefined, {
                     day: "numeric",
                     month: "long",
                     year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: true, 
                   })}
                 </p>
               </div>

@@ -10,7 +10,7 @@ import {
   selectActiveChannel,
   setActiveChannel,
 } from "@/redux/features/channels/channelsSlice";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "@/services/supabaseClient";
 import {
   Megaphone,
@@ -32,6 +32,18 @@ const SideBarChannels = ({
   const [visibleChannel, setVisibleChannel] = useState([]);
   const navigate = useNavigate();
   const isAdmin = useIsAdmin();
+  const [specialRoute, setSpecialRoute] = useState("");
+  const location = useLocation(); const currentURL = location.pathname;
+  useEffect(() => {
+    const map = [
+      { key: "announcements", match: "announcement" },
+      { key: "lecturesLink", match: "lecturesLink" },
+      { key: "videospresentations", match: "videospresentations" },
+    ];
+
+    const found = map.find(r => currentURL.includes(r.match));
+    setSpecialRoute(found?.key || "");
+  }, [currentURL]);
 
   const activeChannel = useSelector(selectActiveChannel);
   const channelFind = async () => {
@@ -102,11 +114,10 @@ const SideBarChannels = ({
               <div
                 onClick={() => handleChannelClick(channel)}
                 className={`flex items-center gap-2 rounded px-2 py-1  cursor-pointer 
-                      ${
-                        isActive
-                          ? "bg-(--sidebar-accent) text-white"
-                          : "hover:bg-(--sidebar-accent)"
-                      }`}
+                      ${isActive
+                    ? "bg-(--sidebar-accent) text-white"
+                    : "hover:bg-(--sidebar-accent)"
+                  }`}
               >
                 {channel.visibility === "public" ? (
                   <Users className="w-4 h-4" />
@@ -126,11 +137,10 @@ const SideBarChannels = ({
           <Link to={`/workspace/${workspace_id}/announcements`}>
             <div
               className={`flex items-center gap-2 px-2 py-1 cursor-pointer 
-                      ${
-                        activeChannel === "announcements"
-                          ? "bg-(--sidebar-accent) text-white"
-                          : "hover:bg-(--sidebar-accent)"
-                      }`}
+                      ${specialRoute === "announcements"
+                  ? "bg-(--sidebar-accent) text-white"
+                  : "hover:bg-(--sidebar-accent)"
+                }`}
             >
               <Megaphone className="w-4 h-4" />
               <span className="font-normal text-[15px]">Announcements</span>
@@ -139,11 +149,10 @@ const SideBarChannels = ({
           <Link to={`/workspace/${workspace_id}/lecturesLink`}>
             <div
               className={`flex items-center gap-2 px-2 py-1 cursor-pointer 
-                      ${
-                        activeChannel === "lecturesLink"
-                          ? "bg-(--sidebar-accent) text-white"
-                          : "hover:bg-(--sidebar-accent)"
-                      }`}
+                      ${specialRoute === "lecturesLink"
+                  ? "bg-(--sidebar-accent) text-white"
+                  : "hover:bg-(--sidebar-accent)"
+                }`}
             >
               <Chain className="w-4 h-4" />
 
@@ -153,11 +162,10 @@ const SideBarChannels = ({
           <Link to={`/workspace/${workspace_id}/videospresentations`}>
             <div
               className={`flex items-center gap-2 px-2 py-1 cursor-pointer 
-                      ${
-                        activeChannel === "lecturesLink"
-                          ? "bg-(--sidebar-accent) text-white"
-                          : "hover:bg-(--sidebar-accent)"
-                      }`}
+                      ${specialRoute === "videospresentations"
+                  ? "bg-(--sidebar-accent) text-white"
+                  : "hover:bg-(--sidebar-accent)"
+                }`}
             >
               <Video className="w-4 h-4" />
 

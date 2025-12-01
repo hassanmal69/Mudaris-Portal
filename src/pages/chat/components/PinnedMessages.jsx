@@ -17,7 +17,7 @@ const PinnedMessages = ({ channelId }) => {
   return (
     <>
       {items && items.length > 0 && (
-        <section className="bg-(--accent)/50 p-4 rounded-lg space-y max-h-[300px] overflow-y-auto border-(--accent) mb-4.5">
+        <section className="bg-[#142744] z-50 p-4 opacity-100 sticky top-0 rounded-lg space-y max-h-[300px] overflow-y-auto border-(--accent) mb-4.5">
           <h4 className=" text-xs text-(--accent-foreground)">
             Pinned Messages
           </h4>
