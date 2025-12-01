@@ -8,14 +8,22 @@
 .messages-container::-webkit-scrollbar {
   width: 8px;
 }
+.responsive_message_content ul {
+  list-style: disc !important;
+  margin-left: 10px;
+}
+.responsive_message_content ol {
+  list-style: decimal !important;
+  margin-left: 10px;
+}
 
 .messages-container::-webkit-scrollbar-thumb {
-  background: #556cd6;
+  background: var(--primary);
   border-radius: 4px;
 }
 
 .messages-container::-webkit-scrollbar-thumb:hover {
-  background: #293c91;
+  background: var(--primary);
 }
 .message-body {
   display: flex;
@@ -24,7 +32,7 @@
 }
 
 .message-body a {
-  color: #556cd6;
+  color: var(--primary);
   text-decoration: underline;
 }
 @media only screen and (max-width: 600px) {

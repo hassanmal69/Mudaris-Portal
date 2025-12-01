@@ -3,12 +3,8 @@ import {
   BoldIcon,
   ItalicIcon,
   StrikethroughIcon,
-  LinkIcon,
-  CodeBracketSquareIcon,
   ListBulletIcon,
   NumberedListIcon,
-  CodeBracketIcon,
-  ChatBubbleLeftEllipsisIcon,
 } from "@heroicons/react/24/outline";
 
 export const toolbarButtons = [
@@ -33,25 +29,7 @@ export const toolbarButtons = [
     isActive: (editor) => editor.isActive("strike"),
     canRun: (editor) => editor.can().chain().toggleStrike().run(),
   },
-  // {
-  //   name: "link",
-  //   icon: LinkIcon,
-  //   action: (editor) => {
-  //     const url = prompt("Enter URL");
-  //     if (url) {
-  //       editor.chain().focus().setLink({ href: url }).run();
-  //     }
-  //   },
-  //   isActive: (editor) => editor.isActive("link"),
-  //   canRun: (editor) => editor.can().chain().setLink({ href: "" }).run(),
-  // },
-  // {
-  //   name: "inlineCode",
-  //   icon: CodeBracketSquareIcon,
-  //   action: (editor) => editor.chain().focus().toggleCode().run(),
-  //   isActive: (editor) => editor.isActive("code"),
-  //   canRun: (editor) => editor.can().chain().toggleCode().run(),
-  // },
+
   {
     name: "bulletList",
     icon: ListBulletIcon,
@@ -64,16 +42,4 @@ export const toolbarButtons = [
     action: (editor) => editor.chain().focus().toggleOrderedList().run(),
     isActive: (editor) => editor.isActive("orderedList"),
   },
-  // {
-  //   name: "codeBlock",
-  //   icon: CodeBracketIcon,
-  //   action: (editor) => editor.chain().focus().toggleCodeBlock().run(),
-  //   isActive: (editor) => editor.isActive("codeBlock"),
-  // },
-  // {
-  //   name: "blockquote",
-  //   icon: ChatBubbleLeftEllipsisIcon,
-  //   action: (editor) => editor.chain().focus().toggleBlockquote().run(),
-  //   isActive: (editor) => editor.isActive("blockquote"),
-  // },
 ];
