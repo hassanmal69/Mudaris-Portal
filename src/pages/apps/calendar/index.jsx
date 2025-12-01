@@ -19,11 +19,12 @@ const Calendar = () => {
       {/* Calendar Embed */}
       <div className="w-full p-4 flex flex-col items-center justify-center">
         <iframe
-          src="https://sslecal2.investing.com?ecoDayBackground=%230a1529&defaultFont=%230a1529&innerBorderColor=%230a1529&borderColor=%233d5a80&columns=exc_flags,exc_currency,exc_importance,exc_actual,exc_forecast,exc_previous&features=datepicker,timezone&countries=25,32,6,37,72,22,17,39,14,10,35,43,56,36,110,11,26,12,4,5&calType=week&timeZone=8&lang=1"
+          src="https://sslecal2.investing.com?ecoDayBackground=%230f1d3d&defaultFont=%23000000&ecoDayFontColor=%23000000&columns=exc_flags,exc_currency,exc_importance,exc_actual,exc_forecast,exc_previous&features=datepicker,timezone,timeselector,filters&countries=25,6,37,22,17,35,4,5&calType=week&timeZone=8&lang=1"
           className="widget-styles"
-          frameBorder="0"
-          loading="lazy"
-          allowTransparency="true"
+          frameborder="0"
+          allowtransparency="true"
+          marginwidth="0"
+          marginheight="0"
         ></iframe>
       </div>
     </div>

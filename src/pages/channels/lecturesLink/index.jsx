@@ -143,7 +143,7 @@ const LecturesLink = () => {
                     href={lecture.lecture_link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-(--primary-foreground) hover:underline mt-2  flex items-center gap-1"
+                    className="text-(--primary-foreground) border border-(--accent) w-fit p-2 rounded hover:underline mt-2  flex items-center gap-1"
                   >
                     <MoizChain className="w-4 h-4" /> Join Lecture
                     <ExternalLink className="w-4 h-4" />
