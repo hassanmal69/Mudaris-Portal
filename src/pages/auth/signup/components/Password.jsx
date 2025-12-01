@@ -45,13 +45,14 @@ const Password = ({ onBack, token, invite, file }) => {
         return;
       }
 
-      dispatch(
-        addToast({
-          message: "Account created. Please log in.",
-          type: "success",
-        })
-      );
-      dispatch(sessionDetection());
+const { error } = await supabase.auth.signInWithPassword({
+  email: invite.email,
+  password: values.password,
+});
+if (error) {
+  dispatch(addToast("Login failed. Please try again."));
+  return;
+}
       navigate(data.redirect);
     } catch (error) {
       throw new Error(error)
