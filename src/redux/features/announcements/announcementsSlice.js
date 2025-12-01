@@ -80,7 +80,10 @@ const announcementsSlice = createSlice({
         state.loading = true;
       })
       .addCase(fetchAnnouncements.fulfilled, (state, action) => {
-        state.list = [...state.list, ...action.payload];
+        const existingIds = new Set(state.list.map((l) => l.id));
+        const filtered = action.payload.filter((l) => !existingIds.has(l.id));
+
+        state.list.push(...filtered);
         state.loading = false;
       })
       .addCase(fetchAnnouncements.rejected, (state) => {

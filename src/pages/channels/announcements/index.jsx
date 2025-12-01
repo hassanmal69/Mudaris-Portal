@@ -17,12 +17,13 @@ import { addToast } from "@/redux/features/toast/toastSlice";
 
 const Announcements = () => {
   const dispatch = useDispatch();
-  const { workspace_id } = useParams();
-  const isAdmin = useIsAdmin();
 
   const { list: announcements, loading } = useSelector(
     (state) => state.announcements
   );
+  const { workspace_id } = useParams();
+  const isAdmin = useIsAdmin();
+
   const { state, dispatchLocal, runInitialLoad, loadMore, handleDialogChange } =
     usePaginatiedList(
       (payload) => fetchAnnouncements({ workspace_id, ...payload }),
@@ -49,10 +50,10 @@ const Announcements = () => {
   };
 
   const { sentinelRef } = useInfiniteScroll({
-    loading: loading || state.loading || false,
+    loading,
     hasMore: state.hasMore,
     onLoadMore: () => loadMore(dispatch),
-    deps: [state.page, announcements.length],
+    deps: [state.page],
   });
 
   // explicit load more

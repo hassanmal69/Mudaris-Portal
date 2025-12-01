@@ -30,6 +30,20 @@ export default function EditorWrapper({ width, styles, toolbarStyles }) {
             class: "mention",
           },
           suggestion,
+        }).extend({
+          addKeyboardShortcuts() {
+            return {
+              Enter: () => {
+                // If Shift key is held, insert a newline
+                if (this.editor.view.state.shiftKey) {
+                  return false; // default behavior -> new line
+                }
+                // Otherwise, submit
+                handleSubmit();
+                return true; // prevent default new line
+              },
+            };
+          },
         }),
       ],
       workspaceId: workspace_id,
