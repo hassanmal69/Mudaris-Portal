@@ -11,6 +11,7 @@ import "./editor.css";
 import { removeValue } from "@/redux/features/ui/fileSlice";
 import { X } from "lucide-react";
 import { Button } from "../ui/button";
+import useEditorActions from "./common";
 export default function EditorWrapper({ width, styles, toolbarStyles }) {
   const dispatch = useDispatch();
   const { workspace_id, groupId } = useParams();
@@ -50,6 +51,7 @@ export default function EditorWrapper({ width, styles, toolbarStyles }) {
     },
     [channelName]
   );
+  const handleSubmit = useEditorActions(editor);
 
   return (
     <div
@@ -118,9 +120,4 @@ export default function EditorWrapper({ width, styles, toolbarStyles }) {
       </div>
     </div>
   );
-}
-{
-  /* {f.fileType === "video" && (
-              <video src={f.fileLink} width="200" controls />
-            )} */
 }

@@ -89,11 +89,11 @@ const WorkspaceCard = ({ workspace, index }) => {
               {membersLoading ? (
                 <p className="text-(--accent-foreground) text-sm">Loading...</p>
               ) : (
-                members.slice(0, 4).map((m, idx) =>
+                members.slice(0, 3).map((m, idx) =>
                   m.user_profiles?.avatar_url ? (
                     <Avatar
                       key={m.user_id}
-                      className="w-7 h-7 border-2 border-(--border) rounded-none"
+                      className="w-7 h-7 border-2 border-(--border) rounded-full"
                     >
                       <AvatarImage
                         src={m.user_profiles?.avatar_url}
