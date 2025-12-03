@@ -243,7 +243,7 @@ export default function useMessages() {
     const handleInsert = async (payload) => {
       const newMsg = payload.new;
       let profile = null;
-
+      console.log(payload.new)
       if (newMsg.sender_id === currentUserId) {
         profile = {
           full_name: fullName,

@@ -3,6 +3,19 @@
   border-radius: 12px;
   overflow: hidden;
 }
+.video-wrapper iframe {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* When wrapper goes fullscreen */
+.video-wrapper:fullscreen {
+  width: 100vw !important;
+  height: 100vh !important;
+  position: fixed !important;
+  top: 50%;
+  left: 0;
+}
 
 .video-container iframe {
   width: 100%;

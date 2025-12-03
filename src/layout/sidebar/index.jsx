@@ -19,7 +19,6 @@ const Sidebar = () => {
   const handleLogout = () => {
     dispatch(logOut());
   };
-
   return (
     <>
       <AddChannelDialog
@@ -49,4 +48,4 @@ const Sidebar = () => {
   );
 };
 
-export default Sidebar;
+export default React.memo(Sidebar);
