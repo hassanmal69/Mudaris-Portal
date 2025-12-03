@@ -12,11 +12,10 @@ const MessageList = ({
   onDelete,
   forwardMsg,
 }) => {
-  const { groupId } = useParams();
-
+  const { groupId,token } = useParams();
   return (
     <>
-      <PinnedMessages channelId={groupId} msg={messages} />
+      <PinnedMessages channelId={groupId} token={token} msg={messages} />
       {messages.map((msg) => {
         const rtl = isRTL(msg?.content);
         return (

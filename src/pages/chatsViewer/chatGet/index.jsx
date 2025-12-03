@@ -33,7 +33,6 @@ const ChatGet = () => {
         .eq("token", token)
         .order("created_at", { ascending: true })
         .range(start, end);
-      console.log("uaa data", data);
       if (error) {
         console.error("Supabase error:", error);
         setLoading(false);

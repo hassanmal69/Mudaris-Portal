@@ -10,15 +10,17 @@ import { supabase } from "@/services/supabaseClient";
 import { useSelector } from "react-redux";
 import { Button } from "@/components/ui/button";
 import useHandleIndividual from "./useHandleIndividual";
+import { useNavigate } from "react-router-dom";
+import { useIsAdmin } from "@/constants/constants";
 
 const SideBarDialogue = () => {
   const [open, setOpen] = useState(true);
   const [data, setData] = useState([]);
   const handleFunction = useHandleIndividual();
-
+  const navigate = useNavigate()
   const { session } = useSelector((state) => state.auth);
   const userId = session?.user?.id;
-
+  const isAdmin = useIsAdmin()
   const fetchChats = async () => {
     const { data: chats, error } = await supabase
       .from("directMessagesChannel")
@@ -89,6 +91,11 @@ const SideBarDialogue = () => {
             );
           })}
         </div>
+        {
+          isAdmin && (
+            <Button onClick={() => navigate('/seePersonalChats')}>handle</Button>
+          )
+        }
       </DialogContent>
     </Dialog>
   );

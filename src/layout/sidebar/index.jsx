@@ -9,7 +9,7 @@ import SideBarHeader from "./components/sideBarHeader";
 import SideBarChannels from "./components/sideBarChannels";
 import SideBarApps from "./components/sideBarApps";
 import SideBarFooter from "./components/sideBarFooter";
-
+import './sidebar.css'
 const Sidebar = () => {
   const dispatch = useDispatch();
   const { session } = useSelector((state) => state.auth);
@@ -27,7 +27,7 @@ const Sidebar = () => {
         usedIn={"createChannel"}
       />
       <InviteDialog open={inviteOpen} onOpenChange={setInviteOpen} />
-      <SidebarContent className="h-full bg-(--sidebar) text-(--foreground) border-2 border-(--sidebar-border) px-2 py-4 flex flex-col gap-4">
+      <SidebarContent className="sideBar h-full bg-(--sidebar) text-(--foreground) border-2 border-(--sidebar-border) px-2 py-4 flex flex-col gap-4">
         <SideBarHeader session={session} />
         <div className="flex flex-col gap-2 border-y-2 w-full border-(--sidebar-border)">
           <SideBarChannels

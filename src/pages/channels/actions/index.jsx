@@ -31,6 +31,7 @@ const Actions = ({ onEdit, onDelete, onAdd }) => {
           <Pencil className="h-4 w-4 mr-2" />
           Edit
         </DropdownMenuItem>
+ 
         <DropdownMenuItem
           className="text-(--secondary-foreground)"
           onClick={onDelete}

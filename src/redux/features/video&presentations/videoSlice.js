@@ -131,7 +131,7 @@ const videosSlice = createSlice({
           state.videosByChapter[cid] = [];
         }
 
-        state.videosByChapter[cid].unshift(video);
+        state.videosByChapter[cid].push(video);
       })
 
       // UPDATE

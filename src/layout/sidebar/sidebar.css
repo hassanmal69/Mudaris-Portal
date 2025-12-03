@@ -1,0 +1,17 @@
+
+.sideBar {
+  @apply overflow-y-scroll scroll-smooth;
+}
+
+.sideBar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.sideBar::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 4px;
+}
+
+.sideBar::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}

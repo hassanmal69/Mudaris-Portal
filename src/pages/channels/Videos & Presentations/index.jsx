@@ -136,7 +136,7 @@ const VideosPresentations = () => {
                           key={video.id}
                           className="text-sm text-(--muted-foreground)
                               hover:bg-(--sidebar-accent) p-4 px-6
-                              flex gap-2 cursor-pointer"
+                              flex gap-2 cursor-pointer justify-between"
                           onClick={() =>
                             setSelectedVideo({
                               video,
@@ -146,15 +146,20 @@ const VideosPresentations = () => {
                             })
                           }
                         >
-                          <PlayCircle className="h-5 w-5" />
-                          <strong className="text-base">
-                            {i + 1}. {video.name}
-                          </strong>
-                          <Actions
-                            onEdit={() => onEdit(chapter)}
-                            onAdd={() => handleAddVideo(chapter.id)}
-                            onDelete={() => onDelete(chapter.id)}
-                          />
+                          <div className="flex gap-2 items-center">
+                            <PlayCircle className="h-5 w-5" />
+                            <strong className="text-base">
+                              {i + 1}. {video.name}
+                            </strong>
+                          </div>
+                          {isAdmin && (
+                            <Actions
+                              onEdit={() => onEdit(chapter)}
+                              onAdd={() => handleAddVideo(chapter.id)}
+                              onDelete={() => onDelete(chapter.id)}
+                            />
+                          )
+                          }
                         </li>
                       ))}
 

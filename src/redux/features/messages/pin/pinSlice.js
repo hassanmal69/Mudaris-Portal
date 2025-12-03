@@ -1,15 +1,14 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { supabase } from "@/services/supabaseClient";
 
-// ✅ Fetch all pinned messages for a channel
+// ✅ Fetch pinned messages
 export const fetchPinnedMessages = createAsyncThunk(
   "pinnedMessages/fetchPinnedMessages",
-  async (channelId, { rejectWithValue }) => {
+  async ({ channelId, token }, { rejectWithValue }) => {
     try {
-      const { data, error } = await supabase
+      let query = supabase
         .from("pinned_messages")
-        .select(
-          `
+        .select(`
           id,
           pinned_at,
           message_id,
@@ -17,20 +16,26 @@ export const fetchPinnedMessages = createAsyncThunk(
           messages (
             id,
             content,
-            created_at
+            created_at,
+            sender_id
           ),
           profiles (
             id,
             full_name,
             avatar_url
           )
-        `
-        )
-        .eq("channel_id", channelId)
+        `)
         .order("pinned_at", { ascending: false });
 
+      if (channelId) query = query.eq("channel_id", channelId);
+      else if (token) query = query.eq("token", token);
+      else return rejectWithValue("Either channelId or token must be provided");
+
+      const { data, error } = await query;
+
       if (error) throw error;
-      const simplifiedData = data.map((item) => ({
+
+      return data.map((item) => ({
         full_name: item.profiles?.full_name || "",
         avatar_url: item.profiles?.avatar_url || "",
         pinned_at: item.pinned_at,
@@ -38,56 +43,47 @@ export const fetchPinnedMessages = createAsyncThunk(
         content: item.messages?.content || "",
         userId: item.profiles?.sender_id,
       }));
-
-      return simplifiedData;
     } catch (error) {
       return rejectWithValue(error.message);
     }
   }
 );
 
-// ✅ Toggle pin/unpin message
+// ✅ Toggle pin/unpin (supports both channelId and token)
 export const togglePinMessage = createAsyncThunk(
   "pinnedMessages/togglePinMessage",
-  async ({ channelId, messageId, userId }, { rejectWithValue }) => {
+  async ({ channelId, messageId, userId, token }, { rejectWithValue }) => {
     try {
-      // 1️⃣ Check if message is already pinned
-      const { data: existingRows, error: existingError } = await supabase
-        .from("pinned_messages")
-        .select("id")
-        .eq("channel_id", channelId)
-        .eq("message_id", messageId);
+      if (!channelId && !token)
+        return rejectWithValue("Either channelId or token must be provided");
 
-      // ignore "no rows found" (code PGRST116)
-      if (existingError && existingError.code !== "PGRST116") {
-        throw existingError;
-      }
-      const existing = existingRows?.[0]; // ✅ fix here
+      // Build base query conditionally
+      const baseQuery = supabase.from("pinned_messages").select("id");
+      if (channelId) baseQuery.eq("channel_id", channelId);
+      if (token) baseQuery.eq("token", token);
+      baseQuery.eq("message_id", messageId);
 
-      // 2️⃣ If already pinned → unpin
+      const { data: existingRows, error: existingError } = await baseQuery;
+      if (existingError && existingError.code !== "PGRST116") throw existingError;
+
+      const existing = existingRows?.[0];
+
+      // 1️⃣ Unpin if already pinned
       if (existing) {
-        const { error: deleteError } = await supabase
-          .from("pinned_messages")
-          .delete()
-          .eq("id", existing.id);
-
-        if (deleteError) throw deleteError;
-
+        const deleteQuery = supabase.from("pinned_messages").delete().eq("id", existing.id);
+        await deleteQuery;
         return { messageId, unpinned: true };
       }
 
-      // 3️⃣ If not pinned → pin it
+      // 2️⃣ Pin if not pinned
+      const insertData = { message_id: messageId, pinned_by: userId };
+      if (channelId) insertData.channel_id = channelId;
+      if (token) insertData.token = token;
+
       const { data, error } = await supabase
         .from("pinned_messages")
-        .insert([
-          {
-            channel_id: channelId,
-            message_id: messageId,
-            pinned_by: userId,
-          },
-        ])
-        .select(
-          `
+        .insert([insertData])
+        .select(`
           id,
           pinned_at,
           message_id,
@@ -103,10 +99,8 @@ export const togglePinMessage = createAsyncThunk(
             full_name,
             avatar_url
           )
-        `
-        )
-
-        .maybeSingle(); // ✅ optional for safety
+        `)
+        .maybeSingle();
 
       if (error) throw error;
 
@@ -117,7 +111,7 @@ export const togglePinMessage = createAsyncThunk(
   }
 );
 
-// ✅ Slice definition
+// ✅ Slice
 const pinSlice = createSlice({
   name: "pinnedMessages",
   initialState: {
@@ -128,7 +122,6 @@ const pinSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      // 📥 Fetch pinned messages
       .addCase(fetchPinnedMessages.pending, (state) => {
         state.loading = true;
       })
@@ -140,16 +133,12 @@ const pinSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-
-      //  Toggle pin/unpin
       .addCase(togglePinMessage.fulfilled, (state, action) => {
         if (action.payload.unpinned) {
-          // remove from pinned list
           state.items = state.items.filter(
             (msg) => msg.message_id !== action.payload.messageId
           );
         } else {
-          // add new pinned message
           state.items.unshift(action.payload);
         }
       });
