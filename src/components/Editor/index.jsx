@@ -11,12 +11,16 @@ import "./editor.css";
 import { removeValue } from "@/redux/features/ui/fileSlice";
 import { X } from "lucide-react";
 import { Button } from "../ui/button";
+import useEditorActions from "./common";
+import { useRef } from "react";
+
 export default function EditorWrapper({ width, styles, toolbarStyles }) {
   const dispatch = useDispatch();
   const { workspace_id, groupId } = useParams();
   const { files } = useSelector((state) => state.file);
   const channel = useSelector((state) => state.channels.byId[groupId]);
   const channelName = channel?.channel_name || "";
+  const submitRef = useRef(null);
 
   const editor = useEditor(
     {
@@ -26,37 +30,36 @@ export default function EditorWrapper({ width, styles, toolbarStyles }) {
           placeholder: `Write something in ${channelName}`,
         }),
         Mention.configure({
-          HTMLAttributes: {
-            class: "mention",
-          },
+          HTMLAttributes: { class: "mention" },
           suggestion,
-        }).extend({
-          addKeyboardShortcuts() {
-            return {
-              Enter: () => {
-                // If Shift key is held, insert a newline
-                if (this.editor.view.state.shiftKey) {
-                  return false; // default behavior -> new line
-                }
-                // Otherwise, submit
-                handleSubmit();
-                return true; // prevent default new line
-              },
-            };
-          },
         }),
       ],
+      autofocus: false,
       workspaceId: workspace_id,
     },
     [channelName]
   );
 
+  const { handleSubmit } = useEditorActions(editor);
+  submitRef.current = handleSubmit;
+
+  // -------------------------------
+  //   ENTER → SUBMIT
+  //   SHIFT+ENTER → NEW LINE
+  // -------------------------------
+  const handleKeyPress = (e) => {
+    if (!editor) return;
+
+    // Submit on Enter
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      submitRef.current && submitRef.current();
+    }
+  };
+
   return (
     <div
-      style={{
-        width: width,
-        ...styles,
-      }}
+      style={{ width, ...styles }}
       className={`editor-container w-full ${
         files.some(
           (f) => f.fileType.includes("image") || f.fileType.includes("pdf")
@@ -66,7 +69,11 @@ export default function EditorWrapper({ width, styles, toolbarStyles }) {
       }`}
     >
       <TextEditor editor={editor} toolbarStyles={toolbarStyles} />
-      <EditorContent editor={editor} />
+
+      {/*--- CONTENT EDITOR WITH KEYDOWN HANDLER ---*/}
+      <EditorContent editor={editor} onKeyDown={handleKeyPress} />
+
+      {/*--- FILES PREVIEW BELOW EDITOR ---*/}
       <div
         className={`${
           files.some(
@@ -79,7 +86,6 @@ export default function EditorWrapper({ width, styles, toolbarStyles }) {
         {files.map((f, index) => (
           <div key={index} className="file-map">
             <div className="relative">
-              {/* PDF */}
               {f.fileType.includes("pdf") && (
                 <embed
                   src={f.fileLink}
@@ -88,27 +94,23 @@ export default function EditorWrapper({ width, styles, toolbarStyles }) {
                 />
               )}
 
-              {/* Audio */}
               {f.fileType === "audio" && (
                 <audio src={f.fileLink} className="h-8" controls />
               )}
 
-              {/* Image */}
               {f.fileType.startsWith("image") && (
                 <div className="w-25 h-25 flex items-center justify-center overflow-hidden rounded border">
                   <img
                     src={f.fileLink}
                     alt={f.file.name}
-                    className="w-full h-full object-cover object-center"
+                    className="w-full h-full object-cover"
                   />
                 </div>
               )}
 
-              {/* Remove Button */}
               <Button
                 onClick={() => dispatch(removeValue(index))}
-                className="text-(--destructive) absolute -top-2 -right-1
-               rounded-full w-5 h-5 bg-(--destructive)/25"
+                className="text-(--destructive) absolute -top-2 -right-1 rounded-full w-5 h-5 bg-(--destructive)/25"
               >
                 <X className="w-5 h-5" />
               </Button>
@@ -118,9 +120,4 @@ export default function EditorWrapper({ width, styles, toolbarStyles }) {
       </div>
     </div>
   );
-}
-{
-  /* {f.fileType === "video" && (
-              <video src={f.fileLink} width="200" controls />
-            )} */
 }

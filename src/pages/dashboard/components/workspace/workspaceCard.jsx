@@ -93,7 +93,7 @@ const WorkspaceCard = ({ workspace, index }) => {
                   m.user_profiles?.avatar_url ? (
                     <Avatar
                       key={m.user_id}
-                      className="w-7 h-7 border-2 border-(--border) rounded-none"
+                      className="w-7 h-7 border-2 border-(--border) rounded-full"
                     >
                       <AvatarImage
                         src={m.user_profiles?.avatar_url}
