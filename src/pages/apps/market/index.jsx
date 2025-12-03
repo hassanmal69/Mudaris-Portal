@@ -182,9 +182,9 @@ const FeaturedSlider = ({ posts = [], onOpen }) => {
   if (!posts || posts.length === 0) return null;
 
   return (
-    <div className="max-w-5xl mx-auto">
+    <div className=" mx-auto w-9xl">
       <div className="flex items-center justify-between mb-3 px-1">
-        <h2 className="text-(--foreground) font-semibold">Featured</h2>
+        {/* <h2 className="text-(--foreground) font-semibold">Featured</h2>  MUdaris Team*/}
         <div className="flex gap-2">
           <button
             onClick={() => scroll("prev")}
@@ -206,7 +206,7 @@ const FeaturedSlider = ({ posts = [], onOpen }) => {
       <div
         ref={ref}
         className="
-          w-full overflow-x-auto scroll-smooth snap-x snap-mandatory
+          w-full  scroll-smooth snap-x snap-mandatory
           -mx-2 px-2 flex gap-4 
         "
       >
@@ -218,6 +218,7 @@ const FeaturedSlider = ({ posts = [], onOpen }) => {
             <div
               className="
                 rounded-(--radius)
+                h-[340px] 
                 overflow-hidden
                 border border-(--border)
                 shadow-lg
@@ -235,7 +236,7 @@ const FeaturedSlider = ({ posts = [], onOpen }) => {
                 />
               </div>
 
-              <div className="p-3">
+              <div className="p-3 flex flex-col justify-between">
                 <h4 className="text-(--primary-foreground) font-semibold leading-snug line-clamp-2">
                   {p.title}
                 </h4>
@@ -327,16 +328,16 @@ const Market = () => {
 
       <section className="flex">
         <div className="max-w-6xl mx-auto px-4">
-          {/* Header */}
-          <header className="flex items-center justify-between mb-6 mt-3">
+          {/* Header */}{" "}
+          {/* please keep it commented till final decision from MUdaris Team */}
+          {/* <header className="flex items-center justify-between mb mt-3">
             <h1 className="text-2xl font-semibold text-(--foreground)">
               Market
             </h1>
             <p className="text-sm text-(--muted-foreground)">
               Latest posts & highlights
             </p>
-          </header>
-
+          </header> */}
           {/* Loading skeleton */}
           {posts === null && (
             <>
@@ -350,18 +351,16 @@ const Market = () => {
               </div>
             </>
           )}
-
           {/* Content */}
           {posts !== null && posts.length > 0 && (
             <>
               {/* Featured slider: top 5 */}
-              <FeaturedSlider posts={posts.slice(0,6)} onOpen={openPreview} />
+              <FeaturedSlider posts={posts.slice(0, 6)} onOpen={openPreview} />
 
               {/* Masonry grid */}
-              <MasonryGrid posts={posts} onOpen={openPreview} />
+              {/* <MasonryGrid posts={posts} onOpen={openPreview} /> */}
             </>
           )}
-
           {/* Empty state */}
           {posts !== null && posts.length === 0 && (
             <div className="max-w-3xl mx-auto text-center py-20">
@@ -370,11 +369,11 @@ const Market = () => {
           )}
         </div>
         <div className="flex-col w-full">
-          <TradingViewMiniChart />
-          <TradingViewHotlist />
+          {/* <TradingViewMiniChart /> */}
+          {/* <TradingViewHotlist /> */}
         </div>
       </section>
-      <section className="flex">
+      <section className="flex items-center">
         <TradingViewHeatmap />
         <TradingViewCryptoHeatmap />
       </section>

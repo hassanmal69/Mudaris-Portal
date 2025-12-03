@@ -30,6 +30,7 @@ export default function TradingViewTicker() {
       colorTheme: "dark",
       isTransparent: true,
       displayMode: "compact",
+      showSymbolLogo: true,
       locale: "en",
     });
 

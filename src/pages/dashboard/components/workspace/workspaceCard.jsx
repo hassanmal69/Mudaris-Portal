@@ -66,7 +66,7 @@ const WorkspaceCard = ({ workspace, index }) => {
     <div className="flex w-full  sm:px-4 m-auto flex-col gap-3 sm:gap-0 sm:flex-row justify-between sm:items-center">
       <div className="flex gap-1.5 items-center">
         {workspace.avatar_url ? (
-          <Avatar className="w-16 h-16 rounded-full">
+          <Avatar className="w-16 h-16 rounded-md">
             <AvatarImage
               src={workspace.avatar_url}
               alt={workspace.workspace_name}
@@ -89,7 +89,7 @@ const WorkspaceCard = ({ workspace, index }) => {
               {membersLoading ? (
                 <p className="text-(--accent-foreground) text-sm">Loading...</p>
               ) : (
-                members.slice(0, 4).map((m, idx) =>
+                members.slice(0, 3).map((m, idx) =>
                   m.user_profiles?.avatar_url ? (
                     <Avatar
                       key={m.user_id}

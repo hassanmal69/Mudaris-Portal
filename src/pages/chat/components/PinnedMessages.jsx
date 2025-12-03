@@ -11,13 +11,16 @@ const PinnedMessages = ({ channelId }) => {
   const pinnedState = useSelector((state) => state.pinnedMessages);
   const { items, loading } = pinnedState || {};
   useEffect(() => {
-    if (!channelId) return
+    if (!channelId) return;
     dispatch(fetchPinnedMessages(channelId));
   }, [channelId, dispatch]);
   return (
     <>
       {items && items.length > 0 && (
-        <section className="bg-[#142744] z-50 p-4 opacity-100 sticky top-0 rounded-lg space-y max-h-[300px] overflow-y-auto border-(--accent) mb-4.5">
+        <section
+          className="bg-(--card) z-50 p-4 opacity-100 mt-5
+         sticky top-0 rounded-lg space-y max-h-[300px] overflow-y-auto border-(--accent) mb-4.5"
+        >
           <h4 className=" text-xs text-(--accent-foreground)">
             Pinned Messages
           </h4>

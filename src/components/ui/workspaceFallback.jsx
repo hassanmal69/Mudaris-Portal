@@ -5,7 +5,7 @@ const WorkspaceFallback = React.memo(({ name, _idx }) => {
   const color = fallbackColors[_idx % fallbackColors.length];
   return (
     <Avatar
-      className={`w-16 h-16 rounded-sm  flex items-center justify-center`}
+      className={`w-16 h-16 rounded-md  flex items-center justify-center`}
     >
       <AvatarFallback
         className={`text-[#2b092b] ${color} rounded text-xl font-bold`}
