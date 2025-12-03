@@ -114,7 +114,7 @@ const chaptersSlice = createSlice({
           state.chaptersByWorkspace[wid] = [];
         }
 
-        state.chaptersByWorkspace[wid].unshift(chapter);
+        state.chaptersByWorkspace[wid].push(chapter);
       })
       .addCase(deleteChapterDB.fulfilled, (state, action) => {
         const deletedId = action.payload;

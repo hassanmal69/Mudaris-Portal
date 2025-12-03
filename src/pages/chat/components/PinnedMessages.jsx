@@ -6,14 +6,18 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import MessageActions from "./messageActions/MessageActions";
 import AllPinnedMessagesDialog from "./AllPinnedMessagesDialog";
-const PinnedMessages = ({ channelId }) => {
+const PinnedMessages = ({ channelId, token }) => {
   const dispatch = useDispatch();
   const pinnedState = useSelector((state) => state.pinnedMessages);
   const { items, loading } = pinnedState || {};
   useEffect(() => {
-    if (!channelId) return;
-    dispatch(fetchPinnedMessages(channelId));
-  }, [channelId, dispatch]);
+    if (channelId) {
+      dispatch(fetchPinnedMessages({ channelId, token: null }));
+    } else if (token) {
+      dispatch(fetchPinnedMessages({ channelId:null, token }));
+    }
+  }, [channelId, token, dispatch]);
+
   return (
     <>
       {items && items.length > 0 && (

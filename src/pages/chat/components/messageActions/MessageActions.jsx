@@ -1,6 +1,6 @@
 import React, { useCallback, useRef } from "react";
 import { MessageSquare } from "lucide-react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import {
   DropdownMenu,
@@ -9,7 +9,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu.jsx";
 import { MoreHorizontalIcon, Pin, Trash2, Forward } from "lucide-react";
-import { Button } from "@/components/ui/button.jsx";
 
 import {
   fetchPinnedMessages,
@@ -27,9 +26,10 @@ const MessageActions = React.memo(
   }) => {
     const renderCount = useRef(0);
     renderCount.current += 1;
+    const { session } = useSelector((state) => state.auth);
     const dispatch = useDispatch();
-    const { groupId } = useParams();
-
+    const { groupId, token } = useParams();
+    const isPerson = userId === session?.user?.id
     // const displayName = useSelector(
     //   (state) => state.auth.user?.user_metadata?.displayName
     // );
@@ -44,15 +44,17 @@ const MessageActions = React.memo(
     // }, [channels, groupId]);
     const handlePin = useCallback(
       async (messageId) => {
+
         await dispatch(
           togglePinMessage({
             channelId: groupId,
             messageId,
             userId,
+            token: token
           })
         );
 
-        dispatch(fetchPinnedMessages(groupId));
+        dispatch(fetchPinnedMessages({ channelId: groupId, token }));
       },
       [groupId, userId, dispatch]
     );
@@ -127,13 +129,15 @@ const MessageActions = React.memo(
                     <Forward className="h-4 w-4 mr-2" />
                     Forward message
                   </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="text-destructive"
-                    onClick={() => handleOpenDeleteDialog(messageId)}
-                  >
-                    <Trash2 className="h-4 w-4 mr-2" />
-                    Delete message
-                  </DropdownMenuItem>
+                  {isPerson && (
+                    <DropdownMenuItem
+                      className="text-destructive"
+                      onClick={() => handleOpenDeleteDialog(messageId)}
+                    >
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Delete message
+                    </DropdownMenuItem>
+                  )}
                 </>
               )}
             </DropdownMenuContent>

@@ -16,7 +16,6 @@ import {
   Megaphone,
   Link as Chain,
   Video,
-  MessageSquareLock,
   Users,
 } from "lucide-react";
 import { fetchChannelMembersbyUser } from "@/redux/features/channelMembers/channelMembersSlice";
@@ -27,11 +26,12 @@ const SideBarChannels = ({ session, workspace_id, groupId, setAddChannelOpen }) 
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const currentURL = location.pathname;
   const isAdmin = useIsAdmin();
   const channelRef = useRef(null);
 
-  // --- derive specialRoute from URL (unchanged) ---
+  const currentURL = location.pathname;
+
+  // --- Recognize special URL routes ---
   const specialRoute = useMemo(() => {
     const map = [
       { key: "announcements", match: "announcement" },
@@ -41,74 +41,71 @@ const SideBarChannels = ({ session, workspace_id, groupId, setAddChannelOpen }) 
     const found = map.find((r) => currentURL.includes(r.match));
     return found?.key || "";
   }, [currentURL]);
-
-  // --- select channel members from Redux (by user id) ---
   const userId = session?.user?.id;
+
   const channelMembersEntry = useSelector(
-    (state) => state.channelMembers.byChannelId[userId] || { data: [], status: "idle" }
+    (state) => state.channelMembers.byChannelId[userId] || { data: [] }
   );
+
   const channelMembers = channelMembersEntry.data || [];
 
-  let visibleChannels = useMemo(
-    () =>
-      Array.isArray(channelMembers)
-        ? channelMembers.filter((cm) => cm?.channels?.workspace_id === workspace_id)
-        : [],
-    [channelMembers, workspace_id]
-  );
+  // Filter channels in this workspace
+  const visibleChannels = useMemo(() => {
+    return channelMembers.filter(
+      (cm) => cm?.channels?.workspace_id === workspace_id
+    );
+  }, [channelMembers, workspace_id]);
+
+  const gotChat = (channels) => {
+    if (!Array.isArray(channels) || channels.length === 0) return null;
+    return visibleChannels.find(
+      (m) => m.channels.channel_name === "Chat"
+    )?.channels;
+  }
+  const getOtherChannels = (channels) => {
+    if (!Array.isArray(channels) || channels.length === 0) return null;
+    return channels
+      .filter((m) => m.channels.channel_name !== "Chat")
+      .map((m) => m.channels);
+  }
+  const chatChannel = gotChat(visibleChannels);
+  const otherChannels = getOtherChannels(visibleChannels);
+
 
   const activeChannel = useSelector(selectActiveChannel);
 
+  // Fetch on mount
   useEffect(() => {
     if (!userId) return;
-    if (!channelMembersEntry.data?.length && channelMembersEntry.status !== "loading") {
+    if (!channelMembersEntry.data?.length) {
       dispatch(fetchChannelMembersbyUser(userId));
     }
-  }, [userId, channelMembersEntry.data?.length, channelMembersEntry.status, dispatch]);
+  }, [userId]);
 
-useEffect(() => {
-  if (!userId) return;
+  // Realtime updates
+  useEffect(() => {
+    if (!userId) return;
 
-  const channel = supabase
-    .channel(`channel_members_user_${userId}`)
-    .on(
-      "postgres_changes",
-      {
+    const ch = supabase
+      .channel(`channel_members_user_${userId}`)
+      .on("postgres_changes", {
         event: "*",
         schema: "public",
         table: "channel_members",
         filter: `user_id=eq.${userId}`,
-      },
-      (payload) => {
-        console.log("🔥 Realtime event detected:", payload);
+      }, () => {
         dispatch(fetchChannelMembersbyUser(userId));
-      }
-    )
-    .subscribe((status) => {
-      console.log("📡 Realtime status:", status);
-    });
-    channelRef.current = channel;
+      })
+      .subscribe();
 
-  return () => {
-    supabase.removeChannel(channel);
-  };
-}, [userId, dispatch]);
+    channelRef.current = ch;
 
-  // --- auto-select / navigate to first channel if none selected ---
-  useEffect(() => {
-    if (!groupId && userId && visibleChannels.length > 0) {
-      const firstChannelId = visibleChannels[0]?.channels?.id;
-      // Only auto-navigate if we have a channel and there's no active channel already
-      if (firstChannelId && (!activeChannel || !activeChannel.id)) {
-        dispatch(setActiveChannel(firstChannelId));
-        navigate(`/workspace/${workspace_id}/group/${firstChannelId}`);
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [visibleChannels, workspace_id, groupId, userId]); // keep deps minimal and stable
+    return () => {
+      supabase.removeChannel(ch);
+    };
+  }, [userId]);
 
   const handleChannelClick = (channel) => {
-    if (!channel?.id) return;
     dispatch(setActiveChannel(channel.id));
     navigate(`/workspace/${workspace_id}/group/${channel.id}`);
   };
@@ -120,65 +117,95 @@ useEffect(() => {
       </SidebarGroupLabel>
 
       <SidebarMenu>
-        {visibleChannels.map((cm) => {
-          const channel = cm.channels;
-          if (!channel) return null;
-          const isActive = activeChannel?.id === channel.id;
+        {/* 1️⃣ CHAT CHANNEL FIRST */}
+        {chatChannel && (
+          <SidebarMenuItem>
+            <div
+              onClick={() => handleChannelClick(chatChannel)}
+              className={`flex items-center gap-2 rounded px-2 py-1 cursor-pointer 
+              ${activeChannel?.id === chatChannel.id && !specialRoute
+                  ? "bg-(--sidebar-accent) text-white"
+                  : "hover:bg-(--sidebar-accent)"
+                }`}
+            >
+              <Users className="w-4 h-4" />
+              <span className="text-[15px]">Chat</span>
+            </div>
+          </SidebarMenuItem>
+        )}
 
-          return (
-            <SidebarMenuItem key={channel.id}>
-              <div
-                onClick={() => handleChannelClick(channel)}
-                className={`flex items-center gap-2 rounded px-2 py-1 cursor-pointer ${isActive ? "bg-(--sidebar-accent) text-white" : "hover:bg-(--sidebar-accent)"
-                  }`}
-              >
-                {channel.visibility === "public" ? (
-                  <Users className="w-4 h-4" />
-                ) : (
-                  <MessageSquareLock className="w-4 h-4" />
-                )}
-                <span className="font-normal text-[15px]">{channel.channel_name}</span>
-              </div>
-            </SidebarMenuItem>
-          );
-        })}
-
-        {/* static links */}
+        {/* 2️⃣ STATIC SECTIONS */}
         <SidebarMenuItem>
           <Link to={`/workspace/${workspace_id}/announcements`}>
             <div
-              className={`flex items-center gap-2 px-2 py-1 cursor-pointer ${specialRoute === "announcements" ? "bg-(--sidebar-accent) text-white" : "hover:bg-(--sidebar-accent)"
+              className={`flex items-center gap-2 px-2 py-1 cursor-pointer ${specialRoute === "announcements"
+                ? "bg-(--sidebar-accent) text-white"
+                : "hover:bg-(--sidebar-accent)"
                 }`}
             >
               <Megaphone className="w-4 h-4" />
-              <span className="font-normal text-[15px]">Announcements</span>
+              <span className="text-[15px]">Announcements</span>
             </div>
           </Link>
 
           <Link to={`/workspace/${workspace_id}/lecturesLink`}>
             <div
-              className={`flex items-center gap-2 px-2 py-1 cursor-pointer ${specialRoute === "lecturesLink" ? "bg-(--sidebar-accent) text-white" : "hover:bg-(--sidebar-accent)"
+              className={`flex items-center gap-2 px-2 py-1 cursor-pointer ${specialRoute === "lecturesLink"
+                ? "bg-(--sidebar-accent) text-white"
+                : "hover:bg-(--sidebar-accent)"
                 }`}
             >
               <Chain className="w-4 h-4" />
-              <span className="font-normal text-[15px]">Lecture's Links</span>
+              <span className="text-[15px]">Lecture's Links</span>
             </div>
           </Link>
 
           <Link to={`/workspace/${workspace_id}/videospresentations`}>
             <div
-              className={`flex items-center gap-2 px-2 py-1 cursor-pointer ${specialRoute === "videospresentations" ? "bg-(--sidebar-accent) text-white" : "hover:bg-(--sidebar-accent)"
+              className={`flex items-center gap-2 px-2 py-1 cursor-pointer ${specialRoute === "videospresentations"
+                ? "bg-(--sidebar-accent) text-white"
+                : "hover:bg-(--sidebar-accent)"
                 }`}
             >
               <Video className="w-4 h-4" />
-              <span className="font-normal text-sm">Videos & Presentations</span>
+              <span className="text-sm">Videos & Presentations</span>
             </div>
           </Link>
         </SidebarMenuItem>
 
+        {/* 3️⃣ OTHER CHANNELS */}
+        {otherChannels && otherChannels.length > 0 && (
+          <div>
+            {otherChannels.map((channel) => {
+              let isActive = activeChannel?.id === channel.id;
+
+              if (specialRoute) {
+                isActive = false;
+              }
+
+              return (
+                <SidebarMenuItem key={channel.id}>
+                  <div
+                    onClick={() => handleChannelClick(channel)}
+                    className={`flex items-center gap-2 rounded px-2 py-1 cursor-pointer 
+              ${isActive
+                        ? "bg-(--sidebar-accent) text-white"
+                        : "hover:bg-(--sidebar-accent)"
+                      }`}
+                  >
+                    <Users className="w-4 h-4" />
+                    <span className="text-[15px]">{channel.channel_name}</span>
+                  </div>
+                </SidebarMenuItem>
+              );
+            })}
+          </div>
+        )}
+
+        {/* ADMIN: CREATE CHANNEL */}
         {isAdmin && (
           <button
-            className="flex items-center gap-2 w-full px-2 py-2 rounded hover:bg-(--sidebar-accent) text-(--sidebar-foreground)/70 hover:text-(--sidebar-foreground)"
+            className="flex items-center gap-2 w-full px-2 py-2 rounded hover:bg-(--sidebar-accent)"
             onClick={() => setAddChannelOpen(true)}
           >
             <PlusIcon className="w-4 h-4" />
