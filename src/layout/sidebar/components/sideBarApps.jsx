@@ -35,7 +35,7 @@ const SideBarApps = ({ workspace_id }) => {
   }, []);
 
   return (
-    <SidebarGroup className='flex flex-col gap-2'>
+    <SidebarGroup className="flex flex-col gap-6 ">
       <SidebarMenu>
         <SidebarGroupLabel className="text-(--sidebar-foreground) font-normal text-sm py-1">
           Apps
@@ -101,7 +101,10 @@ const SideBarApps = ({ workspace_id }) => {
             </SidebarMenuItem>
           ))}
           <SidebarMenuItem className="flex ">
-            <Button variant={"success"} onClick={() => setIsShow((prev) => !prev)}>
+            <Button
+              variant={"ghost"}
+              onClick={() => setIsShow((prev) => !prev)}
+            >
               See Personal Messages
             </Button>
           </SidebarMenuItem>

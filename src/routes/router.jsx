@@ -112,10 +112,7 @@ export const router = createBrowserRouter([
         path: "/workspace/:workspace_id/market",
         element: (
           <PrivateRoute>
-            <TopBarSecond
-              name="Market Insight"
-              desc={"Market Insights of the real world"}
-            />
+            <TopbarOnly />
           </PrivateRoute>
         ),
         children: [{ path: "", element: <Market /> }],

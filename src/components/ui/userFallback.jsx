@@ -6,7 +6,7 @@ const UserFallback = React.memo(({ name, _idx, cn }) => {
   const color = fallbackColors[_idx % fallbackColors.length];
   return (
     <Avatar
-      className={`w-7 h-7 border-2 border-(--border) flex items-center justify-center ${cn}`}
+      className={`w-7 h-7 border-2 rounded-md border-(--border) flex items-center justify-center ${cn}`}
     >
       <AvatarFallback
         className={`text-(-${color})  text-sm  font-semibold ${color}`}

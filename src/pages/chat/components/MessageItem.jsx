@@ -97,7 +97,7 @@ const MessageItem = ({
         />
 
         {message.profiles?.avatar_url ? (
-          <Avatar className="w-10 h-10 rounded-full">
+          <Avatar className="w-10 h-10 rounded-md border-(--border)">
             <AvatarImage src={avatar_url || ""} alt={full_name || "user"} />
             <AvatarFallback>
               {full_name?.[0]?.toUpperCase() || "U"}

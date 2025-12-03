@@ -11,7 +11,8 @@ export const fetchChapters = createAsyncThunk(
     const { data, error } = await supabase
       .from("chapters_videos_presentations")
       .select("*")
-      .eq("workspace_Id", workspaceId);
+      .eq("workspace_Id", workspaceId)
+      .order("created_at", { ascending: true });
 
     if (error) throw error;
     return { workspaceId, data };
@@ -43,7 +44,7 @@ export const deleteChapterDB = createAsyncThunk(
 
     if (fetchErr) throw fetchErr;
     if (videos.length > 0) {
-      const videoIds = videos.map(v => v.id);
+      const videoIds = videos.map((v) => v.id);
 
       const { error: deleteVideosErr } = await supabase
         .from("videos")
@@ -117,11 +118,11 @@ const chaptersSlice = createSlice({
       })
       .addCase(deleteChapterDB.fulfilled, (state, action) => {
         const deletedId = action.payload;
-        console.log('deleted id hehe',action,deletedId)
+        console.log("deleted id hehe", action, deletedId);
         Object.keys(state.chaptersByWorkspace).forEach((wid) => {
-          state.chaptersByWorkspace[wid] = state.chaptersByWorkspace[wid].filter(
-            (chapter) => chapter.id !== deletedId
-          );
+          state.chaptersByWorkspace[wid] = state.chaptersByWorkspace[
+            wid
+          ].filter((chapter) => chapter.id !== deletedId);
         });
       })
       .addCase(updateChapterDB.fulfilled, (state, action) => {
@@ -134,10 +135,8 @@ const chaptersSlice = createSlice({
           (chapter) =>
             chapter.id === updated.id ? { ...chapter, ...updated } : chapter
         );
-      })
-
+      });
   },
-
 });
 
 export const { clearChapters } = chaptersSlice.actions;
