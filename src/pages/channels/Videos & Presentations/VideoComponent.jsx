@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import VimeoPlayer from "@/services/vimeo/vimeoPlayer";
 import { useDispatch, useSelector } from "react-redux";
@@ -13,7 +13,6 @@ const VideoComponent = React.memo(
     const { video, chp, index, allVideos } = data || {};
     const { session } = useSelector((state) => state.auth);
     const dispatch = useDispatch();
-    const [duration, setDuration] = useState("");
     const nextVideo = useMemo(() => {
       if (!allVideos || index === undefined) return null;
       return allVideos[index + 1] || null;
@@ -30,9 +29,6 @@ const VideoComponent = React.memo(
     }, [session?.user?.id, dispatch]);
     const { completedVideos } = useSelector((state) => state.markComplete);
     const isCompleted = video && completedVideos.includes(video.id);
-    const videoDuration = (dur) => {
-      setDuration(dur);
-    };
     if (!video) {
       return (
         <div className="flex items-center justify-center w-full h-full text-(--muted-foreground)">
@@ -46,7 +42,6 @@ const VideoComponent = React.memo(
         <div className="w-full h-[350px] bg-black rounded-lg overflow-hidden">
           <VimeoPlayer
             videoId={video?.video_link}
-            videoDuration={videoDuration}
           />
         </div>
 

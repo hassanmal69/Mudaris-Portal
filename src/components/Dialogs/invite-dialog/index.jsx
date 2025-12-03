@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   Dialog,
   DialogContent,
@@ -25,38 +25,49 @@ const InviteDialog = ({ open, onOpenChange }) => {
   const { currentWorkspace, loading } = useSelector(
     (state) => state.workSpaces
   );
-  const channelState = useSelector((state) => state.channels); // <-- get channels slice
+  const channelState = useSelector((state) => state.channels);
+  const isChannelsLoaded = channelState.allIds.length > 0;
 
-  // Fetch workspace info from Redux
+  // Fetch workspace info once
   useEffect(() => {
-    if (workspace_id) {
-      dispatch(fetchWorkspaceById(workspace_id));
-    }
+    if (workspace_id) dispatch(fetchWorkspaceById(workspace_id));
   }, [workspace_id, dispatch]);
 
-  // Fetch channels from Redux
+  // Fetch channels only if not loaded
   useEffect(() => {
-    if (workspace_id) {
+    if (workspace_id && !isChannelsLoaded) {
       dispatch(fetchChannels(workspace_id));
     }
-  }, [workspace_id, dispatch]);
+  }, [workspace_id, dispatch, isChannelsLoaded]);
 
-  // Suggested channels from Redux
-  const suggestedChannels = channelState.allIds.map((id) => ({
-    id,
-    name: channelState.byId[id]?.channel_name,
-    visibility: channelState.byId[id]?.visibility,
-  }));
-  const allowedChannels = suggestedChannels
-    .filter((ch) => ch.visibility === "public")
-    .map((ch) => ch.id);
+  // Prepare suggested channels from Redux
+  const suggestedChannels = useMemo(() => {
+    if (!isChannelsLoaded) return [];
+    return channelState.allIds.map((id) => ({
+      id,
+      name: channelState.byId[id]?.channel_name,
+      visibility: channelState.byId[id]?.visibility,
+    }));
+  }, [channelState, isChannelsLoaded]);
+
+  // Pre-fill selected channels for step 1
+  useEffect(() => {
+    if (step === 1 && channels.length === 0 && suggestedChannels.length > 0) {
+      setChannels(suggestedChannels.map((ch) => ch.id));
+    }
+  }, [step, suggestedChannels, channels.length]);
+
+  const allowedChannels = useMemo(
+    () => suggestedChannels.filter((ch) => ch.visibility === "public").map((ch) => ch.id),
+    [suggestedChannels]
+  );
 
   const handleCopyLink = async () => {
     for (const email of emails) {
       const link = await createInvitation({
         email,
         allowedChannels,
-        workspace_id: workspace_id,
+        workspace_id,
       });
       if (link) {
         await navigator.clipboard.writeText(link);
@@ -78,7 +89,7 @@ const InviteDialog = ({ open, onOpenChange }) => {
       }
 
       const res = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-invite`, //api
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-invite`,
         {
           method: "POST",
           headers: {
@@ -89,14 +100,13 @@ const InviteDialog = ({ open, onOpenChange }) => {
             workspace_id,
             emails,
             workspaceName: currentWorkspace?.workspace_name || "Workspace",
-            channels: channels || [],
+            channels,
           }),
         }
       );
+
       const data = await res.json();
-      console.log("response ->", res.body);
       if (!res.ok) {
-        console.error("❌ Failed:", data);
         alert("Server error: " + JSON.stringify(data));
         return;
       }
@@ -107,15 +117,11 @@ const InviteDialog = ({ open, onOpenChange }) => {
           "Some invitations failed:\n" +
             failed.map((f) => `${f.email}: ${f.error}`).join("\n")
         );
-        console.log(
-          "Some invitations failed:\n" +
-            failed.map((f) => `${f.email}: ${f.error}`).join("\n")
-        );
       } else {
         alert("✅ All invitations sent successfully!");
       }
     } catch (err) {
-      console.error("⚠️ Unexpected error:", err);
+      console.error("Unexpected error:", err);
       alert("Unexpected error while sending invitations.");
     }
   };
@@ -126,9 +132,7 @@ const InviteDialog = ({ open, onOpenChange }) => {
         <DialogHeader>
           <DialogTitle>
             Invite people to{" "}
-            {loading
-              ? "Loading..."
-              : currentWorkspace?.workspace_name || "Workspace"}
+            {loading ? "Loading..." : currentWorkspace?.workspace_name || "Workspace"}
           </DialogTitle>
         </DialogHeader>
 

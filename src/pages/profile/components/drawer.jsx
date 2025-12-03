@@ -21,8 +21,10 @@ export default function VaulDrawer() {
   };
 
   const channels = useSelector(selectChannels);
+  const channelState = useSelector((state) => state.channels);
 
   const [time, setTime] = useState(new Date());
+  const isChannelsLoaded = channelState.allIds.length > 0;
 
   useEffect(() => {
     const interval = setInterval(() => setTime(new Date()), 1000);
@@ -32,10 +34,11 @@ export default function VaulDrawer() {
     setAvatarUrl(session?.user?.user_metadata.avatar_url);
   }, [session?.user?.user_metadata.avatar_url]);
   useEffect(() => {
-    if (workspace_id) {
+    if (workspace_id && isChannelsLoaded) {
       dispatch(fetchChannels(workspace_id));
     }
-  }, [workspace_id, dispatch]);
+  }, [workspace_id, dispatch, isChannelsLoaded]);
+
 
   return (
     <Drawer.Root direction="right" modal={true}>

@@ -12,22 +12,19 @@ import {
 import { Button } from "@/components/ui/button";
 import { useParams } from "react-router-dom";
 import { fetchChannels } from "@/redux/features/channels/channelsSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 export const ForwardDialog = ({ open, onOpenChange, onConfirmForward }) => {
   const { workspace_id } = useParams();
-  const [channels, setChannels] = useState([]);
   const [selectedChannels, setSelectedChannels] = useState([]);
   const dispatch = useDispatch();
-  const recievingData = async () => {
-    const res = await dispatch(fetchChannels(workspace_id));
-    setChannels(res?.payload);
-  };
+  const channelState = useSelector((state) => state.channels);
 
   useEffect(() => {
-    if (open) recievingData();
-  }, [workspace_id, open]);
-
+    if (workspace_id && channelState.allIds.length === 0) {
+      dispatch(fetchChannels(workspace_id));
+    }
+  }, [workspace_id, dispatch, channelState.allIds.length]);
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg bg-(--background) text-(--foreground) border border-(--border) rounded-md">
@@ -35,24 +32,29 @@ export const ForwardDialog = ({ open, onOpenChange, onConfirmForward }) => {
           <DialogTitle>Forward Message</DialogTitle>
           <DialogDescription>
             Forward this message in to these groups
-            {Array.isArray(channels) &&
-              channels.map((m, i) => (
-                <div key={i}>
+            {channelState.allIds.map((id) => {
+              const ch = channelState.byId[id];
+              const isChecked = selectedChannels.some((c) => c.id === ch.id);
+              return (
+                <div key={ch.id}>
                   <input
                     type="checkbox"
+                    checked={isChecked}
                     onChange={(e) => {
                       if (e.target.checked) {
-                        setSelectedChannels((prev) => [...prev, m]); // add
+                        setSelectedChannels((prev) => [...prev, ch]);
                       } else {
                         setSelectedChannels((prev) =>
-                          prev.filter((c) => c.id !== m.id)
-                        ); // remove
+                          prev.filter((c) => c.id !== ch.id)
+                        );
                       }
                     }}
                   />
-                  {m.channel_name}
+                  {ch.channel_name}
                 </div>
-              ))}
+              );
+            })}
+
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="flex justify-end gap-4">
