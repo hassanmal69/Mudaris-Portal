@@ -5,6 +5,7 @@ import { closeReplyDrawer } from "@/redux/features/reply/replySlice.js";
 import { supabase } from "@/services/supabaseClient";
 import Editor from "@/components/Editor/index.jsx";
 import { isRTL } from "@/utils/rtl/rtl";
+import { Button } from "@/components/ui/button";
 
 export default function ReplyDrawer() {
   const dispatch = useDispatch();
@@ -149,12 +150,13 @@ export default function ReplyDrawer() {
               />
             </div>
 
-            <button
-              className="mt-4 px-4 py-2 bg-[#2b092b] text-white rounded"
+            <Button
+              className="mt-4 "
+              variant={"destructive"}
               onClick={() => dispatch(closeReplyDrawer())}
             >
               Close
-            </button>
+            </Button>
           </div>
         </Drawer.Content>
       </Drawer.Portal>
