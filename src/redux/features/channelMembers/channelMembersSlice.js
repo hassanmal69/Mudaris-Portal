@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { supabase } from "@/services/supabaseClient.js";
+import { createSelector } from "@reduxjs/toolkit";
 
 // Thunk
 // fetch members for a given channel (used by Topbar)
@@ -125,5 +126,17 @@ const channelMembersSlice = createSlice({
 
 export const selectChannelMembers = (channelId) => (state) =>
   state.channelMembers.byChannelId[channelId]?.data || [];
+
+const cache = {};
+
+export const selectChannelsByUser = (userId) => {
+  if (!cache[userId]) {
+    cache[userId] = createSelector(
+      (state) => state.channelMembers.byChannelId[userId]?.data || [],
+      (channels) => channels
+    );
+  }
+  return cache[userId];
+};
 
 export default channelMembersSlice.reducer;

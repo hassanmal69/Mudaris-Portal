@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { SidebarHeader } from "@/components/ui/sidebar";
 import { useSelector } from "react-redux";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -10,6 +10,11 @@ const SideBarHeader = ({ session }) => {
     (state) => state.workSpaces
   );
   const [mode, setMode] = useState(localStorage.getItem("theme") || "dark");
+  const renderCount = useRef(0);
+  renderCount.current++;
+
+  console.log("Sidebar header count:", renderCount.current);
+
   const handleToggle = () => {
     setMode((prevMode) => {
       const root = document.documentElement;
@@ -59,5 +64,4 @@ const SideBarHeader = ({ session }) => {
     </SidebarHeader>
   );
 };
-
-export default SideBarHeader;
+export default React.memo(SideBarHeader);

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import AddChannelDialog from "@/components/Dialogs/add-channel-dialog";
 import InviteDialog from "@/components/Dialogs/invite-dialog";
 import { SidebarContent } from "@/components/ui/sidebar";
@@ -15,10 +15,34 @@ const Sidebar = () => {
   const { session } = useSelector((state) => state.auth);
   const [addChannelOpen, setAddChannelOpen] = useState(false);
   const [inviteOpen, setInviteOpen] = useState(false);
-  const { workspace_id, groupId } = useParams();
-  const handleLogout = () => {
+  const { workspace_id } = useParams();
+  const renderCount = useRef(0);
+  renderCount.current++;
+  const userId = useMemo(() => session?.user?.id, [session?.user?.id]); // stable userId
+
+  console.log("Sidebar parent count:", renderCount.current);
+
+  const handleLogout = useCallback(() => {
     dispatch(logOut());
-  };
+  }, [dispatch]);
+
+  // memoize props objects to avoid creating new references each render
+  const sideBarChannelsProps = useMemo(() => ({
+    setAddChannelOpen,
+    userId,
+    workspace_id
+  }), [setAddChannelOpen, userId, workspace_id]);
+
+  const sideBarAppsProps = useMemo(() => ({
+    workspace_id
+  }), [workspace_id]);
+
+  const sideBarFooterProps = useMemo(() => ({
+    session,
+    setInviteOpen,
+    handleLogout
+  }), [session, setInviteOpen, handleLogout]);
+
   return (
     <>
       <AddChannelDialog
@@ -30,19 +54,10 @@ const Sidebar = () => {
       <SidebarContent className="sideBar h-full bg-(--sidebar) text-(--foreground) border-2 border-(--sidebar-border) px-2 py-4 flex flex-col gap-4">
         <SideBarHeader session={session} />
         <div className="flex flex-col gap-2 border-y-2 w-full border-(--sidebar-border)">
-          <SideBarChannels
-            setAddChannelOpen={setAddChannelOpen}
-            session={session}
-            workspace_id={workspace_id}
-            groupId={groupId}
-          />
-          <SideBarApps workspace_id={workspace_id} />
+          <SideBarChannels {...sideBarChannelsProps} />
+          <SideBarApps {...sideBarAppsProps} />
         </div>
-        <SideBarFooter
-          session={session}
-          setInviteOpen={setInviteOpen}
-          handleLogout={handleLogout}
-        />
+        <SideBarFooter {...sideBarFooterProps} />
       </SidebarContent>
     </>
   );

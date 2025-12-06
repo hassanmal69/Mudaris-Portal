@@ -1,37 +1,44 @@
 import React, { useEffect, useRef, useState } from "react";
-import Player from "@vimeo/player";
 import { fetchPrivateVideos } from "./vimeo.js";
 import PrivateVimeoPlayer from "./privateVimeoPlayer.jsx";
-const VimeoPlayer = ({ videoId  }) => {
-  const playerRef = useRef(null);
+
+const VimeoPlayer = ({ videoId }) => {
   const [videoData, setVideoData] = useState(null);
+  const [invalid, setInvalid] = useState(false);
+
+  const isNumeric = (value) => !isNaN(value);
+
   useEffect(() => {
+    if (!isNumeric(videoId)) {
+      setInvalid(true);
+      return;
+    }
+
+    // Numeric → fetch the video
     const loadVideo = async () => {
       try {
         const data = await fetchPrivateVideos(videoId);
-        setVideoData(data || "no data");
+        setVideoData(data);
       } catch (error) {
-        console.error("Error fetching video URL:", error);
+        console.error("Error fetching video:", error);
+        setInvalid(true);
       }
     };
+    setInvalid(false)
     loadVideo();
   }, [videoId]);
-  useEffect(() => {
-    if (!videoData || playerRef.current) return;
-    const player = new Player(playerRef.current, {
-      url: videoData,
-      width: 200,
-      autoplay: false,
-    });
-    player.on("play", () => console.log("video played"));
-    player.on("pause", () => console.log("video paused"));
-    return () => player.destroy();
-  }, [videoData]);
+
+  if (invalid) {
+    return <p>Video is not valid or not available.</p>;
+  }
+
+  if (!videoData) {
+    return <p>Loading lecture video…</p>;
+  }
+
   return (
-    <div className='w-full h-full'>
-      {!videoData && <p>Loading lecture video</p>}
-      <div ref={playerRef}></div>
-      <PrivateVimeoPlayer embedHtml={videoData?.embed.html} />
+    <div className="w-full h-full">
+      <PrivateVimeoPlayer embedHtml={videoData?.embed?.html} />
     </div>
   );
 };

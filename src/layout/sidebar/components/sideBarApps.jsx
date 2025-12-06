@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   SidebarGroup,
@@ -21,6 +21,10 @@ const SideBarApps = ({ workspace_id }) => {
   const [isShow, setIsShow] = useState(false);
   const [users, setUsers] = useState([]);
   const handleFunction = useHandleIndividual();
+  const renderCount = useRef(0);
+  renderCount.current++;
+  console.log("Sidebar Apps count:", renderCount.current);
+
   const handleDirectProfile = async () => {
     const { data, error } = await supabase
       .from("profiles")
@@ -114,5 +118,5 @@ const SideBarApps = ({ workspace_id }) => {
     </SidebarGroup>
   );
 };
+export default React.memo(SideBarApps);
 
-export default SideBarApps;
