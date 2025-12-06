@@ -11,22 +11,20 @@ import { Download } from "lucide-react";
 const VideoComponent = React.memo(
   ({ data, onNext }) => {
     const { video, chp, index, allVideos } = data || {};
-    const { session } = useSelector((state) => state.auth);
+    const userId = useSelector((state) => state.auth?.user?.id);
     const dispatch = useDispatch();
     const nextVideo = useMemo(() => {
       if (!allVideos || index === undefined) return null;
       return allVideos[index + 1] || null;
     }, [allVideos, index]);
     const handleCompleteLogic = async () => {
-      dispatch(
-        markVideoComplete({ userId: session.user.id, videoId: video.id })
-      );
+      dispatch(markVideoComplete({ userId, videoId: video.id }));
     };
     useEffect(() => {
-      if (session?.user?.id) {
-        dispatch(fetchMarkasComplete(session.user.id));
+      if (userId) {
+        dispatch(fetchMarkasComplete(userId));
       }
-    }, [session?.user?.id, dispatch]);
+    }, [userId, dispatch]);
     const { completedVideos } = useSelector((state) => state.markComplete);
     const isCompleted = video && completedVideos.includes(video.id);
     if (!video) {
@@ -40,9 +38,7 @@ const VideoComponent = React.memo(
       <div className="w-full h-full p-6 space-y-6">
         {/* === VIDEO PLAYER === */}
         <div className="w-full h-[350px] bg-black rounded-lg overflow-hidden">
-          <VimeoPlayer
-            videoId={video?.video_link}
-          />
+          <VimeoPlayer videoId={video?.video_link} />
         </div>
 
         {/* === INFO CARD === */}
@@ -52,10 +48,6 @@ const VideoComponent = React.memo(
           </p>
 
           <h2 className="text-xl font-bold">{video.name}</h2>
-          {/* 
-          <p className="text-sm text-(--muted-foreground)">
-            Duration: {duration}
-          </p> */}
 
           <p className="leading-relaxed text-(--foreground)">
             {video.description}

@@ -17,32 +17,35 @@ import {
 import { addToast } from "@/redux/features/toast/toastSlice";
 const EditProfile = () => {
   const dispatch = useDispatch();
-  const { session } = useSelector((state) => state.auth);
-  const [file, setFile] = useState(null);
-  const [name, setName] = useState(session.user?.user_metadata?.fullName);
-  const [publicUrl, setPublicUrl] = useState(undefined);
-  const [sessionAvatarUrl, setSessionAvatarUrl] = useState(
-    session.user.user_metadata.avatar_url
+  const { avatar_url, fullName } = useSelector(
+    (s) => s.auth.user?.user_metadata || {}
   );
+
+  const [file, setFile] = useState(null);
+  const [name, setName] = useState(fullName);
+  const [publicUrl, setPublicUrl] = useState(undefined);
+  const [sessionAvatarUrl, setSessionAvatarUrl] = useState(avatar_url);
   const id = useId();
   useEffect(() => {
-    setSessionAvatarUrl(session.user.user_metadata.avatar_url);
-  }, [session]);
+    setSessionAvatarUrl(avatar_url);
+  }, []);
 
   const handleSave = async () => {
     // Update names
     const { error } = await supabase.auth.updateUser({
-      data: { fullName: name }
+      data: { fullName: name },
     });
     if (error) {
       console.error("Error updating user info", error);
       return;
     }
-    const { error: updateErrorinProfile } = await supabase.from('profiles')
+    const { error: updateErrorinProfile } = await supabase
+      .from("profiles")
       .update({
-        full_name: name
-      }).eq('id', session.user.id)
-    if (updateErrorinProfile) throw updateErrorinProfile
+        full_name: name,
+      })
+      .eq("id", session.user.id);
+    if (updateErrorinProfile) throw updateErrorinProfile;
     // If picture selected → upload
     if (file) {
       await handleEditPic();
@@ -82,11 +85,13 @@ const EditProfile = () => {
       console.error("Error updating avatar URL:", updateError);
       return;
     }
-    const { error: updateErrorinProfile } = await supabase.from('profiles')
+    const { error: updateErrorinProfile } = await supabase
+      .from("profiles")
       .update({
-        avatar_url: publicUrl
-      }).eq('id', session.user.id)
-    if (updateErrorinProfile) throw updateErrorinProfile
+        avatar_url: publicUrl,
+      })
+      .eq("id", session.user.id);
+    if (updateErrorinProfile) throw updateErrorinProfile;
     setPublicUrl(publicUrl);
     setSessionAvatarUrl(publicUrl);
   };

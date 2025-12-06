@@ -32,7 +32,7 @@ const Dashboard = () => {
         <span
           className="sm:text-[26px]
      block text-right font-extrabold tracking-tight 
-         bg-gradient-to-tr from-(--primary) to-(--primary-foreground) bg-clip-text text-transparent
+         bg-linear-to-tr from-(--primary) to-(--primary-foreground) bg-clip-text text-transparent
     "
         >
           Mudaris Academy

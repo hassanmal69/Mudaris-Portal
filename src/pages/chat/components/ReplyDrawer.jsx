@@ -62,7 +62,7 @@ export default function ReplyDrawer() {
     return () => {
       supabase.removeChannel(subscription);
     };
-  }, [message]);
+  }, [message?.id]);
 
   if (!open || !message) return null;
   const rtl = isRTL(message?.content);

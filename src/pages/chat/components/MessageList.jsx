@@ -6,16 +6,34 @@ import { isRTL } from "@/utils/rtl/rtl.js";
 const MessageList = ({
   messages,
   currentUserId,
-  toggleReaction,
   pickerOpenFor,
   setPickerOpenFor,
   onDelete,
+  hasMore,
+  loadOlder,
   forwardMsg,
 }) => {
-  const { groupId,token } = useParams();
+  const { groupId, token } = useParams();
   return (
     <>
       <PinnedMessages channelId={groupId} token={token} msg={messages} />
+      <div className="flex item-center">
+        {hasMore && (
+          <button
+            onClick={loadOlder}
+            className="mx-auto mt-4 bg-transparent text-(--primary-foreground) px-4 py-2 rounded border border-(--border)"
+          >
+            Load chat
+          </button>
+        )}
+
+        {!hasMore && (
+          <p className="text-center w-full text-gray-400 text-sm mt-4">
+            No more messages
+          </p>
+        )}
+      </div>
+
       {messages.map((msg) => {
         const rtl = isRTL(msg?.content);
         return (
@@ -30,7 +48,8 @@ const MessageList = ({
               rtl={rtl}
               message={msg}
               currentUserId={currentUserId}
-              toggleReaction={toggleReaction}
+              loadOlder={loadOlder}
+              hasMore={hasMore}
               pickerOpenFor={pickerOpenFor}
               setPickerOpenFor={setPickerOpenFor}
               onDelete={onDelete}

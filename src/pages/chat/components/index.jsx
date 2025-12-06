@@ -13,11 +13,10 @@ const Messages = () => {
   const {
     messages,
     currentUserId,
-    toggleReaction,
     pickerOpenFor,
+    loadOlder,
     setPickerOpenFor,
     containerRef,
-    loaderRef,
     hasMore,
     deleteMessage,
     forwardMsg,
@@ -27,17 +26,19 @@ const Messages = () => {
     (state) => state.channels.byId[groupId],
     shallowEqual
   );
+
   const [openDialog, setOpenDialog] = useState(false);
 
-  const channel_name = channel?.channel_name || "channel";
-  const channel_desc = channel?.description || "description";
-  const channel_visbibility = channel?.visibility;
+  const {
+    channel_name = "channel",
+    description = "description",
+    visibility,
+  } = channel || {};
+
   return (
     <section ref={containerRef} className="messages-container">
       <ReplyDrawer />
-      {/* <div ref={loaderRef}>
-        {hasMore ? "loading older messages" : "No more messages"}
-      </div> */}
+
       {channel && (
         <>
           <div className="flex flex-col gap-0 items-center">
@@ -47,8 +48,8 @@ const Messages = () => {
             <h1 className=" text-2xl text-(--primary-foreground) font-black ">
               {channel_name}
             </h1>
-            <p className="text-(--primary-foreground)">{channel_desc}</p>
-            {channel_visbibility === "private" && isAdmin && (
+            <p className="text-(--primary-foreground)">{description}</p>
+            {visibility === "private" && isAdmin && (
               <Button
                 variant={"outline"}
                 className="text-(--primary-foreground) cursor-pointer border"
@@ -68,7 +69,8 @@ const Messages = () => {
       <MessageList
         messages={messages}
         currentUserId={currentUserId}
-        toggleReaction={toggleReaction}
+        hasMore={hasMore}
+        loadOlder={loadOlder}
         pickerOpenFor={pickerOpenFor}
         setPickerOpenFor={setPickerOpenFor}
         onDelete={deleteMessage}
