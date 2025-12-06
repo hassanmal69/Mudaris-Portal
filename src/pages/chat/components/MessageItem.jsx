@@ -20,16 +20,15 @@ import { addToast } from "@/redux/features/toast/toastSlice.js";
 
 const MessageItem = ({
   message,
-  currentUserId,
-  toggleReaction,
   pickerOpenFor,
   setPickerOpenFor,
   onDelete,
   forwardMsg,
   rtl,
 }) => {
-  const { profiles, created_at } = message || {};
-  const { id, full_name, avatar_url } = profiles || {};
+  const { created_at, profiles: { id, full_name, avatar_url } = {} } =
+    message || {};
+
   const dispatch = useDispatch();
   const [__state_local, __dispatch_local] = useReducer(
     __reducer_local,
@@ -136,7 +135,7 @@ const MessageItem = ({
               onEmoji={handleOpenEmoji}
               pickerOpenFor={pickerOpenFor}
               setPickerOpenFor={setPickerOpenFor}
-              toggleReaction={toggleReaction}
+              // toggleReaction={toggleReaction}
               userId={id}
               handleOpenDeleteDialog={handleOpenDeleteDialog}
               handleForwardDialog={handleForwardDialog}
@@ -177,13 +176,13 @@ const MessageItem = ({
               </button>
             )}
           </div>
-          <Reactions
+          {/* <Reactions
             reactions={message.reactions}
             currentUserId={currentUserId}
             onReact={(emoji) => {
               toggleReaction(message.id, emoji);
             }}
-          />
+          /> */}
         </div>
       </div>
     </>

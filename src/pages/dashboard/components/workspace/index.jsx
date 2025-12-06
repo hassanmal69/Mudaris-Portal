@@ -13,10 +13,7 @@ import { Button } from "@/components/ui/button.jsx";
 const Workspace = () => {
   const renderCount = useRef(0);
   const dispatch = useDispatch();
-  const userId = useSelector((state) => state.auth.user?.id);
-  const { loading } = useSelector((state) => state.workSpaces);
-  const workspaces = useSelector((s) => s.workSpaces.workspaces);
-  console.log(workspaces, "ws");
+  const { loading, workspaces } = useSelector((state) => state.workSpaces);
   const [workspacesWithDetails, setWorkspacesWithDetails] = useState([]);
   const [showAll, setShowAll] = useState(false);
 
@@ -104,4 +101,6 @@ const Workspace = () => {
   );
 };
 
-export default Workspace;
+export default React.memo(Workspace);
+
+Workspace.whyDidYouRender = true;

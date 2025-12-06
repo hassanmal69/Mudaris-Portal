@@ -11,21 +11,23 @@ const PAGE_SIZE = 20;
 
 export default function useMessages() {
   const dispatch = useDispatch();
+  const renderCount = useRef(0);
+
   const { groupId, user_id, token } = useParams();
   const messages = useSelector((state) => state.messages.items);
-  const session = useSelector((state) => state.auth);
-  const currentUserId = session.user?.id;
-  // console.log("session is", session.user);
-  // console.log("session is", session);
 
-  const imageUrl = session.user?.user_metadata?.avatar_url;
-  const fullName = session.user?.user_metadata?.fullName;
+  const {
+    avatar_url: imageUrl,
+    fullName,
+    id: currentUserId,
+  } = useSelector((s) => s.auth.user?.user_metadata);
+
   const query = useSelector((state) => state.search.query);
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [pickerOpenFor, setPickerOpenFor] = useState(null);
   const containerRef = useRef(null);
-  const loaderRef = useRef(null);
+  // const loaderRef = useRef(null);
 
   const profilesCache = useRef(new Map());
   // keep a ref to latest messages so callbacks/subscriptions can access up-to-date data
@@ -124,17 +126,17 @@ export default function useMessages() {
     }, 50);
   }, [page, hasMore, messages, dispatch]);
   // infinite scroll observer
-  useEffect(() => {
-    if (!loaderRef.current || !containerRef.current) return;
-    const observer = new window.IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) loadOlder();
-      },
-      { root: containerRef.current, threshold: 1.0 }
-    );
-    observer.observe(loaderRef.current);
-    return () => observer.disconnect();
-  }, [loadOlder]);
+  // useEffect(() => {
+  //   if (!loaderRef.current || !containerRef.current) return;
+  //   const observer = new window.IntersectionObserver(
+  //     (entries) => {
+  //       if (entries[0].isIntersecting) loadOlder();
+  //     },
+  //     { root: containerRef.current, threshold: 1.0 }
+  //   );
+  //   observer.observe(loaderRef.current);
+  //   return () => observer.disconnect();
+  // }, [loadOlder]);
 
   // listen for reaction changes and update the affected message using the latest messages (via ref)
   useEffect(() => {
@@ -186,60 +188,60 @@ export default function useMessages() {
     return () => supabase.removeChannel(subscription);
   }, [dispatch]);
   // toggle reaction
-  const toggleReaction = useCallback(
-    async (messageId, emoji) => {
-      const msg = messagesRef.current.find((m) => m.id === messageId);
-      const alreadyReacted = msg.reactions?.some(
-        (r) => r.user_id === currentUserId && r.reaction_type === emoji
-      );
-      let updatedMessages;
-      if (alreadyReacted) {
-        await supabase
-          .from("message_reactions")
-          .delete()
-          .eq("message_id", messageId)
-          .eq("user_id", currentUserId)
-          .eq("reaction_type", emoji);
-        updatedMessages = messagesRef.current.map((m) =>
-          m.id === messageId
-            ? {
-                ...m,
-                reactions: m.reactions.filter(
-                  (r) =>
-                    !(r.user_id === currentUserId && r.reaction_type === emoji)
-                ),
-              }
-            : m
-        );
-      } else {
-        await supabase.from("message_reactions").upsert([
-          {
-            message_id: messageId,
-            user_id: currentUserId,
-            reaction_type: emoji,
-          },
-        ]);
-        updatedMessages = messagesRef.current.map((m) =>
-          m.id === messageId
-            ? {
-                ...m,
-                reactions: [
-                  ...m.reactions,
-                  {
-                    user_id: currentUserId,
-                    reaction_type: emoji,
-                    id: "optimistic",
-                  },
-                ],
-              }
-            : m
-        );
-      }
-      dispatch(setMessages(updatedMessages));
-      setPickerOpenFor(null);
-    },
-    [currentUserId, dispatch]
-  );
+  // const toggleReaction = useCallback(
+  //   async (messageId, emoji) => {
+  //     const msg = messagesRef.current.find((m) => m.id === messageId);
+  //     const alreadyReacted = msg.reactions?.some(
+  //       (r) => r.user_id === currentUserId && r.reaction_type === emoji
+  //     );
+  //     let updatedMessages;
+  //     if (alreadyReacted) {
+  //       await supabase
+  //         .from("message_reactions")
+  //         .delete()
+  //         .eq("message_id", messageId)
+  //         .eq("user_id", currentUserId)
+  //         .eq("reaction_type", emoji);
+  //       updatedMessages = messagesRef.current.map((m) =>
+  //         m.id === messageId
+  //           ? {
+  //               ...m,
+  //               reactions: m.reactions.filter(
+  //                 (r) =>
+  //                   !(r.user_id === currentUserId && r.reaction_type === emoji)
+  //               ),
+  //             }
+  //           : m
+  //       );
+  //     } else {
+  //       await supabase.from("message_reactions").upsert([
+  //         {
+  //           message_id: messageId,
+  //           user_id: currentUserId,
+  //           reaction_type: emoji,
+  //         },
+  //       ]);
+  //       updatedMessages = messagesRef.current.map((m) =>
+  //         m.id === messageId
+  //           ? {
+  //               ...m,
+  //               reactions: [
+  //                 ...m.reactions,
+  //                 {
+  //                   user_id: currentUserId,
+  //                   reaction_type: emoji,
+  //                   id: "optimistic",
+  //                 },
+  //               ],
+  //             }
+  //           : m
+  //       );
+  //     }
+  //     dispatch(setMessages(updatedMessages));
+  //     setPickerOpenFor(null);
+  //   },
+  //   [currentUserId, dispatch]
+  // );
 
   useEffect(() => {
     const handleInsert = async (payload) => {
@@ -370,7 +372,8 @@ export default function useMessages() {
     },
     [dispatch]
   );
-
+  renderCount.current += 1;
+  console.log(renderCount.current, "useMessage render");
   return {
     messages: filtered,
     setMessages,
@@ -378,9 +381,9 @@ export default function useMessages() {
     hasMore,
     pickerOpenFor,
     setPickerOpenFor,
-    toggleReaction,
+    // toggleReaction,
     containerRef,
-    loaderRef,
+    // loaderRef,
     currentUserId,
     deleteMessage,
     forwardMsg,
