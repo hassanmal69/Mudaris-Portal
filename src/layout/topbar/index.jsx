@@ -55,6 +55,7 @@ const Topbar = () => {
     selectChannelMembers(groupId),
     shallowEqual
   );
+  console.log("channel members from ws", channelMembers);
   const visibility = channel?.visibility || "private";
   const directChannel = useSelector((state) => state?.direct?.directChannel);
   const channel_name =

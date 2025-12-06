@@ -75,24 +75,25 @@ const AddWorkspaceDialog = ({ open, onClose }) => {
     onClose();
   };
   const handleSubmit = async () => {
-    const formData = workspaceData;
-    let { name, description, avatarFile } = formData;
-    dispatch(
-      createWorkspace({
-        name,
-        description,
-        avatarFile,
-        adminId,
-      })
-    )
-      .unwrap()
-      .then((data) => {
-        setTimeout(() => resetWorkspaceState(setWorkspaceData, setStep), 300);
-        handleClose();
-      })
-      .catch((err) => {
-        console.error("Failed to create workspace:", err);
-      });
+    const { name, description, avatarFile } = workspaceData;
+
+    try {
+      // 1️⃣ Create the workspace and get the result
+      const newWorkspace = await dispatch(
+        createWorkspace({
+          name,
+          description,
+          avatarFile,
+          adminId,
+        })
+      ).unwrap();
+
+      // 3️⃣ Reset form & close
+      setTimeout(() => resetWorkspaceState(setWorkspaceData, setStep), 300);
+      handleClose();
+    } catch (err) {
+      console.error("Failed to create workspace:", err);
+    }
   };
 
   const sendEmail = async () => {
@@ -148,7 +149,13 @@ const AddWorkspaceDialog = ({ open, onClose }) => {
 
       if (!res.ok) {
         console.error("❌ Failed:", result);
-        alert("Server error: " + JSON.stringify(result));
+        dispatch(
+          addToast({
+            message: "Server error: " + JSON.stringify(result),
+            type: "destructive",
+            duration: 3000,
+          })
+        );
         return;
       }
 
