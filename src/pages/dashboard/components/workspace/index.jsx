@@ -1,77 +1,88 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { fetchAllWorkspaces } from "@/redux/features/workspace/workspaceSlice.js";
 import {
-  fetchAllWorkspaces,
-  addWorkspacesRealtime,
-} from "@/redux/features/workspace/workspaceSlice.js";
+  fetchUserWorkspace,
+  fetchWorkspaceMembers,
+} from "@/redux/features/workspaceMembers/WorkspaceMembersSlice.js";
 import { supabase } from "@/services/supabaseClient.js";
 import WorkspaceCard from "./workspaceCard.jsx";
 import { ChevronDownIcon, ChevronUpIcon } from "@radix-ui/react-icons";
-import { fetchUserWorkspace } from "@/redux/features/workspaceMembers/WorkspaceMembersSlice.js";
 import { Button } from "@/components/ui/button.jsx";
+
 const Workspace = () => {
-  const { session } = useSelector((state) => state.auth);
+  const renderCount = useRef(0);
   const dispatch = useDispatch();
-  const [showWs, setShowWs] = useState([]);
-  const { workspaces, loading } = useSelector((state) => state.workSpaces);
+  const { loading, workspaces } = useSelector((state) => state.workSpaces);
+  const [workspacesWithDetails, setWorkspacesWithDetails] = useState([]);
   const [showAll, setShowAll] = useState(false);
-  //  const {workspaceMembers}
+
   useEffect(() => {
-    dispatch(fetchAllWorkspaces());
+    dispatch(fetchAllWorkspaces()); // fetch all workspaces once on mount
   }, [dispatch]);
 
-  // Subscribe to real-time changes
   useEffect(() => {
-    const subscription = supabase
-      .channel("workspaces_changes")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "workspaces" },
-        (payload) => {
-          if (
-            payload.eventType === "INSERT" ||
-            payload.eventType === "UPDATE"
-          ) {
-            dispatch(addWorkspacesRealtime(payload.new));
-          }
-        }
-      )
-      .subscribe();
+    const fetchDetails = async () => {
+      if (workspaces.length === 0) return;
 
-    return () => {
-      supabase.removeChannel(subscription);
+      const details = await Promise.all(
+        workspaces.map(async (w) => {
+          const membersRes = await dispatch(fetchWorkspaceMembers(w.id));
+          const members = membersRes?.payload || [];
+
+          const { data } = await supabase
+            .from("channels")
+            .select("id")
+            .eq("workspace_id", w.id)
+            .order("created_at", { ascending: true })
+            .limit(1)
+            .maybeSingle();
+
+          return {
+            id: w.id,
+            workspace: w,
+            members,
+            firstChannelId: data?.id || null,
+          };
+        })
+      );
+
+      setWorkspacesWithDetails(details);
     };
-  }, [dispatch]);
 
-  const fetching = async () => {
-    const wsMember = await dispatch(fetchUserWorkspace(session?.user?.id));
-    setShowWs(wsMember?.payload);
-  };
-  useEffect(() => {
-    fetching();
-  }, []);
+    fetchDetails();
+  }, [dispatch, workspaces]); // ✅ depends on Redux workspaces
 
-  const visibleWorkspaces = showAll ? showWs : showWs.slice(0, 3);
+  // Memoize visible workspaces for toggling
+  const visibleWorkspaces = useMemo(() => {
+    return showAll ? workspacesWithDetails : workspacesWithDetails.slice(0, 3);
+  }, [showAll, workspacesWithDetails]);
+
+  renderCount.current += 1;
+  console.log("Workspace page renders:", renderCount.current);
 
   return (
     <section>
       <div className="flex w-full h-full flex-col gap-4">
         {loading && <p>Loading...</p>}
 
-        {visibleWorkspaces.map((w, i) => (
+        {visibleWorkspaces.map((details, i) => (
           <WorkspaceCard
-            key={w?.workspaces.id}
-            workspace={w?.workspaces}
+            key={details.id}
+            workspace={details.workspace}
+            members={details.members.members}
+            membersLoading={false} // already fetched
+            firstChannelId={details.firstChannelId}
             index={i}
           />
         ))}
 
         {/* Toggle button */}
-        <div className="flex justify-center">
-          {workspaces?.length > 3 && (
+        {workspacesWithDetails.length > 3 && (
+          <div className="flex justify-center">
             <Button
               onClick={() => setShowAll((prev) => !prev)}
-              variant={"outline"}
+              variant="outline"
             >
               {showAll ? (
                 <>
@@ -83,11 +94,13 @@ const Workspace = () => {
                 </>
               )}
             </Button>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </section>
   );
 };
 
-export default Workspace;
+export default React.memo(Workspace);
+
+Workspace.whyDidYouRender = true;

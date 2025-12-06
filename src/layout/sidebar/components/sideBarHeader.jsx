@@ -45,7 +45,7 @@ const SideBarHeader = ({ session }) => {
       </div>
       <Link to={`/dashboard/${session?.user?.id}`}>
         {currentWorkspace?.avatar_url ? (
-          <Avatar className="w-16 h-16  rounded-none ">
+          <Avatar className="w-16 h-16  rounded-md ">
             <AvatarImage
               src={currentWorkspace?.avatar_url}
               alt={currentWorkspace?.workspace_name}

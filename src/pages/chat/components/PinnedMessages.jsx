@@ -8,13 +8,13 @@ import MessageActions from "./messageActions/MessageActions";
 import AllPinnedMessagesDialog from "./AllPinnedMessagesDialog";
 const PinnedMessages = ({ channelId, token }) => {
   const dispatch = useDispatch();
-  const pinnedState = useSelector((state) => state.pinnedMessages);
-  const { items, loading } = pinnedState || {};
+  const { items, loading } = useSelector((state) => state.pinnedMessages || {});
+
   useEffect(() => {
     if (channelId) {
       dispatch(fetchPinnedMessages({ channelId, token: null }));
     } else if (token) {
-      dispatch(fetchPinnedMessages({ channelId:null, token }));
+      dispatch(fetchPinnedMessages({ channelId: null, token }));
     }
   }, [channelId, token, dispatch]);
 

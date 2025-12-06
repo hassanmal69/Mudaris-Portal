@@ -13,6 +13,7 @@ import { supabase } from "@/services/supabaseClient";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchWorkspaceById } from "@/redux/features/workspace/workspaceSlice";
 import { fetchChannels } from "@/redux/features/channels/channelsSlice.js";
+import { addToast } from "@/redux/features/toast/toastSlice";
 
 const InviteDialog = ({ open, onOpenChange }) => {
   const [step, setStep] = useState(0);
@@ -58,7 +59,10 @@ const InviteDialog = ({ open, onOpenChange }) => {
   }, [step, suggestedChannels, channels.length]);
 
   const allowedChannels = useMemo(
-    () => suggestedChannels.filter((ch) => ch.visibility === "public").map((ch) => ch.id),
+    () =>
+      suggestedChannels
+        .filter((ch) => ch.visibility === "public")
+        .map((ch) => ch.id),
     [suggestedChannels]
   );
 
@@ -84,7 +88,13 @@ const InviteDialog = ({ open, onOpenChange }) => {
       } = await supabase.auth.getSession();
 
       if (error || !session) {
-        alert("❌ You must be logged in to invite users.");
+        dispatch(
+          addToast({
+            message: "You must be logged in to invite users.",
+            type: "destructive",
+            duration: 3000,
+          })
+        );
         return;
       }
 
@@ -113,16 +123,33 @@ const InviteDialog = ({ open, onOpenChange }) => {
 
       const failed = data.results.filter((r) => r.error);
       if (failed.length > 0) {
-        alert(
-          "Some invitations failed:\n" +
-            failed.map((f) => `${f.email}: ${f.error}`).join("\n")
+        dispatch(
+          addToast({
+            message:
+              "Some invitations failed:\n" +
+              failed.map((f) => `${f.email}: ${f.error}`).join("\n"),
+            type: "destructive",
+            duration: 3000,
+          })
         );
       } else {
-        alert("✅ All invitations sent successfully!");
+        dispatch(
+          addToast({
+            message: "All invitations sent successfully!",
+            type: "success",
+            duration: 3000,
+          })
+        );
       }
     } catch (err) {
       console.error("Unexpected error:", err);
-      alert("Unexpected error while sending invitations.");
+      dispatch(
+        addToast({
+          message: "Unexpected error while sending invitations.",
+          type: "destructive",
+          duration: 3000,
+        })
+      );
     }
   };
 
@@ -132,7 +159,9 @@ const InviteDialog = ({ open, onOpenChange }) => {
         <DialogHeader>
           <DialogTitle>
             Invite people to{" "}
-            {loading ? "Loading..." : currentWorkspace?.workspace_name || "Workspace"}
+            {loading
+              ? "Loading..."
+              : currentWorkspace?.workspace_name || "Workspace"}
           </DialogTitle>
         </DialogHeader>
 

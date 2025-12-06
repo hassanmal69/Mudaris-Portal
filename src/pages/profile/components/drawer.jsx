@@ -11,17 +11,22 @@ import "../profile.css";
 import { Button } from "@/components/ui/button.jsx";
 export default function VaulDrawer() {
   const { workspace_id } = useParams();
-  const { session } = useSelector((state) => state.auth);
-  const [avatarUrl, setAvatarUrl] = useState(
-    session?.user?.user_metadata.avatar_url
-  );
+  const {
+    avatar_url: aUrl,
+    fullName,
+    email,
+  } = useSelector((state) => state.auth?.user?.user_metadata || {});
+
+  const [avatarUrl, setAvatarUrl] = useState(aUrl);
+
   const dispatch = useDispatch();
   const handleLogout = () => {
     dispatch(logOut());
   };
-
-  const channels = useSelector(selectChannels);
-  const channelState = useSelector((state) => state.channels);
+  const { channels, channelState } = useSelector((state) => ({
+    channels: selectChannels(state),
+    channelState: state.channels,
+  }));
 
   const [time, setTime] = useState(new Date());
   const isChannelsLoaded = channelState.allIds.length > 0;
@@ -31,22 +36,21 @@ export default function VaulDrawer() {
     return () => clearInterval(interval); // cleanup on unmount
   }, [workspace_id, dispatch]);
   useEffect(() => {
-    setAvatarUrl(session?.user?.user_metadata.avatar_url);
-  }, [session?.user?.user_metadata.avatar_url]);
+    setAvatarUrl(aUrl);
+  }, [aUrl]);
   useEffect(() => {
     if (workspace_id && isChannelsLoaded) {
       dispatch(fetchChannels(workspace_id));
     }
   }, [workspace_id, dispatch, isChannelsLoaded]);
 
-
   return (
     <Drawer.Root direction="right" modal={true}>
-      <Drawer.Trigger className="relative flex w-10 h-10 items-center justify-center gap-2 rounded-full ">
+      <Drawer.Trigger className="relative flex w-10 h-10 items-center justify-center gap-2 rounded-md ">
         <img
           src={avatarUrl}
           alt="profileImg"
-          className=" rounded-full hover:cursor-pointer object-cover w-10 h-10"
+          className=" rounded-md hover:cursor-pointer object-cover w-10 h-10"
         />
       </Drawer.Trigger>
       <Drawer.Portal>
@@ -75,7 +79,7 @@ export default function VaulDrawer() {
             <div className="flex w-full flex-col gap-2.5">
               <div className="flex my-3 justify-between">
                 <Drawer.Title className="font-medium mb-2 text-2xl text-(--sidebar-accent-foreground) ">
-                  {session?.user?.user_metadata?.fullName}
+                  {fullName}
                 </Drawer.Title>
                 <div>
                   <EditProfile />
@@ -90,9 +94,7 @@ export default function VaulDrawer() {
                 <h4 className="text-(--sidebar-accent-foreground)">
                   Email address
                 </h4>
-                <p className="text-(--muted-foreground)">
-                  {session?.user?.email}
-                </p>
+                <p className="text-(--muted-foreground)">{email}</p>
               </div>
 
               <div className=" flex flex-col w-full mb-2">

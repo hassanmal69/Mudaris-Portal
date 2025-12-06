@@ -130,7 +130,7 @@ const SideBarChannels = ({ userId, workspace_id, setAddChannelOpen }) => {
               className={`flex items-center gap-2 rounded px-2 py-1 cursor-pointer ${activeChannel?.id === chatChannel.id && !specialRoute
                   ? "bg-(--sidebar-accent) text-white"
                   : "hover:bg-(--sidebar-accent)"
-                }`}
+              }`}
             >
               <Users className="w-4 h-4" />
               <span className="text-[15px]">Chat</span>

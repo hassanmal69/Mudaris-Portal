@@ -37,12 +37,12 @@ export const addWorkspaceMember = createAsyncThunk(
       .insert([{ user_id: userId, workspace_id: workspaceId }]);
 
     if (error) return rejectWithValue(error.message);
-    return { userId, workspaceId, role }
+    return { userId, workspaceId, role };
   }
 );
 
 // Async thunk to fetch user's workspace
-//hassan modifing it to make it 
+//hassan modifing it to make it
 export const fetchUserWorkspace = createAsyncThunk(
   "workspace/fetchUserWorkspace",
   async (userId) => {
@@ -59,7 +59,7 @@ export const fetchUserWorkspace = createAsyncThunk(
     )
   `
       )
-      .eq("user_id", userId)
+      .eq("user_id", userId);
     if (error) throw error;
     return data;
   }

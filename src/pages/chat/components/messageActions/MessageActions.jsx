@@ -26,31 +26,19 @@ const MessageActions = React.memo(
   }) => {
     const renderCount = useRef(0);
     renderCount.current += 1;
-    const { session } = useSelector((state) => state.auth);
     const dispatch = useDispatch();
     const { groupId, token } = useParams();
-    const isPerson = userId === session?.user?.id
-    // const displayName = useSelector(
-    //   (state) => state.auth.user?.user_metadata?.displayName
-    // );
-    // const channelState = useSelector((state) => state.channels);
-    // const channels = channelState.allIds.map((id) => ({
-    //   id,
-    //   name: channelState.byId[id]?.channel_name,
-    //   visibility: channelState.byId[id]?.visibility,
-    // }));
-    // const desiredChannel = useMemo(() => {
-    //   return channels.find((m) => m.id === groupId);
-    // }, [channels, groupId]);
+    const currentUserId = useSelector((state) => state.auth.session?.user?.id);
+    const isPerson = userId === currentUserId;
+
     const handlePin = useCallback(
       async (messageId) => {
-
         await dispatch(
           togglePinMessage({
             channelId: groupId,
             messageId,
             userId,
-            token: token
+            token: token,
           })
         );
 
