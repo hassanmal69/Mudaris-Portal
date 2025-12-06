@@ -12,9 +12,9 @@ import { Button } from "@/components/ui/button.jsx";
 export default function VaulDrawer() {
   const { workspace_id } = useParams();
   const { session } = useSelector((state) => state.auth);
-  const [avatarUrl, setAvatarUrl] = useState(
-    session?.user?.user_metadata.avatar_url
-  );
+  const aUrl = session?.user?.user_metadata.avatar_url;
+  const [avatarUrl, setAvatarUrl] = useState(aUrl);
+
   const dispatch = useDispatch();
   const handleLogout = () => {
     dispatch(logOut());
@@ -31,22 +31,21 @@ export default function VaulDrawer() {
     return () => clearInterval(interval); // cleanup on unmount
   }, [workspace_id, dispatch]);
   useEffect(() => {
-    setAvatarUrl(session?.user?.user_metadata.avatar_url);
-  }, [session?.user?.user_metadata.avatar_url]);
+    setAvatarUrl(aUrl);
+  }, [aUrl]);
   useEffect(() => {
     if (workspace_id && isChannelsLoaded) {
       dispatch(fetchChannels(workspace_id));
     }
   }, [workspace_id, dispatch, isChannelsLoaded]);
 
-
   return (
     <Drawer.Root direction="right" modal={true}>
-      <Drawer.Trigger className="relative flex w-10 h-10 items-center justify-center gap-2 rounded-full ">
+      <Drawer.Trigger className="relative flex w-10 h-10 items-center justify-center gap-2 rounded-md ">
         <img
           src={avatarUrl}
           alt="profileImg"
-          className=" rounded-full hover:cursor-pointer object-cover w-10 h-10"
+          className=" rounded-md hover:cursor-pointer object-cover w-10 h-10"
         />
       </Drawer.Trigger>
       <Drawer.Portal>

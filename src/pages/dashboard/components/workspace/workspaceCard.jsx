@@ -1,69 +1,31 @@
-// WorkspaceCard.jsx
-import React, { useEffect, useState } from "react";
+import React, { useRef } from "react";
 import { Link } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  fetchWorkspaceMembers,
-  selectWorkspaceMembers,
-  selectLoading,
-} from "@/redux/features/workspaceMembers/WorkspaceMembersSlice.js";
 import {
   Avatar,
   AvatarImage,
   AvatarFallback,
 } from "@/components/ui/avatar.jsx";
 import { Button } from "@/components/ui/button.jsx";
-import { supabase } from "@/services/supabaseClient.js"; // <-- add this import
 import WorkspaceFallback from "@/components/ui/workspaceFallback";
 import UserFallback from "@/components/ui/userFallback";
 
-const WorkspaceCard = ({ workspace, index }) => {
-  const dispatch = useDispatch();
-  const members = useSelector(selectWorkspaceMembers(workspace.id));
-  const membersLoading = useSelector(selectLoading(workspace.id));
-
-  const [firstChannelId, setFirstChannelId] = useState(null);
-  // const [channelLoading, setChannelLoading] = useState(true);
-
-  useEffect(() => {
-    dispatch(fetchWorkspaceMembers(workspace.id));
-  }, [dispatch, workspace.id]);
-
-  useEffect(() => {
-    let isMounted = true;
-    const fetchFirstChannel = async () => {
-      try {
-        // select only id, ordered by created_at ascending, limit 1
-        const { data, error } = await supabase
-          .from("channels")
-          .select("id")
-          .eq("workspace_id", workspace.id)
-          .order("created_at", { ascending: true })
-          .limit(1)
-          .maybeSingle(); // returns null when no row instead of throwing
-
-        if (error) {
-          console.error("Error fetching first channel:", error);
-        } else if (isMounted && data && data.id) {
-          setFirstChannelId(data.id);
-        }
-      } catch (err) {
-        console.error("fetchFirstChannel caught:", err);
-      }
-    };
-
-    fetchFirstChannel();
-    return () => {
-      isMounted = false;
-    };
-  }, [workspace.id]);
-
+const WorkspaceCard = ({
+  workspace,
+  members = [],
+  membersLoading = false,
+  firstChannelId = null,
+  index,
+}) => {
+  const renderCount = useRef(0);
   const launchTo = firstChannelId
     ? `/workspace/${workspace.id}/group/${firstChannelId}`
     : `/workspace/${workspace.id}`;
 
+  renderCount.current += 1;
+  // console.log("WorkspaceCard renders:", renderCount.current);
+
   return (
-    <div className="flex w-full  sm:px-4 m-auto flex-col gap-3 sm:gap-0 sm:flex-row justify-between sm:items-center">
+    <div className="flex w-full sm:px-4 m-auto flex-col gap-3 sm:gap-0 sm:flex-row justify-between sm:items-center">
       <div className="flex gap-1.5 items-center">
         {workspace.avatar_url ? (
           <Avatar className="w-16 h-16 rounded-md">
@@ -93,7 +55,7 @@ const WorkspaceCard = ({ workspace, index }) => {
                   m.user_profiles?.avatar_url ? (
                     <Avatar
                       key={m.user_id}
-                      className="w-7 h-7 border-2 border-(--border) rounded-full"
+                      className="w-7 h-7 border-2 border-(--border)"
                     >
                       <AvatarImage
                         src={m.user_profiles?.avatar_url}
@@ -121,9 +83,10 @@ const WorkspaceCard = ({ workspace, index }) => {
         to={launchTo}
         style={{ textDecoration: "none" }}
       >
-        <Button variant={"outline"}>Launch Workspace</Button>
+        <Button variant="outline">Launch Workspace</Button>
       </Link>
     </div>
   );
 };
-export default WorkspaceCard;
+
+export default React.memo(WorkspaceCard);

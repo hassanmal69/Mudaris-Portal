@@ -6,6 +6,7 @@ import "@/styles/global.css";
 import { store } from "./redux/app/store.js";
 import { Provider } from "react-redux";
 import AppInitializer from "./appInitializer.jsx";
+import "./wdyr.js";
 createRoot(document.getElementById("root")).render(
   // <StrictMode>
   <Provider store={store}>

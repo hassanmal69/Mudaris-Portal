@@ -8,7 +8,7 @@ export const createWorkspace = createAsyncThunk(
     try {
       let avatarUrl = null;
 
-      // 1. Upload avatar if provided
+      // Upload avatar if provided
       if (avatarFile) {
         const fileExt = avatarFile.name.split(".").pop();
         const newFilePath = `workspaces/${adminId}-${Date.now()}.${fileExt}`;
@@ -25,14 +25,15 @@ export const createWorkspace = createAsyncThunk(
 
         avatarUrl = publicUrl;
       }
+
+      // Get session for edge function
       const {
         data: { session },
         error,
       } = await supabase.auth.getSession();
-      if (error) {
-        console.log('error caling session', error);
-      }
-      // 2. Call the Edge Function
+      if (error) throw error;
+
+      // Call edge function
       const res = await fetch(
         `https://surdziukuzjqthcfqoax.supabase.co/functions/v1/createWorkspace`,
         {
@@ -47,6 +48,7 @@ export const createWorkspace = createAsyncThunk(
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to create workspace");
+
       return data.workspace;
     } catch (error) {
       return rejectWithValue(error.message);
@@ -71,7 +73,7 @@ export const fetchAllWorkspaces = createAsyncThunk(
   }
 );
 
-// fetch single workspace by ID
+// fetch single workspace
 export const fetchWorkspaceById = createAsyncThunk(
   "workspaces/fetchById",
   async (workspaceId, { rejectWithValue }) => {
@@ -98,35 +100,26 @@ const workspaceSlice = createSlice({
     error: null,
   },
   reducers: {
-    addWorkspacesRealtime: (state, action) => {
-      const newWorkspace = action.payload;
-      const exists = state.workspaces.find((w) => w.id === newWorkspace.id);
-      if (exists) {
-        state.workspaces = state.workspaces.map((w) =>
-          w.id === newWorkspace.id ? newWorkspace : w
-        );
-      } else {
-        state.workspaces.push(newWorkspace);
-      }
-    },
-
     setCurrentWorkspace: (state, action) => {
       state.currentWorkspace = action.payload;
     },
   },
   extraReducers: (builder) => {
     builder
+      // create workspace
       .addCase(createWorkspace.pending, (state) => {
         state.loading = true;
       })
       .addCase(createWorkspace.fulfilled, (state, action) => {
         state.loading = false;
-        state.workspaces.push(action.payload);
+        state.workspaces.push(action.payload); // manually add
       })
       .addCase(createWorkspace.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
+
+      // fetch all
       .addCase(fetchAllWorkspaces.pending, (state) => {
         state.loading = true;
       })
@@ -138,6 +131,8 @@ const workspaceSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
+
+      // fetch by id
       .addCase(fetchWorkspaceById.pending, (state) => {
         state.loading = true;
       })
@@ -151,8 +146,5 @@ const workspaceSlice = createSlice({
       });
   },
 });
-
-export const { addWorkspacesRealtime, setCurrentWorkspace } =
-  workspaceSlice.actions;
-
+export const { setCurrentWorkspace } = workspaceSlice.actions;
 export default workspaceSlice.reducer;

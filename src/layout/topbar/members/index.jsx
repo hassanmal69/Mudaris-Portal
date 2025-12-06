@@ -27,19 +27,7 @@ const Members = ({ members }) => {
   renderCount.current += 1;
   console.log(`members renders: ${renderCount.current}`);
 
-  // Placeholder avatar for "no members"
-  // const renderEmptyAvatar = () => (
-  //   <Avatar
-  //     className="w-8 h-8 border  border-[#c1c1c1] bg-transparent flex items-center justify-center"
-  //     aria-hidden="true"
-  //   >
-  //     <AvatarImage
-  //       src="https://cdn.shadcnstudio.com/ss-assets/avatar/avatar-5.png"
-  //       alt="Hallie Richards"
-  //       className="rounded-sm"
-  //     />
-  //   </Avatar>
-  // );
+  // console.log("members of ws", { members } + "members lenght" + members.length);
   // Sort members alphabetically by full name (fallback to email) and memoize
   const sortedMembers = React.useMemo(() => {
     const list = (members || []).slice();
@@ -170,10 +158,14 @@ const Members = ({ members }) => {
                       </div>
                     </div>
 
-                      <Button
-                        variant={'ghost'}
-                        onClick={() => handleFunction({ ua: { id: user.user_id } })}
-                      >Message</Button>
+                    <Button
+                      variant={"ghost"}
+                      onClick={() =>
+                        handleFunction({ ua: { id: user.user_id } })
+                      }
+                    >
+                      Message
+                    </Button>
                   </div>
                 );
               })
