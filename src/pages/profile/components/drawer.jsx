@@ -1,35 +1,39 @@
 import { Drawer } from "vaul";
-import { useDispatch, useSelector } from "react-redux";
+import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { logOut } from "@/redux/features/auth/authSlice.js";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import EditProfile from "./editProfile.jsx";
-import { fetchChannels } from "@/redux/features/channels/channelsSlice.js";
 import { Clock, Globe, Lock } from "lucide-react";
 import { useParams } from "react-router-dom";
-import { selectChannels } from "@/redux/features/channels/channelsSlice.js";
 import "../profile.css";
 import { Button } from "@/components/ui/button.jsx";
+import { selectChannelsByUser } from "@/redux/features/channelMembers/channelMembersSlice.js";
 export default function VaulDrawer() {
   const { workspace_id } = useParams();
   const {
     avatar_url: aUrl,
     fullName,
-    email,
-  } = useSelector((state) => state.auth?.user?.user_metadata || {});
-
+    email
+  } = useSelector((state) => state.auth?.user?.user_metadata || {}, shallowEqual);
+  const { session } = useSelector((state) => (state.auth),shallowEqual);
+  const userId = useMemo(() => session?.user?.id, [session?.user?.id]); // stable userId
+  
   const [avatarUrl, setAvatarUrl] = useState(aUrl);
 
   const dispatch = useDispatch();
   const handleLogout = () => {
     dispatch(logOut());
   };
-  const { channels, channelState } = useSelector((state) => ({
-    channels: selectChannels(state),
-    channelState: state.channels,
-  }));
+  // const { channels, channelState } = useSelector((state) => ({
+  //   channels: selectChannels(state),
+  //   channelState: state.channels,
+  // }), shallowEqual);
 
   const [time, setTime] = useState(new Date());
-  const isChannelsLoaded = channelState.allIds.length > 0;
+  const channels = useSelector(
+    selectChannelsByUser(userId, workspace_id),
+    shallowEqual
+  );
 
   useEffect(() => {
     const interval = setInterval(() => setTime(new Date()), 1000);
@@ -38,11 +42,6 @@ export default function VaulDrawer() {
   useEffect(() => {
     setAvatarUrl(aUrl);
   }, [aUrl]);
-  useEffect(() => {
-    if (workspace_id && isChannelsLoaded) {
-      dispatch(fetchChannels(workspace_id));
-    }
-  }, [workspace_id, dispatch, isChannelsLoaded]);
 
   return (
     <Drawer.Root direction="right" modal={true}>

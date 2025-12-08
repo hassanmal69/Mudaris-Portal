@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useMemo, useRef, useState, useEffect } from "react";
 import AddChannelDialog from "@/components/Dialogs/add-channel-dialog";
 import InviteDialog from "@/components/Dialogs/invite-dialog";
 import { SidebarContent } from "@/components/ui/sidebar";
@@ -6,46 +6,94 @@ import { useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logOut } from "@/redux/features/auth/authSlice.js";
 import SideBarHeader from "./components/sideBarHeader";
-import SideBarChannels from "./components/sideBarChannels";
+import SideBarChannels from "./components/sidbeBarChannels/index.jsx";
 import SideBarApps from "./components/sideBarApps";
 import SideBarFooter from "./components/sideBarFooter";
 import './sidebar.css'
+
+// Debug helper
+const useRenderLogger = (componentName) => {
+  const renderCount = useRef(0);
+  
+  useEffect(() => {
+    renderCount.current++;
+    console.log(`${componentName} render #${renderCount.current}`);
+    
+    if (renderCount.current > 3) {
+      console.warn(`${componentName} is rendering too much!`);
+    }
+  });
+};
+
 const Sidebar = () => {
+  useRenderLogger('Sidebar');
+  
   const dispatch = useDispatch();
-  const { session } = useSelector((state) => state.auth);
   const [addChannelOpen, setAddChannelOpen] = useState(false);
   const [inviteOpen, setInviteOpen] = useState(false);
-  const { workspace_id, groupId } = useParams();
-  const handleLogout = () => {
+  const { workspace_id } = useParams();
+  
+  // Get session once, extract userId
+  const session = useSelector((state) => state.auth.session);
+  const userId = useMemo(() => session?.user?.id, [session?.user?.id]);
+  
+  // Stable callbacks
+  const stableSetAddChannelOpen = useCallback((open) => {
+    setAddChannelOpen(open);
+  }, []);
+  
+  const stableSetInviteOpen = useCallback((open) => {
+    setInviteOpen(open);
+  }, []);
+  
+  const handleLogout = useCallback(() => {
     dispatch(logOut());
-  };
+  }, [dispatch]);
+  
+  // Memoize ALL props
+  const sideBarChannelsProps = useMemo(() => ({
+    setAddChannelOpen: stableSetAddChannelOpen,
+    userId,
+    workspace_id
+  }), [stableSetAddChannelOpen, userId, workspace_id]);
+  
+  const sideBarAppsProps = useMemo(() => ({
+    workspace_id,
+    userId
+  }), [workspace_id, userId]);
+  
+  const sideBarFooterProps = useMemo(() => ({
+    setInviteOpen: stableSetInviteOpen,
+    handleLogout
+  }), [stableSetInviteOpen, handleLogout]);
+  
+  const sideBarHeaderProps = useMemo(() => ({
+    userId
+  }), [userId]);
+  
   return (
     <>
       <AddChannelDialog
         open={addChannelOpen}
-        onOpenChange={setAddChannelOpen}
+        onOpenChange={stableSetAddChannelOpen}
         usedIn={"createChannel"}
       />
-      <InviteDialog open={inviteOpen} onOpenChange={setInviteOpen} />
+      <InviteDialog open={inviteOpen} onOpenChange={stableSetInviteOpen} />
       <SidebarContent className="sideBar h-full bg-(--sidebar) text-(--foreground) border-2 border-(--sidebar-border) px-2 py-4 flex flex-col gap-4">
-        <SideBarHeader session={session} />
+        <SideBarHeader {...sideBarHeaderProps} />
         <div className="flex flex-col gap-2 border-y-2 w-full border-(--sidebar-border)">
-          <SideBarChannels
-            setAddChannelOpen={setAddChannelOpen}
-            session={session}
-            workspace_id={workspace_id}
-            groupId={groupId}
-          />
-          <SideBarApps workspace_id={workspace_id} />
+          <SideBarChannels {...sideBarChannelsProps} />
+          <SideBarApps {...sideBarAppsProps} />
         </div>
-        <SideBarFooter
-          session={session}
-          setInviteOpen={setInviteOpen}
-          handleLogout={handleLogout}
-        />
+        <SideBarFooter {...sideBarFooterProps} />
       </SidebarContent>
     </>
   );
 };
 
-export default React.memo(Sidebar);
+// Add custom comparison to prevent re-renders
+export default React.memo(Sidebar, (prevProps, nextProps) => {
+  // Since Sidebar has no props, it should never re-render
+  // unless something internal changes
+  return true; // Never re-render based on props
+});

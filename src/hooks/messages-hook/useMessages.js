@@ -21,7 +21,6 @@ export default function useMessages() {
     fullName,
     id: currentUserId,
   } = useSelector((s) => s.auth.user?.user_metadata);
-
   const query = useSelector((state) => state.search.query);
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);

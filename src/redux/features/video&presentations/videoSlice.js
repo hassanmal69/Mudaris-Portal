@@ -70,6 +70,7 @@ export const createVideoDB = createAsyncThunk(
 export const updateVideoDB = createAsyncThunk(
   "videos/update",
   async ({ id, updates }) => {
+    console.log('here id an upate',id,updates);
     const { data, error } = await supabase
       .from("videos")
       .update(updates)

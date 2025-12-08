@@ -25,7 +25,6 @@ const Members = ({ members }) => {
   };
   const renderCount = React.useRef(0);
   renderCount.current += 1;
-  console.log(`members renders: ${renderCount.current}`);
 
   // console.log("members of ws", { members } + "members lenght" + members.length);
   // Sort members alphabetically by full name (fallback to email) and memoize
@@ -128,7 +127,6 @@ const Members = ({ members }) => {
               filteredUsers.map((user, idx) => {
                 const name = user.user_profiles?.full_name;
                 const avatar = user.user_profiles?.avatar_url;
-                console.log(user.user_profiles?.email, "email");
                 return (
                   <div
                     key={user.id}

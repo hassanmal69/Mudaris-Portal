@@ -7,7 +7,7 @@ import {
   deleteChapterDB,
   fetchChapters,
 } from "@/redux/features/video&presentations/chapterSlice";
-import { fetchVideos } from "@/redux/features/video&presentations/videoSlice";
+import { deleteVideoDB, fetchVideos } from "@/redux/features/video&presentations/videoSlice";
 import { useParams } from "react-router-dom";
 import { ChevronDown, ChevronUp, PlayCircle } from "lucide-react";
 import { useIsAdmin } from "@/constants/constants.js";
@@ -62,7 +62,7 @@ const VideosPresentations = () => {
 
   // dispatchLocal({ type: "SELECT_ITEM", payload: item });
   const onDelete = (id) => dispatch(deleteChapterDB(id));
-
+const onDeleteVideo=(id)=>dispatch(deleteVideoDB(id))
   const handleAddVideo = (chapterId) => {
     setActiveChapter(chapterId);
     setVideoDialogOpen(true);
@@ -154,9 +154,9 @@ const VideosPresentations = () => {
                           </div>
                           {isAdmin && (
                             <Actions
-                              onEdit={() => onEdit(chapter)}
-                              onAdd={() => handleAddVideo(chapter.id)}
-                              onDelete={() => onDelete(chapter.id)}
+                              onEdit={() => onEdit(video)}
+                              onAdd={() => handleAddVideo(video.id)}
+                              onDelete={() => onDeleteVideo(video.id)}
                             />
                           )
                           }

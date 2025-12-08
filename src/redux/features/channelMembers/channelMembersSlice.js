@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { supabase } from "@/services/supabaseClient.js";
+import { createSelector } from "@reduxjs/toolkit";
 
 // Thunk
 // fetch members for a given channel (used by Topbar)
@@ -125,5 +126,49 @@ const channelMembersSlice = createSlice({
 
 export const selectChannelMembers = (channelId) => (state) =>
   state.channelMembers.byChannelId[channelId]?.data || [];
+let EMPTY_ARRAY = []
+export const selectChannelMembershipsForUser = (userId) =>
+  createSelector(
+    [(state) => state.channelMembers.byChannelId[userId]],
+    (membershipData) => {
+      if (!membershipData?.data) return EMPTY_ARRAY;
+      return membershipData.data.filter(m => m.channels); // Pre-filter
+    }
+  );
+// Selector factory: creates a memoized selector for each (userId, workspace_id)
+export const selectChannelsByUser = (userId, workspace_id) =>
+  createSelector(
+    [
+      selectChannelMembershipsForUser(userId),
+      () => workspace_id,
+    ],
+    (memberships, workspace_id) => {
+      if (memberships.length === 0) return EMPTY_ARRAY;
+
+      const channels = memberships.map(m => m.channels);
+      const filtered = channels.filter(ch => ch.workspace_id === workspace_id);
+
+      return filtered.length ? filtered : EMPTY_ARRAY;
+    }
+  );
+
+// export const selectChannelsByUser = (userId, workspace_id) => {
+//       [
+//         (state) => state.channelMembers.byChannelId[userId]?.data || [],
+//       ],
+//       (memberships) => {
+//         const filtered = memberships
+//           .map((m) => m.channels) // extract channels table object
+//           .filter((ch) => ch.workspace_id === workspace_id);
+
+//         return filtered.length ? filtered : [];
+//       }
+//     );
+//   }
+
+//   return cache[cacheKey];
+// };
+
+
 
 export default channelMembersSlice.reducer;

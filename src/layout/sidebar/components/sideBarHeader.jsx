@@ -1,58 +1,80 @@
-import React, { useState } from "react";
+import React, { useRef, useState, useCallback, useMemo } from "react";
 import { SidebarHeader } from "@/components/ui/sidebar";
-import { useSelector } from "react-redux";
+import { useSelector, shallowEqual } from "react-redux";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link } from "react-router-dom";
 import WorkspaceFallback from "@/components/ui/workspaceFallback";
 import { Moon, Sun } from "lucide-react";
-const SideBarHeader = ({ session }) => {
+
+const SideBarHeader = ({ userId }) => {
+  // --- RENDER COUNTER ---
+  const renderCount = useRef(0);
+  renderCount.current++;
+  console.log("Sidebar header count:", renderCount.current);
+
   const { currentWorkspace, loading } = useSelector(
-    (state) => state.workSpaces
+    (state) => ({
+      currentWorkspace: state.workSpaces.currentWorkspace,
+      loading: state.workSpaces.loading,
+    }),
+    shallowEqual 
   );
-  const [mode, setMode] = useState(localStorage.getItem("theme") || "dark");
-  const handleToggle = () => {
+
+  // --- THEME STATE ---
+  const [mode, setMode] = useState(
+    () => localStorage.getItem("theme") || "dark"
+  );
+
+  // --- STABLE TOGGLE HANDLER ---
+  const handleToggle = useCallback(() => {
     setMode((prevMode) => {
       const root = document.documentElement;
       const newMode = prevMode === "dark" ? "light" : "dark";
       root.classList.remove(prevMode);
       root.classList.add(newMode);
-      localStorage.setItem("theme", newMode); // store the actual new mode
+      localStorage.setItem("theme", newMode);
       return newMode;
     });
-  };
+  }, []);
+
+  const workspaceName = useMemo(() => {
+    if (loading) return "Loading...";
+    return currentWorkspace?.workspace_name || "Workspace";
+  }, [loading, currentWorkspace]);
+
+  const avatarFallback = useMemo(() => {
+    return currentWorkspace?.workspace_name?.[0]?.toUpperCase() || "W";
+  }, [currentWorkspace]);
 
   return (
     <SidebarHeader>
       <div className="flex gap-4 flex-row">
         <span className="text-lg font-bold tracking-tight">
-          {loading
-            ? "Loading..."
-            : currentWorkspace?.workspace_name || "Workspace"}
+          {workspaceName}
         </span>
 
         <button onClick={handleToggle} className="text-sm">
           {mode === "dark" ? (
             <Sun className="h-5 w-5" />
           ) : (
-            <Moon className="w-5 h-5" />
+            <Moon className="h-5 w-5" />
           )}
         </button>
       </div>
-      <Link to={`/dashboard/${session?.user?.id}`}>
+
+      <Link to={`/dashboard/${userId}`}>
         {currentWorkspace?.avatar_url ? (
-          <Avatar className="w-16 h-16  rounded-md ">
+          <Avatar className="w-16 h-16 rounded-md">
             <AvatarImage
-              src={currentWorkspace?.avatar_url}
-              alt={currentWorkspace?.workspace_name}
+              src={currentWorkspace.avatar_url}
+              alt={workspaceName}
             />
-            <AvatarFallback>
-              {currentWorkspace.workspace_name?.[0]?.toUpperCase()}
-            </AvatarFallback>
+            <AvatarFallback>{avatarFallback}</AvatarFallback>
           </Avatar>
         ) : (
           <WorkspaceFallback
             name={currentWorkspace?.workspace_name}
-            _idx={currentWorkspace?.id[0]}
+            _idx={currentWorkspace?.id?.[0]}
           />
         )}
       </Link>
@@ -60,4 +82,4 @@ const SideBarHeader = ({ session }) => {
   );
 };
 
-export default SideBarHeader;
+export default React.memo(SideBarHeader);

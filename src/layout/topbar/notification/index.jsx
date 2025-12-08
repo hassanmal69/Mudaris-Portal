@@ -23,11 +23,6 @@ export function Notifications() {
 
   const channelRef = useRef(null);
 
-  // --- Determine if this is personal view
-  const isPersonal = useMemo(
-    () => window.location.pathname.includes("/individual/"),
-    [window.location.pathname]
-  );
 
   // --- Compute unread notifications
   const computeUnread = useCallback(
@@ -55,98 +50,92 @@ export function Notifications() {
         "userId",
   workspaces:workspaceId(workspace_name)
         `
-      )
+      ).eq("userId", userId)
+      .eq("workspaceId", workspace_id)
       .order("created_at", { ascending: false });
 
-    if (isPersonal) {
-      queryBuilder = queryBuilder.eq("userId", userId);
-    } else {
-      queryBuilder = queryBuilder.eq("workspaceId", workspace_id);
-    }
+  const { data, error } = await queryBuilder;
 
-    const { data, error } = await queryBuilder;
+  if (!error && data) {
+    setNotifications(data);
+    setUnread(computeUnread(data));
+  }
+}, [userId, workspace_id, computeUnread]);
 
-    if (!error && data) {
-      setNotifications(data);
-      setUnread(computeUnread(data));
-    }
-  }, [userId, workspace_id, isPersonal, computeUnread]);
+// --- Setup realtime subscription
+const setupRealtime = useCallback(async () => {
+  if (!userId) return;
 
-  // --- Setup realtime subscription
-  const setupRealtime = useCallback(async () => {
-    if (!userId) return;
+  if (channelRef.current) supabase.removeChannel(channelRef.current);
 
+  const filter = 
+  `userId=eq.${userId},workspaceId=eq.${workspace_id}`;
+
+  const channel = supabase
+    .channel("notifications-realtime")
+    .on(
+      "postgres_changes",
+      { event: "INSERT", schema: "public", table: "notifications", filter },
+      (payload) => {
+        setNotifications((prev) => {
+          const updated = [payload.new, ...prev];
+          if (lastSeen) setUnread(computeUnread(updated));
+          return updated;
+        });
+      }
+    )
+    .subscribe();
+
+  channelRef.current = channel;
+}, [userId, workspace_id, lastSeen, computeUnread]);
+
+// --- Initialize fetch + realtime
+useEffect(() => {
+  fetchNotifications();
+  setupRealtime();
+
+  return () => {
     if (channelRef.current) supabase.removeChannel(channelRef.current);
-
-    const filter = isPersonal
-      ? `userId=eq.${userId}`
-      : `workspaceId=eq.${workspace_id}`;
-
-    const channel = supabase
-      .channel("notifications-realtime")
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "notifications", filter },
-        (payload) => {
-          setNotifications((prev) => {
-            const updated = [payload.new, ...prev];
-            if (lastSeen) setUnread(computeUnread(updated));
-            return updated;
-          });
-        }
-      )
-      .subscribe();
-
-    channelRef.current = channel;
-  }, [userId, workspace_id, isPersonal, lastSeen, computeUnread]);
-
-  // --- Initialize fetch + realtime
-  useEffect(() => {
-    fetchNotifications();
-    setupRealtime();
-
-    return () => {
-      if (channelRef.current) supabase.removeChannel(channelRef.current);
-    };
-  }, [fetchNotifications, setupRealtime]);
-
-  // --- Mark notifications as seen
-  const handleOpenChange = async (open) => {
-    if (!open) return;
-
-    const now = new Date().toISOString();
-
-    const { error } = await supabase.auth.updateUser({
-      data: { last_notification_seen: now },
-    });
-
-    if (!error) setUnread([]);
   };
+}, [fetchNotifications, setupRealtime]);
 
-  // --- Memoized dropdown items
-  const notificationItems = useMemo(() => {
-    if (notifications.length === 0) {
-      return [<DropdownMenuItem key="none">No notifications</DropdownMenuItem>];
-    }
-    return notifications.map((n) => (
-      <DropdownMenuItem key={n.id}>{n.description}</DropdownMenuItem>
-    ));
-  }, [notifications]);
+// --- Mark notifications as seen
+const handleOpenChange = async (open) => {
+  if (!open) return;
 
-  return (
-    <DropdownMenu onOpenChange={handleOpenChange}>
-      <DropdownMenuTrigger className="relative">
-        <Bell className="h-6 w-6 text-(--primary-foreground)" />
-        {unread.length > 0 && (
-          <Badge className="absolute -top-2 -right-2 rounded-full px-2 py-0.5 text-(--foreground)">
-            {unread.length}
-          </Badge>
-        )}
-      </DropdownMenuTrigger>
+  const now = new Date().toISOString();
 
-      <DropdownMenuContent className="w-72 text-(--foreground)">
-        {notificationItems}
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
+  const { error } = await supabase.auth.updateUser({
+    data: { last_notification_seen: now },
+  });
+
+  if (!error) setUnread([]);
+};
+
+// --- Memoized dropdown items
+const notificationItems = useMemo(() => {
+  if (notifications.length === 0) {
+    return [<DropdownMenuItem key="none">No notifications</DropdownMenuItem>];
+  }
+  return notifications.map((n) => (
+    <DropdownMenuItem key={n.id}>{n.description}</DropdownMenuItem>
+  ));
+}, [notifications]);
+
+return (
+  <DropdownMenu onOpenChange={handleOpenChange}>
+    <DropdownMenuTrigger className="relative">
+      <Bell className="h-6 w-6 text-(--primary-foreground)" />
+      {unread.length > 0 && (
+        <Badge className="absolute -top-2 -right-2 rounded-full px-2 py-0.5 text-(--foreground)">
+          {unread.length}
+        </Badge>
+      )}
+    </DropdownMenuTrigger>
+
+    <DropdownMenuContent className="w-72 text-(--foreground)">
+      {notificationItems}
+    </DropdownMenuContent>
+  </DropdownMenu>
+);
 }

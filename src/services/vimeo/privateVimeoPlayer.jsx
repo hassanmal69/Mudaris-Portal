@@ -74,7 +74,7 @@ const PrivateVimeoPlayer = ({ embedHtml }) => {
   return (
     <div
       ref={wrapperRef}
-      className="video-wrapper relative w-full h-full overflow-hidden"
+      className="video-container relative w-full h-full overflow-hidden"
     >
       {/* Watermark Canvas */}
       <canvas
@@ -84,7 +84,7 @@ const PrivateVimeoPlayer = ({ embedHtml }) => {
 
       {/* Vimeo Embed */}
       <div
-        className="absolute inset-0 z-10"
+        className="absolute video-wrapper inset-0 h-full w-full z-10"
         dangerouslySetInnerHTML={{ __html: embedHtml }}
       />
     </div>
