@@ -1,64 +1,38 @@
 import { useEffect, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { loginSchema } from "@/validation/authSchema";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "@/redux/features/auth/authSlice";
 import bgImg from "@/assets/images/GrowthIcon.png";
 import { useLocation } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 const Login = () => {
   const location = useLocation();
   const from = location.state?.from?.pathname || null;
   const dispatch = useDispatch();
-  const { loading, error } = useSelector((state) => state.auth);
   const navigate = useNavigate();
-  const { session } = useSelector((state) => state.auth);
-  const [pageloading, setpageloading] = useState(false);
-  const handletogle = () => {
-    const root = document.documentElement;
+  const { loading, error, session } = useSelector((state) => state.auth);
 
-    if (mode === "dark") {
-      root.classList.add("light");
-      localStorage.setItem("theme", "light");
-      console.log(localStorage.getItem("theme"));
-    }
-  };
   useEffect(() => {
-    const sessionDetect = async () => {
-      if (!session || session === undefined) setpageloading(true);
-      if (session) {
-        if (from) {
-          navigate(from, { replace: true });
-        } else {
-          navigate(`/dashboard/${session?.user?.id}`, { replace: true });
-        }
-      }
-    };
+    if (session) {
+      navigate(from || `/dashboard/${session.user.id}`, {
+        replace: true,
+      });
+    }
+  }, [session, navigate, from]);
 
-    sessionDetect();
-  }, [navigate, from, session]);
-
-  return pageloading ? (
-    <div className="font-poppins flex relative flex-col md:flex-row bg-[linear-gradient(20.82deg,#220E3D_11.13%,#5B25A3_88.87%)]">
-      <div className="text-white flex flex-col justify-center items-center w-[70%]">
-        <div className="flex flex-col items-center text-left w-full h-full">
-          <div className="flex flex-col gap-2">
-            <h1 className=" font-extrabold text-[60px] leading-[70px]">
-              <span className="font-semibold text-[40px] leading-[70px]">
-                Welcome to{" "}
-              </span>{" "}
-              <br />
-              Mudaris Academy <br /> Student Portal
-            </h1>
-            <p className="font-poppins font-medium text-[16px]">
-              Login to access your account
-            </p>
-          </div>
-        </div>
-        <img className="w-[70%]" src={bgImg} alt="Mudaris Academy logo" />
-      </div>
-      <div className="w-full  md:w-1/2 flex items-center justify-center bg-[#2A2C32] text-white py-12">
+  if (loading) {
+    return (
+      <p className="text-9xl text-center flex w-full h-full items-center justify-center">
+        Loading
+      </p>
+    );
+  }
+  return (
+    <section className="w-full h-screen bg-(--background) flex items-center justify-center">
+      <main className="max-w-2xl w-fit min-w-2xs p-7 rounded bg-(--card) flex items-center justify-center border border-(--border)">
         <Formik
           initialValues={{
             email: "",
@@ -72,13 +46,16 @@ const Login = () => {
         >
           {({ touched, errors, isSubmitting }) => (
             <Form
-              className="w-1/2 flex flex-col items-start gap-2"
+              className="flex flex-col items-center  gap-2"
               aria-label="Login form"
             >
-              <h2 className="text-[48px] font-bold text-white dm-sans">
-                Sign in
+              <img src={bgImg} alt="logo" className="w-[50px] h-[50px] " />
+              <h2 className="text-3xl text-center font-bold text-(--foreground) dm-sans">
+                Mudaris Academey{" "}
               </h2>
-              <p className="opacity-70">Enter your account details</p>
+              <p className="text-(--primary-foreground)">
+                Enter your account details
+              </p>
               <div className="w-full">
                 <div className="mb-5">
                   <Field
@@ -86,17 +63,17 @@ const Login = () => {
                     name="email"
                     type="email"
                     autoComplete="email"
-                    className={`w-full py-2 focus:outline-none focus:ring-2 focus:ring-purple transition border-b-2 text-white placeholder-white/60 backdrop-blur-sm ${
+                    className={`w-full border p-3 text-(--primary-foreground) bg-(--input) border-(--border) rounded focus:outline-none focus:ring-2 focus:ring-purple transition border-b-2 backdrop-blur-sm ${
                       touched.email && errors.email
-                        ? "border-red-400"
-                        : "border-b-white/30"
+                        ? "border-(--destructive)"
+                        : ""
                     }`}
                     placeholder="Email"
                   />
                   <ErrorMessage
                     name="email"
                     component="p"
-                    className="text-red-300 text-xs mt-1"
+                    className="text-(--destructive) text-xs mt-1"
                   />
                 </div>
 
@@ -106,26 +83,27 @@ const Login = () => {
                     name="password"
                     type="password"
                     autoComplete="current-password"
-                    className={`w-full py-2 border-b-2 focus:outline-none focus:ring-2 focus:ring-purple transition text-white placeholder-white/60 backdrop-blur-sm ${
+                    className={` border p-3 w-full  text-(--primary-foreground) bg-(--input) border-(--border) rounded focus:outline-none focus:ring-2 focus:ring-purple transition border-b-2 backdrop-blur-sm ${
                       touched.password && errors.password
-                        ? "border-red-400"
-                        : "border-white/30"
+                        ? "border-(--destructive)"
+                        : ""
                     }`}
                     placeholder="Password"
                   />
                   <ErrorMessage
                     name="password"
                     component="p"
-                    className="text-red-300 text-xs mt-1"
+                    className="text-(--destructive) text-xs mt-1"
                   />
                 </div>
               </div>
 
-              <button
+              <Button
                 type="submit"
-                className="w-full font-poppins  bg-purple/80 bg-[#58259C] backdrop-blur-sm text-white py-2 rounded-lg hover:bg-purple transition flex items-center justify-center font-normal text-[16px] disabled:opacity-60 border border-white/20"
                 disabled={loading}
                 aria-busy={loading}
+                variant={"success"}
+                className={"w-full h-[45px]"}
               >
                 {loading ? (
                   <span className="flex items-center">
@@ -154,20 +132,21 @@ const Login = () => {
                 ) : (
                   "Sign in"
                 )}
-              </button>
-
-              {error && (
-                <p className="text-red-300 text-sm mt-6 text-center">{error}</p>
-              )}
+              </Button>
+              <div className="text-(--foreground) text-center text-xs">
+                <p>
+                  By continuing, you acknowledge Anthropic's
+                  <span className="text-blue-500 hover:underline cursor-pointer">
+                    <Link to="/privacypolicy"> Privacy Policy and agree</Link>
+                  </span>
+                </p>
+                <p>to get occasional product update and promotional emails.</p>
+              </div>
             </Form>
           )}
         </Formik>
-      </div>
-    </div>
-  ) : (
-    <p className="text-9xl text-center flex w-full h-full items-center justify-center">
-      Loading
-    </p>
+      </main>
+    </section>
   );
 };
 

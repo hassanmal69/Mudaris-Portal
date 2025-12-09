@@ -16,6 +16,7 @@ import HandleChatsViewer from "@/pages/chatsViewer/index.jsx";
 import ChatGet from "@/pages/chatsViewer/chatGet/index.jsx";
 import VideosPresentations from "@/pages/channels/Videos & Presentations/index.jsx";
 import TopbarTwo from "@/layout/TopbarTwo/index.jsx";
+import Terms from "@/pages/terms/index.jsx";
 
 export const router = createBrowserRouter([
   {
@@ -26,7 +27,10 @@ export const router = createBrowserRouter([
     path: "/invite/verify",
     element: <SignUp />,
   },
-
+  {
+    path: "/privacypolicy",
+    element: <Terms />,
+  },
   // ✅ All themed pages wrapped
   {
     element: <ThemeLayout />, // theme applied here
@@ -55,6 +59,7 @@ export const router = createBrowserRouter([
           </OnlyAdmin>
         ),
       },
+
       {
         path: "/seePersonalChats/:token",
         element: (
