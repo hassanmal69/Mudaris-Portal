@@ -30,7 +30,7 @@ const FullName = ({ onNext }) => {
           </div>
           <button
             type="submit"
-            className="btn bg-purple py-1.5 px-6 rounded-[12px] text-l font-semibold btn-primary"
+            className="btn bg-purple py-1.5 px-6 rounded-xl text-l font-semibold btn-primary"
           >
             Next
           </button>

@@ -1,9 +1,15 @@
 import React, { useEffect, useMemo, useCallback, useRef } from "react";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
-import { selectActiveChannel, setActiveChannel } from "@/redux/features/channels/channelsSlice";
+import {
+  selectActiveChannel,
+  setActiveChannel,
+} from "@/redux/features/channels/channelsSlice";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useIsAdmin } from "@/constants/constants.js";
-import { fetchChannelMembersbyUser, selectChannelsByUser } from "@/redux/features/channelMembers/channelMembersSlice";
+import {
+  fetchChannelMembersbyUser,
+  selectChannelsByUser,
+} from "@/redux/features/channelMembers/channelMembersSlice";
 import ChannelsSection from "./channelSection";
 import LoadingState from "./";
 
@@ -13,7 +19,6 @@ const SideBarChannels = ({ userId, workspace_id, setAddChannelOpen }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const isAdmin = useIsAdmin();
 
   // Track renders
   renderCount.current++;
@@ -49,10 +54,10 @@ const SideBarChannels = ({ userId, workspace_id, setAddChannelOpen }) => {
   // Optimize chat/other channels separation
   const { chatChannel, otherChannels } = useMemo(() => {
     console.log("Processing channels:", visibleChannels.length);
-    
+
     let chat = null;
     const others = [];
-    
+
     for (const channel of visibleChannels) {
       if (channel.channel_name === "Chat") {
         chat = channel;
@@ -60,7 +65,7 @@ const SideBarChannels = ({ userId, workspace_id, setAddChannelOpen }) => {
         others.push(channel);
       }
     }
-    
+
     return { chatChannel: chat, otherChannels: others };
   }, [visibleChannels]);
 
@@ -85,8 +90,6 @@ const SideBarChannels = ({ userId, workspace_id, setAddChannelOpen }) => {
       otherChannels={otherChannels}
       specialRoute={specialRoute}
       activeChannelId={activeChannel?.id}
-      workspace_id={workspace_id}
-      isAdmin={isAdmin}
       setAddChannelOpen={setAddChannelOpen}
       onChannelClick={handleChannelClick}
     />
@@ -98,16 +101,16 @@ SideBarChannels.whyDidYouRender = true;
 
 // Export with React.memo
 export default React.memo(SideBarChannels, (prevProps, nextProps) => {
-  const isEqual = 
+  const isEqual =
     prevProps.userId === nextProps.userId &&
     prevProps.workspace_id === nextProps.workspace_id &&
     prevProps.setAddChannelOpen === nextProps.setAddChannelOpen;
-  
+
   console.log("SideBarChannels props comparison:", {
     prevProps,
     nextProps,
-    isEqual
+    isEqual,
   });
-  
+
   return isEqual;
 });
