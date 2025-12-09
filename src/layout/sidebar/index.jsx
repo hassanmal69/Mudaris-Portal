@@ -7,7 +7,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { logOut } from "@/redux/features/auth/authSlice.js";
 import SideBarHeader from "./components/sideBarHeader";
 import SideBarChannels from "./components/sidbeBarChannels/index.jsx";
-import SideBarApps from "./components/sideBarApps";
+import SideBarApps from "./components/sideBarApps/sideBarApps";
 import SideBarFooter from "./components/sideBarFooter";
 import './sidebar.css'
 

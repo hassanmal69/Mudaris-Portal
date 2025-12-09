@@ -7,8 +7,8 @@ import {
 import { supabase } from "@/services/supabaseClient";
 import { Avatar, AvatarImage } from "@/components/ui/avatar.jsx";
 import { Button } from "@/components/ui/button.jsx";
-import useHandleIndividual from "./useHandleIndividual.js";
-import SideBarDialogue from "./sideBarDialogue.jsx";
+import useHandleIndividual from "../useHandleIndividual.js";
+import SideBarDialogue from "../sideBarDialogue.jsx";
 
 const SidebarDirectMessages = ({ userId }) => {
   const [isShow, setIsShow] = useState(false);

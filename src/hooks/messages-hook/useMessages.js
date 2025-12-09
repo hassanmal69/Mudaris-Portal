@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { supabase } from "@/services/supabaseClient";
 import {
@@ -14,14 +14,14 @@ export default function useMessages() {
   const renderCount = useRef(0);
 
   const { groupId, user_id, token } = useParams();
-  const messages = useSelector((state) => state.messages.items);
+  const selectMessages = useMemo(() => (state) => state.messages.items, []);
+  const messages = useSelector(selectMessages, shallowEqual)
+  const selectAuthUser = useMemo(() => (s) => s.auth.user?.user_metadata, []);
 
-  const {
-    avatar_url: imageUrl,
-    fullName,
-    id: currentUserId,
-  } = useSelector((s) => s.auth.user?.user_metadata);
-  const query = useSelector((state) => state.search.query);
+  const selectQuery = useMemo(() => (state) => state.search.query, []);
+  const query = useSelector(selectQuery, shallowEqual);
+  const { avatar_url: imageUrl, fullName, id: currentUserId } =
+    useSelector(selectAuthUser);
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [pickerOpenFor, setPickerOpenFor] = useState(null);
@@ -39,8 +39,8 @@ export default function useMessages() {
     () =>
       query
         ? messages.filter((msg) =>
-            msg.content?.toLowerCase().includes(query.toLowerCase())
-          )
+          msg.content?.toLowerCase().includes(query.toLowerCase())
+        )
         : messages,
     [messages, query]
   );
@@ -58,6 +58,8 @@ export default function useMessages() {
           attachments,
           created_at,
           isForward,
+          channel_id,
+          token,
           profiles (
             id,
             full_name,
@@ -96,6 +98,7 @@ export default function useMessages() {
   // initial load
   useEffect(() => {
     (async () => {
+
       const firstBatch = await loadMessages(0);
       dispatch(setMessages(firstBatch));
       setPage(1);
