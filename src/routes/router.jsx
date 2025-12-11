@@ -17,6 +17,7 @@ import ChatGet from "@/pages/chatsViewer/chatGet/index.jsx";
 import VideosPresentations from "@/pages/channels/Videos & Presentations/index.jsx";
 import TopbarTwo from "@/layout/TopbarTwo/index.jsx";
 import Terms from "@/pages/terms/index.jsx";
+import UnreadProvider from "@/hooks/unread-hook/useUnread.jsx";
 
 export const router = createBrowserRouter([
   {
@@ -140,12 +141,15 @@ export const router = createBrowserRouter([
 
 function WorkspaceLayout() {
   return (
-    <SidebarLayout>
-      <Topbar />
-      <Outlet />
-    </SidebarLayout>
+    <UnreadProvider>
+      <SidebarLayout>
+        <Topbar />
+        <Outlet />
+      </SidebarLayout>
+    </UnreadProvider>
   );
 }
+
 function TopbarOnly() {
   return (
     <SidebarLayout>

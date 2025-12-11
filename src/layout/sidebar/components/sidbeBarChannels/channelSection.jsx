@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React from "react";
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -19,7 +19,6 @@ const ChannelsSection = React.memo(
     setAddChannelOpen,
     onChannelClick,
   }) => {
-    console.log("ChannelsSection rendered");
     const isAdmin = useIsAdmin();
 
     return (

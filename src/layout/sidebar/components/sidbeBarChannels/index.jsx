@@ -1,3 +1,4 @@
+// SideBarChannels.jsx - SIMPLIFIED VERSION
 import React, { useEffect, useMemo, useCallback, useRef } from "react";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import {
@@ -5,13 +6,11 @@ import {
   setActiveChannel,
 } from "@/redux/features/channels/channelsSlice";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useIsAdmin } from "@/constants/constants.js";
 import {
   fetchChannelMembersbyUser,
   selectChannelsByUser,
 } from "@/redux/features/channelMembers/channelMembersSlice";
 import ChannelsSection from "./channelSection";
-import LoadingState from "./";
 
 // Main component
 const SideBarChannels = ({ userId, workspace_id, setAddChannelOpen }) => {
@@ -20,9 +19,13 @@ const SideBarChannels = ({ userId, workspace_id, setAddChannelOpen }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // 🔥 JUST CALL THE HOOK - don't destructure getUnread
+
   // Track renders
   renderCount.current++;
-  console.log("🔄 SideBarChannels MAIN rendered #", renderCount.current);
+  if (renderCount.current > 3) {
+    console.log("🚨 SideBarChannels is rendering too much!", renderCount.current);
+  }
 
   // Memoize selector
   const channelsSelector = useMemo(
@@ -30,15 +33,17 @@ const SideBarChannels = ({ userId, workspace_id, setAddChannelOpen }) => {
     [userId, workspace_id]
   );
 
-  // Select data
-  const visibleChannels = useSelector(channelsSelector, shallowEqual);
-  const activeChannel = useSelector(selectActiveChannel);
-
-  // Fetch channels once
+  // 🔥 This now gets channels WITH unreadCounts already attached
+  const channelsWithUnread = useSelector(channelsSelector, shallowEqual);
+  const activeChannel = useSelector(selectActiveChannel, shallowEqual);
+  console.log('check channels',channelsWithUnread)
+  // Fetch channels once - use a ref to track if already fetched
+  const hasFetched = useRef(false);
   useEffect(() => {
-    console.log("Fetch effect running for userId:", userId);
-    if (userId) {
+    if (userId && !hasFetched.current) {
+      console.log("Fetch effect running for userId:", userId);
       dispatch(fetchChannelMembersbyUser(userId));
+      hasFetched.current = true;
     }
   }, [dispatch, userId]);
 
@@ -50,15 +55,12 @@ const SideBarChannels = ({ userId, workspace_id, setAddChannelOpen }) => {
     if (path.includes("videospresentations")) return "videospresentations";
     return "";
   }, [location.pathname]);
-
-  // Optimize chat/other channels separation
+  // 🔥 SIMPLIFIED: Channels already have unreadCount from selector
   const { chatChannel, otherChannels } = useMemo(() => {
-    console.log("Processing channels:", visibleChannels.length);
-
     let chat = null;
     const others = [];
 
-    for (const channel of visibleChannels) {
+    for (const channel of channelsWithUnread) {
       if (channel.channel_name === "Chat") {
         chat = channel;
       } else {
@@ -67,7 +69,7 @@ const SideBarChannels = ({ userId, workspace_id, setAddChannelOpen }) => {
     }
 
     return { chatChannel: chat, otherChannels: others };
-  }, [visibleChannels]);
+  }, [channelsWithUnread]); // Single dependency!
 
   // Click handler
   const handleChannelClick = useCallback(
@@ -79,10 +81,7 @@ const SideBarChannels = ({ userId, workspace_id, setAddChannelOpen }) => {
     [dispatch, navigate, workspace_id]
   );
 
-  // Loading state
-  // if (!visibleChannels?.length) {
-  //   return <LoadingState />;
-  // }
+  // Debug
 
   return (
     <ChannelsSection
@@ -96,21 +95,11 @@ const SideBarChannels = ({ userId, workspace_id, setAddChannelOpen }) => {
   );
 };
 
-// Add debugging
-SideBarChannels.whyDidYouRender = true;
-
-// Export with React.memo
+// 🔥 Add custom comparison to prevent unnecessary re-renders
 export default React.memo(SideBarChannels, (prevProps, nextProps) => {
-  const isEqual =
+  return (
     prevProps.userId === nextProps.userId &&
     prevProps.workspace_id === nextProps.workspace_id &&
-    prevProps.setAddChannelOpen === nextProps.setAddChannelOpen;
-
-  console.log("SideBarChannels props comparison:", {
-    prevProps,
-    nextProps,
-    isEqual,
-  });
-
-  return isEqual;
+    prevProps.setAddChannelOpen === nextProps.setAddChannelOpen
+  );
 });

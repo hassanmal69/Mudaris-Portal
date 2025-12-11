@@ -135,40 +135,28 @@ export const selectChannelMembershipsForUser = (userId) =>
       return membershipData.data.filter(m => m.channels); // Pre-filter
     }
   );
-// Selector factory: creates a memoized selector for each (userId, workspace_id)
+// channelMembersSlice.js - ONLY CHANGE THE SELECTOR PATH
+export const selectUnreadMessages = (state)=> state.unread?.messages || {}; // FIXED: Changed from unReadmessages to messages
+
+// Rest of your selectors stay the same
 export const selectChannelsByUser = (userId, workspace_id) =>
   createSelector(
     [
       selectChannelMembershipsForUser(userId),
       () => workspace_id,
+      (state) => state.unread?.messages || {}
     ],
-    (memberships, workspace_id) => {
-      if (memberships.length === 0) return EMPTY_ARRAY;
+    (memberships, workspace_id, unreadMessages) => {
+      if (!memberships.length) return [];
 
-      const channels = memberships.map(m => m.channels);
-      const filtered = channels.filter(ch => ch.workspace_id === workspace_id);
-
-      return filtered.length ? filtered : EMPTY_ARRAY;
+      return memberships
+        .map(m => m.channels)
+        .filter(ch => ch.workspace_id === workspace_id)
+        .map(ch => ({
+          ...ch,
+          unreadCount: unreadMessages[ch.id] || 0,
+        }));
     }
   );
-
-// export const selectChannelsByUser = (userId, workspace_id) => {
-//       [
-//         (state) => state.channelMembers.byChannelId[userId]?.data || [],
-//       ],
-//       (memberships) => {
-//         const filtered = memberships
-//           .map((m) => m.channels) // extract channels table object
-//           .filter((ch) => ch.workspace_id === workspace_id);
-
-//         return filtered.length ? filtered : [];
-//       }
-//     );
-//   }
-
-//   return cache[cacheKey];
-// };
-
-
 
 export default channelMembersSlice.reducer;

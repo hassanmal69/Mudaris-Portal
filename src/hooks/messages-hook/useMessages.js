@@ -16,8 +16,8 @@ export default function useMessages() {
   const { groupId, user_id, token } = useParams();
   const selectMessages = useMemo(() => (state) => state.messages.items, []);
   const messages = useSelector(selectMessages, shallowEqual)
-  const selectAuthUser = useMemo(() => (s) => s.auth.user?.user_metadata, []);
-
+  const selectAuthUser = useMemo(() => (s) => s.auth.user?.user_metadata || [], []);
+  const [loading, setLoading] = useState(true)
   const selectQuery = useMemo(() => (state) => state.search.query, []);
   const query = useSelector(selectQuery, shallowEqual);
   const { avatar_url: imageUrl, fullName, id: currentUserId } =
@@ -98,7 +98,7 @@ export default function useMessages() {
   // initial load
   useEffect(() => {
     (async () => {
-
+      setLoading(true)
       const firstBatch = await loadMessages(0);
       dispatch(setMessages(firstBatch));
       setPage(1);
@@ -107,6 +107,7 @@ export default function useMessages() {
           containerRef.current.scrollTop = containerRef.current.scrollHeight;
         }
       }, 100);
+      setLoading(false)
     })();
   }, [groupId, user_id, dispatch, token]);
 
@@ -380,6 +381,7 @@ export default function useMessages() {
     messages: filtered,
     setMessages,
     loadOlder,
+    loading,
     hasMore,
     pickerOpenFor,
     setPickerOpenFor,

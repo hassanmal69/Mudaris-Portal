@@ -1,18 +1,10 @@
-import React, { useEffect, useMemo } from "react";
+import React from "react";
 import { SidebarMenuItem } from "@/components/ui/sidebar";
 import { Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import useUnread from "@/hooks/unread-hook/useUnread";
 
 const ChannelItem = React.memo(({ channel, isActive, onClick }) => {
-  const { getUnread } = useUnread();
-
-  // Get unread count for this channel
-  const unreadCount = useMemo(() =>
-    getUnread(channel.id),
-    [getUnread, channel.id]
-  );
-  const hasUnread = unreadCount > 0;
+  // const unreadCount = channel.unreadCount || 0;
 
   return (
     <SidebarMenuItem>
@@ -28,15 +20,10 @@ const ChannelItem = React.memo(({ channel, isActive, onClick }) => {
           <span className="text-[15px]">{channel.channel_name}</span>
         </div>
 
-        {hasUnread && (
-          <Badge
-            variant={isActive ? "secondary" : "destructive"}
-            className="ml-auto"
-          >
-            {unreadCount > 9 ? "9+" : unreadCount}
+          <Badge variant={"secondary"} className="ml-auto">
+            <span>{channel.unreadCount !== undefined ? channel.unreadCount : "..."}</span>
           </Badge>
-        )}
-      </div>
+             </div>
     </SidebarMenuItem>
   );
 });

@@ -18,6 +18,8 @@ import videosReducer from "@/redux/features/video&presentations/videoSlice";
 import toastReducer from "@/redux/features/toast/toastSlice.js";
 import markCompleteSlice from "@/redux/features/video&presentations/markcompleteSlice.js";
 import lastSeenReducer from "@/redux/features/lastSeen/lastseenSlice.js"
+import unreadReducer from '@/redux/features/unread/unreadSlice.js'
+
 export const store = configureStore({
   reducer: {
     auth: authReducer,
@@ -30,6 +32,7 @@ export const store = configureStore({
     workspaceMembers: workspaceMembersReducer,
     channels: channelsReducer,
     direct: directSliceReducer,
+    unread: unreadReducer,
     channelMembers: channelMembersReducer,
     pinnedMessages: pinnedMessagesReducer,
     announcements: announcementsReducer,
