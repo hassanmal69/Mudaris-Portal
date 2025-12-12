@@ -1,14 +1,11 @@
 import React from "react";
 import FileUploader from "@/components/Editor/components/toolbar/files";
 import { toolbarButtons } from "../../config/toolbarButtons";
-import EmojiButton from "../EmojiButton.jsx";
 import MentionButton from "../MentionButton.jsx";
 import AudioRecording from "@/components/Editor/components/toolbar/audio";
-import VideoRecording from "@/components/Editor/components/toolbar/video";
 import { Button } from "@/components/ui/button";
 export default function Toolbar({ editor, toolbarStyles }) {
   if (!editor) return null;
-
   return (
     <div className="toolbar flex flex-wrap justify-between">
       <div className="flex items-center gap-1">

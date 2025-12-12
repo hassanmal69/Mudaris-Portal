@@ -1,5 +1,5 @@
 import React from "react";
-import ChannelItem from "./ChannelItem";
+import ChannelItem from "./channelItem.jsx";
 
 const ChannelsList = React.memo(({ 
   channels, 
@@ -7,7 +7,6 @@ const ChannelsList = React.memo(({
   specialRoute, 
   onChannelClick 
 }) => {
-  console.log(`ChannelsList rendered with ${channels.length} channels`);
   
   return (
     <>
