@@ -1,10 +1,12 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./vimeo.css";
 import { useSelector } from "react-redux";
+import { FullscreenIcon } from "lucide-react";
 
 const PrivateVimeoPlayer = ({ embedHtml }) => {
   const { session } = useSelector((state) => state.auth);
   const id = session?.user?.id || "Unknown ID";
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   const canvasRef = useRef(null);
   const wrapperRef = useRef(null);
@@ -21,7 +23,7 @@ const PrivateVimeoPlayer = ({ embedHtml }) => {
     ctx.fillStyle = "white";
     ctx.textAlign = "center";
 
-    ctx.fillText(id, canvas.width / 2, canvas.height - 30);
+    ctx.fillText(id, canvas.width / 2, canvas.height / 2);
   };
 
   // === Resize Canvas ===
@@ -39,37 +41,29 @@ const PrivateVimeoPlayer = ({ embedHtml }) => {
   // === Initial size + redraw on user change ===
   useEffect(() => {
     resizeCanvas();
-  }, [id]);
+  }, [id, isFullscreen]);
 
   // === Resize + fullscreen listeners ===
   useEffect(() => {
-    const handler = () => setTimeout(resizeCanvas, 150);
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
 
-    window.addEventListener("resize", handler);
-    document.addEventListener("fullscreenchange", handler);
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
 
     return () => {
-      window.removeEventListener("resize", handler);
-      document.removeEventListener("fullscreenchange", handler);
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
     };
   }, []);
 
-  // === Intercept Vimeo fullscreen and apply it on WRAPPER ===
-  useEffect(() => {
-    const observer = new MutationObserver(() => {
-      const iframe = wrapperRef.current?.querySelector("iframe");
+  function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+      wrapperRef.current.requestFullscreen();
+    } else {
+      document.exitFullscreen();
 
-      iframe.allow = "fullscreen";
-
-      iframe.addEventListener("fullscreenchange", () => {
-        wrapperRef.current?.requestFullscreen?.();
-      });
-    });
-
-    observer.observe(wrapperRef.current, { childList: true, subtree: true });
-
-    return () => observer.disconnect();
-  }, []);
+    }
+  }
 
   return (
     <div
@@ -83,10 +77,21 @@ const PrivateVimeoPlayer = ({ embedHtml }) => {
       />
 
       {/* Vimeo Embed */}
-      <div
-        className="absolute video-wrapper inset-0 h-full w-full z-10"
-        dangerouslySetInnerHTML={{ __html: embedHtml }}
-      />
+      <div className="w-full h-full relative">
+        <div
+          className="absolute video-wrapper inset-0 h-full w-full z-10"
+          dangerouslySetInnerHTML={{ __html: embedHtml }}
+        />
+        <div className="w-full h-full absolute flex justify-end items-end">
+          <button
+            onClick={toggleFullscreen}
+            className={` transition-colors duration-200 ease-in-out
+    ${isFullscreen ? "fullscreen-button" : "screen-button"}`}
+          >
+            <FullscreenIcon className={`${isFullscreen ? 'w-10 h-10' : 'w-8 h-8'}`} />
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
