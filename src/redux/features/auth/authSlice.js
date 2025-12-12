@@ -100,7 +100,7 @@ export const loginUser = createAsyncThunk(
 
       const session = data.session;
 
-      return (session = {});
+      return session
     } catch (err) {
       return rejectWithValue(err.message || "Login failed");
     }
