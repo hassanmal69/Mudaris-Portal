@@ -1,5 +1,5 @@
 import React from "react";
-import ChannelItem from "./ChannelItem";
+import ChannelItem from "./channelItem.jsx";
 
 const ChannelsList = React.memo(({ 
   channels, 
