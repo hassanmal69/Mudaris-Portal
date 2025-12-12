@@ -7,7 +7,6 @@ const ChannelsList = React.memo(({
   specialRoute, 
   onChannelClick 
 }) => {
-  console.log(`ChannelsList rendered with ${channels.length} channels`);
   
   return (
     <>
