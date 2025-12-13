@@ -7,16 +7,20 @@ import {
 } from "@/components/ui/dialog";
 import VideoForm from "./videoForm.jsx";
 
-const VideoDialog = ({ open, onOpenChange, chapterId }) => {
+const VideoDialog = ({ open, onOpenChange, chapterId, editingData }) => {
   const handleClose = () => onOpenChange(false);
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Add Video</DialogTitle>
+          {
+            editingData ?
+              <DialogTitle>Update Video</DialogTitle>
+              :
+              <DialogTitle>Add Video</DialogTitle>
+          }
         </DialogHeader>
-        <VideoForm onClose={handleClose} chapterId={chapterId} />
+        <VideoForm onClose={handleClose} data={editingData} chapterId={chapterId} />
       </DialogContent>
     </Dialog>
   );

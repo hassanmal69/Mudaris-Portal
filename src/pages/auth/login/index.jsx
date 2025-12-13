@@ -7,6 +7,7 @@ import { loginUser } from "@/redux/features/auth/authSlice";
 import bgImg from "@/assets/images/GrowthIcon.png";
 import { useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Eye, EyeOff } from "lucide-react";
 
 const Login = () => {
   const location = useLocation();
@@ -14,7 +15,7 @@ const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { loading, error, session } = useSelector((state) => state.auth);
-
+  const [showPassword, setShowPassword] = useState(false)
   useEffect(() => {
     if (session) {
       navigate(from || `/dashboard/${session.user.id}`, {
@@ -63,11 +64,10 @@ const Login = () => {
                     name="email"
                     type="email"
                     autoComplete="email"
-                    className={`w-full border p-3 text-(--primary-foreground) bg-(--input) border-(--border) rounded focus:outline-none focus:ring-2 focus:ring-purple transition border-b-2 backdrop-blur-sm ${
-                      touched.email && errors.email
-                        ? "border-(--destructive)"
-                        : ""
-                    }`}
+                    className={`w-full border p-3 text-(--primary-foreground) bg-(--input) border-(--border) rounded focus:outline-none focus:ring-2 focus:ring-purple transition border-b-2 backdrop-blur-sm ${touched.email && errors.email
+                      ? "border-(--destructive)"
+                      : ""
+                      }`}
                     placeholder="Email"
                   />
                   <ErrorMessage
@@ -78,18 +78,26 @@ const Login = () => {
                 </div>
 
                 <div className="mb-6">
-                  <Field
-                    id="password"
-                    name="password"
-                    type="password"
-                    autoComplete="current-password"
-                    className={` border p-3 w-full  text-(--primary-foreground) bg-(--input) border-(--border) rounded focus:outline-none focus:ring-2 focus:ring-purple transition border-b-2 backdrop-blur-sm ${
-                      touched.password && errors.password
+                  <div className="relative flex justify-end items-center">
+                    <Field
+                      id="password"
+                      name="password"
+                      type={showPassword ? 'text' : 'password'}
+                      autoComplete="current-password"
+                      className={` border p-3 w-full  text-(--primary-foreground) bg-(--input) border-(--border) rounded focus:outline-none focus:ring-2 focus:ring-purple transition border-b-2 backdrop-blur-sm ${touched.password && errors.password
                         ? "border-(--destructive)"
                         : ""
-                    }`}
-                    placeholder="Password"
-                  />
+                        }`}
+                      placeholder="Password"
+                    />
+                    <button
+                      type="button"
+                      className="text-white absolute right-3"
+                      onClick={() => setShowPassword((prev) => !prev)}
+                    >
+                      {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                    </button>
+                  </div>
                   <ErrorMessage
                     name="password"
                     component="p"
