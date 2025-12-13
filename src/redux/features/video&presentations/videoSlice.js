@@ -69,17 +69,23 @@ export const createVideoDB = createAsyncThunk(
 // UPDATE video
 export const updateVideoDB = createAsyncThunk(
   "videos/update",
-  async ({ id, updates }) => {
-    console.log('here id an upate',id,updates);
-    const { data, error } = await supabase
+  async (payload) => {
+    const { name, id, description, video_link, chapter_id } =
+      payload;
+
+    const { error } = await supabase
       .from("videos")
-      .update(updates)
+      .update({
+        name,
+        description,
+        video_link,
+        chapter_id
+      })
       .eq("id", id)
-      .select("*")
       .single();
 
     if (error) throw error;
-    return data;
+    return payload;
   }
 );
 
@@ -139,7 +145,6 @@ const videosSlice = createSlice({
       .addCase(updateVideoDB.fulfilled, (state, action) => {
         const updated = action.payload;
         const cid = updated.chapter_id;
-
         state.videosByChapter[cid] = state.videosByChapter[cid].map((v) =>
           v.id === updated.id ? updated : v
         );

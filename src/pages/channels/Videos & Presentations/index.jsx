@@ -34,6 +34,7 @@ const VideosPresentations = () => {
   const [videoDialogOpen, setVideoDialogOpen] = useState(false);
   const [activeChapter, setActiveChapter] = useState(null);
   const [editingChapter, setEditingChapter] = useState(null);
+  const [editingVideo, setEditingVideo] = useState(null);
 
   // Fetch chapters (only once thanks to caching)
   useEffect(() => {
@@ -60,14 +61,18 @@ const VideosPresentations = () => {
     setChapterDialogOpen(true);
   };
 
-  // dispatchLocal({ type: "SELECT_ITEM", payload: item });
   const onDelete = (id) => dispatch(deleteChapterDB(id));
-const onDeleteVideo=(id)=>dispatch(deleteVideoDB(id))
+  const onDeleteVideo = (id) => dispatch(deleteVideoDB(id))
   const handleAddVideo = (chapterId) => {
     setActiveChapter(chapterId);
+    setEditingVideo('')
     setVideoDialogOpen(true);
   };
-
+  const handleEditingVideo = (video, chapterId) => {
+    setActiveChapter(chapterId);
+    setEditingVideo(video)
+    setVideoDialogOpen(true);
+  }
   return (
     <div className="bg-(--background) text-(--foreground) p-4 flex flex-col gap-6">
       {isAdmin && (
@@ -154,8 +159,7 @@ const onDeleteVideo=(id)=>dispatch(deleteVideoDB(id))
                           </div>
                           {isAdmin && (
                             <Actions
-                              onEdit={() => onEdit(video)}
-                              onAdd={() => handleAddVideo(video.id)}
+                              onEdit={() => handleEditingVideo(video, chapter.id)}
                               onDelete={() => onDeleteVideo(video.id)}
                             />
                           )
@@ -196,6 +200,7 @@ const onDeleteVideo=(id)=>dispatch(deleteVideoDB(id))
       {activeChapter && (
         <VideoDialog
           chapterId={activeChapter}
+          editingData={editingVideo}
           open={videoDialogOpen}
           onOpenChange={setVideoDialogOpen}
         />
