@@ -117,15 +117,15 @@ const MessageActions = React.memo(
                     <Forward className="h-4 w-4 mr-2" />
                     Forward message
                   </DropdownMenuItem>
-                  {isPerson && (
-                    <DropdownMenuItem
-                      className="text-destructive"
-                      onClick={() => handleOpenDeleteDialog(messageId)}
-                    >
-                      <Trash2 className="h-4 w-4 mr-2" />
-                      Delete message
-                    </DropdownMenuItem>
-                  )}
+                  {/* {isPerson && ( */}
+                  <DropdownMenuItem
+                    className="text-destructive"
+                    onClick={() => handleOpenDeleteDialog(messageId)}
+                  >
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Delete message
+                  </DropdownMenuItem>
+                  {/* )} */}
                 </>
               )}
             </DropdownMenuContent>
