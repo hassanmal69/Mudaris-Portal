@@ -26,5 +26,5 @@ export default async function createInvitation({
     console.error("Error creating invitation:", error);
     return null;
   }
-  return `https://mudaris-portal.vercel.app/invite/verify?token=${token}`;
+  return `https://mymudarisacademy.com/invite/verify?token=${token}`;
 }

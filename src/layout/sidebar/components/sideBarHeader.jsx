@@ -7,11 +7,7 @@ import WorkspaceFallback from "@/components/ui/workspaceFallback";
 import { Moon, Sun } from "lucide-react";
 
 const SideBarHeader = ({ userId }) => {
-  // --- RENDER COUNTER ---
-  const renderCount = useRef(0);
-  renderCount.current++;
-  console.log("Sidebar header count:", renderCount.current);
-
+  console.count('sidebar header')
   const { currentWorkspace, loading } = useSelector(
     (state) => ({
       currentWorkspace: state.workSpaces.currentWorkspace,
@@ -24,7 +20,6 @@ const SideBarHeader = ({ userId }) => {
   const [mode, setMode] = useState(
     () => localStorage.getItem("theme") || "dark"
   );
-
   // --- STABLE TOGGLE HANDLER ---
   const handleToggle = useCallback(() => {
     setMode((prevMode) => {
