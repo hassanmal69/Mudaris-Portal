@@ -17,7 +17,7 @@ const SideBarHeader = ({ userId }) => {
       currentWorkspace: state.workSpaces.currentWorkspace,
       loading: state.workSpaces.loading,
     }),
-    shallowEqual 
+    shallowEqual
   );
 
   // --- THEME STATE ---

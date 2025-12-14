@@ -79,7 +79,7 @@ const InviteDialog = ({ open, onOpenChange }) => {
       }
     }
   };
-
+  console.log(channels, "this is channels");
   const sendEmail = async () => {
     try {
       const {

@@ -13,11 +13,14 @@ export default function VaulDrawer() {
   const {
     avatar_url: aUrl,
     fullName,
-    email
-  } = useSelector((state) => state.auth?.user?.user_metadata || {}, shallowEqual);
-  const { session } = useSelector((state) => (state.auth),shallowEqual);
-  const userId = useMemo(() => session?.user?.id, [session?.user?.id]); // stable userId
-  
+    email,
+  } = useSelector(
+    (state) => state.auth?.user?.user_metadata || {},
+    shallowEqual
+  );
+  const userId = useSelector((state) => state.auth.user?.id);
+  //const userId = useMemo(() => session?.user?.id, [session?.user?.id]); // stable userId
+
   const [avatarUrl, setAvatarUrl] = useState(aUrl);
 
   const dispatch = useDispatch();
@@ -28,17 +31,17 @@ export default function VaulDrawer() {
   //   channels: selectChannels(state),
   //   channelState: state.channels,
   // }), shallowEqual);
-
+  console.count("drawer render");
   const [time, setTime] = useState(new Date());
   const channels = useSelector(
     selectChannelsByUser(userId, workspace_id),
     shallowEqual
   );
 
-  useEffect(() => {
-    const interval = setInterval(() => setTime(new Date()), 1000);
-    return () => clearInterval(interval); // cleanup on unmount
-  }, [workspace_id, dispatch]);
+  // useEffect(() => {
+  //   const interval = setInterval(() => setTime(new Date()), 1000);
+  //   return () => clearInterval(interval); // cleanup on unmount
+  // }, [workspace_id, dispatch]);
   useEffect(() => {
     setAvatarUrl(aUrl);
   }, [aUrl]);

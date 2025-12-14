@@ -1,5 +1,5 @@
 import { supabase } from "@/services/supabaseClient";
-import React, { useEffect, useId, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ImagePlusIcon } from "lucide-react";
 import { Button } from "@/components/ui/button.jsx";
@@ -17,18 +17,26 @@ import {
 import { addToast } from "@/redux/features/toast/toastSlice";
 const EditProfile = () => {
   const dispatch = useDispatch();
-  const { avatar_url, fullName } = useSelector(
-    (s) => s.auth.user?.user_metadata || {}
-  );
+  const avatar_url = useSelector((s) => s.auth.user?.user_metadata?.avatar_url);
 
+  const fullName = useSelector((s) => s.auth.user?.user_metadata?.fullName);
+
+  const userId = useSelector((s) => s.auth.user?.id);
+
+  console.log(userId, "sgnajsg");
   const [file, setFile] = useState(null);
   const [name, setName] = useState(fullName);
   const [publicUrl, setPublicUrl] = useState(undefined);
-  const [sessionAvatarUrl, setSessionAvatarUrl] = useState(avatar_url);
-  const id = useId();
   useEffect(() => {
-    setSessionAvatarUrl(avatar_url);
-  }, []);
+    if (fullName !== undefined) {
+      setName(fullName);
+    }
+  }, [fullName]);
+
+  // useEffect(() => {
+  //   setSessionAvatarUrl(avatar_url);
+  // }, [avatar_url]);
+  console.count("EditProfile render");
 
   const handleSave = async () => {
     // Update names
@@ -44,7 +52,7 @@ const EditProfile = () => {
       .update({
         full_name: name,
       })
-      .eq("id", session.user.id);
+      .eq("id", userId);
     if (updateErrorinProfile) throw updateErrorinProfile;
     // If picture selected → upload
     if (file) {
@@ -60,7 +68,6 @@ const EditProfile = () => {
   };
 
   const handleEditPic = async () => {
-    const userId = session.user.id;
     const fileExt = file.name.split(".").pop();
     const newFilePath = `pictures/avatar/${userId}-${Date.now()}.${fileExt}`;
     const { error: uploadError } = await supabase.storage
@@ -90,10 +97,10 @@ const EditProfile = () => {
       .update({
         avatar_url: publicUrl,
       })
-      .eq("id", session.user.id);
+      .eq("id", userId);
     if (updateErrorinProfile) throw updateErrorinProfile;
     setPublicUrl(publicUrl);
-    setSessionAvatarUrl(publicUrl);
+    // setSessionAvatarUrl(publicUrl);
   };
 
   return (
@@ -117,7 +124,8 @@ const EditProfile = () => {
         <div className="w-full h-full flex justify-center pt-6">
           <div className="relative flex size-20 items-center justify-center overflow-hidden rounded-full border-4 border-(--chart-5) shadow-xs shadow-black/10">
             <img
-              src={publicUrl || sessionAvatarUrl}
+              //src={publicUrl || sessionAvatarUrl}
+              src={publicUrl ?? avatar_url}
               className="size-full object-cover"
               alt="Profile"
             />
@@ -146,9 +154,9 @@ const EditProfile = () => {
         <div className="px-6 pt-4 pb-6">
           <form className="space-y-4">
             <div className="flex flex-col gap-2">
-              <Label htmlFor={`${id}-fullname`}>Full Name</Label>
+              <Label htmlFor={`${userId}-fullname`}>Full Name</Label>
               <Input
-                id={`${id}-fullname`}
+                id={`${userId}-fullname`}
                 placeholder="Full Name"
                 className=" border-(--border) dark:bg-(--input-background) bg-(--switch-background) text-(--accent-foreground)"
                 value={name}

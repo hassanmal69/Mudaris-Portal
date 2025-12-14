@@ -18,7 +18,7 @@ const MessageList = ({
     <>
       <PinnedMessages channelId={groupId} token={token} msg={messages} />
       <div className="flex item-center">
-        {hasMore && (
+        {hasMore.lenght > 1 && (
           <button
             onClick={loadOlder}
             className="mx-auto mt-4 bg-transparent text-(--primary-foreground) px-4 py-2 rounded border border-(--border)"

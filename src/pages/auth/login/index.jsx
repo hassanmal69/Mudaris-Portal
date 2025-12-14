@@ -14,23 +14,15 @@ const Login = () => {
   const from = location.state?.from?.pathname || null;
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { loading, error, session } = useSelector((state) => state.auth);
-  const [showPassword, setShowPassword] = useState(false)
+  const { loading, session } = useSelector((state) => state.auth);
+  const [showPassword, setShowPassword] = useState(false);
   useEffect(() => {
-    if (session) {
-      navigate(from || `/dashboard/${session.user.id}`, {
-        replace: true,
-      });
-    }
-  }, [session, navigate, from]);
+    if (!session) return;
+    navigate(from || `/dashboard/${session.user.id}`, {
+      replace: true,
+    });
+  }, [session]);
 
-  if (loading) {
-    return (
-      <p className="text-9xl text-center flex w-full h-full items-center justify-center">
-        Loading
-      </p>
-    );
-  }
   return (
     <section className="w-full h-screen bg-(--background) flex items-center justify-center">
       <main className="max-w-2xl w-fit min-w-2xs p-7 rounded bg-(--card) flex items-center justify-center border border-(--border)">
@@ -42,7 +34,7 @@ const Login = () => {
           validationSchema={loginSchema}
           onSubmit={(values, { setSubmitting }) => {
             dispatch(loginUser(values));
-            setSubmitting(true);
+            //setSubmitting(true);
           }}
         >
           {({ touched, errors, isSubmitting }) => (
@@ -64,10 +56,11 @@ const Login = () => {
                     name="email"
                     type="email"
                     autoComplete="email"
-                    className={`w-full border p-3 text-(--primary-foreground) bg-(--input) border-(--border) rounded focus:outline-none focus:ring-2 focus:ring-purple transition border-b-2 backdrop-blur-sm ${touched.email && errors.email
-                      ? "border-(--destructive)"
-                      : ""
-                      }`}
+                    className={`w-full border p-3 text-(--primary-foreground) bg-(--input) border-(--border) rounded focus:outline-none focus:ring-2 focus:ring-purple transition border-b-2 backdrop-blur-sm ${
+                      touched.email && errors.email
+                        ? "border-(--destructive)"
+                        : ""
+                    }`}
                     placeholder="Email"
                   />
                   <ErrorMessage
@@ -82,12 +75,13 @@ const Login = () => {
                     <Field
                       id="password"
                       name="password"
-                      type={showPassword ? 'text' : 'password'}
+                      type={showPassword ? "text" : "password"}
                       autoComplete="current-password"
-                      className={` border p-3 w-full  text-(--primary-foreground) bg-(--input) border-(--border) rounded focus:outline-none focus:ring-2 focus:ring-purple transition border-b-2 backdrop-blur-sm ${touched.password && errors.password
-                        ? "border-(--destructive)"
-                        : ""
-                        }`}
+                      className={` border p-3 w-full  text-(--primary-foreground) bg-(--input) border-(--border) rounded focus:outline-none focus:ring-2 focus:ring-purple transition border-b-2 backdrop-blur-sm ${
+                        touched.password && errors.password
+                          ? "border-(--destructive)"
+                          : ""
+                      }`}
                       placeholder="Password"
                     />
                     <button

@@ -11,15 +11,14 @@ import { ChevronDownIcon, ChevronUpIcon } from "@radix-ui/react-icons";
 import { Button } from "@/components/ui/button.jsx";
 
 const Workspace = () => {
-  const renderCount = useRef(0);
   const dispatch = useDispatch();
   const { loading, workspaces } = useSelector((state) => state.workSpaces);
   const [workspacesWithDetails, setWorkspacesWithDetails] = useState([]);
   const [showAll, setShowAll] = useState(false);
-
+  console.count("ws rendered");
   useEffect(() => {
-    dispatch(fetchAllWorkspaces()); // fetch all workspaces once on mount
-  }, [dispatch]);
+    dispatch(fetchAllWorkspaces()); //   fetch all workspaces once on mount
+  }, []);
 
   useEffect(() => {
     const fetchDetails = async () => {
@@ -38,8 +37,9 @@ const Workspace = () => {
             .limit(1)
             .maybeSingle();
 
+          console.log(membersRes, "members");
           return {
-            id: w.id,
+            //  id: w.id,
             workspace: w,
             members,
             firstChannelId: data?.id || null,
@@ -48,34 +48,36 @@ const Workspace = () => {
       );
 
       setWorkspacesWithDetails(details);
+      // console.log(details, "details");
     };
 
     fetchDetails();
-  }, [dispatch, workspaces]); // ✅ depends on Redux workspaces
+  }, [workspaces]); // ✅ depends on Redux workspaces
 
   // Memoize visible workspaces for toggling
   const visibleWorkspaces = useMemo(() => {
     return showAll ? workspacesWithDetails : workspacesWithDetails.slice(0, 3);
   }, [showAll, workspacesWithDetails]);
-
-  renderCount.current += 1;
-  console.log("Workspace page renders:", renderCount.current);
-
+  if (visibleWorkspaces.length > 0)
+    console.log(visibleWorkspaces, "visible ws");
   return (
     <section>
       <div className="flex w-full h-full flex-col gap-4">
         {loading && <p>Loading...</p>}
-
-        {visibleWorkspaces.map((details, i) => (
-          <WorkspaceCard
-            key={details.id}
-            workspace={details.workspace}
-            members={details.members.members}
-            membersLoading={false} // already fetched
-            firstChannelId={details.firstChannelId}
-            index={i}
-          />
-        ))}
+        {visibleWorkspaces.length > 0 ? (
+          visibleWorkspaces?.map((details, i) => (
+            <WorkspaceCard
+              key={details.id}
+              workspace={details.workspace}
+              members={details.members.members}
+              membersLoading={false} // already fetched
+              firstChannelId={details.firstChannelId}
+              index={i}
+            />
+          ))
+        ) : (
+          <h2>Please create a workspace</h2>
+        )}
 
         {/* Toggle button */}
         {workspacesWithDetails.length > 3 && (
