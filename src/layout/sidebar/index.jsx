@@ -14,11 +14,11 @@ import './sidebar.css'
 // Debug helper
 const useRenderLogger = (componentName) => {
   const renderCount = useRef(0);
-  
+
   useEffect(() => {
     renderCount.current++;
     console.log(`${componentName} render #${renderCount.current}`);
-    
+
     if (renderCount.current > 3) {
       console.warn(`${componentName} is rendering too much!`);
     }
@@ -27,50 +27,48 @@ const useRenderLogger = (componentName) => {
 
 const Sidebar = () => {
   useRenderLogger('Sidebar');
-  
+
   const dispatch = useDispatch();
   const [addChannelOpen, setAddChannelOpen] = useState(false);
   const [inviteOpen, setInviteOpen] = useState(false);
   const { workspace_id } = useParams();
-  
-  // Get session once, extract userId
-  const session = useSelector((state) => state.auth.session);
-  const userId = useMemo(() => session?.user?.id, [session?.user?.id]);
-  
+
+  const userId = useSelector((state) => state.auth.session?.user?.id);
+
   // Stable callbacks
   const stableSetAddChannelOpen = useCallback((open) => {
     setAddChannelOpen(open);
   }, []);
-  
+
   const stableSetInviteOpen = useCallback((open) => {
     setInviteOpen(open);
   }, []);
-  
+
   const handleLogout = useCallback(() => {
     dispatch(logOut());
   }, [dispatch]);
-  
+
   // Memoize ALL props
   const sideBarChannelsProps = useMemo(() => ({
     setAddChannelOpen: stableSetAddChannelOpen,
     userId,
     workspace_id
   }), [stableSetAddChannelOpen, userId, workspace_id]);
-  
+
   const sideBarAppsProps = useMemo(() => ({
     workspace_id,
     userId
   }), [workspace_id, userId]);
-  
+
   const sideBarFooterProps = useMemo(() => ({
     setInviteOpen: stableSetInviteOpen,
     handleLogout
   }), [stableSetInviteOpen, handleLogout]);
-  
+
   const sideBarHeaderProps = useMemo(() => ({
     userId
   }), [userId]);
-  
+
   return (
     <>
       <AddChannelDialog
