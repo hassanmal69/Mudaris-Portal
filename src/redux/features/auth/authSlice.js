@@ -10,24 +10,24 @@ import { supabase } from "@/services/supabaseClient";
  * @param {string} userData.avatarUrl
  */
 //auth listener
-export const initAuthListener = () => (dispatch) => {
-  const {
-    data: { subscription },
-  } = supabase.auth.onAuthStateChange((event, session) => {
-    if (session) {
-      dispatch(
-        setSession({
-          session,
-          token: session.access_token,
-        })
-      );
-    } else {
-      dispatch(setSession({ session: null, token: null }));
-    }
-  });
+// export const initAuthListener = () => (dispatch) => {
+//   const {
+//     data: { subscription },
+//   } = supabase.auth.onAuthStateChange((event, session) => {
+//     if (session) {
+//       dispatch(
+//         setSession({
+//           session,
+//           token: session.access_token,
+//         })
+//       );
+//     } else {
+//       dispatch(setSession({ session: null, token: null }));
+//     }
+//   });
 
-  return subscription; // so you can unsubscribe if needed
-};
+//   return subscription; // so you can unsubscribe if needed
+// };
 // --- session detection Thunk ---
 export const sessionDetection = createAsyncThunk(
   "auth/sessionDetect",

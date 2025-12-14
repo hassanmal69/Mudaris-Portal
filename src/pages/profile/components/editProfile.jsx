@@ -1,6 +1,6 @@
 import { supabase } from "@/services/supabaseClient";
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { ImagePlusIcon } from "lucide-react";
 import { Button } from "@/components/ui/button.jsx";
 import { Input } from "@/components/ui/input.jsx";
@@ -17,26 +17,20 @@ import {
 import { addToast } from "@/redux/features/toast/toastSlice";
 const EditProfile = () => {
   const dispatch = useDispatch();
-  const avatar_url = useSelector((s) => s.auth.user?.user_metadata?.avatar_url);
-
-  const fullName = useSelector((s) => s.auth.user?.user_metadata?.fullName);
-
-  const userId = useSelector((s) => s.auth.user?.id);
-
-  console.log(userId, "sgnajsg");
+  const { avatar_url, fullName } = useSelector(
+    (s) => s.auth.user?.user_metadata || {}, shallowEqual
+  );
+  const userId = useSelector(
+    (s) => s.auth.user?.id || {}, shallowEqual
+  );
+  console.count('edit')
   const [file, setFile] = useState(null);
   const [name, setName] = useState(fullName);
   const [publicUrl, setPublicUrl] = useState(undefined);
+  const [sessionAvatarUrl, setSessionAvatarUrl] = useState(avatar_url);
   useEffect(() => {
-    if (fullName !== undefined) {
-      setName(fullName);
-    }
-  }, [fullName]);
-
-  // useEffect(() => {
-  //   setSessionAvatarUrl(avatar_url);
-  // }, [avatar_url]);
-  console.count("EditProfile render");
+    setSessionAvatarUrl(avatar_url);
+  }, []);
 
   const handleSave = async () => {
     // Update names
@@ -97,10 +91,10 @@ const EditProfile = () => {
       .update({
         avatar_url: publicUrl,
       })
-      .eq("id", userId);
+      .eq("id",userId);
     if (updateErrorinProfile) throw updateErrorinProfile;
     setPublicUrl(publicUrl);
-    // setSessionAvatarUrl(publicUrl);
+    setSessionAvatarUrl(publicUrl);
   };
 
   return (
@@ -115,17 +109,12 @@ const EditProfile = () => {
           <DialogTitle className="border-b border-(--border) px-6 py-4 text-(--muted-foreground) text-base">
             Edit profile
           </DialogTitle>
-          {/* <DialogDescription className="">
-            Make changes to your profile here. You can change your photo and set
-            a username.
-          </DialogDescription> */}
         </DialogHeader>
         {/* Avatar Upload */}
         <div className="w-full h-full flex justify-center pt-6">
           <div className="relative flex size-20 items-center justify-center overflow-hidden rounded-full border-4 border-(--chart-5) shadow-xs shadow-black/10">
             <img
-              //src={publicUrl || sessionAvatarUrl}
-              src={publicUrl ?? avatar_url}
+              src={publicUrl || sessionAvatarUrl}
               className="size-full object-cover"
               alt="Profile"
             />
@@ -154,9 +143,9 @@ const EditProfile = () => {
         <div className="px-6 pt-4 pb-6">
           <form className="space-y-4">
             <div className="flex flex-col gap-2">
-              <Label htmlFor={`${userId}-fullname`}>Full Name</Label>
+              <Label htmlFor='fullname'>Full Name</Label>
               <Input
-                id={`${userId}-fullname`}
+                id='fullname'
                 placeholder="Full Name"
                 className=" border-(--border) dark:bg-(--input-background) bg-(--switch-background) text-(--accent-foreground)"
                 value={name}

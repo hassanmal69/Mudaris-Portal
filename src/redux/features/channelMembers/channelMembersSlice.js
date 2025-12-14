@@ -152,23 +152,5 @@ export const selectChannelsByUser = (userId, workspace_id) =>
     }
   );
 
-// export const selectChannelsByUser = (userId, workspace_id) => {
-//       [
-//         (state) => state.channelMembers.byChannelId[userId]?.data || [],
-//       ],
-//       (memberships) => {
-//         const filtered = memberships
-//           .map((m) => m.channels) // extract channels table object
-//           .filter((ch) => ch.workspace_id === workspace_id);
-
-//         return filtered.length ? filtered : [];
-//       }
-//     );
-//   }
-
-//   return cache[cacheKey];
-// };
-
-
 
 export default channelMembersSlice.reducer;

@@ -1,20 +1,15 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import Profile from "@/pages/profile";
 import { useParams } from "react-router-dom";
-import { Globe, Lock, Search, Siren } from "lucide-react";
+import { Lock, Search } from "lucide-react";
 import Members from "./members";
 import { useDispatch, useSelector, shallowEqual } from "react-redux";
 import { setQuery } from "@/redux/features/messages/search/searchSlice";
 import { Notifications } from "./notification";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import {
-  fetchChannelMembersByChannel,
-  selectChannelMembers,
-} from "@/redux/features/channelMembers/channelMembersSlice";
 import "./topbar.css";
 import { Users } from "lucide-react";
-import { supabase } from "@/services/supabaseClient";
 
 // Debounce utility
 function debounce(fn, delay) {
@@ -40,22 +35,12 @@ const Topbar = () => {
   // --- State ---
   const [isMobile, setIsMobile] = useState(window.innerWidth < 860);
 
-  // --- Fetch channel members ---
-  useEffect(() => {
-    if (groupId) {
-      dispatch(fetchChannelMembersByChannel(groupId));
-    }
-  }, [groupId, dispatch]);
+  console.count("topbar rerendering")
 
   const channel = useSelector(
     (state) => state.channels.byId[groupId],
     shallowEqual
   );
-  const channelMembers = useSelector(
-    selectChannelMembers(groupId),
-    shallowEqual
-  );
-  console.log("channel members from ws", channelMembers);
   const visibility = channel?.visibility || "private";
   const directChannel = useSelector((state) => state?.direct?.directChannel);
   const channel_name =
@@ -77,13 +62,14 @@ const Topbar = () => {
     return () => debouncedDispatch.cancel();
   }, [localQuery, debouncedDispatch]);
 
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 860);
-    window.addEventListener("resize", handleResize);
-    handleResize();
-    return () => window.removeEventListener("resize", handleResize);
+  const handleResize = useCallback(() => {
+    setIsMobile(window.innerWidth < 860);
   }, []);
 
+  useEffect(() => {
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [handleResize]);
   return (
     <section
       className="top-0 w-full bg-(--sidebar) z-20 shadow-sm md:px-6 py-2 flex items-center topbar-container"
@@ -126,7 +112,7 @@ const Topbar = () => {
       {/* Right Section */}
       <div className="flex items-center gap-2 min-h-0 ">
         <Notifications />
-        <Members members={channelMembers} />
+        <Members />
         <Profile />
       </div>
     </section>
