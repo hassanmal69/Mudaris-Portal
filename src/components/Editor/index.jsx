@@ -85,7 +85,7 @@ export default function EditorWrapper({ width, styles, toolbarStyles }) {
       >
         {files.map((f, index) => (
           <div key={index} className="file-map">
-            <div className="relative">
+            <div className="relative w-fit">
               {f.fileType.includes("pdf") && (
                 <embed
                   src={f.fileLink}

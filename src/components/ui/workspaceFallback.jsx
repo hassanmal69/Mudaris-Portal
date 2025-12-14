@@ -8,7 +8,7 @@ const WorkspaceFallback = React.memo(({ name, _idx }) => {
       className={`w-16 h-16 rounded-md  flex items-center justify-center`}
     >
       <AvatarFallback
-        className={`text-[#2b092b] ${color} rounded text-xl font-bold`}
+        className={`text-(--foreground) ${color} rounded text-xl font-bold`}
       >
         {name?.[0]?.toUpperCase()}
       </AvatarFallback>

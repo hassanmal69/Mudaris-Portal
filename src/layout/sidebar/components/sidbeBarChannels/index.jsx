@@ -5,13 +5,11 @@ import {
   setActiveChannel,
 } from "@/redux/features/channels/channelsSlice";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useIsAdmin } from "@/constants/constants.js";
 import {
   fetchChannelMembersbyUser,
   selectChannelsByUser,
 } from "@/redux/features/channelMembers/channelMembersSlice";
 import ChannelsSection from "./channelSection";
-import LoadingState from "./";
 
 // Main component
 const SideBarChannels = ({ userId, workspace_id, setAddChannelOpen }) => {

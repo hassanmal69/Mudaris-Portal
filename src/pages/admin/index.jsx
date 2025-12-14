@@ -47,7 +47,7 @@ export default function UsersList() {
 
       <div className="overflow-x-auto rounded-lg shadow-md">
         <table className="min-w-full border border-[#111]">
-          <thead className="bg-[#2b092b] text-gray-300">
+          <thead className="bg-(--primary) text-gray-300">
             <tr>
               <th className="px-4 py-2 text-left">Avatar</th>
               <th className="px-4 py-2 text-left">Name</th>

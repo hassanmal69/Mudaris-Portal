@@ -1,13 +1,21 @@
 import React from "react";
 import { SidebarMenuItem } from "@/components/ui/sidebar";
 import { Link, useParams } from "react-router-dom";
-
+import { Megaphone, Link as Chain, Video } from "lucide-react";
 const ROUTE_MAP = {
-  announcements: { icon: "📢", label: "Announcements" },
-  lecturesLink: { icon: "🔗", label: "Lecture's Links" },
-  videospresentations: { icon: "🎥", label: "Videos & Presentations" },
+  announcements: {
+    icon: <Megaphone className="w-4 h-4" />,
+    label: "Announcements",
+  },
+  lecturesLink: {
+    icon: <Chain className="w-4 h-4" />,
+    label: "Lecture's Links",
+  },
+  videospresentations: {
+    icon: <Video className="w-4 h-4" />,
+    label: "Videos & Presentations",
+  },
 };
-
 const SpecialRouteItem = React.memo(({ route, isActive }) => {
   const { workspace_id } = useParams();
   console.log(`SpecialRouteItem ${route} rendered`);
