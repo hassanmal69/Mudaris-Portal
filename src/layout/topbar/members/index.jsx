@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -13,8 +13,26 @@ import { Input } from "@/components/ui/input";
 import { Search, Users } from "lucide-react";
 import UserFallback from "@/components/ui/userFallback";
 import useHandleIndividual from "@/layout/sidebar/components/useHandleIndividual";
+import { fetchChannelMembersByChannel, selectChannelMembers } from "@/redux/features/channelMembers/channelMembersSlice";
+import { useParams } from "react-router-dom";
+import { shallowEqual, useDispatch, useSelector } from "react-redux";
 
-const Members = ({ members }) => {
+const Members = () => {
+  const { groupId } = useParams();
+  const dispatch = useDispatch()
+  useEffect(() => {
+    if (groupId) {
+      dispatch(fetchChannelMembersByChannel(groupId));
+    }
+  }, [groupId]);
+  const selectingMembers = useMemo(() =>
+    selectChannelMembers(groupId),
+    [groupId]
+  )
+  const members = useSelector(
+    selectingMembers,
+    shallowEqual
+  );
   // const MAX_RENDER = 3;
   const handleFunction = useHandleIndividual();
 

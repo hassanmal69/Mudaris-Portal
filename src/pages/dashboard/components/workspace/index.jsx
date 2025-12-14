@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchAllWorkspaces } from "@/redux/features/workspace/workspaceSlice.js";
 import {
-  fetchUserWorkspace,
   fetchWorkspaceMembers,
 } from "@/redux/features/workspaceMembers/WorkspaceMembersSlice.js";
 import { supabase } from "@/services/supabaseClient.js";

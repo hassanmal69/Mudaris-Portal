@@ -1,44 +1,44 @@
 import { Drawer } from "vaul";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { logOut } from "@/redux/features/auth/authSlice.js";
-import { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import EditProfile from "./editProfile.jsx";
 import { Clock, Globe, Lock } from "lucide-react";
 import { useParams } from "react-router-dom";
 import "../profile.css";
 import { Button } from "@/components/ui/button.jsx";
 import { selectChannelsByUser } from "@/redux/features/channelMembers/channelMembersSlice.js";
-export default function VaulDrawer() {
+const ClockTicker = React.memo(() => {
+  const [time, setTime] = useState(new Date());
+
+  useEffect(() => {
+    const id = setInterval(() => setTime(new Date()), 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  return <>{time.toLocaleTimeString()}</>;
+});
+
+function VaulDrawer() {
   const { workspace_id } = useParams();
   const {
     avatar_url: aUrl,
     fullName,
     email
   } = useSelector((state) => state.auth?.user?.user_metadata || {}, shallowEqual);
-  const { session } = useSelector((state) => (state.auth),shallowEqual);
+  const { session } = useSelector((state) => (state.auth), shallowEqual);
   const userId = useMemo(() => session?.user?.id, [session?.user?.id]); // stable userId
-  
   const [avatarUrl, setAvatarUrl] = useState(aUrl);
-
   const dispatch = useDispatch();
   const handleLogout = () => {
     dispatch(logOut());
   };
-  // const { channels, channelState } = useSelector((state) => ({
-  //   channels: selectChannels(state),
-  //   channelState: state.channels,
-  // }), shallowEqual);
-
-  const [time, setTime] = useState(new Date());
+  console.count('parent')
   const channels = useSelector(
     selectChannelsByUser(userId, workspace_id),
     shallowEqual
   );
 
-  useEffect(() => {
-    const interval = setInterval(() => setTime(new Date()), 1000);
-    return () => clearInterval(interval); // cleanup on unmount
-  }, [workspace_id, dispatch]);
   useEffect(() => {
     setAvatarUrl(aUrl);
   }, [aUrl]);
@@ -102,7 +102,7 @@ export default function VaulDrawer() {
                 </h4>
                 <p className="flex gap-1 text-(--muted-foreground) items-center">
                   <Clock className="w-5  h-5" />
-                  {time.toLocaleTimeString()}
+                  <ClockTicker />
                 </p>
               </div>
 
@@ -140,3 +140,5 @@ export default function VaulDrawer() {
     </Drawer.Root>
   );
 }
+export default React.memo(VaulDrawer);
+VaulDrawer.whyDidYouRender = true;
