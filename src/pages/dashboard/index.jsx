@@ -15,13 +15,9 @@ import CreateWorkspace from "./components/createWorkspace.jsx";
 import "./dashboard.css";
 import { useIsAdmin } from "@/constants/constants.js";
 const Dashboard = () => {
-  const renderCount = useRef(0);
-  const { session } = useSelector((state) => state.auth);
-  const fullName = session?.user?.user_metadata?.fullName;
+  const fullName = useSelector((s) => s.auth.user?.user_metadata?.fullName);
   const [isOpen, setisOpen] = useState(false);
   const isAdmin = useIsAdmin();
-  renderCount.current += 1;
-  console.log("render count most parent: " + renderCount.current);
   return (
     <section className="flex flex-col bg-(--background) text--(--foreground) min-h-screen">
       <div className="h-dvh z-10 w-dvw absolute overflow-hidden pointer-events-none">
