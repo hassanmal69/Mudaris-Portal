@@ -38,7 +38,7 @@
 @media only screen and (max-width: 600px) {
   .messages-container {
     margin: 0;
-    height: 100vh;
+    height: 60vh;
     margin-left: 5px;
   }
   .responsive_channel_header h1 {

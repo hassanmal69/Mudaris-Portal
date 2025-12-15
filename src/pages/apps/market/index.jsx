@@ -7,7 +7,7 @@ import TradingViewHeatmap from "./component/TradingViewHeatmap";
 import TradingViewCryptoHeatmap from "./component/TradingViewCryptoHeatmap";
 import TradingViewTimeline from "./component/TradingViewTimeline";
 import FeaturedCarousel from "./component/FeaturedCarousel";
-
+import "./market.css";
 /*
   Market.jsx
   - MasonryGrid (CSS columns)
@@ -169,100 +169,6 @@ const PostCard = ({ post, onOpen }) => {
 };
 
 /* ---------- FeaturedSlider ---------- */
-// const FeaturedSlider = ({ posts = [], onOpen }) => {
-//   const ref = useRef(null);
-
-//   const scroll = (dir = "next") => {
-//     const el = ref.current;
-//     if (!el) return;
-//     const width = el.clientWidth;
-//     const offset = dir === "next" ? width * 0.9 : -width * 0.9;
-//     el.scrollBy({ left: offset, behavior: "smooth" });
-//   };
-
-//   if (!posts || posts.length === 0) return null;
-
-//   return (
-//     <div className=" mx-auto w-9xl">
-//       <div className="flex items-center justify-between mb-3 px-1">
-//         {/* <h2 className="text-(--foreground) font-semibold">Featured</h2>  MUdaris Team*/}
-//         <div className="flex gap-2">
-//           <button
-//             onClick={() => scroll("prev")}
-//             className="px-3 py-1 bg-(--primary) text-(--primary-foreground) rounded"
-//             aria-label="Scroll left"
-//           >
-//             ‹
-//           </button>
-//           <button
-//             onClick={() => scroll("next")}
-//             className="px-3 py-1 bg-(--primary)  text-(--primary-foreground) rounded"
-//             aria-label="Scroll right"
-//           >
-//             ›
-//           </button>
-//         </div>
-//       </div>
-
-//       <div
-//         ref={ref}
-//         className="
-//           w-full  scroll-smooth snap-x snap-mandatory
-//           -mx-2 px-2 flex gap-4
-//         "
-//       >
-//         {posts.map((p, idx) => (
-//           <div
-//             key={p.id || idx}
-//             className="snap-start min-w-[320px] max-w-[420px]"
-//           >
-//             <div
-//               className="
-//                 rounded-(--radius)
-//                 h-[340px]
-//                 overflow-hidden
-//                 border border-(--border)
-//                 shadow-lg
-//                 bg-(--card)
-//                 transition-transform duration-300
-//                 hover:-translate-y-1
-//               "
-//             >
-//               <div className="w-full h-44 overflow-hidden">
-//                 <img
-//                   src={p.thumbnail_url}
-//                   alt={p.title}
-//                   loading="lazy"
-//                   className="w-full h-full object-cover"
-//                 />
-//               </div>
-
-//               <div className="p-3 flex flex-col justify-between">
-//                 <h4 className="text-(--primary-foreground) font-semibold leading-snug line-clamp-2">
-//                   {p.title}
-//                 </h4>
-//                 <p className="text-sm text-(--secondary-foreground) line-clamp-2 mt-2">
-//                   {p.subtitle || p.preview_text || ""}
-//                 </p>
-//                 <div className="mt-3 flex items-center justify-between">
-//                   <span className="text-xs text-(--muted-foreground)">
-//                     {p.authors?.[0]}
-//                   </span>
-//                   <button
-//                     onClick={() => onOpen(p.web_url, p.title)}
-//                     className="text-xs bg-(--primary) text-(--primary-foreground) px-2 py-1 rounded"
-//                   >
-//                     Preview
-//                   </button>
-//                 </div>
-//               </div>
-//             </div>
-//           </div>
-//         ))}
-//       </div>
-//     </div>
-//   );
-// };
 
 /* ---------- MasonryGrid ---------- */
 /* Using columns for performance. Adjust column-count via responsive classes. */
@@ -327,7 +233,7 @@ const Market = () => {
     <main className="py-8 bg-(--background) min-h-screen">
       <TradingViewTicker />
 
-      <section className="flex">
+      <section className="flex slider-section">
         <div className="max-w-6xl mx-auto px-4">
           {/* Header */}{" "}
           {/* please keep it commented till final decision from MUdaris Team */}
@@ -377,7 +283,7 @@ const Market = () => {
           <TradingViewHotlist />
         </div>
       </section>
-      <section className="flex items-center">
+      <section className="flex items-center view-maps">
         <TradingViewHeatmap />
         <TradingViewCryptoHeatmap />
       </section>

@@ -7,6 +7,7 @@ import {
   markVideoComplete,
 } from "@/redux/features/video&presentations/markcompleteSlice";
 import { Download } from "lucide-react";
+import "./responsive.css";
 
 const VideoComponent = React.memo(
   ({ data, onNext }) => {
@@ -35,7 +36,7 @@ const VideoComponent = React.memo(
       );
     }
     return (
-      <div className="w-full h-full p-6 space-y-6">
+      <div className="w-full h-full videos-presentation-responsiveness p-6 space-y-6">
         {/* === VIDEO PLAYER === */}
         <div className="w-full h-[350px] bg-black rounded-lg overflow-hidden">
           <VimeoPlayer videoId={video?.video_link} />

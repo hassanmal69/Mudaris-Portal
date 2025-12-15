@@ -2,15 +2,15 @@ import React, { useEffect, useRef, useState } from "react";
 import { fetchPrivateVideos } from "./vimeo.js";
 import PrivateVimeoPlayer from "./privateVimeoPlayer.jsx";
 import { useSelector } from "react-redux"; // Import useSelector
-import './vimeo.css'
+import "./vimeo.css";
 import VimeoPlayerWithWatermark from "./privateVimeoPlayer.jsx";
 const VimeoPlayer = ({ videoId }) => {
   const [videoData, setVideoData] = useState(null);
   const [invalid, setInvalid] = useState(false);
 
   // Get user data from Redux
-  const { session } = useSelector((state) => state.auth);
-  const userId = session?.user?.id || "Unknown ID";
+  // const { session } = useSelector((state) => state.auth);
+  // const userId = session?.user?.id || "Unknown ID";
 
   const isNumeric = (value) => !isNaN(value);
 
@@ -30,7 +30,7 @@ const VimeoPlayer = ({ videoId }) => {
         setInvalid(true);
       }
     };
-    setInvalid(false)
+    setInvalid(false);
     loadVideo();
   }, [videoId]);
 
@@ -45,9 +45,7 @@ const VimeoPlayer = ({ videoId }) => {
   return (
     <div className="w-full h-full relative">
       {/* Pass userId as watermark prop */}
-      <PrivateVimeoPlayer
-        embedHtml={videoData?.embed?.html}
-      />
+      <PrivateVimeoPlayer embedHtml={videoData?.embed?.html} />
     </div>
   );
 };

@@ -72,7 +72,10 @@ export const router = createBrowserRouter([
         path: "/workspace/:workspace_id/videospresentations",
         element: (
           <PrivateRoute>
-            <TopbarOnly />
+            <TopBarSecond
+              name="videos and presestaion"
+              desc="Access lecture materials and resources"
+            />
           </PrivateRoute>
         ),
         children: [{ path: "", element: <VideosPresentations /> }],

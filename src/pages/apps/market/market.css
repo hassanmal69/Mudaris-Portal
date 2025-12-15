@@ -1,0 +1,10 @@
+@media only screen and (max-width: 600px) {
+  .slider-section {
+    flex-direction: column;
+  }
+  .view-maps {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+}

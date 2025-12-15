@@ -7,12 +7,15 @@ import {
   deleteChapterDB,
   fetchChapters,
 } from "@/redux/features/video&presentations/chapterSlice";
-import { deleteVideoDB, fetchVideos } from "@/redux/features/video&presentations/videoSlice";
+import {
+  deleteVideoDB,
+  fetchVideos,
+} from "@/redux/features/video&presentations/videoSlice";
 import { useParams } from "react-router-dom";
 import { ChevronDown, ChevronUp, PlayCircle } from "lucide-react";
 import { useIsAdmin } from "@/constants/constants.js";
 import Actions from "../actions/index.jsx";
-
+import "./responsive.css";
 const VideoComponent = React.lazy(() => import("./VideoComponent.jsx"));
 
 const VideosPresentations = () => {
@@ -62,17 +65,17 @@ const VideosPresentations = () => {
   };
 
   const onDelete = (id) => dispatch(deleteChapterDB(id));
-  const onDeleteVideo = (id) => dispatch(deleteVideoDB(id))
+  const onDeleteVideo = (id) => dispatch(deleteVideoDB(id));
   const handleAddVideo = (chapterId) => {
     setActiveChapter(chapterId);
-    setEditingVideo('')
+    setEditingVideo("");
     setVideoDialogOpen(true);
   };
   const handleEditingVideo = (video, chapterId) => {
     setActiveChapter(chapterId);
-    setEditingVideo(video)
+    setEditingVideo(video);
     setVideoDialogOpen(true);
-  }
+  };
   return (
     <div className="bg-(--background) text-(--foreground) p-4 flex flex-col gap-6">
       {isAdmin && (
@@ -87,10 +90,10 @@ const VideosPresentations = () => {
         </div>
       )}
       {chapters && chapters.length > 0 ? (
-        <div className='flex'>
+        <div className="flex responsive-video-left-sidebar">
           {/* LEFT SIDEBAR */}
           <div
-            className="mt-4 w-[35%] h-dvh overflow-y-scroll scroll-smooth 
+            className="mt-4 w-[35%] responsive-video-left-component h-dvh overflow-y-scroll scroll-smooth 
   [scrollbar-width:auto] 
   [&::-webkit-scrollbar]:w-2 
   [&::-webkit-scrollbar-track]:bg-(--sidebar-primary) 
@@ -159,11 +162,12 @@ const VideosPresentations = () => {
                           </div>
                           {isAdmin && (
                             <Actions
-                              onEdit={() => handleEditingVideo(video, chapter.id)}
+                              onEdit={() =>
+                                handleEditingVideo(video, chapter.id)
+                              }
                               onDelete={() => onDeleteVideo(video.id)}
                             />
-                          )
-                          }
+                          )}
                         </li>
                       ))}
 
