@@ -1,7 +1,8 @@
 @media only screen and (max-width: 600px) {
   .responsive_chat_screen {
     margin: 0;
-    overflow-y: scroll;
+    overflow-y: hidden;
+    height: 100vh;
   }
 }
 @media only screen and (min-width: 600px) {
