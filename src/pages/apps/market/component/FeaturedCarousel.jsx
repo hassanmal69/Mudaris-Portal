@@ -19,17 +19,6 @@ const FeaturedSlider = ({ posts = [], onOpen }) => {
     });
   };
 
-  // const scroll = (dir = "next") => {
-  //   const el = ref.current;
-  //   if (!el) return;
-
-  //   // Width of one child = carousel width / visible cards
-  //   const cardWidth = el.clientWidth / 3; // show 3 cards
-  //   const offset = dir === "next" ? cardWidth : -cardWidth;
-
-  //   el.scrollBy({ left: offset, behavior: "smooth" });
-  // };
-
   if (!posts.length) return null;
 
   return (

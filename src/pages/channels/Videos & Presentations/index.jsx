@@ -77,7 +77,7 @@ const VideosPresentations = () => {
     setVideoDialogOpen(true);
   };
   return (
-    <div className="bg-(--background) text-(--foreground) p-4 flex flex-col gap-6">
+    <div className="bg-(--background) responsive-video-presentation-container  text-(--foreground) p-4 flex flex-col gap-6">
       {isAdmin && (
         <div className="flex w-full justify-center">
           <Button
