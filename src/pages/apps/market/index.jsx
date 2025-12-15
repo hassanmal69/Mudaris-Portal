@@ -48,7 +48,7 @@ const PostModal = ({ open, onClose, url, title }) => {
       />
 
       {/* modal content */}
-      <div className="relative z-10 w-full max-w-5xl h-[80vh] rounded-[var(--radius)] overflow-hidden shadow-2xl border border-(--border) bg-(--card)">
+      <div className="relative z-10 w-full max-w-5xl h-[80vh] rounded-(--radius) overflow-hidden shadow-2xl border border-(--border) bg-(--card)">
         {/* header */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-(--border)">
           <div className="text-(--card-foreground) font-medium">{title}</div>
@@ -112,7 +112,7 @@ const PostCard = ({ post, onOpen }) => {
         break-inside-avoid
         bg-(--card)
         text-(--card-foreground)
-        rounded-[var(--radius)]
+        rounded-(--radius)
         overflow-hidden
         shadow-lg
         border border-(--border)
@@ -157,7 +157,7 @@ const PostCard = ({ post, onOpen }) => {
         <div className="pt-2">
           <button
             onClick={() => onOpen(post.web_url, post.title)}
-            className="inline-flex items-center gap-2 px-3 py-2 bg-(--primary) text-(--primary-foreground) rounded-[var(--radius)] font-medium hover:opacity-95"
+            className="inline-flex items-center gap-2 px-3 py-2 bg-(--primary) text-(--primary-foreground) rounded-(--radius) font-medium hover:opacity-95"
             aria-label={`Open ${post.title}`}
           >
             Read
