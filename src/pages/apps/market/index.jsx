@@ -234,38 +234,8 @@ const Market = () => {
       <TradingViewTicker />
 
       <section className="flex slider-section">
-        <div className="max-w-6xl mx-auto px-4">
-          {posts === null && (
-            <>
-              <div className="max-w-5xl mx-auto">
-                <div className="space-y-4">
-                  <div className="h-6 w-40 bg-(--muted) rounded animate-pulse" />
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
-                    <SkeletonCard />
-                  </div>
-                </div>
-              </div>
-            </>
-          )}
-          {/* Content */}
-          {posts !== null && posts.length > 0 && (
-            <>
-              {/* Featured slider: top 5 */}
-              <FeaturedCarousel
-                posts={posts.slice(0, 6)}
-                onOpen={openPreview}
-              />
-            </>
-          )}
-          {/* Empty state */}
-          {posts !== null && posts.length === 0 && (
-            <div className="max-w-3xl mx-auto text-center py-20">
-              <div className="text-(--muted-foreground)">No posts yet.</div>
-            </div>
-          )}
-        </div>
-        <div className="flex-col w-full">
-          {/* <TradingViewMiniChart /> */}
+        <div className="flex w-full">
+          <TradingViewMiniChart />
           <TradingViewHotlist />
         </div>
       </section>

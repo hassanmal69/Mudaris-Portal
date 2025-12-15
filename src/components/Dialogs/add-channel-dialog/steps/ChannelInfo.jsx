@@ -6,7 +6,7 @@ const ChannelInfo = ({ state, setState, errors }) => {
   return (
     <div className="space-y-4">
       <div className="flex flex-col gap-2">
-        <Label htmlFor="channel-name" className="text-(--primary)">
+        <Label htmlFor="channel-name" className="text-(--primary-foreground)">
           Channel Name
           <span className="text-(--destructive)">*</span>
         </Label>
@@ -24,7 +24,10 @@ const ChannelInfo = ({ state, setState, errors }) => {
         )}
       </div>
       <div className="flex flex-col gap-2" aria-describedby={undefined}>
-        <Label htmlFor="channel-description" className="text-(--primary)">
+        <Label
+          htmlFor="channel-description"
+          className="text-(--primary-foreground)"
+        >
           Description
         </Label>
         <Input
