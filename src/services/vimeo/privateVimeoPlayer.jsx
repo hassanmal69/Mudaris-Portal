@@ -5,8 +5,7 @@ import { FullscreenIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const PrivateVimeoPlayer = ({ embedHtml }) => {
-  const { session } = useSelector((state) => state.auth);
-  const id = session?.user?.id || "Unknown ID";
+  const id = useSelector((state) => state.auth?.user?.id) || null;
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 600);
 
@@ -23,19 +22,19 @@ const PrivateVimeoPlayer = ({ embedHtml }) => {
   const wrapperRef = useRef(null);
 
   // === Draw Watermark ===
-  const drawWatermark = () => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
+  // const drawWatermark = () => {
+  //   const canvas = canvasRef.current;
+  //   if (!canvas) return;
+  //   const ctx = canvas.getContext("2d");
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.globalAlpha = 0.5;
-    ctx.font = "16px Arial";
-    ctx.fillStyle = "white";
-    ctx.textAlign = "center";
+  //   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  //   ctx.globalAlpha = 0.5;
+  //   ctx.font = "16px Arial";
+  //   ctx.fillStyle = "white";
+  //   ctx.textAlign = "center";
 
-    ctx.fillText(id, canvas.width / 2, canvas.height / 2);
-  };
+  //   ctx.fillText(id, canvas.width / 2, canvas.height / 2);
+  // };
 
   // === Resize Canvas ===
   const resizeCanvas = () => {
@@ -45,27 +44,27 @@ const PrivateVimeoPlayer = ({ embedHtml }) => {
     if (canvas && wrapper) {
       canvas.width = wrapper.clientWidth;
       canvas.height = wrapper.clientHeight;
-      drawWatermark();
+      // drawWatermark();
     }
   };
 
   // === Initial size + redraw on user change ===
-  useEffect(() => {
-    resizeCanvas();
-  }, [id, isFullscreen]);
+  // useEffect(() => {
+  //   resizeCanvas();
+  // }, [id, isFullscreen]);
 
   // === Resize + fullscreen listeners ===
-  useEffect(() => {
-    const handleFullscreenChange = () => {
-      setIsFullscreen(!!document.fullscreenElement);
-    };
+  // useEffect(() => {
+  //   const handleFullscreenChange = () => {
+  //     setIsFullscreen(!!document.fullscreenElement);
+  //   };
 
-    document.addEventListener("fullscreenchange", handleFullscreenChange);
+  //   document.addEventListener("fullscreenchange", handleFullscreenChange);
 
-    return () => {
-      document.removeEventListener("fullscreenchange", handleFullscreenChange);
-    };
-  }, []);
+  //   return () => {
+  //     document.removeEventListener("fullscreenchange", handleFullscreenChange);
+  //   };
+  // }, []);
 
   function toggleFullscreen() {
     if (!document.fullscreenElement) {
@@ -78,7 +77,9 @@ const PrivateVimeoPlayer = ({ embedHtml }) => {
   return (
     <div
       ref={wrapperRef}
-      className="video-container relative w-full h-full overflow-hidden"
+      className="video-container relative w-full 
+      h-full
+       overflow-hidden"
     >
       {/* Watermark Canvas */}
       <canvas
@@ -87,16 +88,21 @@ const PrivateVimeoPlayer = ({ embedHtml }) => {
       />
 
       {/* Vimeo Embed */}
-      <div className="w-full h-full relative">
+      <div
+        className="w-full 
+      h-full 
+      relative"
+      >
         <div
           className="absolute video-wrapper inset-0 h-full w-full z-10"
           dangerouslySetInnerHTML={{ __html: embedHtml }}
         />
-        <div className="w-full h-full absolute flex justify-end items-end sm:items-center sm:justify-center">
+        {/* <div className="w-full h-full absolute flex justify-end items-end sm:items-center sm:justify-center">
           {isMobile ? (
             <Button
               variant={"success"}
               className="text-sm z-50 mb-1  w-[99%] mr-0.5 font-medium  relative transition-colors duration-200 ease-in-out"
+              onClick={toggleFullscreen}
             >
               {isFullscreen ? "Exit Fullscreen" : "Fullscreen"}
             </Button>
@@ -111,7 +117,7 @@ const PrivateVimeoPlayer = ({ embedHtml }) => {
               />
             </button>
           )}
-        </div>
+        </div> */}
       </div>
     </div>
   );

@@ -2,13 +2,16 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useDispatch } from "react-redux";
-import { createVideoDB, updateVideoDB } from "@/redux/features/video&presentations/videoSlice";
+import {
+  createVideoDB,
+  updateVideoDB,
+} from "@/redux/features/video&presentations/videoSlice";
 import { Label } from "@/components/ui/label";
 import { addToast } from "@/redux/features/toast/toastSlice";
 
 const VideoForm = ({ onClose, chapterId, data }) => {
   const dispatch = useDispatch();
-  if (data) var { name, description, video_link, presentation_link, id } = data
+  if (data) var { name, description, video_link, presentation_link, id } = data;
 
   const [formData, setFormData] = useState({
     name: name,
@@ -41,9 +44,9 @@ const VideoForm = ({ onClose, chapterId, data }) => {
           description: formData.description,
           video_link: formData.video_id,
           chapter_id: chapterId,
-          presentation_file: formData.presentation_file
+          presentation_file: formData.presentation_file,
         })
-      )
+      );
       dispatch(
         addToast({
           message: "updated video successfully.",
@@ -58,9 +61,9 @@ const VideoForm = ({ onClose, chapterId, data }) => {
           description: formData.description,
           video_link: formData.video_id,
           chapter_id: chapterId,
-          presentation_file: formData.presentation_file
+          presentation_file: formData.presentation_file,
         })
-      )
+      );
       dispatch(
         addToast({
           message: "added a video successfully.",
@@ -69,7 +72,7 @@ const VideoForm = ({ onClose, chapterId, data }) => {
         })
       );
     }
-    resetForm()
+    resetForm();
     onClose();
   };
 
@@ -122,48 +125,47 @@ const VideoForm = ({ onClose, chapterId, data }) => {
           className="w-full p-2 border rounded-md border-(--border)"
         />
       </div>
-      {
-        data ?
-          <p></p> :
-          <div className="flex flex-col gap-1">
-            <Label className="text-(--muted-foreground) text-[14px]">
-              Add presentation
-            </Label>
-            <Input
-              name="presentation_ppt"
-              type="file"
-              accept=".ppt,.pptx"
-              // value={formData.presentation_file}
-              onChange={(e) =>
-                setFormData((prev) => ({
-                  ...prev,
-                  presentation_file: e.target.files[0],
-                }))
-              }
-              //onChange={handleChange}
-              placeholder="https://..."
-              className="w-full p-2 border rounded-md border-(--border)"
-            />
-          </div>
-
-      }
+      {data ? (
+        <p></p>
+      ) : (
+        <div className="flex flex-col gap-1">
+          <Label className="text-(--muted-foreground) text-[14px]">
+            Add presentation
+          </Label>
+          <Input
+            name="presentation_ppt"
+            type="file"
+            accept=".ppt,.pptx"
+            // value={formData.presentation_file}
+            onChange={(e) =>
+              setFormData((prev) => ({
+                ...prev,
+                presentation_file: e.target.files[0],
+              }))
+            }
+            //onChange={handleChange}
+            placeholder="https://..."
+            className="w-full p-2 border rounded-md border-(--border)"
+          />
+        </div>
+      )}
 
       <div className="flex justify-between mt-4">
         <Button type="button" onClick={onClose} variant={"destructive"}>
           Cancel
         </Button>
-        {
-          data ? <Button type="submit" variant={"success"}>
+        {data ? (
+          <Button type="submit" variant={"success"}>
             Update Video
-          </Button> :
-            <Button type="submit" variant={"success"}>
-              Add Video
-            </Button>
-        }
+          </Button>
+        ) : (
+          <Button type="submit" variant={"success"}>
+            Add Video
+          </Button>
+        )}
       </div>
     </form>
   );
 };
 
 export default VideoForm;
-//1137954405

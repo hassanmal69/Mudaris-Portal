@@ -235,17 +235,6 @@ const Market = () => {
 
       <section className="flex slider-section">
         <div className="max-w-6xl mx-auto px-4">
-          {/* Header */}{" "}
-          {/* please keep it commented till final decision from MUdaris Team */}
-          {/* <header className="flex items-center justify-between mb mt-3">
-            <h1 className="text-2xl font-semibold text-(--foreground)">
-              Market
-            </h1>
-            <p className="text-sm text-(--muted-foreground)">
-              Latest posts & highlights
-            </p>
-          </header> */}
-          {/* Loading skeleton */}
           {posts === null && (
             <>
               <div className="max-w-5xl mx-auto">
@@ -266,9 +255,6 @@ const Market = () => {
                 posts={posts.slice(0, 6)}
                 onOpen={openPreview}
               />
-
-              {/* Masonry grid */}
-              {/* <MasonryGrid posts={posts} onOpen={openPreview} /> */}
             </>
           )}
           {/* Empty state */}
