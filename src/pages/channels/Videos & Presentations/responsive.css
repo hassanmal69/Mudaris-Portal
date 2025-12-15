@@ -1,0 +1,21 @@
+@media only screen and (max-width: 600px) {
+  .responsive-video-left-sidebar {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+  .responsive-video-left-component {
+    width: 100%;
+
+    overflow-y: auto;
+    scrollbar-width: none; /* Firefox */
+  }
+
+  .responsive-video-left-component::-webkit-scrollbar {
+    display: none; /* Chrome, Safari */
+  }
+  .videos-presentation-responsiveness {
+    padding: 0;
+    margin: 0;
+  }
+}

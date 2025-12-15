@@ -3,17 +3,32 @@ import React, { useEffect, useRef, useState } from "react";
 /* ---------- FeaturedSlider (Carousel) ---------- */
 const FeaturedSlider = ({ posts = [], onOpen }) => {
   const ref = useRef(null);
-
   const scroll = (dir = "next") => {
     const el = ref.current;
     if (!el) return;
 
-    // Width of one child = carousel width / visible cards
-    const cardWidth = el.clientWidth / 3; // show 3 cards
-    const offset = dir === "next" ? cardWidth : -cardWidth;
+    const firstCard = el.querySelector("[data-card]");
+    if (!firstCard) return;
 
-    el.scrollBy({ left: offset, behavior: "smooth" });
+    const cardWidth =
+      firstCard.offsetWidth + parseInt(getComputedStyle(el).columnGap || 16);
+
+    el.scrollBy({
+      left: dir === "next" ? cardWidth : -cardWidth,
+      behavior: "smooth",
+    });
   };
+
+  // const scroll = (dir = "next") => {
+  //   const el = ref.current;
+  //   if (!el) return;
+
+  //   // Width of one child = carousel width / visible cards
+  //   const cardWidth = el.clientWidth / 3; // show 3 cards
+  //   const offset = dir === "next" ? cardWidth : -cardWidth;
+
+  //   el.scrollBy({ left: offset, behavior: "smooth" });
+  // };
 
   if (!posts.length) return null;
 
@@ -46,12 +61,13 @@ const FeaturedSlider = ({ posts = [], onOpen }) => {
         ref={ref}
         className="
           flex gap-4 overflow-x-auto scroll-smooth no-scrollbar
-          snap-x snap-mandatory px-2
+          snap-x snap-mandatory px-2 scroll-px-2
         "
       >
         {posts.map((p, idx) => (
           <div
             key={p.id || idx}
+            data-card
             className="
               snap-start
               shrink-0
@@ -61,7 +77,7 @@ const FeaturedSlider = ({ posts = [], onOpen }) => {
               max-w-[380px]
             "
           >
-            <div className="rounded-lg overflow-hidden shadow-lg border border-(--border) bg-(--card)">
+            <div className="rounded-lg h-[350px] overflow-hidden shadow-lg border border-(--border) bg-(--card)">
               <div className="h-44 overflow-hidden">
                 <img
                   src={p.thumbnail_url}
