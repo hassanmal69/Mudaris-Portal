@@ -21,7 +21,7 @@ const TopbarTwo = ({ name, desc }) => {
       {isMobile && (
         <div className="p-2">
           <SidebarTrigger className="text-white border border-white rounded p-2">
-            <span>☰</span>
+            <span></span>
           </SidebarTrigger>
         </div>
       )}

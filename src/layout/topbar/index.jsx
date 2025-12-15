@@ -35,7 +35,7 @@ const Topbar = () => {
   // --- State ---
   const [isMobile, setIsMobile] = useState(window.innerWidth < 860);
 
-  console.count("topbar rerendering")
+  console.count("topbar rerendering");
 
   const channel = useSelector(
     (state) => state.channels.byId[groupId],
@@ -76,10 +76,9 @@ const Topbar = () => {
       style={{ minHeight: "56px" }}
     >
       {isMobile && (
-        <div className="p-2">
-          <SidebarTrigger className="text-white border border-white rounded p-2">
-            <span>☰</span>
-          </SidebarTrigger>
+        <div className="p-2 flex gap-2">
+          <SidebarTrigger className="text-white border border-white rounded p-2" />
+          <p className="text-(--foreground) text-[18px] font-medium">Click</p>
         </div>
       )}
 
@@ -93,7 +92,6 @@ const Topbar = () => {
           {channel_name}
         </h2>
       </div>
-
       <div className="hidden sm:flex sm:flex-1 items-center justify-center">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-(--foreground) w-4 h-4" />
@@ -108,7 +106,6 @@ const Topbar = () => {
           />
         </div>
       </div>
-
       {/* Right Section */}
       <div className="flex items-center gap-2 min-h-0 ">
         <Notifications />
