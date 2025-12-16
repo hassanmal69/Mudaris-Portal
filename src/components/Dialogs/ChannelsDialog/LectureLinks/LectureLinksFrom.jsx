@@ -10,8 +10,7 @@ import {
 import { useParams } from "react-router-dom";
 import { addToast } from "@/redux/features/toast/toastSlice";
 
-const URL_REGEX =
-  /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
+const URL_REGEX = /^(https?:\/\/)([^\s$.?#].[^\s]*)$/i;
 
 const LectureLinksFrom = ({ onClose, lecturesLink }) => {
   const { workspace_id } = useParams();
@@ -27,13 +26,13 @@ const LectureLinksFrom = ({ onClose, lecturesLink }) => {
     const { name, value } = e.target;
 
     // Validate URL for lectureLink field
-    // if (name === "lectureLink" && value) {
-    //   if (!URL_REGEX.test(value)) {
-    //     setLinkError("Please enter a valid URL (e.g., https://example.com)");
-    //   } else {
-    //     setLinkError("");
-    //   }
-    // }
+    if (name === "lectureLink" && value) {
+      if (!URL_REGEX.test(value)) {
+        setLinkError("Please enter a valid URL (e.g., https://example.com)");
+      } else {
+        setLinkError("");
+      }
+    }
 
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
