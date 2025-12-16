@@ -13,27 +13,26 @@ import { Input } from "@/components/ui/input";
 import { Search, Users } from "lucide-react";
 import UserFallback from "@/components/ui/userFallback";
 import useHandleIndividual from "@/layout/sidebar/components/useHandleIndividual";
-import { fetchChannelMembersByChannel, selectChannelMembers } from "@/redux/features/channelMembers/channelMembersSlice";
+import {
+  fetchChannelMembersByChannel,
+  selectChannelMembers,
+} from "@/redux/features/channelMembers/channelMembersSlice";
 import { useParams } from "react-router-dom";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 
 const Members = () => {
   const { groupId } = useParams();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   useEffect(() => {
     if (groupId) {
       dispatch(fetchChannelMembersByChannel(groupId));
     }
   }, [groupId]);
-  const selectingMembers = useMemo(() =>
-    selectChannelMembers(groupId),
+  const selectingMembers = useMemo(
+    () => selectChannelMembers(groupId),
     [groupId]
-  )
-  const members = useSelector(
-    selectingMembers,
-    shallowEqual
   );
-  // const MAX_RENDER = 3;
+  const members = useSelector(selectingMembers, shallowEqual);
   const handleFunction = useHandleIndividual();
 
   const [search, setSearch] = useState("");
@@ -41,10 +40,7 @@ const Members = () => {
   const renderMembers = () => {
     setOpen(true);
   };
-  const renderCount = React.useRef(0);
-  renderCount.current += 1;
 
-  // console.log("members of ws", { members } + "members lenght" + members.length);
   // Sort members alphabetically by full name (fallback to email) and memoize
   const sortedMembers = React.useMemo(() => {
     const list = (members || []).slice();
@@ -77,48 +73,21 @@ const Members = () => {
 
   return (
     <>
-      <div className="flex items-center gap-1 py-1 px-3 bg-(--primary)   max-w-full rounded member-container mr-1.5">
-        <div
-          className="flex items-center  cursor-pointer"
-          onClick={sortedMembers.length > 0 ? renderMembers : undefined}
-        >
-          {/* {sortedMembers.length === 0
-            ? renderEmptyAvatar()
-            : sortedMembers.slice(0, MAX_RENDER).map((user, idx) => {
-                const name = user.user_profiles?.full_name;
-                const avatar = user.user_profiles?.avatar_url;
-
-                return avatar ? (
-                  <Avatar
-                    key={user.id}
-                    className="w-8 h-8 border border-(--border) shadow mr-[-10px]"
-                  >
-                    <AvatarImage src={avatar} alt={name} />
-                    <AvatarFallback>
-                      {name?.[0]?.toUpperCase() || "?"}
-                    </AvatarFallback>
-                  </Avatar>
-                ) : (
-                  <div key={user.id}>
-                    <UserFallback cn={"mr-[-10px]"} name={name} _idx={idx} />
-                  </div>
-                );
-              })}
-
-          {sortedMembers.length > MAX_RENDER && (
-            <span className="text-[#eee] text-[14px]">
-              {sortedMembers.length - MAX_RENDER}+
-            </span>
-          )} */}
-
-          {sortedMembers.length && (
-            <span className="text-(--secondary-foreground) items-center text-sm flex gap-0.5">
-              <Users className="w-4 h-4" />
-              <p> {sortedMembers.length}</p>
-            </span>
-          )}
+      {members.length > 0 && (
+        <div className="flex items-center gap-1 py-1 px-3 bg-(--primary)   max-w-full rounded member-container mr-1.5">
+          <div
+            className="flex items-center  cursor-pointer"
+            onClick={sortedMembers.length > 0 ? renderMembers : undefined}
+          >
+            {sortedMembers.length && (
+              <span className="text-(--secondary-foreground) items-center text-sm flex gap-0.5">
+                <Users className="w-4 h-4" />
+                <p> {sortedMembers.length}</p>
+              </span>
+            )}
+          </div>
         </div>
-      </div>
+      )}
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-md p-0 bg-(--background) border-(--border)">
@@ -176,9 +145,10 @@ const Members = () => {
 
                     <Button
                       variant={"ghost"}
-                      onClick={() =>
-                        handleFunction({ ua: { id: user.user_id } })
-                      }
+                      onClick={() => {
+                        setOpen(false);
+                        handleFunction({ ua: { id: user.user_id } });
+                      }}
                     >
                       Message
                     </Button>
