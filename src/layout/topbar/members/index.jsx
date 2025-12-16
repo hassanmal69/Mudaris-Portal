@@ -72,6 +72,7 @@ const Members = () => {
       return name.includes(term) || email.includes(term);
     });
   }, [sortedMembers, search]);
+
   return (
     <>
       {members?.length > 0 && (
@@ -148,7 +149,7 @@ const Members = () => {
                       variant={"ghost"}
                       onClick={() => {
                         setOpen(false);
-                        handleFunction({ ua: { id: user.user_id } });
+                        handleFunction(user?.user_profiles);
                       }}
                     >
                       Message
