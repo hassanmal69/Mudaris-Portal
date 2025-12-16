@@ -17,10 +17,10 @@ const SideBarDialogue = () => {
   const [open, setOpen] = useState(true);
   const [data, setData] = useState([]);
   const handleFunction = useHandleIndividual();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const { session } = useSelector((state) => state.auth);
   const userId = session?.user?.id;
-  const isAdmin = useIsAdmin()
+  const isAdmin = useIsAdmin();
   const fetchChats = async () => {
     const { data: chats, error } = await supabase
       .from("directMessagesChannel")
@@ -81,7 +81,10 @@ const SideBarDialogue = () => {
                   </h4>
 
                   <Button
-                    onClick={() => handleFunction(user)}
+                    onClick={() => {
+                      setOpen(false);
+                      handleFunction(user);
+                    }}
                     variant={"primary"}
                   >
                     Tap to view full conversation
@@ -91,11 +94,9 @@ const SideBarDialogue = () => {
             );
           })}
         </div>
-        {
-          isAdmin && (
-            <Button onClick={() => navigate('/seePersonalChats')}>handle</Button>
-          )
-        }
+        {isAdmin && (
+          <Button onClick={() => navigate("/seePersonalChats")}>handle</Button>
+        )}
       </DialogContent>
     </Dialog>
   );

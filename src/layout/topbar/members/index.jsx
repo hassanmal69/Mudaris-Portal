@@ -22,8 +22,8 @@ import { shallowEqual, useDispatch, useSelector } from "react-redux";
 
 const Members = () => {
   const { groupId } = useParams();
-  const dispatch = useDispatch()
-  const fetchedUsers = useRef({})
+  const dispatch = useDispatch();
+  const fetchedUsers = useRef({});
   useEffect(() => {
     if (groupId && !fetchedUsers.current[groupId]) {
       dispatch(fetchChannelMembersByChannel(groupId));
@@ -31,8 +31,8 @@ const Members = () => {
     }
   }, []);
 
-  const selectingMembers = useMemo(() =>
-    selectChannelMembers(groupId),
+  const selectingMembers = useMemo(
+    () => selectChannelMembers(groupId),
     [groupId]
   );
   const members = useSelector(selectingMembers, shallowEqual);
@@ -72,10 +72,9 @@ const Members = () => {
       return name.includes(term) || email.includes(term);
     });
   }, [sortedMembers, search]);
-
   return (
     <>
-      {members.length > 0 && (
+      {members?.length > 0 && (
         <div className="flex items-center gap-1 py-1 px-3 bg-(--primary)   max-w-full rounded member-container mr-1.5">
           <div
             className="flex items-center  cursor-pointer"

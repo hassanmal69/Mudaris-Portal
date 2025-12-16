@@ -76,8 +76,10 @@ const Topbar = () => {
     >
       {isMobile && (
         <div className="p-2 flex gap-2">
-          <SidebarTrigger className="text-white border border-white rounded p-2" />
-          <p className="text-(--foreground) text-[18px] font-medium">Click</p>
+          <SidebarTrigger className="text-yellow-300 border border-yellow-300 rounded p-2" />
+          <p className="text-(--primary-foreground) text-[18px] font-medium">
+            Click
+          </p>
         </div>
       )}
 
