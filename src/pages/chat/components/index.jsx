@@ -21,6 +21,7 @@ const Messages = () => {
     deleteMessage,
     forwardMsg,
   } = useMessages();
+
   const { groupId } = useParams();
   const channel = useSelector(
     (state) => state.channels.byId[groupId],
