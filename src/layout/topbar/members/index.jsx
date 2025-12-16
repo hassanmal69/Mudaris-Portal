@@ -119,9 +119,9 @@ const Members = () => {
                 return (
                   <div
                     key={user.id}
-                    className="flex justify-between items-center"
+                    className="flex justify-between items-center border-b border-(--border)"
                   >
-                    <div className="flex items-center gap-2 border-b border-(--border) py-2">
+                    <div className="flex items-center gap-2  py-2">
                       {avatar ? (
                         <Avatar className="w-10 h-10">
                           <AvatarImage src={avatar} alt={name} />
