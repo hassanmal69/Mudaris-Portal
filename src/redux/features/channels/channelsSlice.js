@@ -202,42 +202,7 @@ const channelsSlice = createSlice({
       });
   },
 });
-let channelSubscription = null;
 
- const subscribeToChannelChanges = () => (dispatch) => {
-  if (channelSubscription) return; // guardrail
-
-  channelSubscription = supabase
-    .channel("channels_realtime")
-    .on(
-      "postgres_changes",
-      {
-        event: "*",
-        schema: "public",
-        table: "channels",
-      },
-      (payload) => {
-        console.log("🔥 CHANNEL REALTIME", payload);
-
-        const { eventType, new: newRow, old: oldRow } = payload;
-
-        if (eventType === "INSERT") {
-          dispatch(channelInserted(newRow));
-        } else if (eventType === "UPDATE") {
-          dispatch(channelUpdated(newRow));
-        } else if (eventType === "DELETE") {
-          dispatch(channelDeleted(oldRow.id));
-        }
-      }
-    )
-    .subscribe();
-};
- const unsubscribeFromChannelChanges = () => {
-  if (channelSubscription) {
-    supabase.removeChannel(channelSubscription);
-    channelSubscription = null;
-  }
-};
 // --- Actions ---
 export const {
   channelInserted,
@@ -263,13 +228,6 @@ export const selectActiveChannel = createSelector(
 );
 
 // --- Exports ---
-export {
-  fetchChannels,
-  createChannel,
-  updateChannel,
-  deleteChannel,
-  subscribeToChannelChanges,
-  unsubscribeFromChannelChanges
-};
+export { fetchChannels, createChannel, updateChannel, deleteChannel };
 
 export default channelsSlice.reducer;

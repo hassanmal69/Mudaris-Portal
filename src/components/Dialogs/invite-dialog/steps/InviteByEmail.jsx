@@ -25,7 +25,7 @@ const InviteByEmail = ({ emails, setEmails, onCopyLink, onNext }) => {
     if (workspace_id) {
       dispatch(fetchWorkspaceMembers(workspace_id));
     }
-  }, [dispatch, workspace_id]);
+  }, [workspace_id]);
   const handleAdd = () => {
     const entered = input
       .split(",")

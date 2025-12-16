@@ -11,22 +11,20 @@ const PAGE_SIZE = 20;
 
 export default function useMessages() {
   const dispatch = useDispatch();
-  const renderCount = useRef(0);
 
   const { groupId, user_id, token } = useParams();
   const messages = useSelector((state) => state.messages.items, shallowEqual);
 
-  const {
-    avatar_url: imageUrl,
-    fullName,
-  } = useSelector((s) => s.auth.user?.user_metadata, shallowEqual);
+  const { avatar_url: imageUrl, fullName } = useSelector(
+    (s) => s.auth.user?.user_metadata,
+    shallowEqual
+  );
   const currentUserId = useSelector((s) => s.auth.user?.id, shallowEqual);
   const query = useSelector((state) => state.search.query, shallowEqual);
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [pickerOpenFor, setPickerOpenFor] = useState(null);
   const containerRef = useRef(null);
-  // const loaderRef = useRef(null);
 
   const profilesCache = useRef(new Map());
   // keep a ref to latest messages so callbacks/subscriptions can access up-to-date data
@@ -39,20 +37,21 @@ export default function useMessages() {
     () =>
       query
         ? messages.filter((msg) =>
-          msg.content?.toLowerCase().includes(query.toLowerCase())
-        )
+            msg.content?.toLowerCase().includes(query.toLowerCase())
+          )
         : messages,
     [messages, query]
   );
   // 🔹 Load messages with sender profile
 
-  const loadMessages = async (pageNum) => {
-    const FROM = pageNum * PAGE_SIZE;
-    const TO = FROM + PAGE_SIZE - 1;
-    let queryBuilder = supabase
-      .from("messages")
-      .select(
-        `
+  const loadMessages = useCallback(
+    async (pageNum) => {
+      const FROM = pageNum * PAGE_SIZE;
+      const TO = FROM + PAGE_SIZE - 1;
+      let queryBuilder = supabase
+        .from("messages")
+        .select(
+          `
           id,
           content,
           attachments,
@@ -70,28 +69,30 @@ export default function useMessages() {
             reaction_type
           )
         `
-      )
-      .order("created_at", { ascending: false })
-      .range(FROM, TO)
-      .is("reply_to", null);
+        )
+        .order("created_at", { ascending: false })
+        .range(FROM, TO)
+        .is("reply_to", null);
 
-    if (user_id) {
-      queryBuilder = queryBuilder.eq("sender_id", user_id);
-    } else if (token) {
-      queryBuilder = queryBuilder.eq("token", token);
-    } else {
-      queryBuilder = queryBuilder.eq("channel_id", groupId);
-    }
+      if (user_id) {
+        queryBuilder = queryBuilder.eq("sender_id", user_id);
+      } else if (token) {
+        queryBuilder = queryBuilder.eq("token", token);
+      } else {
+        queryBuilder = queryBuilder.eq("channel_id", groupId);
+      }
 
-    const { data, error } = await queryBuilder;
-    if (error) return [];
-    const messagesWithReplyCount = data.map((msg) => ({
-      ...msg,
-      replyCount: msg.replies ? msg.replies.length : 0,
-      reactions: msg.reactions || [],
-    }));
-    return messagesWithReplyCount.reverse();
-  };
+      const { data, error } = await queryBuilder;
+      if (error) return [];
+      const messagesWithReplyCount = data.map((msg) => ({
+        ...msg,
+        replyCount: msg.replies ? msg.replies.length : 0,
+        reactions: msg.reactions || [],
+      }));
+      return messagesWithReplyCount.reverse();
+    },
+    [groupId, user_id, token]
+  );
 
   // initial load
   useEffect(() => {
@@ -123,19 +124,7 @@ export default function useMessages() {
     setTimeout(() => {
       container.scrollTop = container.scrollHeight - oldScrollHeight;
     }, 50);
-  }, [page, hasMore, messages, dispatch]);
-  // infinite scroll observer
-  // useEffect(() => {
-  //   if (!loaderRef.current || !containerRef.current) return;
-  //   const observer = new window.IntersectionObserver(
-  //     (entries) => {
-  //       if (entries[0].isIntersecting) loadOlder();
-  //     },
-  //     { root: containerRef.current, threshold: 1.0 }
-  //   );
-  //   observer.observe(loaderRef.current);
-  //   return () => observer.disconnect();
-  // }, [loadOlder]);
+  }, [page, hasMore]);
 
   // listen for reaction changes and update the affected message using the latest messages (via ref)
   useEffect(() => {
@@ -185,68 +174,12 @@ export default function useMessages() {
       )
       .subscribe();
     return () => supabase.removeChannel(subscription);
-  }, [dispatch]);
-  // toggle reaction
-  // const toggleReaction = useCallback(
-  //   async (messageId, emoji) => {
-  //     const msg = messagesRef.current.find((m) => m.id === messageId);
-  //     const alreadyReacted = msg.reactions?.some(
-  //       (r) => r.user_id === currentUserId && r.reaction_type === emoji
-  //     );
-  //     let updatedMessages;
-  //     if (alreadyReacted) {
-  //       await supabase
-  //         .from("message_reactions")
-  //         .delete()
-  //         .eq("message_id", messageId)
-  //         .eq("user_id", currentUserId)
-  //         .eq("reaction_type", emoji);
-  //       updatedMessages = messagesRef.current.map((m) =>
-  //         m.id === messageId
-  //           ? {
-  //               ...m,
-  //               reactions: m.reactions.filter(
-  //                 (r) =>
-  //                   !(r.user_id === currentUserId && r.reaction_type === emoji)
-  //               ),
-  //             }
-  //           : m
-  //       );
-  //     } else {
-  //       await supabase.from("message_reactions").upsert([
-  //         {
-  //           message_id: messageId,
-  //           user_id: currentUserId,
-  //           reaction_type: emoji,
-  //         },
-  //       ]);
-  //       updatedMessages = messagesRef.current.map((m) =>
-  //         m.id === messageId
-  //           ? {
-  //               ...m,
-  //               reactions: [
-  //                 ...m.reactions,
-  //                 {
-  //                   user_id: currentUserId,
-  //                   reaction_type: emoji,
-  //                   id: "optimistic",
-  //                 },
-  //               ],
-  //             }
-  //           : m
-  //       );
-  //     }
-  //     dispatch(setMessages(updatedMessages));
-  //     setPickerOpenFor(null);
-  //   },
-  //   [currentUserId, dispatch]
-  // );
+  }, []);
 
   useEffect(() => {
     const handleInsert = async (payload) => {
       const newMsg = payload.new;
       let profile = null;
-      console.log(payload.new);
       if (newMsg.sender_id === currentUserId) {
         profile = {
           full_name: fullName,
@@ -332,12 +265,11 @@ export default function useMessages() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [dispatch, fullName, imageUrl, currentUserId, groupId]);
+  }, [fullName, imageUrl, currentUserId, groupId]);
 
   const forwardMsg = useCallback(
     async (groups, message) => {
       for (const e of groups) {
-        console.log('cireent user id', currentUserId)
         const { error } = await supabase.from("messages").insert({
           channel_id: e.id,
           content: message.content,
@@ -372,8 +304,7 @@ export default function useMessages() {
     },
     [dispatch]
   );
-  renderCount.current += 1;
-  console.log(renderCount.current, "useMessage render");
+
   return {
     messages: filtered,
     setMessages,
@@ -381,9 +312,7 @@ export default function useMessages() {
     hasMore,
     pickerOpenFor,
     setPickerOpenFor,
-    // toggleReaction,
     containerRef,
-    // loaderRef,
     currentUserId,
     deleteMessage,
     forwardMsg,

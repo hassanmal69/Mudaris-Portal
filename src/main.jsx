@@ -18,7 +18,6 @@ supabase.auth.onAuthStateChange((_event, session) => {
     })
   );
 });
-
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <Provider store={store}>
