@@ -4,7 +4,7 @@ import {
   selectActiveChannel,
   setActiveChannel,
 } from "@/redux/features/channels/channelsSlice";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   fetchChannelMembersbyUser,
   selectChannelsByUser,
@@ -12,46 +12,32 @@ import {
 import ChannelsSection from "./channelSection";
 
 // Main component
-const SideBarChannels = ({ userId, workspace_id, setAddChannelOpen }) => {
-  const renderCount = useRef(0);
+const SideBarChannels = ({ userId,workspace_id, setAddChannelOpen }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const location = useLocation();
-
-  // Track renders
-  renderCount.current++;
-  console.log("🔄 SideBarChannels MAIN rendered #", renderCount.current);
 
   // Memoize selector
-  const channelsSelector = useMemo(
-    () => selectChannelsByUser(userId, workspace_id),
-    [userId, workspace_id]
-  );
+  let channelsSelector
+  if (workspace_id) {
+    channelsSelector = selectChannelsByUser(userId, workspace_id)
+  }
 
   // Select data
   const visibleChannels = useSelector(channelsSelector, shallowEqual);
   const activeChannel = useSelector(selectActiveChannel);
 
   // Fetch channels once
-  useEffect(() => {
-    console.log("Fetch effect running for userId:", userId);
-    if (userId) {
-      dispatch(fetchChannelMembersbyUser(userId));
-    }
-  }, [dispatch, userId]);
+  const fetchedUsers = useRef({});
 
-  // Optimize special route detection
-  const specialRoute = useMemo(() => {
-    const path = location.pathname;
-    if (path.includes("announcement")) return "announcements";
-    if (path.includes("lecturesLink")) return "lecturesLink";
-    if (path.includes("videospresentations")) return "videospresentations";
-    return "";
-  }, [location.pathname]);
+  useEffect(() => {
+    if (userId && !fetchedUsers.current[userId]) {
+      dispatch(fetchChannelMembersbyUser(userId));
+      fetchedUsers.current[userId] = true;
+    }
+  }, []);
 
   // Optimize chat/other channels separation
   const { chatChannel, otherChannels } = useMemo(() => {
-    console.log("Processing channels:", visibleChannels.length);
 
     let chat = null;
     const others = [];
@@ -70,23 +56,15 @@ const SideBarChannels = ({ userId, workspace_id, setAddChannelOpen }) => {
   // Click handler
   const handleChannelClick = useCallback(
     (channel) => {
-      console.log("Channel clicked:", channel.id);
       dispatch(setActiveChannel(channel.id));
       navigate(`/workspace/${workspace_id}/group/${channel.id}`);
     },
     [dispatch, navigate, workspace_id]
   );
-
-  // Loading state
-  // if (!visibleChannels?.length) {
-  //   return <LoadingState />;
-  // }
-
   return (
     <ChannelsSection
       chatChannel={chatChannel}
       otherChannels={otherChannels}
-      specialRoute={specialRoute}
       activeChannelId={activeChannel?.id}
       setAddChannelOpen={setAddChannelOpen}
       onChannelClick={handleChannelClick}

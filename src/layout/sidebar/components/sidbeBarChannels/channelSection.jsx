@@ -9,18 +9,25 @@ import ChannelsList from "./channelList";
 import SpecialRoutesList from "./specialRouteList";
 import CreateChannelButton from "./chatChannelButton";
 import { useIsAdmin } from "@/constants/constants";
+import { useLocation } from "react-router-dom";
 
 const ChannelsSection = React.memo(
   ({
     chatChannel,
     otherChannels,
-    specialRoute,
     activeChannelId,
     setAddChannelOpen,
     onChannelClick,
   }) => {
-    console.log("ChannelsSection rendered");
     const isAdmin = useIsAdmin();
+    const location = useLocation();
+    const specialRoute = useMemo(() => {
+      const path = location.pathname;
+      if (path.includes("announcement")) return "announcements";
+      if (path.includes("lecturesLink")) return "lecturesLink";
+      if (path.includes("videospresentations")) return "videospresentations";
+      return "";
+    }, [location.pathname]);
 
     return (
       <SidebarGroup>
