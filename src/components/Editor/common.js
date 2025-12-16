@@ -54,13 +54,15 @@ export default function useEditorActions(editor) {
     if (e?.preventDefault) e.preventDefault();
     if (!editor) return;
 
+    const hasFiles = files && files.length > 0;
+
+    if (isEditorEmpty(editor) && !hasFiles) {
+      return;
+    }
     const messageHTML = editor.getHTML();
     const jsonVersion = editor.getJSON();
 
     const { isMention, mentionedId } = checkMention(jsonVersion);
-
-    const isEmpty = messageHTML === "<p></p>";
-    if (isEmpty && (!files || files.length === 0)) return;
 
     const isDirectMessage = window.location.pathname.includes("/individual/");
 
@@ -120,6 +122,13 @@ export default function useEditorActions(editor) {
       body: JSON.stringify(payload),
     });
   };
+  function isEditorEmpty(editor) {
+    if (!editor) return true;
+
+    const text = editor.state.doc.textContent;
+
+    return text.trim().length === 0;
+  }
 
   return {
     handleSubmit,
