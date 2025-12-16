@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -22,14 +22,17 @@ import { shallowEqual, useDispatch, useSelector } from "react-redux";
 
 const Members = () => {
   const { groupId } = useParams();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch()
+  const fetchedUsers = useRef({})
   useEffect(() => {
-    if (groupId) {
+    if (groupId && !fetchedUsers.current[groupId]) {
       dispatch(fetchChannelMembersByChannel(groupId));
+      fetchedUsers.current[groupId] = true;
     }
-  }, [groupId]);
-  const selectingMembers = useMemo(
-    () => selectChannelMembers(groupId),
+  }, []);
+
+  const selectingMembers = useMemo(() =>
+    selectChannelMembers(groupId),
     [groupId]
   );
   const members = useSelector(selectingMembers, shallowEqual);
@@ -41,7 +44,6 @@ const Members = () => {
     setOpen(true);
   };
 
-  // Sort members alphabetically by full name (fallback to email) and memoize
   const sortedMembers = React.useMemo(() => {
     const list = (members || []).slice();
     list.sort((a, b) => {
