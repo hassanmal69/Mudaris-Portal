@@ -43,9 +43,8 @@ const Topbar = () => {
   );
   const visibility = channel?.visibility || "private";
   const directChannel = useSelector((state) => state?.direct?.directChannel);
-  const channel_name =
-    channel?.channel_name || directChannel.full_name || "channel";
-
+  const name = directChannel.full_name || "student";
+  const channel_name = channel?.channel_name || name || "channel";
   // --- Search Query ---
   // const query = useSelector((state) => state.search.query);
 
