@@ -1,4 +1,4 @@
-import React, { useReducer } from "react";
+import React, { useReducer, useState } from "react";
 import MessageActions from "./messageActions/MessageActions.jsx";
 import MessageContent from "./MessageContent.jsx";
 import Reactions from "./Reactions.jsx";
@@ -17,6 +17,8 @@ import {
 import UserFallback from "@/components/ui/userFallback.jsx";
 import { ForwardDialog } from "./messageActions/components/ForwardDialog.jsx";
 import { addToast } from "@/redux/features/toast/toastSlice.js";
+import { Button } from "@/components/ui/button.jsx";
+import useHandleIndividual from "@/layout/sidebar/components/useHandleIndividual.js";
 
 const MessageItem = ({
   message,
@@ -28,13 +30,14 @@ const MessageItem = ({
 }) => {
   const { created_at, profiles: { id, full_name, avatar_url } = {} } =
     message || {};
+  const handleFunction = useHandleIndividual();
 
   const dispatch = useDispatch();
   const [__state_local, __dispatch_local] = useReducer(
     __reducer_local,
     initialState
   );
-
+  const [dialogueShow, setDialogueShow] = useState(false)
   const handleConfirmDelete = () => {
     __dispatch_local({ type: "SHOW_DELETE_SUCCESS" });
     dispatch(
@@ -142,20 +145,51 @@ const MessageItem = ({
             />
           </div>
 
-          <div className="flex gap-2 items-center">
-            <strong className="text-(--foreground) font-normal">
-              {message.profiles?.full_name || "Unknown User"}
-            </strong>
-            {message.isForward ? (
-              <p className="italic text-xs font-extralight">
-                Message is forwaded
-              </p>
-            ) : (
-              <p></p>
-            )}
-            <span className="text-xs text-(--muted-foreground)">
-              <LocalTime utcString={created_at} />
-            </span>
+          <div className="flex gap-2 items-center relative"
+            onClick={() => setDialogueShow(prev => !prev)}
+          >
+
+            {
+              dialogueShow && (
+                <div className={`bg-(--primary) absolute ${rtl ? "rev-tooltip" : "tooltip"} rounded-2xl flex flex-col items-center justify-center gap-4 p-2 lg:p-6 -top-35`}>
+                  <div className="flex gap-4">
+                    {message.profiles?.avatar_url ? (
+                      <Avatar className="w-10 h-10 rounded-md border-(--border)">
+                        <AvatarImage src={avatar_url || ""} alt={full_name || "user"} />
+                        <AvatarFallback>
+                          {full_name?.[0]?.toUpperCase() || "U"}
+                        </AvatarFallback>
+                      </Avatar>
+                    ) : (
+                      <UserFallback
+                        name={message.profiles?.full_name}
+                        _idx={message.id[0]}
+                      />
+                    )}
+
+                    <strong className="text-(--foreground) font-normal">
+                      {message.profiles?.full_name || "Unknown User"}
+                    </strong>
+                  </div>
+                  <Button variant="secondary" onClick={() => handleFunction(message.profiles)}> Message </Button>
+                </div>
+              )
+            }
+            <div className="">
+              <strong className="text-(--foreground) font-normal">
+                {message.profiles?.full_name || "Unknown User"}
+              </strong>
+              {message.isForward ? (
+                <p className="italic text-xs font-extralight">
+                  Message is forwaded
+                </p>
+              ) : (
+                <p></p>
+              )}
+              <span className="text-xs text-(--muted-foreground)">
+                <LocalTime utcString={created_at} />
+              </span>
+            </div>
           </div>
           <MessageContent
             attachments={message.attachments}

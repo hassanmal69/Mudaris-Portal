@@ -1,10 +1,73 @@
+.tooltip {
+  color: #fff;
+  font-size: 18px;
+  max-width: 28ch;
+  text-align: center;
+}
+
+.tooltip {
+  /* triangle dimension */
+  --b: 1em;
+  /* control the base */
+  --h: .7em;
+  /* control the height */
+
+  --c: #0f1e3e;
+
+  padding: 1em;
+  border-radius: 1.2em;
+  border-bottom-left-radius: 0;
+  clip-path: polygon(0 0, 100% 0, 100% 100%,
+      var(--b) 100%,
+      calc(-1*var(--h)) calc(100% + var(--h)),
+      0 calc(100% - var(--b)));
+  background: var(--c);
+  border-image: conic-gradient(var(--c) 0 0) 0 0 999 999/ 0 0 calc(var(--h) + var(--b)) calc(var(--h) + var(--b))/0 0 var(--h) var(--h);
+}
+
+.rev-tooltip {
+  color: #fff;
+  font-size: 18px;
+  max-width: 28ch;
+  text-align: center;
+}
+
+.rev-tooltip {
+  --b: 1em;
+  --h: .7em;
+  --c: #0f1e3e;
+
+  padding: 1em;
+  border-radius: 1.2em;
+  border-bottom-left-radius: 0;
+
+  clip-path: polygon(100% 0, 0 0, 0 100%,
+      calc(100% - var(--b)) 100%,
+      calc(100% + var(--h)) calc(100% + var(--h)),
+      100% calc(100% - var(--b)));
+
+  background: var(--c);
+  border-image: conic-gradient(var(--c) 0 0) 0 999 999 0 / 0 calc(var(--h) + var(--b)) calc(var(--h) + var(--b)) 0 / 0 var(--h) var(--h) 0;
+}
+
 @media only screen and (max-width: 600px) {
   .responsive_chat_screen {
     margin: 0;
     overflow-y: hidden;
     height: 100vh;
   }
+  .tooltip {
+    --b: 0.8em;
+    --h: .6em;
+      padding: 0.8em;
+  }
+  .rev-tooltip {
+    --b: 0.8em;
+    --h: .6em;
+      padding: 0.8em;
+  }
 }
+
 @media only screen and (min-width: 600px) {
   .responsive_chat_screen {
     overflow: hidden;
