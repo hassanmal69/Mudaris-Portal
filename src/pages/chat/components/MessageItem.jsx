@@ -135,7 +135,6 @@ const MessageItem = ({
               onEmoji={handleOpenEmoji}
               pickerOpenFor={pickerOpenFor}
               setPickerOpenFor={setPickerOpenFor}
-              // toggleReaction={toggleReaction}
               userId={id}
               handleOpenDeleteDialog={handleOpenDeleteDialog}
               handleForwardDialog={handleForwardDialog}
@@ -176,13 +175,6 @@ const MessageItem = ({
               </button>
             )}
           </div>
-          {/* <Reactions
-            reactions={message.reactions}
-            currentUserId={currentUserId}
-            onReact={(emoji) => {
-              toggleReaction(message.id, emoji);
-            }}
-          /> */}
         </div>
       </div>
     </>

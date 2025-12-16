@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 
 const MessageContent = ({ attachments = [], content, id }) => {
   const [previewSrc, setPreviewSrc] = useState(null);
@@ -39,7 +39,7 @@ const MessageContent = ({ attachments = [], content, id }) => {
   );
 };
 
-export default MessageContent;
+export default React.memo(MessageContent);
 function ImagePreview({ src, onClose }) {
   if (!src) return null;
 
@@ -57,3 +57,5 @@ function ImagePreview({ src, onClose }) {
     </div>
   );
 }
+
+React.memo(ImagePreview);

@@ -151,6 +151,7 @@ const InviteDialog = ({ open, onOpenChange }) => {
         })
       );
     }
+    onOpenChange(false);
   };
 
   return (

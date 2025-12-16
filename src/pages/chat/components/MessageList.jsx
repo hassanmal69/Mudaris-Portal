@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import MessageItem from "./MessageItem.jsx";
 import PinnedMessages from "./PinnedMessages.jsx";
 import { isRTL } from "@/utils/rtl/rtl.js";
+import { Button } from "@/components/ui/button.jsx";
 
 const MessageList = ({
   messages,
@@ -19,12 +20,13 @@ const MessageList = ({
       <PinnedMessages channelId={groupId} token={token} msg={messages} />
       <div className="flex item-center">
         {hasMore && (
-          <button
+          <Button
             onClick={loadOlder}
-            className="mx-auto mt-4 bg-transparent text-(--primary-foreground) px-4 py-2 rounded border border-(--border)"
+            variant={"success"}
+            className="mx-auto mt-4  px-4 py-2"
           >
             Load chat
-          </button>
+          </Button>
         )}
 
         {!hasMore && (
@@ -38,7 +40,6 @@ const MessageList = ({
         const rtl = isRTL(msg?.content);
         return (
           <div
-            key={msg.id}
             className={`my-2 px-3 py-2 rounded-xl  ${
               rtl ? "text-right" : "text-left"
             }`}
