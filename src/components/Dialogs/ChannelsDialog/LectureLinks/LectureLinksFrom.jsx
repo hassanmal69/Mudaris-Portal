@@ -27,13 +27,13 @@ const LectureLinksFrom = ({ onClose, lecturesLink }) => {
     const { name, value } = e.target;
 
     // Validate URL for lectureLink field
-    if (name === "lectureLink" && value) {
-      if (!URL_REGEX.test(value)) {
-        setLinkError("Please enter a valid URL (e.g., https://example.com)");
-      } else {
-        setLinkError("");
-      }
-    }
+    // if (name === "lectureLink" && value) {
+    //   if (!URL_REGEX.test(value)) {
+    //     setLinkError("Please enter a valid URL (e.g., https://example.com)");
+    //   } else {
+    //     setLinkError("");
+    //   }
+    // }
 
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
