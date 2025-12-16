@@ -7,6 +7,7 @@ import { createSelector } from "@reduxjs/toolkit";
 export const fetchChannelMembersByChannel = createAsyncThunk(
   "channelMembers/fetchByChannel",
   async (channelId, thunkAPI) => {
+    console.count('sidebarchannelscallbychanel')
     const { data, error } = await supabase
       .from("channel_members")
       .select("id, user_id, user_profiles ( id, full_name, avatar_url, email )")
@@ -19,6 +20,8 @@ export const fetchChannelMembersByChannel = createAsyncThunk(
 export const fetchChannelMembersbyUser = createAsyncThunk(
   "channelMembers/fetchByUser",
   async (userId) => {
+    console.count('sidebarchannelscallbyusr')
+
     const { data, error } = await supabase
       .from("channel_members")
       .select("id, channels ( id, channel_name,visibility,workspace_id )")
@@ -123,7 +126,6 @@ const channelMembersSlice = createSlice({
       });
   },
 });
-
 export const selectChannelMembers = (channelId) => (state) =>
   state.channelMembers.byChannelId[channelId]?.data || [];
 let EMPTY_ARRAY = []
@@ -144,11 +146,11 @@ export const selectChannelsByUser = (userId, workspace_id) =>
     ],
     (memberships, workspace_id) => {
       if (memberships.length === 0) return EMPTY_ARRAY;
-
-      const channels = memberships.map(m => m.channels);
-      const filtered = channels.filter(ch => ch.workspace_id === workspace_id);
-
-      return filtered.length ? filtered : EMPTY_ARRAY;
+      return memberships
+        .map(m => m.channels)
+        .filter(
+          ch => ch && ch.workspace_id === workspace_id
+        );
     }
   );
 

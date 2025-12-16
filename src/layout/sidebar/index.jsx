@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useRef, useState, useEffect } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import AddChannelDialog from "@/components/Dialogs/add-channel-dialog";
 import InviteDialog from "@/components/Dialogs/invite-dialog";
 import { SidebarContent } from "@/components/ui/sidebar";
@@ -11,87 +11,68 @@ import SideBarApps from "./components/sideBarApps";
 import SideBarFooter from "./components/sideBarFooter";
 import './sidebar.css'
 
-// Debug helper
-const useRenderLogger = (componentName) => {
-  const renderCount = useRef(0);
 
-  useEffect(() => {
-    renderCount.current++;
-    console.log(`${componentName} render #${renderCount.current}`);
+  const Sidebar = () => {
 
-    if (renderCount.current > 3) {
-      console.warn(`${componentName} is rendering too much!`);
-    }
-  });
-};
+    const dispatch = useDispatch();
+    const [addChannelOpen, setAddChannelOpen] = useState(false);
+    const [inviteOpen, setInviteOpen] = useState(false);
+    const { workspace_id } = useParams();
 
-const Sidebar = () => {
-  useRenderLogger('Sidebar');
+    const userId = useSelector((state) => state.auth.session?.user?.id);
 
-  const dispatch = useDispatch();
-  const [addChannelOpen, setAddChannelOpen] = useState(false);
-  const [inviteOpen, setInviteOpen] = useState(false);
-  const { workspace_id } = useParams();
+    // Stable callbacks
+    const stableSetAddChannelOpen = useCallback((open) => {
+      setAddChannelOpen(open);
+    }, []);
 
-  const userId = useSelector((state) => state.auth.session?.user?.id);
+    const stableSetInviteOpen = useCallback((open) => {
+      setInviteOpen(open);
+    }, []);
 
-  // Stable callbacks
-  const stableSetAddChannelOpen = useCallback((open) => {
-    setAddChannelOpen(open);
-  }, []);
+    const handleLogout = useCallback(() => {
+      dispatch(logOut());
+    }, [dispatch]);
 
-  const stableSetInviteOpen = useCallback((open) => {
-    setInviteOpen(open);
-  }, []);
+    // Memoize ALL props
+    const sideBarChannelsProps = useMemo(() => ({
+      setAddChannelOpen: stableSetAddChannelOpen,
+      userId,
+      workspace_id
+    }), [stableSetAddChannelOpen, userId, workspace_id]);
 
-  const handleLogout = useCallback(() => {
-    dispatch(logOut());
-  }, [dispatch]);
+    const sideBarAppsProps = useMemo(() => ({
+      workspace_id,
+      userId
+    }), [workspace_id, userId]);
 
-  // Memoize ALL props
-  const sideBarChannelsProps = useMemo(() => ({
-    setAddChannelOpen: stableSetAddChannelOpen,
-    userId,
-    workspace_id
-  }), [stableSetAddChannelOpen, userId, workspace_id]);
+    const sideBarFooterProps = useMemo(() => ({
+      setInviteOpen: stableSetInviteOpen,
+      handleLogout
+    }), [stableSetInviteOpen, handleLogout]);
 
-  const sideBarAppsProps = useMemo(() => ({
-    workspace_id,
-    userId
-  }), [workspace_id, userId]);
+    const sideBarHeaderProps = useMemo(() => ({
+      userId
+    }), [userId]);
 
-  const sideBarFooterProps = useMemo(() => ({
-    setInviteOpen: stableSetInviteOpen,
-    handleLogout
-  }), [stableSetInviteOpen, handleLogout]);
+    return (
+      <>
+        <AddChannelDialog
+          open={addChannelOpen}
+          onOpenChange={stableSetAddChannelOpen}
+          usedIn={"createChannel"}
+        />
+        <InviteDialog open={inviteOpen} onOpenChange={stableSetInviteOpen} />
+        <SidebarContent className="sideBar h-full bg-(--sidebar) text-(--foreground) border-2 border-(--sidebar-border) px-2 py-4 flex flex-col gap-4">
+          <SideBarHeader {...sideBarHeaderProps} />
+          <div className="flex flex-col gap-2 border-y-2 w-full border-(--sidebar-border)">
+            <SideBarChannels {...sideBarChannelsProps} />
+            <SideBarApps {...sideBarAppsProps} />
+          </div>
+          <SideBarFooter {...sideBarFooterProps} />
+        </SidebarContent>
+      </>
+    );
+  };
 
-  const sideBarHeaderProps = useMemo(() => ({
-    userId
-  }), [userId]);
-
-  return (
-    <>
-      <AddChannelDialog
-        open={addChannelOpen}
-        onOpenChange={stableSetAddChannelOpen}
-        usedIn={"createChannel"}
-      />
-      <InviteDialog open={inviteOpen} onOpenChange={stableSetInviteOpen} />
-      <SidebarContent className="sideBar h-full bg-(--sidebar) text-(--foreground) border-2 border-(--sidebar-border) px-2 py-4 flex flex-col gap-4">
-        <SideBarHeader {...sideBarHeaderProps} />
-        <div className="flex flex-col gap-2 border-y-2 w-full border-(--sidebar-border)">
-          <SideBarChannels {...sideBarChannelsProps} />
-          <SideBarApps {...sideBarAppsProps} />
-        </div>
-        <SideBarFooter {...sideBarFooterProps} />
-      </SidebarContent>
-    </>
-  );
-};
-
-// Add custom comparison to prevent re-renders
-export default React.memo(Sidebar, (prevProps, nextProps) => {
-  // Since Sidebar has no props, it should never re-render
-  // unless something internal changes
-  return true; // Never re-render based on props
-});
+  export default React.memo(Sidebar);
