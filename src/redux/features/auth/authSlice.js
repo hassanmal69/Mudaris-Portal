@@ -9,25 +9,7 @@ import { supabase } from "@/services/supabaseClient";
  * @param {string} userData.role
  * @param {string} userData.avatarUrl
  */
-//auth listener
-// export const initAuthListener = () => (dispatch) => {
-//   const {
-//     data: { subscription },
-//   } = supabase.auth.onAuthStateChange((event, session) => {
-//     if (session) {
-//       dispatch(
-//         setSession({
-//           session,
-//           token: session.access_token,
-//         })
-//       );
-//     } else {
-//       dispatch(setSession({ session: null, token: null }));
-//     }
-//   });
 
-//   return subscription; // so you can unsubscribe if needed
-// };
 // --- session detection Thunk ---
 export const sessionDetection = createAsyncThunk(
   "auth/sessionDetect",
@@ -72,8 +54,11 @@ export const signupUser = createAsyncThunk(
       });
 
       if (error) {
+        if (error.message.toLowerCase().includes("invalid login credentials")) {
+          return rejectWithValue("Incorrect password");
+        }
         console.error("Signup error:", error);
-        return rejectWithValue(error.message || "Signup failed");
+        return rejectWithValue(error.message || "Login failed");
       }
 
       return {
@@ -81,7 +66,7 @@ export const signupUser = createAsyncThunk(
         session: data.session || null,
       };
     } catch (err) {
-      return rejectWithValue(err.message || "Signup failed");
+      return rejectWithValue(err.message || "Login failed");
     }
   }
 );
@@ -100,7 +85,7 @@ export const loginUser = createAsyncThunk(
 
       const session = data.session;
 
-      return session
+      return session;
     } catch (err) {
       return rejectWithValue(err.message || "Login failed");
     }
@@ -180,7 +165,7 @@ export const authSlice = createSlice({
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        state.error = action.payload || "Login Failed";
       })
 
       .addCase(logOut.pending, (state) => {
