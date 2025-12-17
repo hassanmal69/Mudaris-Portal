@@ -61,6 +61,7 @@ export const fetchAllWorkspaces = createAsyncThunk(
   "workspaces/fetchAll",
   async (_, { rejectWithValue }) => {
     try {
+      console.log('wokruspacerender')
       const { data, error } = await supabase
         .from("workspaces")
         .select("id, workspace_name, avatar_url, description");

@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import {
   Avatar,
@@ -19,7 +19,7 @@ const WorkspaceCard = ({
   const launchTo = firstChannelId
     ? `/workspace/${workspace.id}/group/${firstChannelId}`
     : `/workspace/${workspace.id}`;
-  // console.count("WorkspaceCard");
+  console.count("WorkspaceCard");
   return (
     <div className="flex w-full sm:px-4 m-auto flex-col gap-3 sm:gap-0 sm:flex-row justify-between sm:items-center">
       <div className="flex gap-1.5 items-center">
@@ -47,23 +47,28 @@ const WorkspaceCard = ({
               {membersLoading ? (
                 <p className="text-(--accent-foreground) text-sm">Loading...</p>
               ) : (
-                members.slice(0, 3).map((m, idx) =>
-                  m.user_profiles?.avatar_url ? (
-                    <Avatar
-                      key={m.user_id}
-                      className="w-7 h-7 border-2 border-(--border)"
-                    >
-                      <AvatarImage
-                        src={m.user_profiles?.avatar_url}
-                        alt={m.user_profiles?.full_name}
-                      />
-                    </Avatar>
-                  ) : (
-                    <UserFallback
-                      name={m.user_profiles?.full_name}
-                      _idx={idx}
-                    />
-                  )
+                Object.entries(members).slice(0, 3).map((m, idx) =>
+                (
+                  <div key={m.user_id}>
+                    {
+                      m.user_profiles?.avatar_url ? (
+                        <Avatar
+                        >
+                          <AvatarImage
+                            src={m.user_profiles?.avatar_url}
+                            alt={m.user_profiles?.full_name}
+                          />
+                        </Avatar>
+                      ) : (
+                        <UserFallback
+                          name={m.user_profiles?.full_name}
+                          _idx={idx}
+                        />
+                      )
+
+                    }
+                  </div>
+                )
                 )
               )}
             </div>

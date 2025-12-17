@@ -6,7 +6,6 @@ export const fetchWorkspaceMembers = createAsyncThunk(
   "workspaceMembers/fetchWorkspaceMembers",
   async (workspaceId, { getState, rejectWithValue }) => {
     const state = getState().workspaceMembers;
-    // Caching: Don't fetch if already present
     if (state.byWorkspaceId[workspaceId]?.members?.length > 0) {
       return {
         workspaceId,
