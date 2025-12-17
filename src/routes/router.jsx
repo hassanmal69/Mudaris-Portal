@@ -17,7 +17,7 @@ import ChatGet from "@/pages/chatsViewer/chatGet/index.jsx";
 import VideosPresentations from "@/pages/channels/Videos & Presentations/index.jsx";
 import TopbarTwo from "@/layout/TopbarTwo/index.jsx";
 import Terms from "@/pages/terms/index.jsx";
-import ForgotPassword from "@/pages/auth/ForgotPassword/index.jsx";
+import ForgotPassword from "@/pages/auth/forgotpassword/index.jsx";
 import ResetPassword from "@/pages/auth/forgotpassword/ResetPassword.jsx";
 
 export const router = createBrowserRouter([
