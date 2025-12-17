@@ -66,7 +66,9 @@ export default function ResetPassword() {
         </div>
         {message && <p className="text-sm text-muted-foreground">{message}</p>}
 
-        <Button type="submit" disabled={loading} className="w-full">
+        <Button type="submit" 
+        variant={'success'}
+        disabled={loading} className="w-full">
           {loading ? "Updating..." : "Update Password"}
         </Button>
       </form>
