@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import useHandleIndividual from "./useHandleIndividual";
 import { useNavigate } from "react-router-dom";
 import { useIsAdmin } from "@/constants/constants";
+import UserFallback from "@/components/ui/userFallback";
 
 const SideBarDialogue = () => {
   const [open, setOpen] = useState(true);
@@ -60,7 +61,7 @@ const SideBarDialogue = () => {
             <p className="text-center text-gray-400">No chats found...</p>
           )}
 
-          {data.map((item) => {
+          {data.map((item,i) => {
             const user =
               item.sender_id === userId ? item.receiver : item.sender;
 
@@ -69,11 +70,18 @@ const SideBarDialogue = () => {
                 key={item.id}
                 className="flex items-center gap-4 p-3 rounded-lg bg-(--card) border border-[#222]"
               >
-                <img
+                {user?.avatar_url ? <img
                   src={user?.avatar_url}
-                  alt="avatar"
-                  className="w-12 h-12 rounded-full object-cover"
+                  alt="profileImg"
+                  className=" rounded-md hover:cursor-pointer object-cover w-10 h-10"
                 />
+                  :
+                  <UserFallback
+                    name={user?.full_name}
+                    cn={'rounded-md hover:cursor-pointer object-cover w-10 h-10'}
+                    _idx={i}
+                  />
+                }
 
                 <div>
                   <h4 className="text-lg font-semibold text-white">

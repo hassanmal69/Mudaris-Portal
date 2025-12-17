@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React from "react";
 import {
   SidebarGroupLabel,
   SidebarMenu,
@@ -9,11 +9,6 @@ import { Calendar, Telescope } from "lucide-react";
 
 const SidebarAppsList = ({ workspace_id }) => {
   const navigate = useNavigate();
-
-  const renderCount = useRef(0);
-  renderCount.current++;
-  console.log("SidebarAppsList render markeet:", renderCount.current);
-
   return (
     <SidebarMenu>
       <SidebarGroupLabel className="text-(--sidebar-foreground) font-normal text-sm py-1">
