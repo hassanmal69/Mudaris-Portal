@@ -133,18 +133,15 @@ const VideoForm = ({ onClose, chapterId, data }) => {
             Add presentation
           </Label>
           <Input
-            name="presentation_ppt"
+            name="presentation_file"
             type="file"
-            accept=".ppt,.pptx"
-            // value={formData.presentation_file}
+            accept=".ppt,.pptx,.pdf"
             onChange={(e) =>
               setFormData((prev) => ({
                 ...prev,
-                presentation_file: e.target.files[0],
+                presentation_file: e.target.files?.[0] || null,
               }))
             }
-            //onChange={handleChange}
-            placeholder="https://..."
             className="w-full p-2 border rounded-md border-(--border)"
           />
         </div>
