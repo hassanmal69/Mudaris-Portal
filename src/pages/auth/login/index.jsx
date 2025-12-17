@@ -56,11 +56,10 @@ const Login = () => {
                     name="email"
                     type="email"
                     autoComplete="email"
-                    className={`w-full border p-3 text-(--primary-foreground) bg-(--input) border-(--border) rounded focus:outline-none focus:ring-2 focus:ring-purple transition border-b-2 backdrop-blur-sm ${
-                      touched.email && errors.email
+                    className={`w-full border p-3 text-(--primary-foreground) bg-(--input) border-(--border) rounded focus:outline-none focus:ring-2 focus:ring-purple transition border-b-2 backdrop-blur-sm ${touched.email && errors.email
                         ? "border-(--destructive)"
                         : ""
-                    }`}
+                      }`}
                     placeholder="Email"
                   />
                   <ErrorMessage
@@ -77,16 +76,15 @@ const Login = () => {
                       name="password"
                       type={showPassword ? "text" : "password"}
                       autoComplete="current-password"
-                      className={` border p-3 w-full  text-(--primary-foreground) bg-(--input) border-(--border) rounded focus:outline-none focus:ring-2 focus:ring-purple transition border-b-2 backdrop-blur-sm ${
-                        touched.password && errors.password
+                      className={` border p-3 w-full  text-(--primary-foreground) bg-(--input) border-(--border) rounded focus:outline-none focus:ring-2 focus:ring-purple transition border-b-2 backdrop-blur-sm ${touched.password && errors.password
                           ? "border-(--destructive)"
                           : ""
-                      }`}
+                        }`}
                       placeholder="Password"
                     />
                     <button
                       type="button"
-                      className="text-(--primary) absolute right-3"
+                      className="text-(--chart-4) absolute right-3"
                       onClick={() => setShowPassword((prev) => !prev)}
                     >
                       {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
