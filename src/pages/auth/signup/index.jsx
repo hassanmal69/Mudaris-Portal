@@ -13,10 +13,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { addToast } from "@/redux/features/toast/toastSlice";
 import bgImg from "@/assets/images/GrowthIcon.png";
+import { Eye, EyeOff } from "lucide-react";
 
 const Signup = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
 
   // Redux state
   const { fullName } = useSelector((state) => state.signupForm);
@@ -162,7 +164,6 @@ const Signup = () => {
                   component="div"
                 />
               </div>
-
               <div>
                 <div className="flex items-center">
                   <Field
@@ -184,7 +185,6 @@ const Signup = () => {
                   component="div"
                 />
               </div>
-
               {/* Avatar */}
               <div>
                 <Input
@@ -197,27 +197,35 @@ const Signup = () => {
                   }}
                 />
               </div>
-
               {/* Password */}
-              <div>
-                <Field
-                  name="password"
-                  type="password"
-                  autoComplete="current-password"
-                  className={` border p-3 w-full  text-(--primary-foreground) bg-(--input) border-(--border) rounded focus:outline-none focus:ring-2 focus:ring-purple transition border-b-2 backdrop-blur-sm ${
-                    touched.password && errors.password
-                      ? "border-(--destructive)"
-                      : ""
-                  }`}
-                  placeholder="Password"
-                />
+              <div className="mb-6">
+                <div className="relative flex justify-end items-center">
+                  <Field
+                    id="password"
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    autoComplete="current-password"
+                    className={` border p-3 w-full  text-(--primary-foreground) bg-(--input) border-(--border) rounded focus:outline-none focus:ring-2 focus:ring-purple transition border-b-2 backdrop-blur-sm ${
+                      touched.password && errors.password
+                        ? "border-(--destructive)"
+                        : ""
+                    }`}
+                    placeholder="Password"
+                  />
+                  <button
+                    type="button"
+                    className="text-white absolute right-3"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                  >
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
+                </div>
                 <ErrorMessage
                   name="password"
-                  className="text-red-500 text-sm"
-                  component="div"
+                  component="p"
+                  className="text-(--destructive) text-xs mt-1"
                 />
               </div>
-
               {/* Submit */}
               <Button
                 type="submit"
@@ -226,7 +234,6 @@ const Signup = () => {
               >
                 Create Account
               </Button>
-
               <div className="text-center text-xs">
                 <Link
                   to="/"

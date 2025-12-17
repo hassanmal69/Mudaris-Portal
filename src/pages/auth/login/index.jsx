@@ -14,7 +14,7 @@ const Login = () => {
   const from = location.state?.from?.pathname || null;
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { loading, session } = useSelector((state) => state.auth);
+  const { loading, session, error } = useSelector((state) => state.auth);
   const [showPassword, setShowPassword] = useState(false);
   useEffect(() => {
     if (!session) return;
@@ -44,7 +44,7 @@ const Login = () => {
             >
               <img src={bgImg} alt="logo" className="w-[50px] h-[50px] " />
               <h2 className="text-3xl text-center font-bold text-(--foreground) dm-sans">
-                Mudaris Academey{" "}
+                Mudaris Academy{" "}
               </h2>
               <p className="text-(--primary-foreground)">
                 Enter your account details
@@ -86,12 +86,21 @@ const Login = () => {
                     />
                     <button
                       type="button"
-                      className="text-white absolute right-3"
+                      className="text-(--primary) absolute right-3"
                       onClick={() => setShowPassword((prev) => !prev)}
                     >
                       {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                     </button>
                   </div>
+                  {error && (
+                    <p
+                      role="alert"
+                      className="w-full text-center text-sm text-(--destructive) mb-2"
+                    >
+                      Email or password is incorrect!
+                    </p>
+                  )}
+
                   <ErrorMessage
                     name="password"
                     component="p"
@@ -143,6 +152,13 @@ const Login = () => {
                   </span>
                 </p>
                 <p>to get occasional product update and promotional emails.</p>
+
+                <Link
+                  to="/forgot-password"
+                  className="text-sm text-blue-500  font-bold underline"
+                >
+                  Forgot password?
+                </Link>
               </div>
             </Form>
           )}
