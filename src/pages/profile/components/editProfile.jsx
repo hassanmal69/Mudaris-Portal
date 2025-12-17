@@ -23,7 +23,6 @@ const EditProfile = () => {
   const userId = useSelector(
     (s) => s.auth.user?.id || {}, shallowEqual
   );
-  console.count('edit')
   const [file, setFile] = useState(null);
   const [name, setName] = useState(fullName);
   const [publicUrl, setPublicUrl] = useState(undefined);
@@ -101,7 +100,7 @@ const EditProfile = () => {
     <Dialog>
       <DialogTrigger asChild>
         <Button variant={"ghost"} className="text-(--primary-foregroun)">
-          edit
+          Edit
         </Button>
       </DialogTrigger>
       <DialogContent className="flex flex-col gap-0 overflow-y-visible p-0 sm:max-w-lg  [&>button:last-child]:top-3.5">

@@ -1,9 +1,8 @@
-import VaulDrawer from "@/pages/profile/components/drawer.jsx";
+import ParentProfile from "@/pages/profile/components/parentProfile";
 import React from "react";
 import "./profile.css";
 const Profile = () => {
-  console.count("profile");
-  return <VaulDrawer />;
+  return <ParentProfile />;
 };
 
 export default Profile;

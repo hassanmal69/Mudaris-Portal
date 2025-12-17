@@ -5,16 +5,23 @@
   scroll-behavior: smooth;
   overflow-y: scroll;
 }
+
 .messages-container::-webkit-scrollbar {
   width: 8px;
 }
+
 .responsive_message_content ul {
   list-style: disc !important;
   margin-left: 10px;
 }
+
 .responsive_message_content ol {
   list-style: decimal !important;
   margin-left: 10px;
+}
+
+.responsive_message_content p>a {
+  color: var(--foreground);
 }
 
 .messages-container::-webkit-scrollbar-thumb {
@@ -25,6 +32,7 @@
 .messages-container::-webkit-scrollbar-thumb:hover {
   background: var(--primary);
 }
+
 .message-body {
   display: flex;
   flex-direction: column;
@@ -35,22 +43,27 @@
   color: var(--primary);
   text-decoration: underline;
 }
+
 @media only screen and (max-width: 600px) {
   .messages-container {
     margin: 0;
     height: 60vh;
     margin-left: 5px;
   }
+
   .responsive_channel_header h1 {
     font-size: 20px;
   }
+
   .responsive_channel_header p {
     font-size: 14px;
   }
+
   .responsive_channel_header button {
     font-size: 12px;
     width: 70px;
   }
+
   .responsive_message_content {
     font-size: 12px;
   }

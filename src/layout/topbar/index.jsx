@@ -35,8 +35,6 @@ const Topbar = () => {
   // --- State ---
   const [isMobile, setIsMobile] = useState(window.innerWidth < 860);
 
-  console.count("topbar rerendering");
-
   const channel = useSelector(
     (state) => state.channels.byId[groupId],
     shallowEqual
