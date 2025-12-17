@@ -9,7 +9,7 @@ const UserFallback = React.memo(({ name, _idx, cn, avatarCn }) => {
       className={`w-7 h-7 border-2 rounded-md border-(--border) flex items-center justify-center ${cn}`}
     >
       <AvatarFallback
-        className={`text-(-${color})  text-sm  font-semibold ${color} ${avatarCn}`}
+        className={`text-(--primary)  text-sm  font-semibold ${color} ${avatarCn}`}
       >
         {name?.[0]?.toUpperCase()}
       </AvatarFallback>
