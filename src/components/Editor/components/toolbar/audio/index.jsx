@@ -7,7 +7,6 @@ import { addValue } from "@/redux/features/ui/fileSlice";
 
 const AudioRecording = () => {
   const dispatch = useDispatch();
-
   const { status, startRecording, stopRecording, mediaBlobUrl } =
     useReactMediaRecorder({
       audio: true,

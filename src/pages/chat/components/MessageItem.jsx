@@ -1,24 +1,16 @@
-import React, { useReducer, useState } from "react";
+import React, { useReducer } from "react";
 import MessageActions from "./messageActions/MessageActions.jsx";
 import MessageContent from "./MessageContent.jsx";
-import Reactions from "./Reactions.jsx";
 import { useDispatch } from "react-redux";
 import { openReplyDrawer } from "@/redux/features/reply/replySlice.js";
-import {
-  Avatar,
-  AvatarImage,
-  AvatarFallback,
-} from "@/components/ui/avatar.jsx";
 import { DeleteDialog } from "./messageActions/components/DeleteDialog.jsx";
 import {
   initialState,
   __reducer_local,
 } from "./messageActions/components/reducer.js";
-import UserFallback from "@/components/ui/userFallback.jsx";
 import { ForwardDialog } from "./messageActions/components/ForwardDialog.jsx";
 import { addToast } from "@/redux/features/toast/toastSlice.js";
-import { Button } from "@/components/ui/button.jsx";
-import useHandleIndividual from "@/layout/sidebar/components/useHandleIndividual.js";
+import VaulDrawer from "@/components/drawer/index.jsx"
 
 const MessageItem = ({
   message,
@@ -30,14 +22,11 @@ const MessageItem = ({
 }) => {
   const { created_at, profiles: { id, full_name, avatar_url } = {} } =
     message || {};
-  const handleFunction = useHandleIndividual();
-
   const dispatch = useDispatch();
   const [__state_local, __dispatch_local] = useReducer(
     __reducer_local,
     initialState
   );
-  const [dialogueShow, setDialogueShow] = useState(false)
   const handleConfirmDelete = () => {
     __dispatch_local({ type: "SHOW_DELETE_SUCCESS" });
     dispatch(
@@ -98,27 +87,9 @@ const MessageItem = ({
           }
         />
 
-        {message.profiles?.avatar_url ? (
-          <Avatar className="w-10 h-10 rounded-md border-(--border)">
-            <AvatarImage src={avatar_url || ""} alt={full_name || "user"} />
-            <AvatarFallback>
-              {full_name?.[0]?.toUpperCase() || "U"}
-            </AvatarFallback>
-          </Avatar>
-        ) : (
-          <UserFallback
-            name={message.profiles?.full_name}
-            _idx={message.id[0]}
-          />
-        )}
+        <VaulDrawer avatarUrl={avatar_url} userId={message.profiles.id} fullName={full_name} email={message.profiles?.email} />
 
         <div className="relative message-body w-full  text-(--muted-foreground) group">
-          {/* MessageActions: hidden by default, shown when the parent .group is hovered */}
-          {/* hassan sending msg obj as i need it in forward msg
-          
-       
-          
-          */}
           <div
             className={`
     absolute 
@@ -145,35 +116,8 @@ const MessageItem = ({
           </div>
 
           <div className="flex gap-2 items-center relative"
-            onClick={() => setDialogueShow(prev => !prev)}
           >
 
-            {
-              dialogueShow && (
-                <div className={`bg-(--primary) absolute ${rtl ? "rev-tooltip" : "tooltip"} rounded-2xl flex flex-col items-center justify-center gap-4 p-2 lg:p-6 -top-35`}>
-                  <div className="flex gap-4">
-                    {message.profiles?.avatar_url ? (
-                      <Avatar className="w-10 h-10 rounded-md border-(--border)">
-                        <AvatarImage src={avatar_url || ""} alt={full_name || "user"} />
-                        <AvatarFallback>
-                          {full_name?.[0]?.toUpperCase() || "U"}
-                        </AvatarFallback>
-                      </Avatar>
-                    ) : (
-                      <UserFallback
-                        name={message.profiles?.full_name}
-                        _idx={message.id[0]}
-                      />
-                    )}
-
-                    <strong className="text-(--foreground) font-normal">
-                      {message.profiles?.full_name || "Unknown User"}
-                    </strong>
-                  </div>
-                  <Button variant="secondary" onClick={() => handleFunction(message.profiles)}> Message </Button>
-                </div>
-              )
-            }
             <div className="">
               <strong className="text-(--foreground) font-normal">
                 {message.profiles?.full_name || "Unknown User"}
@@ -216,7 +160,6 @@ const MessageItem = ({
 };
 
 export default MessageItem;
-
 const LocalTime = ({ utcString }) => {
   const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
