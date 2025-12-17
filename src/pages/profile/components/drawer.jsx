@@ -24,16 +24,19 @@ function VaulDrawer() {
   const {
     avatar_url: aUrl,
     fullName,
-    email
-  } = useSelector((state) => state.auth?.user?.user_metadata || {}, shallowEqual);
-  const { session } = useSelector((state) => (state.auth), shallowEqual);
+    email,
+  } = useSelector(
+    (state) => state.auth?.user?.user_metadata || {},
+    shallowEqual
+  );
+  const { session } = useSelector((state) => state.auth, shallowEqual);
   const userId = useMemo(() => session?.user?.id, [session?.user?.id]); // stable userId
   const [avatarUrl, setAvatarUrl] = useState(aUrl);
   const dispatch = useDispatch();
   const handleLogout = () => {
     dispatch(logOut());
   };
-  console.count('parent')
+  console.count("parent");
   const channels = useSelector(
     selectChannelsByUser(userId, workspace_id),
     shallowEqual
@@ -131,7 +134,7 @@ function VaulDrawer() {
 
           {/* Footer (always visible) */}
           <div className="px-6 py-4">
-            <Button variant={"secondary"} onClick={handleLogout}>
+            <Button variant={"destructive"} onClick={handleLogout}>
               Sign Out
             </Button>
           </div>

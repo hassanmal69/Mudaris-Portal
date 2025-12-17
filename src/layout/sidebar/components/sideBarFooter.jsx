@@ -16,7 +16,7 @@ const SideBarFooter = ({ setInviteOpen, handleLogout }) => {
           Invite new Users
         </Button>
       )}
-      <Button variant={"outline"} onClick={handleLogout}>
+      <Button variant={"destructive"} onClick={handleLogout}>
         Sign Out
       </Button>
     </SidebarFooter>

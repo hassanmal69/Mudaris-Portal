@@ -38,7 +38,7 @@ const VideoComponent = React.memo(
     return (
       <div className="w-full h-full videos-presentation-responsiveness p-6 space-y-6">
         {/* === VIDEO PLAYER === */}
-        <div className="w-full h-[350px] bg-black rounded-lg overflow-hidden">
+        <div className="w-full h-87.5 bg-black rounded-lg overflow-hidden">
           <VimeoPlayer videoId={video?.video_link} />
         </div>
 
