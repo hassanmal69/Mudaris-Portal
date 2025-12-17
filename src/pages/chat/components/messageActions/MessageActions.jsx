@@ -29,6 +29,7 @@ const MessageActions = React.memo(
     const dispatch = useDispatch();
     const { groupId, token } = useParams();
     const currentUserId = useSelector((state) => state.auth.session?.user?.id);
+console.log('',userId)
     const isPerson = userId === currentUserId;
 
     const handlePin = useCallback(
@@ -117,7 +118,7 @@ const MessageActions = React.memo(
                     <Forward className="h-4 w-4 mr-2" />
                     Forward message
                   </DropdownMenuItem>
-                  {/* {isPerson && ( */}
+                  {isPerson && (
                   <DropdownMenuItem
                     className="text-destructive"
                     onClick={() => handleOpenDeleteDialog(messageId)}
@@ -125,7 +126,7 @@ const MessageActions = React.memo(
                     <Trash2 className="h-4 w-4 mr-2" />
                     Delete message
                   </DropdownMenuItem>
-                  {/* )} */}
+                  )}
                 </>
               )}
             </DropdownMenuContent>

@@ -109,7 +109,7 @@ const MessageItem = ({
               onEmoji={handleOpenEmoji}
               pickerOpenFor={pickerOpenFor}
               setPickerOpenFor={setPickerOpenFor}
-              userId={id}
+              userId={message.profiles.id}
               handleOpenDeleteDialog={handleOpenDeleteDialog}
               handleForwardDialog={handleForwardDialog}
             />
