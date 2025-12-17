@@ -4,7 +4,7 @@ import EditProfile from "./editProfile.jsx";
 import { useParams } from "react-router-dom";
 import "../profile.css";
 import { selectChannelsByUser } from "@/redux/features/channelMembers/channelMembersSlice.js";
-import VaulDrawer from "@/components/drawer/index.jsx"
+import VaulDrawer from "@/components/Drawer/index.jsx"
 
 const ParentProfile = () => {
   const { workspace_id } = useParams();

@@ -10,7 +10,7 @@ import {
 } from "./messageActions/components/reducer.js";
 import { ForwardDialog } from "./messageActions/components/ForwardDialog.jsx";
 import { addToast } from "@/redux/features/toast/toastSlice.js";
-import VaulDrawer from "@/components/drawer/index.jsx"
+import VaulDrawer from "@/components/Drawer/index.jsx"
 
 const MessageItem = ({
   message,
