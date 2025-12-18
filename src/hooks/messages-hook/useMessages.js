@@ -25,7 +25,7 @@ export default function useMessages() {
   const [hasMore, setHasMore] = useState(true);
   const [pickerOpenFor, setPickerOpenFor] = useState(null);
   const containerRef = useRef(null);
-
+  console.log(hasMore, "use messages has more");
   const profilesCache = useRef(new Map());
   // keep a ref to latest messages so callbacks/subscriptions can access up-to-date data
   const messagesRef = useRef(messages);
@@ -99,6 +99,12 @@ export default function useMessages() {
     (async () => {
       const firstBatch = await loadMessages(0);
       dispatch(setMessages(firstBatch));
+
+      if (firstBatch.length < PAGE_SIZE) {
+        setHasMore(false);
+      } else {
+        setHasMore(true);
+      }
       setPage(1);
       setTimeout(() => {
         if (containerRef.current) {
@@ -109,14 +115,15 @@ export default function useMessages() {
   }, [groupId, user_id, dispatch, token]);
 
   // load older
+  const loadingRef = useRef(false);
   const loadOlder = useCallback(async () => {
-    if (!hasMore || !containerRef.current) return;
+    if (!hasMore || loadingRef.current) return;
+    loadingRef.current = true;
     const container = containerRef.current;
     const oldScrollHeight = container.scrollHeight;
     const olderBatch = await loadMessages(page);
-    if (olderBatch.length === 0) {
+    if (olderBatch.length < PAGE_SIZE) {
       setHasMore(false);
-      return;
     }
     // use latest messages from ref to avoid stale closure and unnecessary deps
     dispatch(setMessages([...olderBatch, ...messagesRef.current]));
@@ -124,6 +131,7 @@ export default function useMessages() {
     setTimeout(() => {
       container.scrollTop = container.scrollHeight - oldScrollHeight;
     }, 50);
+    loadingRef.current = false;
   }, [page, hasMore]);
 
   // listen for reaction changes and update the affected message using the latest messages (via ref)
