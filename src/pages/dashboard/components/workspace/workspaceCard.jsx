@@ -19,7 +19,6 @@ const WorkspaceCard = ({
   const launchTo = firstChannelId
     ? `/workspace/${workspace.id}/group/${firstChannelId}`
     : `/workspace/${workspace.id}`;
-  console.count("WorkspaceCard");
   return (
     <div className="flex w-full sm:px-4 m-auto flex-col gap-3 sm:gap-0 sm:flex-row justify-between sm:items-center">
       <div className="flex gap-1.5 items-center">
