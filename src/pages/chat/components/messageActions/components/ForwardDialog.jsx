@@ -21,10 +21,8 @@ export const ForwardDialog = ({ open, onOpenChange, onConfirmForward }) => {
   const channelState = useSelector((state) => state.channels);
 
   useEffect(() => {
-    if (workspace_id && channelState.allIds.length === 0) {
       dispatch(fetchChannels(workspace_id));
-    }
-  }, [workspace_id, dispatch, channelState.allIds.length]);
+  }, []);
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg bg-(--background) text-(--foreground) border border-(--border) rounded-md">

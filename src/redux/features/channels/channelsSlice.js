@@ -8,16 +8,22 @@ import { supabase } from "@/services/supabaseClient.js";
 // --- Thunks ---
 const fetchChannels = createAsyncThunk(
   "channels/fetchChannels",
-  async (workspaceId, { rejectWithValue }) => {
+  async (workspaceId, thunkAPI) => {
+    const state = thunkAPI.getState();
+    const cachedChannel = Object.values(state.channels.byId)
+      .filter((channel) => channel.workspace_id === workspaceId)
+    if (cachedChannel.length > 0) return cachedChannel;
+    console.count("fetchingchannels")
     const { data, error } = await supabase
       .from("channels")
       .select("*")
       .eq("workspace_id", workspaceId);
 
-    if (error) return rejectWithValue(error.message);
+    if (error) return thunkAPI.rejectWithValue(error.message);
     return data;
   }
 );
+
 
 const createChannel = createAsyncThunk(
   "channels/createChannel",

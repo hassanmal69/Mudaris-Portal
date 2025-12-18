@@ -76,8 +76,12 @@ export const fetchAllWorkspaces = createAsyncThunk(
 // fetch single workspace
 export const fetchWorkspaceById = createAsyncThunk(
   "workspaces/fetchById",
-  async (workspaceId, { rejectWithValue }) => {
+  async (workspaceId, thunkAPI) => {
+    const state = thunkAPI.getState()
+    const cachedWs = state.currentWorkspace
+    if (workspaceId === state.currentWorkspace?.id) return cachedWs
     try {
+      console.count('fetchingchannels ws')
       const { data, error } = await supabase
         .from("workspaces")
         .select("id, workspace_name, description, avatar_url")
@@ -86,7 +90,7 @@ export const fetchWorkspaceById = createAsyncThunk(
       if (error) throw error;
       return data;
     } catch (error) {
-      return rejectWithValue(error.message);
+      return thunkAPI.rejectWithValue(error.message);
     }
   }
 );
