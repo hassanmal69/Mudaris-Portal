@@ -15,6 +15,7 @@ const MessageList = ({
   forwardMsg,
 }) => {
   const { groupId, token } = useParams();
+  console.log("has more", hasMore);
   return (
     <>
       <PinnedMessages channelId={groupId} token={token} msg={messages} />

@@ -19,12 +19,15 @@ import TopbarTwo from "@/layout/TopbarTwo/index.jsx";
 import Terms from "@/pages/terms/index.jsx";
 import ForgotPassword from "@/pages/auth/forgotpassword/index.jsx";
 import ResetPassword from "@/pages/auth/forgotpassword/ResetPassword.jsx";
+import ErrorPage from "@/pages/errorPage/index.jsx";
 
 export const router = createBrowserRouter([
   {
     path: "/",
     element: <Login />,
+    errorElement: <ErrorPage />,
   },
+
   {
     path: "/invite/verify",
     element: <SignUp />,
