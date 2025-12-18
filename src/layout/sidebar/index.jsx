@@ -12,67 +12,66 @@ import SideBarFooter from "./components/sideBarFooter";
 import './sidebar.css'
 
 
-  const Sidebar = () => {
+const Sidebar = () => {
+  const dispatch = useDispatch();
+  const [addChannelOpen, setAddChannelOpen] = useState(false);
+  const [inviteOpen, setInviteOpen] = useState(false);
+  const { workspace_id } = useParams();
 
-    const dispatch = useDispatch();
-    const [addChannelOpen, setAddChannelOpen] = useState(false);
-    const [inviteOpen, setInviteOpen] = useState(false);
-    const { workspace_id } = useParams();
+  const userId = useSelector((state) => state.auth.session?.user?.id);
 
-    const userId = useSelector((state) => state.auth.session?.user?.id);
+  // Stable callbacks
+  const stableSetAddChannelOpen = useCallback((open) => {
+    setAddChannelOpen(open);
+  }, []);
 
-    // Stable callbacks
-    const stableSetAddChannelOpen = useCallback((open) => {
-      setAddChannelOpen(open);
-    }, []);
+  const stableSetInviteOpen = useCallback((open) => {
+    setInviteOpen(open);
+  }, []);
 
-    const stableSetInviteOpen = useCallback((open) => {
-      setInviteOpen(open);
-    }, []);
+  const handleLogout = useCallback(() => {
+    dispatch(logOut());
+  }, [dispatch]);
 
-    const handleLogout = useCallback(() => {
-      dispatch(logOut());
-    }, [dispatch]);
+  // Memoize ALL props
+  const sideBarChannelsProps = useMemo(() => ({
+    setAddChannelOpen: stableSetAddChannelOpen,
+    userId,
+    workspace_id
+  }), [stableSetAddChannelOpen, userId, workspace_id]);
 
-    // Memoize ALL props
-    const sideBarChannelsProps = useMemo(() => ({
-      setAddChannelOpen: stableSetAddChannelOpen,
-      userId,
-      workspace_id
-    }), [stableSetAddChannelOpen, userId, workspace_id]);
+  const sideBarAppsProps = useMemo(() => ({
+    workspace_id,
+    userId
+  }), [workspace_id, userId]);
 
-    const sideBarAppsProps = useMemo(() => ({
-      workspace_id,
-      userId
-    }), [workspace_id, userId]);
+  const sideBarFooterProps = useMemo(() => ({
+    setInviteOpen: stableSetInviteOpen,
+    handleLogout
+  }), [stableSetInviteOpen, handleLogout]);
 
-    const sideBarFooterProps = useMemo(() => ({
-      setInviteOpen: stableSetInviteOpen,
-      handleLogout
-    }), [stableSetInviteOpen, handleLogout]);
+  const sideBarHeaderProps = useMemo(() => ({
+    userId
+  }), [userId]);
+console.count("sidebarrendering")
+  return (
+    <>
+      <AddChannelDialog
+        open={addChannelOpen}
+        onOpenChange={stableSetAddChannelOpen}
+        usedIn={"createChannel"}
+      />
+      <InviteDialog open={inviteOpen} onOpenChange={stableSetInviteOpen} />
+      <SidebarContent className="sideBar h-full bg-(--sidebar) text-(--foreground) border-2 border-(--sidebar-border) px-2 py-4 flex flex-col gap-4">
+        <SideBarHeader {...sideBarHeaderProps} />
+        <div className="flex flex-col gap-2 border-y-2 w-full border-(--sidebar-border)">
+          <SideBarChannels {...sideBarChannelsProps} />
+          <SideBarApps {...sideBarAppsProps} />
+        </div>
+        <SideBarFooter {...sideBarFooterProps} />
+      </SidebarContent>
+    </>
+  );
+};
 
-    const sideBarHeaderProps = useMemo(() => ({
-      userId
-    }), [userId]);
-
-    return (
-      <>
-        <AddChannelDialog
-          open={addChannelOpen}
-          onOpenChange={stableSetAddChannelOpen}
-          usedIn={"createChannel"}
-        />
-        <InviteDialog open={inviteOpen} onOpenChange={stableSetInviteOpen} />
-        <SidebarContent className="sideBar h-full bg-(--sidebar) text-(--foreground) border-2 border-(--sidebar-border) px-2 py-4 flex flex-col gap-4">
-          <SideBarHeader {...sideBarHeaderProps} />
-          <div className="flex flex-col gap-2 border-y-2 w-full border-(--sidebar-border)">
-            <SideBarChannels {...sideBarChannelsProps} />
-            <SideBarApps {...sideBarAppsProps} />
-          </div>
-          <SideBarFooter {...sideBarFooterProps} />
-        </SidebarContent>
-      </>
-    );
-  };
-
-  export default React.memo(Sidebar);
+export default React.memo(Sidebar);
