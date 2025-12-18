@@ -14,7 +14,12 @@ import { Button } from "../ui/button";
 import useEditorActions from "./common";
 import { useRef } from "react";
 
-export default function EditorWrapper({ width, styles, toolbarStyles }) {
+export default function EditorWrapper({
+  width,
+  styles,
+  toolbarStyles,
+  placeholder,
+}) {
   const dispatch = useDispatch();
   const { workspace_id, groupId } = useParams();
   const { files } = useSelector((state) => state.file);
@@ -27,7 +32,9 @@ export default function EditorWrapper({ width, styles, toolbarStyles }) {
       extensions: [
         StarterKit,
         Placeholder.configure({
-          placeholder: `Write something in ${channelName}`,
+          placeholder: placeholder
+            ? placeholder
+            : `Write something in ${channelName}`,
         }),
         Mention.configure({
           HTMLAttributes: { class: "mention" },

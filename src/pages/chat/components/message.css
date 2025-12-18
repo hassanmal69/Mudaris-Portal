@@ -20,7 +20,7 @@
   margin-left: 10px;
 }
 
-.responsive_message_content p>a {
+.responsive_message_content p > a {
   color: var(--foreground);
 }
 
@@ -66,5 +66,8 @@
 
   .responsive_message_content {
     font-size: 12px;
+  }
+  .reply-container {
+    width: 100%;
   }
 }

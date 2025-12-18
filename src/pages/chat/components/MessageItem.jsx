@@ -10,7 +10,7 @@ import {
 } from "./messageActions/components/reducer.js";
 import { ForwardDialog } from "./messageActions/components/ForwardDialog.jsx";
 import { addToast } from "@/redux/features/toast/toastSlice.js";
-import VaulDrawer from "@/components/Drawer/index.jsx"
+import VaulDrawer from "@/components/Drawer/index.jsx";
 
 const MessageItem = ({
   message,
@@ -87,19 +87,24 @@ const MessageItem = ({
           }
         />
 
-        <VaulDrawer avatarUrl={avatar_url} userId={message.profiles.id} fullName={full_name} email={message.profiles?.email} />
+        <VaulDrawer
+          avatarUrl={avatar_url}
+          userId={message.profiles.id}
+          fullName={full_name}
+          email={message.profiles?.email}
+        />
 
         <div className="relative message-body w-full  text-(--muted-foreground) group">
           <div
             className={`
-    absolute 
-    top-1 
-       opacity-0 invisible 
-    group-hover:opacity-100 group-hover:visible 
-    transition-opacity duration-150 z-10
+    absolute top-1 z-10 transition-opacity duration-150
 
-    ${rtl ? "left-15 gap-0 " : "right-1"}
-  `}
+    opacity-100 visible
+
+    sm:opacity-0 sm:invisible
+    sm:group-hover:opacity-100 sm:group-hover:visible
+    ${rtl ? "left-15" : "right-1"}
+    `}
             dir={rtl ? "rtl" : "ltr"}
           >
             <MessageActions
@@ -115,9 +120,7 @@ const MessageItem = ({
             />
           </div>
 
-          <div className="flex gap-2 items-center relative"
-          >
-
+          <div className="flex gap-2 items-center relative">
             <div className="">
               <strong className="text-(--foreground) font-normal">
                 {message.profiles?.full_name || "Unknown User"}
