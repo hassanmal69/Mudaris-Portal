@@ -16,6 +16,7 @@ import lectureLinkReducer from "../features/lecturesLink/lecturesLinksSlice.js";
 import chapterReducer from "@/redux/features/video&presentations/chapterSlice";
 import videosReducer from "@/redux/features/video&presentations/videoSlice";
 import toastReducer from "@/redux/features/toast/toastSlice.js";
+import adminReducer from "@/redux/features/admin/adminSlice.js"; // your cached admin slice
 
 import markCompleteSlice from "@/redux/features/video&presentations/markcompleteSlice.js";
 export const store = configureStore({
@@ -25,6 +26,7 @@ export const store = configureStore({
     file: fileSliceReducer,
     reply: replyReducer,
     messages: messageReducer,
+    admins: adminReducer,
     search: searchReducer,
     workSpaces: workspaceReducer,
     workspaceMembers: workspaceMembersReducer,

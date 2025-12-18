@@ -1,76 +1,28 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import {
   SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { supabase } from "@/services/supabaseClient";
 import { Avatar, AvatarImage } from "@/components/ui/avatar.jsx";
 import { Button } from "@/components/ui/button.jsx";
 import useHandleIndividual from "./useHandleIndividual.js";
 import SideBarDialogue from "./sideBarDialogue.jsx";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchAdmins } from "@/redux/features/admin/adminSlice.js";
 
 const SidebarDirectMessages = ({ userId }) => {
   const [isShow, setIsShow] = useState(false);
-  const [users, setUsers] = useState([]);
   const handleFunction = useHandleIndividual();
-  const [isLoading, setIsLoading] = useState(false);
-
-  // Fetch Profiles Once
-  const fetchAdmins = useCallback(async () => {
-    if (isLoading) return;
-
-    setIsLoading(true);
-    try {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("full_name, id, avatar_url")
-        .eq("role", "admin");
-
-      if (error) {
-        console.error("Error fetching admins:", error);
-        return;
-      }
-
-      // Filter out current user and set users
-      if (data) {
-        const filteredUsers = data.filter(u => u.id !== userId);
-        setUsers(filteredUsers.length > 0 ? filteredUsers : []);
-      }
-    } catch (err) {
-      console.error("Unexpected error:", err);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [userId, isLoading]);
-
+  const { list: admins, status } = useSelector(state => state.admins);
+  const dispatch = useDispatch()
   useEffect(() => {
-    let isMounted = true;
-
-    const loadData = async () => {
-      await fetchAdmins();
-    };
-
-    if (isMounted) {
-      loadData();
+    if (status === "idle") {
+      dispatch(fetchAdmins());
     }
+  }, [status, dispatch]);
 
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-  if (isLoading) {
-    return (
-      <SidebarMenu>
-        <SidebarGroupLabel className="text-(--sidebar-foreground) font-normal text-sm">
-          Direct Messages
-        </SidebarGroupLabel>
-        <SidebarMenuItem>
-          <p className="px-2 py-1 text-sm text-gray-500">Loading...</p>
-        </SidebarMenuItem>
-      </SidebarMenu>
-    );
-  }
+  const filteredUsers = admins.filter(u => u.id !== userId);
 
   return (
     <SidebarMenu>
@@ -79,7 +31,7 @@ const SidebarDirectMessages = ({ userId }) => {
       </SidebarGroupLabel>
 
       {/* DM LIST */}
-      {users.map((u) => (
+      {filteredUsers.map((u) => (
         <SidebarMenuItem
           key={u.id}
           onClick={() => handleFunction(u)}
