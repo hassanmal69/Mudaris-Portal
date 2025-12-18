@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import {
   Dialog,
   DialogContent,
@@ -21,7 +21,8 @@ const InviteDialog = ({ open, onOpenChange }) => {
   const [channels, setChannels] = useState([]);
   const { workspace_id } = useParams();
   const dispatch = useDispatch();
-
+  const channelCall = useRef(false)
+  const workspaceCall = useRef(false)
   // Redux state
   const { currentWorkspace, loading } = useSelector(
     (state) => state.workSpaces
@@ -31,13 +32,17 @@ const InviteDialog = ({ open, onOpenChange }) => {
 
   // Fetch workspace info once
   useEffect(() => {
-    if (workspace_id) dispatch(fetchWorkspaceById(workspace_id));
-  }, [workspace_id, dispatch]);
+    if (workspace_id && !workspaceCall.current) {
+      dispatch(fetchWorkspaceById(workspace_id))
+      workspaceCall.current = true
+    }
+  }, [workspace_id]);
 
   // Fetch channels only if not loaded
   useEffect(() => {
-    if (workspace_id && !isChannelsLoaded) {
+    if (workspace_id && !isChannelsLoaded && !channelCall.current) {
       dispatch(fetchChannels(workspace_id));
+      channelCall.current = true;
     }
   }, [workspace_id, dispatch, isChannelsLoaded]);
 
@@ -79,7 +84,6 @@ const InviteDialog = ({ open, onOpenChange }) => {
       }
     }
   };
-  console.log(channels, "this is channels");
   const sendEmail = async () => {
     try {
       const {

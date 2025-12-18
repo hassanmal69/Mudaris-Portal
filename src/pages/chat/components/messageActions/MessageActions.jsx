@@ -29,7 +29,6 @@ const MessageActions = React.memo(
     const dispatch = useDispatch();
     const { groupId, token } = useParams();
     const currentUserId = useSelector((state) => state.auth.session?.user?.id);
-console.log('',userId)
     const isPerson = userId === currentUserId;
 
     const handlePin = useCallback(
