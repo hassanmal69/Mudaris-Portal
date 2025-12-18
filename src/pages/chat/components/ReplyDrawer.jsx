@@ -77,7 +77,7 @@ export default function ReplyDrawer() {
       <Drawer.Portal>
         <Drawer.Overlay className="fixed inset-0 bg-(--card)" />
         <Drawer.Content
-          className={`top-2 bottom-2 fixed z-10 outline-none w-[550px] flex right-1 `}
+          className={`top-2 bottom-2 reply-container fixed z-10 outline-none w-137.5 flex right-1 `}
           style={{ "--initial-transform": "calc(100% + 8px)" }}
           dir={rtl ? "rtl" : "ltr"}
         >
@@ -116,7 +116,9 @@ export default function ReplyDrawer() {
               {replies.map((reply) => (
                 <div
                   key={reply.id}
-                  className={`flex gap-2 ${rtl ? "flex-row-reverse text-right" : ""}`}
+                  className={`flex gap-2 ${
+                    rtl ? "flex-row-reverse text-right" : ""
+                  }`}
                 >
                   <img
                     src={reply.profiles?.avatar_url}
@@ -142,10 +144,9 @@ export default function ReplyDrawer() {
             </div>
 
             {/* Reply input */}
-            <div className="mt-auto">
+            <div className="w-full max-w-4xl">
               <Editor
-                placeholder="Write your reply..."
-                width={"500px"}
+                placeholder="Write your reply"
                 toolbarStyles={{ width: "12px", height: "12px" }}
               />
             </div>

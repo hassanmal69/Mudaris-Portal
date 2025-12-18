@@ -5,6 +5,7 @@ export default function MentionButton({ editor }) {
     <Button
       type="button"
       title="mention"
+      variant={"ghost"}
       onClick={() => {
         if (!editor) return;
         const { from, to } = editor.state.selection;

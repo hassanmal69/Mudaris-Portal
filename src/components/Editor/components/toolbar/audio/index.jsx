@@ -39,12 +39,12 @@ const AudioRecording = () => {
     <div className="">
       <div className="space-y-4">
         <div className="flex gap-2">
-          {(status === 'idle' || status === 'stopped') && (
-            <Button onClick={startRecording}>
+          {(status === "idle" || status === "stopped") && (
+            <Button onClick={startRecording} variant={"ghost"}>
               <Mic className="w-20 h-20  text-(--primary-foreground" />
             </Button>
           )}
-          {status === 'recording' && (
+          {status === "recording" && (
             <Button variant="destructive" onClick={stopRecording}>
               <StopCircle className="w-20 h-20" />
             </Button>
