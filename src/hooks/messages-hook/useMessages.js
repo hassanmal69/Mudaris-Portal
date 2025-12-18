@@ -7,7 +7,7 @@ import {
   addMessage,
   setMessages,
 } from "@/redux/features/messages/messageSlice";
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 30;
 
 export default function useMessages() {
   const dispatch = useDispatch();

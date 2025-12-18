@@ -43,7 +43,7 @@ const Messages = () => {
       {channel && (
         <>
           <div className="flex flex-col gap-0 items-center">
-            <span className="bg-(--standard) text-(--standard-foreground) font-bold w-[65px] text-2xl rounded-md h-[65px] flex items-center justify-center mb-2">
+            <span className="bg-(--standard) text-(--standard-foreground) font-bold w-16.5 text-2xl rounded-md h-16.5 flex items-center justify-center mb-2">
               #
             </span>
             <h1 className=" text-2xl text-(--primary-foreground) font-black ">

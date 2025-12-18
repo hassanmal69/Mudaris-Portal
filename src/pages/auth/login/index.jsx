@@ -42,7 +42,7 @@ const Login = () => {
               className="flex flex-col items-center  gap-2"
               aria-label="Login form"
             >
-              <img src={bgImg} alt="logo" className="w-[50px] h-[50px] " />
+              <img src={bgImg} alt="logo" className="w-12.5 h-12.5 " />
               <h2 className="text-3xl text-center font-bold text-(--foreground) dm-sans">
                 Mudaris Academy{" "}
               </h2>
@@ -56,10 +56,11 @@ const Login = () => {
                     name="email"
                     type="email"
                     autoComplete="email"
-                    className={`w-full border p-3 text-(--primary-foreground) bg-(--input) border-(--border) rounded focus:outline-none focus:ring-2 focus:ring-purple transition border-b-2 backdrop-blur-sm ${touched.email && errors.email
+                    className={`w-full border p-3 text-(--primary-foreground) bg-(--input) border-(--border) rounded focus:outline-none focus:ring-2 focus:ring-purple transition border-b-2 backdrop-blur-sm ${
+                      touched.email && errors.email
                         ? "border-(--destructive)"
                         : ""
-                      }`}
+                    }`}
                     placeholder="Email"
                   />
                   <ErrorMessage
@@ -76,10 +77,11 @@ const Login = () => {
                       name="password"
                       type={showPassword ? "text" : "password"}
                       autoComplete="current-password"
-                      className={` border p-3 w-full  text-(--primary-foreground) bg-(--input) border-(--border) rounded focus:outline-none focus:ring-2 focus:ring-purple transition border-b-2 backdrop-blur-sm ${touched.password && errors.password
+                      className={` border p-3 w-full  text-(--primary-foreground) bg-(--input) border-(--border) rounded focus:outline-none focus:ring-2 focus:ring-purple transition border-b-2 backdrop-blur-sm ${
+                        touched.password && errors.password
                           ? "border-(--destructive)"
                           : ""
-                        }`}
+                      }`}
                       placeholder="Password"
                     />
                     <button
@@ -112,7 +114,7 @@ const Login = () => {
                 disabled={loading}
                 aria-busy={loading}
                 variant={"success"}
-                className={"w-full h-[45px]"}
+                className={"w-full h-11.5"}
               >
                 {loading ? (
                   <span className="flex items-center">
