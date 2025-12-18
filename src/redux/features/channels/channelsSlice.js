@@ -13,7 +13,6 @@ const fetchChannels = createAsyncThunk(
     const cachedChannel = Object.values(state.channels.byId)
       .filter((channel) => channel.workspace_id === workspaceId)
     if (cachedChannel.length > 0) return cachedChannel;
-    console.count("fetchingchannels")
     const { data, error } = await supabase
       .from("channels")
       .select("*")
