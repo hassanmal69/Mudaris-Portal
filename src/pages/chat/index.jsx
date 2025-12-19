@@ -4,7 +4,7 @@ import "./chat.css";
 
 const Chat = () => {
   return (
-    <section className="w-full bg--(--sidebar) m-2.5 responsive_chat_screen">
+    <section className="w-full bg--(--sidebar) m-2.5 h-screen responsive_chat_screen">
       <div className="absolute  inset-0 z-0 w-full h-full pointer-events-none" />
       <Messages />
       <Editor toolbarStyles={{ width: "20px", height: "20px" }} />
