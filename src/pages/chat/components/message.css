@@ -47,7 +47,7 @@
 @media only screen and (max-width: 600px) {
   .messages-container {
     margin: 0;
-    height: 60vh;
+    height: 65dvh;
     margin-left: 5px;
   }
 
