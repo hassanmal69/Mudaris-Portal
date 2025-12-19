@@ -57,7 +57,7 @@ function VaulDrawer({
           className="right-2 top-2 bottom-2 fixed z-10 h-full
           after:bottom-0
           after:w-0
-          outline-none w-[400px] responsive_drawer_profile rounded-md text-(--sidebar-accent-foreground) bg-(--dialog) border border-(--border) flex flex-col "
+          outline-none w-100 responsive_drawer_profile rounded-md text-(--sidebar-accent-foreground) bg-(--dialog) border border-(--border) flex flex-col "
           style={{ "--initial-transform": "calc(100% + 8px)" }}
         >
           {/* Header */}
