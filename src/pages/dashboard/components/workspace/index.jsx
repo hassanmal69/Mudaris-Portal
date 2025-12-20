@@ -3,22 +3,26 @@ import { supabase } from "@/services/supabaseClient.js";
 import WorkspaceCard from "./workspaceCard.jsx";
 import { ChevronDownIcon, ChevronUpIcon } from "@radix-ui/react-icons";
 import { Button } from "@/components/ui/button.jsx";
+import { useSelector } from "react-redux";
 
 const Workspace = () => {
   const [workspacesWithDetails, setWorkspacesWithDetails] = useState([]);
   const [showAll, setShowAll] = useState(false);
+  const userId = useSelector((state) => state.auth.user.id);
   useEffect(() => {
     fetchingDetails()
   }, [])
   const fetchingDetails = async () => {
     const { data, error } = await supabase.functions.invoke('fetchingWorkspaces', {
-      body: { name: 'Functions' },
+      body: {
+        userId,
+        name: 'Functions'
+      },
     })
     if (error) {
       console.error(error);
       return;
     }
-    console.log('dta is',data)
     setWorkspacesWithDetails(data)
   }
   const visibleWorkspaces = useMemo(() => {
@@ -32,7 +36,7 @@ const Workspace = () => {
             return (
               <WorkspaceCard
                 key={item.workspace.id}
-                workspace={item.workspace}
+                workspace={item.workspace.workspaces}
                 members={item.members}
                 count={item.count}
                 firstChannelId={item.firstChannelId}
