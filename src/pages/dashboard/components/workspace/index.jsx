@@ -18,6 +18,7 @@ const Workspace = () => {
       console.error(error);
       return;
     }
+    console.log('dta is',data)
     setWorkspacesWithDetails(data)
   }
   const visibleWorkspaces = useMemo(() => {
@@ -33,6 +34,7 @@ const Workspace = () => {
                 key={item.workspace.id}
                 workspace={item.workspace}
                 members={item.members}
+                count={item.count}
                 firstChannelId={item.firstChannelId}
               />
             )

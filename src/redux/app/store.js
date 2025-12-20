@@ -16,14 +16,16 @@ import lectureLinkReducer from "../features/lecturesLink/lecturesLinksSlice.js";
 import chapterReducer from "@/redux/features/video&presentations/chapterSlice";
 import videosReducer from "@/redux/features/video&presentations/videoSlice";
 import toastReducer from "@/redux/features/toast/toastSlice.js";
-import adminReducer from "@/redux/features/admin/adminSlice.js"; // your cached admin slice
-
+import adminReducer from "@/redux/features/admin/adminSlice.js";
 import markCompleteSlice from "@/redux/features/video&presentations/markcompleteSlice.js";
+import notificationsReducer from "@/redux/features/notifications/notificationSlice.js";
+
 export const store = configureStore({
   reducer: {
     auth: authReducer,
     signupForm: signupFormReducer,
     file: fileSliceReducer,
+    notifications: notificationsReducer,
     reply: replyReducer,
     messages: messageReducer,
     admins: adminReducer,
