@@ -41,9 +41,8 @@ const MessageList = ({
         const rtl = isRTL(msg?.content);
         return (
           <div
-            className={`my-2 px-3 py-2 rounded-xl  ${
-              rtl ? "text-right" : "text-left"
-            }`}
+            className={`my-2 px-3 py-2 rounded-xl  ${rtl ? "text-right" : "text-left"
+              }`}
             dir={rtl ? "rtl" : "ltr"}
           >
             <MessageItem
