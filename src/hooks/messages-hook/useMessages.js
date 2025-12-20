@@ -37,8 +37,8 @@ export default function useMessages() {
     () =>
       query
         ? messages.filter((msg) =>
-            msg.content?.toLowerCase().includes(query.toLowerCase())
-          )
+          msg.content?.toLowerCase().includes(query.toLowerCase())
+        )
         : messages,
     [messages, query]
   );
@@ -60,7 +60,8 @@ export default function useMessages() {
           profiles (
             id,
             full_name,
-            avatar_url
+            avatar_url,
+            email
           ),
           replies:messages!reply_to(id),
           reactions:message_reactions (
