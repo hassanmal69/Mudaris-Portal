@@ -15,6 +15,7 @@ const WorkspaceCard = ({
   membersLoading = false,
   firstChannelId = null,
   index,
+  count
 }) => {
   const launchTo = firstChannelId
     ? `/workspace/${workspace.id}/group/${firstChannelId}`
@@ -43,10 +44,10 @@ const WorkspaceCard = ({
 
           <div className="flex gap-3 items-center">
             <div className="flex -space-x-4 rtl:space-x-reverse">
-              {membersLoading ? (
+              {membersLoading && members.length < 3 ? (
                 <p className="text-(--accent-foreground) text-sm">Loading...</p>
               ) : (
-                Object.entries(members).slice(0, 3).map((m, idx) =>
+                members.map((m, idx) =>
                 (
                   <div key={m.user_id}>
                     {
@@ -62,17 +63,19 @@ const WorkspaceCard = ({
                         <UserFallback
                           name={m.user_profiles?.full_name}
                           _idx={idx}
+                          cn={'h-[35px] w-[35px]'}
                         />
                       )
 
                     }
                   </div>
                 )
+
                 )
               )}
             </div>
             <p className="font-light text-(--primary-foreground) text-sm">
-              {members.length} Members
+              {count} Members
             </p>
           </div>
         </div>
