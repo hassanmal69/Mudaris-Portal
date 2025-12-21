@@ -38,7 +38,7 @@ const HandleChatsViewer = () => {
   }, []);
 
   return (
-    <div className="bg-(--background) h-dvh w-full font-bold text-(--primary-foreground) p-4">
+    <div className="bg-(--background) w-full font-bold text-(--primary-foreground) p-4">
       <h1
         className="mb-4 text-3xl
       "
