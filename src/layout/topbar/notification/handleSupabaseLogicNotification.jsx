@@ -2,6 +2,7 @@ import { supabase } from "@/services/supabaseClient";
 
 const HandleSupabaseLogicNotification = (res, workspace_id, groupId, userId, description) => {
     const supabaseFunctionality = async () => {        
+       console.log('heres notification',res, workspace_id, groupId, userId, description)
         const { error } = await supabase
             .from('notifications')
             .insert({

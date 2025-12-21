@@ -1,18 +1,24 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   createVideoDB,
   updateVideoDB,
 } from "@/redux/features/video&presentations/videoSlice";
 import { Label } from "@/components/ui/label";
 import { addToast } from "@/redux/features/toast/toastSlice";
+import HandleSupabaseLogicNotification from "@/layout/topbar/notification/handleSupabaseLogicNotification";
+import { useParams } from "react-router-dom";
 
 const VideoForm = ({ onClose, chapterId, data }) => {
   const dispatch = useDispatch();
   if (data) var { name, description, video_link, presentation_link, id } = data;
-
+  const { currentWorkspace } = useSelector(
+    (state) => state.workSpaces
+  )
+    const { workspace_id } = useParams();
+  
   const [formData, setFormData] = useState({
     name: name,
     description: description,
@@ -64,6 +70,13 @@ const VideoForm = ({ onClose, chapterId, data }) => {
           presentation_file: formData.presentation_file,
         })
       );
+      HandleSupabaseLogicNotification(
+        'chapterDb',
+        workspace_id,
+        null,
+        null,
+        `New Video is added in Video's & Presentation in ${currentWorkspace?.workspace_name}`,
+      )
       dispatch(
         addToast({
           message: "added a video successfully.",

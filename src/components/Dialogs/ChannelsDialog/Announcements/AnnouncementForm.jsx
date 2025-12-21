@@ -9,6 +9,7 @@ import { Input } from "../../../ui/input";
 import { Textarea } from "../../../ui/textarea";
 import { useParams } from "react-router-dom";
 import { addToast } from "@/redux/features/toast/toastSlice";
+import HandleSupabaseLogicNotification from "@/layout/topbar/notification/handleSupabaseLogicNotification";
 
 const PRIORITY_OPTIONS = [
   { value: "important", label: "Important" },
@@ -62,7 +63,13 @@ const AnnouncementForm = ({ onClose, announcement }) => {
           workspace_id,
         })
       );
-
+      HandleSupabaseLogicNotification(
+        'announcement',
+        workspace_id,
+        null,
+        null,
+        "New Announcement is added",
+      )
       dispatch(
         addToast({
           message: "Announcement created successfully!",

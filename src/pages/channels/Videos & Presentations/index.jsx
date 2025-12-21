@@ -48,7 +48,7 @@ const VideosPresentations = () => {
     const cached = videosByChapter[chapterId];
 
     if (!cached) {
-      dispatch(fetchVideos(chapterId)); // Load only if missing
+      dispatch(fetchVideos(chapterId));
     }
 
     setExpandedChapter((prev) => (prev === chapterId ? null : chapterId));

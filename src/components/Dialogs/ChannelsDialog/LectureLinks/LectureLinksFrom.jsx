@@ -60,7 +60,6 @@ const LectureLinksFrom = ({ onClose, lecturesLink }) => {
         })
       );
 
-      console.log(workspace_id, "ws id");
       dispatch(
         addToast({
           message: "Lecture link updated successfully!",
@@ -85,6 +84,13 @@ const LectureLinksFrom = ({ onClose, lecturesLink }) => {
           duration: 3000,
         })
       );
+      HandleSupabaseLogicNotification(
+        'lecturesLink',
+        workspace_id,
+        null,
+        null,
+        `New Lecture's Link is added in ${currentWorkspace?.workspace_name}`,
+      )
     }
     onClose();
   };

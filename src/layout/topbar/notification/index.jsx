@@ -9,7 +9,7 @@ import {
 import { useEffect, useState, useRef, useMemo, useCallback } from "react";
 import { supabase } from "@/services/supabaseClient";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   fetchNotifications,
 } from "@/redux/features/notifications/notificationSlice";
@@ -39,7 +39,7 @@ export function Notifications() {
   }, [userId, workspace_id, dispatch]);
 
   const channelRef = useRef(null);
-
+  const navigate = useNavigate()
   // --- Setup realtime subscription
   const setupRealtime = useCallback(async () => {
     if (!userId) return;
@@ -71,8 +71,8 @@ export function Notifications() {
 
     const count = lastSeen
       ? items.filter(
-          (n) => new Date(n.created_at) > new Date(lastSeen)
-        ).length
+        (n) => new Date(n.created_at) > new Date(lastSeen)
+      ).length
       : items.length;
 
     setUnread(count);
@@ -95,7 +95,21 @@ export function Notifications() {
 
     setUnread(0);
   };
+  const handleNavigation = (u) => {
+    console.log(u);
 
+    if (u.type === 'directMessage') {
+      if (u.token) navigate(`/workspace/${workspace_id}/individual/${u.token}`)
+    } else if (u.type === 'announcement') {
+      navigate(`/workspace/${workspace_id}/announcements`)
+    } else if (u.type === 'chapterDb') {
+      navigate(`/workspace/${workspace_id}/videospresentations`)
+    } else if (u.type === 'lecturesLink') {
+      navigate(`/workspace/${workspace_id}/lecturesLink`)
+    } else if (u.type === 'reply' || u.type === 'mentioned') {
+      navigate(`/workspace/${workspace_id}/group/${u.channelId}`)
+    }
+  }
   return (
     <DropdownMenu onOpenChange={handleOpenChange}>
       <DropdownMenuTrigger className="relative ">
@@ -107,13 +121,17 @@ export function Notifications() {
         )}
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent className="w-72 text-(--primary-foreground) bg-(--card) border-(--border)">
+      <DropdownMenuContent
+        className="w-72 text-(--primary-foreground) bg-(--card) border-(--border)">
         {items.length === 0 && (
           <DropdownMenuItem>No notifications</DropdownMenuItem>
         )}
 
         {items.map((m) => (
-          <DropdownMenuItem key={m.id}>
+          <DropdownMenuItem
+            onClick={() => handleNavigation(m)
+            }
+            key={m.id}>
             {m.description}
           </DropdownMenuItem>
         ))}

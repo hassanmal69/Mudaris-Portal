@@ -7,27 +7,27 @@ export const fetchNotifications = createAsyncThunk(
   async ({ userId, workspaceId, page = 0, pageSize = 20 }) => {
     const from = page * pageSize;
     const to = from + pageSize - 1;
-    const { data, error } = await supabase
+    let queryBuilder = supabase
       .from("notifications")
-      .select(`
+      .select(
+        `
         id,
         description,
         created_at,
         type,
         "workspaceId",
-        "channelId"
-      `)
-      .eq("userId", userId)
-      .eq("workspaceId", workspaceId)
+        "channelId",
+        "userId",
+        token,
+         workspaces:workspaceId(workspace_name)
+        `)
+      .or(`workspaceId.eq.${workspaceId},userId.eq.${userId}`)
       .order("created_at", { ascending: false })
       .range(from, to);
 
+    const { data, error } = await queryBuilder;
     if (error) throw error;
-
-    // Calculate unread count based on lastSeen
-
     return { data, page };
-
   }
 );
 // selectors.js

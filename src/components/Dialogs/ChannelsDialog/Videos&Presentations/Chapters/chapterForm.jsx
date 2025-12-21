@@ -1,17 +1,20 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   createChapterDB,
   updateChapterDB,
 } from "@/redux/features/video&presentations/chapterSlice.js";
 import { useParams } from "react-router-dom";
+import HandleSupabaseLogicNotification from "@/layout/topbar/notification/handleSupabaseLogicNotification";
 const ChapterForm = ({ onClose, data }) => {
   const dispatch = useDispatch();
   const { workspace_id } = useParams();
   const [chapterName, setChapterName] = useState(data?.name || "");
-
+  const { currentWorkspace } = useSelector(
+    (state) => state.workSpaces
+  )
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!chapterName.trim()) return;
@@ -32,6 +35,13 @@ const ChapterForm = ({ onClose, data }) => {
           workspace_Id: workspace_id,
         })
       );
+      HandleSupabaseLogicNotification(
+        'chapterDb',
+        workspace_id,
+        null,
+        null,
+        `New Chapter is added in Video's & Presentation in ${currentWorkspace?.workspace_name}`,
+      )
     }
 
     onClose();
