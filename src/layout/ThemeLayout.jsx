@@ -4,7 +4,7 @@ import { Outlet } from "react-router-dom";
 
 const ThemeLayout = () => {
   return (
-    <section className="min-h-screen w-full relative overflow-hidden">
+    <section className="min-h-[80dvh] h-screen w-full relative overflow-hidden">
       <div className="relative z-10">
         <Outlet />
       </div>

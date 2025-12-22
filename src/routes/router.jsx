@@ -86,7 +86,7 @@ export const router = createBrowserRouter([
         element: (
           <PrivateRoute>
             <TopBarSecond
-              name="videos and presestaion"
+              name="videos and presentation"
               desc="Access lecture materials and resources"
             />
           </PrivateRoute>
