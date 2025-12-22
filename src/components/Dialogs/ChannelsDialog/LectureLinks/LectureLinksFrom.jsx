@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Input } from "../../../ui/input";
 import { Textarea } from "../../../ui/textarea";
 import {
@@ -9,12 +9,16 @@ import {
 } from "@/redux/features/lecturesLink/lecturesLinksSlice";
 import { useParams } from "react-router-dom";
 import { addToast } from "@/redux/features/toast/toastSlice";
+import HandleSupabaseLogicNotification from "@/layout/topbar/notification/handleSupabaseLogicNotification";
 
 const URL_REGEX = /^(https?:\/\/)([^\s$.?#].[^\s]*)$/i;
 
 const LectureLinksFrom = ({ onClose, lecturesLink }) => {
   const { workspace_id } = useParams();
   const dispatch = useDispatch();
+  const { currentWorkspace } = useSelector(
+    (state) => state.workSpaces
+  )
   const [formData, setFormData] = useState({
     title: lecturesLink?.title || "",
     description: lecturesLink?.description || "",

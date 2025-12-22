@@ -42,7 +42,6 @@ const Topbar = () => {
     (state) => state?.direct?.directChannel,
     shallowEqual
   );
-  console.log(directChannel)
   // --- Derived values (no extra state) ---
   const channel_name =
     channel?.channel_name ||
