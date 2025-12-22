@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Drawer } from "vaul";
 import { useDispatch, useSelector } from "react-redux";
 import { closeReplyDrawer } from "@/redux/features/reply/replySlice.js";
@@ -6,11 +6,13 @@ import { supabase } from "@/services/supabaseClient";
 import Editor from "@/components/Editor/index.jsx";
 import { isRTL } from "@/utils/rtl/rtl";
 import { Button } from "@/components/ui/button";
+import UserFallback from "@/components/ui/userFallback";
 
 export default function ReplyDrawer() {
   const dispatch = useDispatch();
   const { open, message } = useSelector((state) => state.reply);
   const [replies, setReplies] = useState([]);
+  const randomIdRef = useRef(Math.floor(Math.random() * 100));
 
   useEffect(() => {
     if (!message) return;
@@ -66,7 +68,7 @@ export default function ReplyDrawer() {
 
   if (!open || !message) return null;
   const rtl = isRTL(message?.content);
-
+  const avatarUrl = message?.profiles?.avatar_url
   return (
     <Drawer.Root
       open={open}
@@ -82,9 +84,8 @@ export default function ReplyDrawer() {
           dir={rtl ? "rtl" : "ltr"}
         >
           <div
-            className={`bg-(--card) h-full w-full p-5 flex text-(--card-foreground) flex-col rounded ${
-              rtl ? "text-right" : "text-left"
-            }`}
+            className={`bg-(--card) h-full w-full p-5 flex text-(--card-foreground) flex-col rounded ${rtl ? "text-right" : "text-left"
+              }`}
           >
             {/* Parent message */}
             <Drawer.Title
@@ -96,19 +97,31 @@ export default function ReplyDrawer() {
             </Drawer.Title>
             <div className="mb-4 border-b border-(--chart-1) pb-4">
               <div className="flex items-center gap-2">
-                <img
-                  src={message.profiles?.avatar_url}
-                  alt={message.profiles?.full_name}
-                  className="w-10 h-10 rounded-full"
-                />
-                <span className="font-semibold">
-                  {message.profiles?.full_name || "Unknown User"}
-                </span>
+                {avatarUrl ? (
+                  <img
+                    src={avatarUrl}
+                    alt="profileImg"
+                    className="w-10 h-10 rounded-full"
+                  />
+                ) : (
+                  <UserFallback
+                    name={message.profiles?.full_name}
+                    _idx={randomIdRef.current}
+                    cn={"w-10 h-10 rounded-full"}
+                    avatarCn={"text-lg font-bold"}
+                  />
+                )}
+                <div className="flex flex-col">
+                  <span className="font-semibold">
+                    {message.profiles?.full_name || "Unknown User"}
+                  </span>
+
+                  <div
+                    className={`mt-2 text-sm  ${rtl ? "text-right" : "text-left"}`}
+                    dangerouslySetInnerHTML={{ __html: message.content }}
+                  />
+                </div>
               </div>
-              <div
-                className={`mt-2 text-sm  ${rtl ? "text-right" : "text-left"}`}
-                dangerouslySetInnerHTML={{ __html: message.content }}
-              />
             </div>
 
             {/* Replies list */}
@@ -116,16 +129,24 @@ export default function ReplyDrawer() {
               {replies.map((reply) => (
                 <div
                   key={reply.id}
-                  className={`flex gap-2 ${
-                    rtl ? "flex-row-reverse text-right" : ""
-                  }`}
+                  className={`flex items-center ${rtl ? "flex-row text-right" : ""
+                    }`}
                 >
-                  <img
-                    src={reply.profiles?.avatar_url}
-                    alt={reply.profiles?.full_name}
-                    className="w-8 h-8 rounded-full"
-                  />
+                  {reply.profiles?.avatar_url ? (
+                    <img
+                      src={reply.profiles?.avatar_url}
+                      alt="profileImg"
+                      className="w-8 h-8 rounded"
 
+                    />
+                  ) : (
+                    <UserFallback
+                      name={reply.profiles?.full_name}
+                      _idx={randomIdRef.current}
+                      className="w-8 h-8 rounded"
+                      avatarCn={"text-lg font-bold"}
+                    />
+                  )}
                   <div className=" p-2 rounded-lg">
                     <span className="font-medium text-sm">
                       {reply.profiles?.full_name}
