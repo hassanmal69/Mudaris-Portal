@@ -13,7 +13,7 @@ export const fetchAdmins = createAsyncThunk(
         console.count("fetchadmins")
         const { data, error } = await supabase
             .from("profiles")
-            .select("id, full_name, avatar_url")
+            .select("id, full_name, avatar_url,email")
             .eq("role", "admin");
 
         if (error) throw error;

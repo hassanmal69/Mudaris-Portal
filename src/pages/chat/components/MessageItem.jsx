@@ -1,7 +1,7 @@
 import React, { useReducer } from "react";
 import MessageActions from "./messageActions/MessageActions.jsx";
 import MessageContent from "./MessageContent.jsx";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { openReplyDrawer } from "@/redux/features/reply/replySlice.js";
 import { DeleteDialog } from "./messageActions/components/DeleteDialog.jsx";
 import {

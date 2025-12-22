@@ -6,10 +6,6 @@ const fileSlice = createSlice({
     },
     reducers: {
         addValue: (state, action) => {
-            // state.file = action.payload.file;
-            // state.fileLink = action.payload.fileLink;
-            // state.fileType = action.payload.fileType;
-            console.log('action is ',action.payload)
             state.files.push(action.payload)
         },
         removeValue: (state, action) => {
