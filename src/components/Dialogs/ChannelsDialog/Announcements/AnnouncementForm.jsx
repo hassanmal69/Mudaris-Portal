@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   createAnnouncementDB,
   updateAnnouncementDB,
@@ -21,6 +21,9 @@ const PRIORITY_OPTIONS = [
 const AnnouncementForm = ({ onClose, announcement }) => {
   const { workspace_id } = useParams();
   const dispatch = useDispatch();
+  const { currentWorkspace } = useSelector(
+    (state) => state.workSpaces
+  )
   const [formData, setFormData] = useState({
     title: announcement?.title || "",
     description: announcement?.description || "",
@@ -68,7 +71,7 @@ const AnnouncementForm = ({ onClose, announcement }) => {
         workspace_id,
         null,
         null,
-        "New Announcement is added",
+        `New Announcement is added in  ${currentWorkspace?.workspace_name}`,
       )
       dispatch(
         addToast({
