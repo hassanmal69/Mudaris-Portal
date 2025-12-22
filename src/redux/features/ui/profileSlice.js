@@ -6,9 +6,7 @@ const profileSlice = createSlice({
     },
     reducers: {
         updateValue: (state) => {
-            console.log('statecoming', state.editProfileOpen);
             state.editProfileOpen = !state.editProfileOpen;
-            console.log('statecomingafter', state.editProfileOpen);
         },
         setValue: (state, action) => {
             state.editProfileOpen = action.payload;
