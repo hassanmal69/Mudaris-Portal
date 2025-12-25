@@ -5,9 +5,8 @@
   cursor: pointer;
 }
 .mention {
-  background: rgb(0, 128, 0, 0.2);
-  color: green;
   padding: 2px 4px;
+  border-radius: 30px;
 }
 .toolbar {
   padding: 5px;

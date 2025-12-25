@@ -79,7 +79,7 @@ const AddWorkspaceDialog = ({ open, onClose }) => {
 
     try {
       // 1️⃣ Create the workspace and get the result
-      const newWorkspace = await dispatch(
+      await dispatch(
         createWorkspace({
           name,
           description,

@@ -14,6 +14,24 @@ import { Button } from "../ui/button";
 import useEditorActions from "./common";
 import { useRef } from "react";
 
+const CustomMention = Mention.extend({
+  addAttributes() {
+    return {
+      ...this.parent?.(),
+
+      color: {
+        default: null,
+        renderHTML: (attributes) => {
+          if (!attributes.color) return {};
+          return {
+            style: `background-color: ${attributes.color}20; color: ${attributes.color};`,
+          };
+        },
+      },
+    };
+  },
+});
+
 export default function EditorWrapper({
   width,
   styles,
@@ -36,8 +54,7 @@ export default function EditorWrapper({
             ? placeholder
             : `Write something in ${channelName}`,
         }),
-        Mention.configure({
-          HTMLAttributes: { class: "mention" },
+        CustomMention.configure({
           suggestion,
         }),
       ],
