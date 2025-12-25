@@ -6,6 +6,7 @@ import {
   fetchWorkspaceMembers,
 } from "@/redux/features/workspaceMembers/WorkspaceMembersSlice.js";
 import { store } from "@/redux/app/store.js";
+import { getRandomMentionColor } from "@/constants/constants.js";
 
 const updatePosition = (editor, element) => {
   const virtualElement = {
@@ -41,7 +42,6 @@ export default {
         await store.dispatch(fetchWorkspaceMembers(workspaceId));
         members = selectWorkspaceMembers(workspaceId)(store.getState());
       }
-      console.log("members bhi check lazmi hain", members);
       // members shape: [{ user_id, profiles: { id, full_name, avatar_url } }]
       const filteredMembers = members
         .filter((m) => m.user_profiles && m.user_profiles.full_name)
@@ -61,7 +61,23 @@ export default {
       return [];
     }
   },
-
+  command: ({ editor, range, props }) => {
+    editor
+      .chain()
+      .focus()
+      .insertContentAt(range, [
+        {
+          type: "mention",
+          attrs: {
+            id: props.id,
+            label: props.label,
+            color: getRandomMentionColor(),
+          },
+        },
+        { type: "text", text: " " },
+      ])
+      .run();
+  },
   render: () => {
     let reactRenderer;
 
