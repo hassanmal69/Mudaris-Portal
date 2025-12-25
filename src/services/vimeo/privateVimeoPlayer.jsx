@@ -66,24 +66,24 @@ const PrivateVimeoPlayer = ({ embedHtml }) => {
   //   };
   // }, []);
 
-  function toggleFullscreen() {
-    if (!document.fullscreenElement) {
-      wrapperRef.current.requestFullscreen();
-    } else {
-      document.exitFullscreen();
-    }
-  }
+  // function toggleFullscreen() {
+  //   if (!document.fullscreenElement) {
+  //     wrapperRef.current.requestFullscreen();
+  //   } else {
+  //     document.exitFullscreen();
+  //   }
+  // }
 
   return (
     <div
-      ref={wrapperRef}
+      // ref={wrapperRef}
       className="video-container relative w-full 
       h-full
        overflow-hidden"
     >
       {/* Watermark Canvas */}
       <canvas
-        ref={canvasRef}
+        // ref={canvasRef}
         className="absolute inset-0 z-50 pointer-events-none"
       />
 

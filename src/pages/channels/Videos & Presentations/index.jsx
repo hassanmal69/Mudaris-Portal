@@ -90,7 +90,7 @@ const VideosPresentations = () => {
         </div>
       )}
       {chapters && chapters.length > 0 ? (
-        <div className="flex responsive-video-left-sidebar ">
+        <div className="flex responsive-video-left-sidebar">
           {/* LEFT SIDEBAR */}
           <div
             className="mt-4 w-[35%] responsive-video-left-component h-dvh overflow-y-scroll scroll-smooth 
