@@ -13,6 +13,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import {
   fetchNotifications,
 } from "@/redux/features/notifications/notificationSlice";
+import useHandleIndividual from "@/layout/sidebar/components/useHandleIndividual";
 
 export function Notifications() {
   const [unread, setUnread] = useState(0);
@@ -25,7 +26,7 @@ export function Notifications() {
   const { items } = useSelector((state) => state.notifications);
 
   const dispatch = useDispatch();
-
+  const handleFunction = useHandleIndividual()
   useEffect(() => {
     if (!userId || !workspace_id) return;
 
@@ -96,10 +97,13 @@ export function Notifications() {
     setUnread(0);
   };
   const handleNavigation = (u) => {
-    console.log(u);
+    console.log('u is ', u);
 
     if (u.type === 'directMessage') {
-      if (u.token) navigate(`/workspace/${workspace_id}/individual/${u.token}`)
+      if (u.token) {
+        navigate(`/workspace/${workspace_id}/individual/${u.token}`)
+        // handleFunction(u.profiles)
+      }
     } else if (u.type === 'announcement') {
       navigate(`/workspace/${workspace_id}/announcements`)
     } else if (u.type === 'chapterDb') {
