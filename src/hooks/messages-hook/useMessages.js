@@ -289,11 +289,38 @@ export default function useMessages() {
 
         if (error) console.error("Insert error:", error);
       }
-
-      console.log("forwarded message:", message.content, message.attachments);
     },
     [dispatch]
   );
+  const editMessage = useCallback(
+    async (message) => {
+      const { id, content } = message;
+      const previousMessages = messagesRef.current;
+
+      const updatedMessages = previousMessages.map((m) =>
+        m.id === id
+          ? { ...m, content }
+          : m
+      );
+
+      dispatch(setMessages(updatedMessages));
+
+      // 2️⃣ Update DB (SAFE)
+      const { error } = await supabase
+        .from("messages")
+        .update({ content })
+        .eq("id", id);
+
+      if (error) {
+        console.error("Update error:", error);
+
+        // 3️⃣ Rollback on failure
+        dispatch(setMessages(previousMessages));
+      }
+    },
+    [dispatch]
+  );
+
 
   // delete a message (optimistic)
   const deleteMessage = useCallback(
@@ -325,5 +352,6 @@ export default function useMessages() {
     currentUserId,
     deleteMessage,
     forwardMsg,
+    editMessage
   };
 }
