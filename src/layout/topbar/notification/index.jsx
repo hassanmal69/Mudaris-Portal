@@ -6,14 +6,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu.jsx";
-import { useEffect, useState, useRef, useMemo, useCallback } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { supabase } from "@/services/supabaseClient";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   fetchNotifications,
+  prependNotification,
 } from "@/redux/features/notifications/notificationSlice";
-import useHandleIndividual from "@/layout/sidebar/components/useHandleIndividual";
 
 export function Notifications() {
   const [unread, setUnread] = useState(0);
@@ -26,7 +26,6 @@ export function Notifications() {
   const { items } = useSelector((state) => state.notifications);
 
   const dispatch = useDispatch();
-  const handleFunction = useHandleIndividual()
   useEffect(() => {
     if (!userId || !workspace_id) return;
 
@@ -97,7 +96,6 @@ export function Notifications() {
     setUnread(0);
   };
   const handleNavigation = (u) => {
-    console.log('u is ', u);
 
     if (u.type === 'directMessage') {
       if (u.token) {
